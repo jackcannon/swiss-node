@@ -7,7 +7,7 @@ export * from './tools/table';
 export * from './tools/progressBar';
 export * from './tools/clr';
 export * from './tools/LogUtils';
-export { explodePath } from './tools/PathUtils';
+export { explodePath, ExplodedPath } from './tools/PathUtils';
 
 import * as LogUtils from './tools/LogUtils';
 import * as PathUtils from './tools/PathUtils';
