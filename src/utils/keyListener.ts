@@ -3,6 +3,7 @@ export interface KeyListener {
   stop(): void;
 }
 
+// TODO docs
 export const getKeyListener = (
   callback: (keyName?: string, rawValue?: string) => void,
   isStart: boolean = true,

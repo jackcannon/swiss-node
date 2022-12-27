@@ -463,10 +463,15 @@ export const pause = async (text: string | Breadcrumb = 'Press enter to continue
     const message = typeof text === 'string' ? text : text.get();
     console.log(chalk.gray(message));
 
-    getKeyListener((key) => {
+    const finish = () => {
+      kl.stop();
+      resolve();
+    };
+
+    const kl = getKeyListener((key) => {
       switch (key) {
         case 'return':
-          return resolve();
+          return finish();
       }
     });
   });
