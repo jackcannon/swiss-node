@@ -1,5 +1,6 @@
-import { Partial as Partial$1, RemapOf, second, ProgressBarOptions } from 'swiss-ak';
+import { Partial as Partial$1, RemapOf, second, ProgressBarOptions, OfType } from 'swiss-ak';
 import * as chalk from 'chalk';
+import { ChalkInstance } from 'chalk';
 
 declare const chlk: {
     gray0: chalk.ChalkInstance;
@@ -863,6 +864,67 @@ declare namespace LogUtils {
   };
 }
 
+interface LogOptions {
+    /**
+     * Default: false
+     */
+    showDate?: boolean;
+    /**
+     * Default: true
+     */
+    showTime?: boolean;
+    /**
+     * Default: true
+     */
+    enableColours?: boolean;
+}
+interface LogConfigs {
+    [key: string]: LogConfig;
+}
+interface LogConfig {
+    name: string;
+    nameColour?: ChalkInstance;
+    showDate?: boolean;
+    showTime?: boolean;
+    contentColour?: ChalkInstance;
+}
+declare const defaultConfigs: {
+    readonly blank: LogConfig;
+    readonly log: LogConfig;
+    readonly out: LogConfig;
+    readonly normal: LogConfig;
+    readonly verbose: LogConfig;
+    readonly debug: LogConfig;
+    readonly info: LogConfig;
+    readonly warn: LogConfig;
+    readonly error: LogConfig;
+};
+declare type LogFunction = (...args: any[]) => void;
+declare type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
+declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
+declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
+    readonly blank: LogConfig;
+    readonly log: LogConfig;
+    readonly out: LogConfig;
+    readonly normal: LogConfig;
+    readonly verbose: LogConfig;
+    readonly debug: LogConfig;
+    readonly info: LogConfig;
+    readonly warn: LogConfig;
+    readonly error: LogConfig;
+} & T, LogFunction>;
+declare const log: OfType<{
+    readonly blank: LogConfig;
+    readonly log: LogConfig;
+    readonly out: LogConfig;
+    readonly normal: LogConfig;
+    readonly verbose: LogConfig;
+    readonly debug: LogConfig;
+    readonly info: LogConfig;
+    readonly warn: LogConfig;
+    readonly error: LogConfig;
+}, LogFunction>;
+
 interface ExplodedPath {
     /**
      * The full original path as it was passed in.
@@ -967,4 +1029,4 @@ interface KeyListener {
 }
 declare const getKeyListener: (callback: (keyName?: string, rawValue?: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 
-export { AlignType, Breadcrumb, Colour, ExplodedPath, FullTableOptions, LineCounter, LogUtils, PathUtils, ResponsiveOption, TableFormatConfig, TableOptions, align, ask, center, centerLines, chlk, clr, concatLineGroups, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, getResponsiveValue, hasColor, justify, justifyLines, left, leftLines, limitToLength, limitToLengthStart, loading$1 as loading, moveUp, out, pad, processLogContents, progressBarUtils, right, rightLines, split, table$1 as table, truncate, truncateStart, wrap };
+export { AlignType, Breadcrumb, Colour, DefaultLogger, ExplodedPath, FullTableOptions, LineCounter, LogConfig, LogConfigs, LogOptions, LogUtils, Logger, PathUtils, ResponsiveOption, TableFormatConfig, TableOptions, align, ask, center, centerLines, chlk, clr, concatLineGroups, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, getResponsiveValue, hasColor, justify, justifyLines, left, leftLines, limitToLength, limitToLengthStart, loading$1 as loading, log, moveUp, out, pad, processLogContents, progressBarUtils, right, rightLines, split, table$1 as table, truncate, truncateStart, wrap };

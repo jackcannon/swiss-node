@@ -73,7 +73,7 @@ var randomID = () => Math.random().toString(36).substring(2);
 var getLineCounter = () => {
   let lineCount = 0;
   const checkpoints = {};
-  const log = (...args) => {
+  const log2 = (...args) => {
     const added = out.utils.getNumLines(args.map(getLogStr).join(" "));
     lineCount += added;
     console.log(...args);
@@ -81,7 +81,7 @@ var getLineCounter = () => {
   };
   const move = (lines) => {
     if (lines > 0) {
-      log("\n".repeat(lines - 1));
+      log2("\n".repeat(lines - 1));
     }
     if (lines < 0) {
       clearBack(-lines);
@@ -129,7 +129,7 @@ var getLineCounter = () => {
     lineCount = 0;
   };
   const lc = {
-    log,
+    log: log2,
     move,
     wrap: wrap2,
     add,
@@ -2693,6 +2693,100 @@ var getColouredProgressBarOpts = (opts, randomise = false) => {
 var progressBarUtils = {
   getColouredProgressBarOpts
 };
+
+// src/tools/log.ts
+import util from "util";
+import chalk15 from "chalk";
+import { ObjectUtils as ObjectUtils2 } from "swiss-ak";
+var defaultOptions = {
+  showDate: false,
+  showTime: true,
+  enableColours: true
+};
+var defaultConfigs = {
+  blank: {
+    name: "",
+    nameColour: chalk15,
+    showDate: false,
+    showTime: false
+  },
+  log: {
+    name: "LOG",
+    nameColour: chalk15.bgWhite.black
+  },
+  out: {
+    name: "OUT",
+    nameColour: chalk15.bgWhite.black
+  },
+  normal: {
+    name: "LOG",
+    nameColour: chalk15.bgWhite.black
+  },
+  verbose: {
+    name: "LOG",
+    nameColour: chalk15.bgWhite.black
+  },
+  debug: {
+    name: "DBUG",
+    nameColour: chalk15.bgMagenta.whiteBright
+  },
+  info: {
+    name: "INFO",
+    nameColour: chalk15.bgBlue.whiteBright
+  },
+  warn: {
+    name: "WARN",
+    nameColour: chalk15.bgYellowBright.black
+  },
+  error: {
+    name: "ERRR",
+    nameColour: chalk15.bgRed.whiteBright
+  }
+};
+var getStr = (enableColours) => (item) => {
+  const inspect2 = ["object", "boolean", "number"];
+  if (inspect2.includes(typeof item) && !(item instanceof Date)) {
+    return util.inspect(item, { colors: enableColours, depth: null });
+  } else {
+    return item + "";
+  }
+};
+var getDatePrefix = (now, addDate, addTime, showDate, showTime) => {
+  if (!addDate && !addTime)
+    return "";
+  let date2 = addDate ? now.toISOString().substring(0, 10) : "";
+  let time2 = addTime ? now.toISOString().substring(11, 23) : "";
+  const dateStr = `[${[showDate ? date2 : " ".repeat(date2.length), showTime ? time2 : " ".repeat(time2.length)].filter((s) => s).join(" ")}] `;
+  if (!showDate && !showTime || !showDate && !addTime || !addDate && !showTime)
+    return " ".repeat(dateStr.length);
+  return dateStr;
+};
+var formatLog = (args, config, completeOptions, longestName = 1) => {
+  const now = new Date();
+  const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
+  const { name, nameColour, contentColour, showDate, showTime } = config;
+  const dateWrapper = enableColours ? chalk15.dim : (str) => str;
+  const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
+  const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
+  const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
+  const nameStr = ` ${out.center(`${name}`, longestName)} `;
+  const prefixRaw = `${dateStr}${nameStr} `;
+  const prefix = `${dateWrapper(dateStr)}${nameWrapper(nameStr)} `;
+  return args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixRaw.length) : prefix) + contentWrapper(line)).join("\n");
+};
+var createLogger = (extraConfigs = {}, options = {}) => {
+  const completeOptions = { ...defaultOptions, ...options };
+  const allConfigs = { ...defaultConfigs, ...extraConfigs };
+  const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
+  return ObjectUtils2.mapValues(allConfigs, (key, config) => {
+    const func = (...args) => {
+      const log2 = formatLog(args, config, completeOptions, longestName);
+      console.log(log2);
+    };
+    return func;
+  });
+};
+var log = createLogger({});
 export {
   LogUtils_exports as LogUtils,
   PathUtils_exports as PathUtils,
@@ -2703,6 +2797,7 @@ export {
   chlk,
   clr,
   concatLineGroups,
+  createLogger,
   explodePath,
   getBreadcrumb,
   getKeyListener,
@@ -2718,6 +2813,7 @@ export {
   limitToLength,
   limitToLengthStart,
   loading,
+  log,
   moveUp,
   out,
   pad,
