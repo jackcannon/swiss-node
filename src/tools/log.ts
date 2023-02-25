@@ -1,7 +1,7 @@
 // TODO logs
 
 import util from 'util';
-import chalk, { ChalkInstance } from 'chalk';
+import chalk from 'chalk';
 import { out } from './out';
 import { KeysOnly, ObjectUtils, OfType } from 'swiss-ak';
 
@@ -34,10 +34,10 @@ export interface LogConfigs {
 
 export interface LogConfig {
   name: string;
-  nameColour?: ChalkInstance;
+  nameColour?: Function;
   showDate?: boolean;
   showTime?: boolean;
-  contentColour?: ChalkInstance;
+  contentColour?: Function;
 }
 
 const defaultConfigs = {

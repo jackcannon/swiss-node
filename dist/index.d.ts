@@ -1,16 +1,64 @@
 import { Partial as Partial$1, RemapOf, second, ProgressBarOptions, OfType } from 'swiss-ak';
-import * as chalk from 'chalk';
-import { ChalkInstance } from 'chalk';
 
+interface ChalkFn {
+    (...text: string[]): string;
+    level: 0 | 1 | 2 | 3;
+    readonly reset: this;
+    readonly bold: this;
+    readonly dim: this;
+    readonly italic: this;
+    readonly underline: this;
+    readonly overline: this;
+    readonly inverse: this;
+    readonly hidden: this;
+    readonly strikethrough: this;
+    readonly visible: this;
+    readonly black: this;
+    readonly red: this;
+    readonly green: this;
+    readonly yellow: this;
+    readonly blue: this;
+    readonly magenta: this;
+    readonly cyan: this;
+    readonly white: this;
+    readonly gray: this;
+    readonly grey: this;
+    readonly blackBright: this;
+    readonly redBright: this;
+    readonly greenBright: this;
+    readonly yellowBright: this;
+    readonly blueBright: this;
+    readonly magentaBright: this;
+    readonly cyanBright: this;
+    readonly whiteBright: this;
+    readonly bgBlack: this;
+    readonly bgRed: this;
+    readonly bgGreen: this;
+    readonly bgYellow: this;
+    readonly bgBlue: this;
+    readonly bgMagenta: this;
+    readonly bgCyan: this;
+    readonly bgWhite: this;
+    readonly bgGray: this;
+    readonly bgGrey: this;
+    readonly bgBlackBright: this;
+    readonly bgRedBright: this;
+    readonly bgGreenBright: this;
+    readonly bgYellowBright: this;
+    readonly bgBlueBright: this;
+    readonly bgMagentaBright: this;
+    readonly bgCyanBright: this;
+    readonly bgWhiteBright: this;
+}
 declare const chlk: {
-    gray0: chalk.ChalkInstance;
-    gray1: chalk.ChalkInstance;
-    gray2: chalk.ChalkInstance;
-    gray3: chalk.ChalkInstance;
-    gray4: chalk.ChalkInstance;
-    gray5: chalk.ChalkInstance;
-    grays: chalk.ChalkInstance[];
-    gray: (num: number) => chalk.ChalkInstance;
+    gray0: ChalkFn;
+    gray1: ChalkFn;
+    gray2: ChalkFn;
+    gray3: ChalkFn;
+    gray4: ChalkFn;
+    gray5: ChalkFn;
+    grays: ChalkFn[];
+    gray: (num: number) => ChalkFn;
     clear: (str: string) => string;
     not: (style: Function) => (item: string) => string;
     notUnderlined: (item: string) => string;
@@ -21,31 +69,31 @@ declare const chlk: {
  * A collection of shortcuts and aliases for chalk functions
  */
 declare const clr: {
-    hl1: chalk.ChalkInstance;
-    hl2: chalk.ChalkInstance;
-    approve: chalk.ChalkInstance;
-    create: chalk.ChalkInstance;
-    update: chalk.ChalkInstance;
-    delete: chalk.ChalkInstance;
-    deleteAll: chalk.ChalkInstance;
-    blue: chalk.ChalkInstance;
-    cyan: chalk.ChalkInstance;
-    green: chalk.ChalkInstance;
-    magenta: chalk.ChalkInstance;
-    red: chalk.ChalkInstance;
-    yellow: chalk.ChalkInstance;
-    t1: chalk.ChalkInstance;
-    t2: chalk.ChalkInstance;
-    t3: chalk.ChalkInstance;
-    t4: chalk.ChalkInstance;
-    t5: chalk.ChalkInstance;
-    t6: chalk.ChalkInstance;
-    gray0: chalk.ChalkInstance;
-    gray1: chalk.ChalkInstance;
-    gray2: chalk.ChalkInstance;
-    gray3: chalk.ChalkInstance;
-    gray4: chalk.ChalkInstance;
-    gray5: chalk.ChalkInstance;
+    hl1: ChalkFn;
+    hl2: ChalkFn;
+    approve: ChalkFn;
+    create: ChalkFn;
+    update: ChalkFn;
+    delete: ChalkFn;
+    deleteAll: ChalkFn;
+    blue: ChalkFn;
+    cyan: ChalkFn;
+    green: ChalkFn;
+    magenta: ChalkFn;
+    red: ChalkFn;
+    yellow: ChalkFn;
+    t1: ChalkFn;
+    t2: ChalkFn;
+    t3: ChalkFn;
+    t4: ChalkFn;
+    t5: ChalkFn;
+    t6: ChalkFn;
+    gray0: ChalkFn;
+    gray1: ChalkFn;
+    gray2: ChalkFn;
+    gray3: ChalkFn;
+    gray4: ChalkFn;
+    gray5: ChalkFn;
 };
 declare type Colour = keyof typeof clr;
 
@@ -883,10 +931,10 @@ interface LogConfigs {
 }
 interface LogConfig {
     name: string;
-    nameColour?: ChalkInstance;
+    nameColour?: Function;
     showDate?: boolean;
     showTime?: boolean;
-    contentColour?: ChalkInstance;
+    contentColour?: Function;
 }
 declare const defaultConfigs: {
     readonly blank: LogConfig;

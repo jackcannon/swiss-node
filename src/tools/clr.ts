@@ -1,47 +1,97 @@
 import chalk from 'chalk';
-import { fn, ObjOfType } from 'swiss-ak';
+
+interface ChalkFn {
+  (...text: string[]): string;
+  level: 0 | 1 | 2 | 3;
+  readonly reset: this;
+  readonly bold: this;
+  readonly dim: this;
+  readonly italic: this;
+  readonly underline: this;
+  readonly overline: this;
+  readonly inverse: this;
+  readonly hidden: this;
+  readonly strikethrough: this;
+  readonly visible: this;
+  readonly black: this;
+  readonly red: this;
+  readonly green: this;
+  readonly yellow: this;
+  readonly blue: this;
+  readonly magenta: this;
+  readonly cyan: this;
+  readonly white: this;
+  readonly gray: this;
+  readonly grey: this;
+  readonly blackBright: this;
+  readonly redBright: this;
+  readonly greenBright: this;
+  readonly yellowBright: this;
+  readonly blueBright: this;
+  readonly magentaBright: this;
+  readonly cyanBright: this;
+  readonly whiteBright: this;
+  readonly bgBlack: this;
+  readonly bgRed: this;
+  readonly bgGreen: this;
+  readonly bgYellow: this;
+  readonly bgBlue: this;
+  readonly bgMagenta: this;
+  readonly bgCyan: this;
+  readonly bgWhite: this;
+  readonly bgGray: this;
+  readonly bgGrey: this;
+  readonly bgBlackBright: this;
+  readonly bgRedBright: this;
+  readonly bgGreenBright: this;
+  readonly bgYellowBright: this;
+  readonly bgBlueBright: this;
+  readonly bgMagentaBright: this;
+  readonly bgCyanBright: this;
+  readonly bgWhiteBright: this;
+}
 
 /**
  * gray0
  *
  * Gray 0 (0-5). Equivalent to chalk.black
  */
-const gray0 = chalk.black;
+const gray0 = chalk.black as ChalkFn;
 
 /**
  * gray1
  *
  * Gray 1 (0-5). Equivalent to chalk.gray.dim
  */
-const gray1 = chalk.gray.dim;
+const gray1 = chalk.gray.dim as ChalkFn;
 
 /**
  * gray2
  *
  * Gray 2 (0-5). Equivalent to chalk.white.dim
  */
-const gray2 = chalk.white.dim;
+const gray2 = chalk.white.dim as ChalkFn;
 
 /**
  * gray3
  *
  * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
  */
-const gray3 = chalk.whiteBright.dim;
+const gray3 = chalk.whiteBright.dim as ChalkFn;
 
 /**
  * gray4
  *
  * Gray 4 (0-5). Equivalent to chalk.white
  */
-const gray4 = chalk.white;
+const gray4 = chalk.white as ChalkFn;
 
 /**
  * gray5
  *
  * Gray 5 (0-5). Equivalent to chalk.whiteBright
  */
-const gray5 = chalk.whiteBright;
+const gray5 = chalk.whiteBright as ChalkFn;
 
 /**
  * grays
@@ -52,7 +102,7 @@ const gray5 = chalk.whiteBright;
  * grays[2]; // gray2
  * ```
  */
-const grays = [
+const grays: ChalkFn[] = [
   // grays
   gray0,
   gray1,
@@ -105,27 +155,27 @@ export const chlk = {
  * A collection of shortcuts and aliases for chalk functions
  */
 export const clr = {
-  hl1: chalk.yellowBright.bold,
-  hl2: chalk.yellow,
-  approve: chalk.green.bold,
-  create: chalk.greenBright.bold,
-  update: chalk.yellow.bold,
-  delete: chalk.redBright.bold,
-  deleteAll: chalk.redBright.bold,
+  hl1: chalk.yellowBright.bold as ChalkFn,
+  hl2: chalk.yellow as ChalkFn,
+  approve: chalk.green.bold as ChalkFn,
+  create: chalk.greenBright.bold as ChalkFn,
+  update: chalk.yellow.bold as ChalkFn,
+  delete: chalk.redBright.bold as ChalkFn,
+  deleteAll: chalk.redBright.bold as ChalkFn,
 
-  blue: chalk.blueBright,
-  cyan: chalk.cyanBright,
-  green: chalk.greenBright,
-  magenta: chalk.magentaBright,
-  red: chalk.redBright,
-  yellow: chalk.yellowBright,
+  blue: chalk.blueBright as ChalkFn,
+  cyan: chalk.cyanBright as ChalkFn,
+  green: chalk.greenBright as ChalkFn,
+  magenta: chalk.magentaBright as ChalkFn,
+  red: chalk.redBright as ChalkFn,
+  yellow: chalk.yellowBright as ChalkFn,
 
-  t1: chalk.yellowBright,
-  t2: chalk.magentaBright,
-  t3: chalk.blueBright,
-  t4: chalk.redBright,
-  t5: chalk.greenBright,
-  t6: chalk.cyanBright,
+  t1: chalk.yellowBright as ChalkFn,
+  t2: chalk.magentaBright as ChalkFn,
+  t3: chalk.blueBright as ChalkFn,
+  t4: chalk.redBright as ChalkFn,
+  t5: chalk.greenBright as ChalkFn,
+  t6: chalk.cyanBright as ChalkFn,
 
   gray0,
   gray1,
