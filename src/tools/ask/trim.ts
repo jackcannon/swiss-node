@@ -1,11 +1,13 @@
-import { getDeferred, hours, ms, ObjectUtils, seconds, symbols } from 'swiss-ak';
+import { getDeferred, hours, ms, ObjectTools, seconds, symbols } from 'swiss-ak';
 import stringWidth from 'string-width';
 
-import { table } from '../table';
-import { out } from '../out';
-import { getKeyListener } from '../../utils/keyListener';
+import * as table from '../table';
+import * as out from '../out';
+import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 import chalk from 'chalk';
+
+//<!-- DOCS: 140 -->
 
 const toTimeCode = (frame: number, frameRate: number = 60, includeHours: boolean = false, includeMinutes: boolean = true) => {
   const frLength = stringWidth(frameRate + '');
@@ -89,6 +91,13 @@ const getColors = (opts: AskTrimOptions) => ({
   activeHandleBase: opts.clrActiveHandleBase
 });
 
+/**<!-- DOCS: ### -->
+ * trim
+ *
+ * - `ask.trim`
+ *
+ * Get a start and end frame from the user
+ */
 const trim = async (totalFrames: number, frameRate: number, options: Partial<AskTrimOptions> = {}): Promise<Handles<number>> => {
   const opts = getFullOptions(options);
   const lc = getLineCounter();
@@ -111,7 +120,7 @@ const trim = async (totalFrames: number, frameRate: number, options: Partial<Ask
     lc.clear();
     const width = out.utils.getTerminalWidth();
     const totalSpace = width - 2;
-    const handlePositions: Handles<number> = ObjectUtils.mapValues(handles, (_k, value: number) =>
+    const handlePositions: Handles<number> = ObjectTools.mapValues(handles, (_k, value: number) =>
       Math.floor((value / (totalFrames - 1)) * totalSpace)
     );
 
@@ -128,19 +137,19 @@ const trim = async (totalFrames: number, frameRate: number, options: Partial<Ask
     const handEnd = activeHandle == 'end' ? actvHand : inactvHand;
 
     const drawHandleLabels = () => {
-      const handleLabelsRaw: Handles<string[]> = ObjectUtils.mapValues(handles, (_k, value: number) => [
+      const handleLabelsRaw: Handles<string[]> = ObjectTools.mapValues(handles, (_k, value: number) => [
         // ` ${value} `,
         ` ${toTimeCode(value, frameRate, showHours)} `,
         ''
       ]);
-      const handleLabelWidths: Handles<number> = ObjectUtils.mapValues(handleLabelsRaw, (_k, value: string[]) =>
+      const handleLabelWidths: Handles<number> = ObjectTools.mapValues(handleLabelsRaw, (_k, value: string[]) =>
         Math.max(...value.map((s) => stringWidth(s)))
       );
       const handleAligns: Handles<string> = {
         start: handleLabelWidths.start > befSpace ? 'left' : 'right',
         end: handleLabelWidths.end > aftSpace ? 'right' : 'left'
       };
-      const handleLabels: Handles<string[]> = ObjectUtils.mapValues(handleLabelsRaw, (key, value: string[]) =>
+      const handleLabels: Handles<string[]> = ObjectTools.mapValues(handleLabelsRaw, (key, value: string[]) =>
         value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], ' ', true))
       );
 

@@ -12,8 +12,8 @@ import {
   isSameMonth,
   sortDynDates
 } from '../../../utils/dynDates';
-import { out } from '../../out';
-import { table, TableFormatConfig } from '../../table';
+import * as out from '../../out';
+import * as table from '../../table';
 import { getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 
@@ -63,7 +63,7 @@ const getMonthTable = (
   const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(styles.mid, y, x));
   const formatDim = [...formatNonMonth, table.utils.getFormat(styles.normal, undefined, undefined, true)];
 
-  const formatCursor: TableFormatConfig[] = [];
+  const formatCursor: table.TableFormatConfig[] = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
     formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk.reset(styles.primary(s)), y, x)));

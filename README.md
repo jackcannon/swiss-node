@@ -1,109 +1,204 @@
-# swiss-node (Swiss Army Knife for node)
+# swiss-node
+
+Swiss Army Knife for node
 
 A collection of helper functions and useful little things for node.js
 
 Uses `swiss-ak`
 
-- [swiss-node (Swiss Army Knife for node)](#swiss-node-swiss-army-knife-for-node)
-- [Install](#install)
-- [ask](#ask)
-  - [ask.text](#asktext)
-  - [ask.autotext](#askautotext)
-  - [ask.number](#asknumber)
-  - [ask.boolean](#askboolean)
-  - [ask.booleanAlt](#askbooleanalt)
-  - [ask.select](#askselect)
-  - [ask.multiselect](#askmultiselect)
-  - [ask.crud](#askcrud)
-  - [ask.validate](#askvalidate)
-  - [ask.imitate](#askimitate)
-  - [ask.prefill](#askprefill)
-  - [ask.loading](#askloading)
-  - [ask.pause](#askpause)
-  - [ask.countdown](#askcountdown)
-  - [ask.fileExplorer](#askfileexplorer)
-  - [ask.multiFileExplorer](#askmultifileexplorer)
-  - [ask.section](#asksection)
-  - [ask.utils](#askutils)
-    - [ask.utils.itemsToPromptObjects](#askutilsitemstopromptobjects)
-- [Breadcrumb](#breadcrumb)
-  - [getBreadcrumb](#getbreadcrumb)
-- [out](#out)
-  - [out.pad](#outpad)
-  - [out.center](#outcenter)
-  - [out.left](#outleft)
-  - [out.right](#outright)
-  - [out.justify](#outjustify)
-  - [out.align](#outalign)
-  - [out.wrap](#outwrap)
-  - [out.moveUp](#outmoveup)
-  - [out.loading](#outloading)
-  - [out.limitToLength](#outlimittolength)
-  - [out.truncate](#outtruncate)
-  - [out.utils](#oututils)
-    - [out.utils.getTerminalWidth](#oututilsgetterminalwidth)
-    - [out.utils.getLines](#oututilsgetlines)
-    - [out.utils.getNumLines](#oututilsgetnumlines)
-    - [out.utils.getLinesWidth](#oututilsgetlineswidth)
-    - [out.utils.getLogLines](#oututilsgetloglines)
-    - [out.utils.getNumLogLines](#oututilsgetnumloglines)
-    - [out.utils.getLogLinesWidth](#oututilsgetloglineswidth)
-    - [out.utils.joinLines](#oututilsjoinlines)
-    - [out.utils.hasColor](#oututilshascolor)
-- [table](#table)
-  - [table.print](#tableprint)
-    - [table.print Options](#tableprint-options)
-  - [table.printObjects](#tableprintobjects)
-  - [table.utils](#tableutils)
-    - [table.utils.objectsToTable](#tableutilsobjectstotable)
-    - [table.utils.transpose](#tableutilstranspose)
-    - [table.utils.concatRows](#tableutilsconcatrows)
-- [chlk](#chlk)
-  - [gray0](#gray0)
-  - [gray1](#gray1)
-  - [gray2](#gray2)
-  - [gray3](#gray3)
-  - [gray4](#gray4)
-  - [gray5](#gray5)
-  - [grays](#grays)
-  - [gray](#gray)
-- [clr](#clr)
-- [lineCounter](#linecounter)
-  - [getLineCounter](#getlinecounter)
-    - [lc.log](#lclog)
-    - [lc.wrap](#lcwrap)
-    - [lc.add](#lcadd)
-    - [lc.get](#lcget)
-    - [lc.clear](#lcclear)
-    - [lc.clearBack](#lcclearback)
-    - [lc.checkpoint](#lccheckpoint)
-    - [lc.clearToCheckpoint](#lccleartocheckpoint)
-- [LogUtils](#logutils)
-  - [LogUtils.getLogStr](#logutilsgetlogstr)
-  - [LogUtils.processLogContents](#logutilsprocesslogcontents)
-  - [LogUtils.getLog](#logutilsgetlog)
-- [PathUtils](#pathutils)
-  - [explodePath](#explodepath)
-- [progressBarUtils](#progressbarutils)
-  - [getColouredProgressBarOpts](#getcolouredprogressbaropts)
+<!-- DOCS: TOC START -->
 
-# Install
+  - [Table of Contents](#)
+    - [ask](#ask)
+      - [text](#text)
+      - [autotext](#autotext)
+      - [number](#number)
+      - [boolean](#boolean)
+      - [booleanAlt](#booleanalt)
+      - [select](#select)
+      - [multiselect](#multiselect)
+      - [crud](#crud)
+      - [validate](#validate)
+      - [imitate](#imitate)
+      - [prefill](#prefill)
+      - [loading](#loading)
+      - [pause](#pause)
+      - [countdown](#countdown)
+      - [wizard](#wizard)
+      - [date](#date)
+      - [time](#time)
+      - [datetime](#datetime)
+      - [dateRange](#daterange)
+      - [fileExplorer](#fileexplorer)
+      - [multiFileExplorer](#multifileexplorer)
+      - [saveFileExplorer](#savefileexplorer)
+      - [select](#select)
+      - [multiselect](#multiselect)
+      - [trim](#trim)
+      - [separator](#separator)
+      - [section](#section)
+      - [utils](#utils)
+        - [itemsToPromptObjects](#itemstopromptobjects)
+    - [out](#out)
+      - [pad](#pad)
+      - [center](#center)
+      - [left](#left)
+      - [right](#right)
+      - [justify](#justify)
+      - [leftLines](#leftlines)
+      - [centerLines](#centerlines)
+      - [rightLines](#rightlines)
+      - [justifyLines](#justifylines)
+      - [align](#align)
+      - [split](#split)
+      - [wrap](#wrap)
+      - [moveUp](#moveup)
+      - [loading](#loading)
+      - [limitToLength](#limittolength)
+      - [limitToLengthStart](#limittolengthstart)
+      - [truncate](#truncate)
+      - [truncateStart](#truncatestart)
+      - [concatLineGroups](#concatlinegroups)
+      - [getResponsiveValue](#getresponsivevalue)
+        - [ResponsiveOption<T>](#responsiveoptiont)
+      - [getBreadcrumb](#getbreadcrumb)
+        - [Breadcrumb](#breadcrumb)
+      - [getLineCounter](#getlinecounter)
+        - [LineCounter](#linecounter)
+          - [lc.log](#lclog)
+          - [move](#move)
+          - [lc.wrap](#lcwrap)
+          - [lc.add](#lcadd)
+          - [lc.get](#lcget)
+          - [getSince](#getsince)
+          - [lc.clear](#lcclear)
+          - [lc.clearBack](#lcclearback)
+          - [lc.checkpoint](#lccheckpoint)
+          - [lc.clearToCheckpoint](#lccleartocheckpoint)
+      - [utils](#utils)
+        - [getTerminalWidth](#getterminalwidth)
+        - [getLines](#getlines)
+        - [getNumLines](#getnumlines)
+        - [getLinesWidth](#getlineswidth)
+        - [getLogLines](#getloglines)
+        - [getNumLogLines](#getnumloglines)
+        - [getLogLinesWidth](#getloglineswidth)
+        - [joinLines](#joinlines)
+        - [hasColor](#hascolor)
+    - [table](#table)
+      - [print](#print)
+      - [printObjects](#printobjects)
+      - [getLines](#getlines)
+      - [TableOptions](#tableoptions)
+        - [wrapperFn](#wrapperfn)
+        - [wrapLinesFn](#wraplinesfn)
+        - [overrideChar](#overridechar)
+        - [overrideHorChar](#overridehorchar)
+        - [overrideVerChar](#overrideverchar)
+        - [drawOuter](#drawouter)
+        - [drawRowLines](#drawrowlines)
+        - [drawColLines](#drawcollines)
+        - [colWidths](#colwidths)
+        - [align](#align)
+        - [alignCols](#aligncols)
+        - [transpose](#transpose)
+        - [transposeBody](#transposebody)
+        - [margin](#margin)
+        - [cellPadding](#cellpadding)
+        - [format](#format)
+        - [truncate](#truncate)
+        - [maxWidth](#maxwidth)
+      - [TableFormatConfig](#tableformatconfig)
+        - [formatFn](#formatfn)
+        - [isHeader](#isheader)
+        - [isBody](#isbody)
+        - [row](#row)
+        - [col](#col)
+      - [utils](#utils)
+        - [objectsToTable](#objectstotable)
+        - [transpose](#transpose)
+        - [concatRows](#concatrows)
+        - [getFormat](#getformat)
+    - [log](#log)
+      - [log](#log)
+      - [createLogger](#createlogger)
+      - [LogOptions](#logoptions)
+        - [showDate](#showdate)
+        - [showTime](#showtime)
+        - [enableColours](#enablecolours)
+      - [LogConfig](#logconfig)
+    - [chlk](#chlk)
+      - [gray0](#gray0)
+      - [gray1](#gray1)
+      - [gray2](#gray2)
+      - [gray3](#gray3)
+      - [gray4](#gray4)
+      - [gray5](#gray5)
+      - [grays](#grays)
+      - [gray](#gray)
+      - [clear](#clear)
+      - [not](#not)
+      - [notUnderlined](#notunderlined)
+      - [gray0](#gray0)
+      - [gray1](#gray1)
+      - [gray2](#gray2)
+      - [gray3](#gray3)
+      - [gray4](#gray4)
+      - [gray5](#gray5)
+    - [clr](#clr)
+      - [hl1](#hl1)
+      - [hl2](#hl2)
+      - [approve](#approve)
+      - [create](#create)
+      - [update](#update)
+      - [delete](#delete)
+      - [deleteAll](#deleteall)
+      - [blue](#blue)
+      - [cyan](#cyan)
+      - [green](#green)
+      - [magenta](#magenta)
+      - [red](#red)
+      - [yellow](#yellow)
+      - [t1](#t1)
+      - [t2](#t2)
+      - [t3](#t3)
+      - [t4](#t4)
+      - [t5](#t5)
+      - [t6](#t6)
+    - [LogTools](#logtools)
+      - [getLogStr](#getlogstr)
+      - [processLogContents](#processlogcontents)
+      - [getLog](#getlog)
+    - [PathsTools](#pathstools)
+      - [explodePath](#explodepath)
+        - [ExplodedPath](#explodedpath)
+          - [path](#path)
+          - [dir](#dir)
+          - [folders](#folders)
+          - [name](#name)
+          - [ext](#ext)
+          - [filename](#filename)
+      - [removeTrailSlash](#removetrailslash)
+      - [trailSlash](#trailslash)
+      - [removeDoubleSlashes](#removedoubleslashes)
+    - [progressBarTools](#progressbartools)
+      - [getColouredProgressBarOpts](#getcolouredprogressbaropts)
+    - [waiters](#waiters)
+      - [nextTick](#nexttick)
+    - [keyListener](#keylistener)
+      - [getKeyListener](#getkeylistener)
 
-```bash
-npm install swiss-ak swiss-node
-```
+<!-- DOCS: TOC END -->
 
-or
+<!-- DOCS: MAIN START -->
 
-```bash
-yarn add swiss-ak swiss-node
-```
+## ask
+A collection of functions to ask the user for input.
 
-# ask
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-A collection of user input functions that use the `prompts` library
-
-## ask.text
+### text
+- `ask.text`
 
 Get a text input from the user.
 
@@ -111,9 +206,10 @@ Get a text input from the user.
 const name = await ask.text('What is your name?'); // 'Jack'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.autotext
+### autotext
+- `ask.autotext`
 
 Get a text input from the user, with auto-completion.
 
@@ -121,9 +217,10 @@ Get a text input from the user, with auto-completion.
 const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.number
+### number
+- `ask.number`
 
 Get a number input from the user.
 
@@ -131,9 +228,10 @@ Get a number input from the user.
 const age = await ask.number('How old are you?'); // 30
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.boolean
+### boolean
+- `ask.boolean`
 
 Get a boolean input from the user (yes or no)
 
@@ -141,9 +239,10 @@ Get a boolean input from the user (yes or no)
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.booleanAlt
+### booleanAlt
+- `ask.booleanAlt`
 
 Get a boolean input from the user (yes or no)
 
@@ -153,9 +252,10 @@ Alternative interface to ask.boolean
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.select
+### select
+- `ask.select`
 
 Get the user to select an option from a list.
 
@@ -163,19 +263,21 @@ Get the user to select an option from a list.
 const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.multiselect
+### multiselect
+- `ask.multiselect`
 
-Get the user to select multiple options from a list.
+Get the user to select multiple opts from a list.
 
 ```typescript
 const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.crud
+### crud
+- `ask.crud`
 
 Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
 
@@ -185,9 +287,10 @@ Values returned are: 'none' | 'create' | 'update' | 'delete' | 'delete-all'
 const action = await ask.crud('What do you want to do next?'); // 'none'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.validate
+### validate
+- `ask.validate`
 
 Validate the result of an `ask` prompt
 
@@ -198,19 +301,23 @@ const name = await ask.validate(
 ); // 'Jack'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.imitate
+### imitate
+- `ask.imitate`
 
 Imitate the display of a prompt
 
 ```typescript
+imitate(true, 'What is your name?', 'Jack');
+
 ask.imitate(true, 'What is your name?', 'Jack');
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.prefill
+### prefill
+- `ask.prefill`
 
 Auto-fills an ask prompt with the provided value, if defined.
 
@@ -222,13 +329,14 @@ Good for keeping skipping parts of forms, but providing context and keeping disp
 let data = {};
 const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
 
-data = { name: 'Jack' };
+data = {name: 'Jack'}
 const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.loading
+### loading
+- `ask.loading`
 
 Display an animated loading indicator that imitates the display of a prompt
 
@@ -238,9 +346,10 @@ const loader = ask.loading('What is your name?');
 loader.stop();
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.pause
+### pause
+- `ask.pause`
 
 Pause the program until the user presses enter
 
@@ -248,9 +357,10 @@ Pause the program until the user presses enter
 await ask.pause();
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.countdown
+### countdown
+- `ask.countdown`
 
 Animated countdown for a given number of seconds
 
@@ -258,42 +368,110 @@ Animated countdown for a given number of seconds
 await ask.countdown(5);
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.fileExplorer
+### wizard
+- `ask.wizard`
 
-Get a file from the user
+Create a wizard object that can be used to build up a complex object
 
-```typescript
-const file = await ask.fileExplorer('Select a file');
-```
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+### date
+- `ask.date`
 
-## ask.multiFileExplorer
+Get a date input from the user.
 
-Like fileExplorer but allows multiple selections within a single directory
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+### time
+- `ask.time`
 
-## ask.section
+Get a time input from the user.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### datetime
+- `ask.datetime`
+
+Get a date and time input from the user.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### dateRange
+- `ask.dateRange`
+
+Get a date range input from the user.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### fileExplorer
+- `ask.fileExplorer`
+
+Get a file or folder path from the user.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### multiFileExplorer
+- `ask.multiFileExplorer`
+
+Get multiple file or folder paths from the user.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### saveFileExplorer
+- `ask.saveFileExplorer`
+
+Get a file path from the user, with the intention of saving a file to that path.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### select
+- `ask.table.select`
+
+Get a single selection from a table.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### multiselect
+- `ask.table.multiselect`
+
+Get multiple selections from a table.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### trim
+- `ask.trim`
+
+Get a start and end frame from the user
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### separator
+- `ask.separator`
+
+Prints a separator line to the console.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### section
+- `ask.section`
 
 Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
 
 ```typescript
 const ans1 = await ask.text('Question 1:');
-const ans2 = await ask.section(
-  'Question 2:',
+const ans2 = await ask.section('Question 2:',
   (lc: LineCounter) => {
     lc.log('Some information');
   },
   (qst) => ask.text(qst),
   () => ask.text('Question 2b:')
 );
+
 ```
 
 During the section, it looks like this:
-
 ```
 Question 1: answer1
 ┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
@@ -304,54 +482,29 @@ Question 2b: answer2b
 ```
 
 After the last question in the section has been submitted, it looks like this:
-
 ```
 Question 1: answer1
 Question 2a: [ answer2, answer2b ]
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## ask.utils
+### utils
 
-### ask.utils.itemsToPromptObjects
+#### itemsToPromptObjects
+- `ask.utils.itemsToPromptObjects`
 
 Take an array of items and convert them to an array of prompt objects
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# Breadcrumb
+## out
+A collection of functions to print to the console
 
-Provides a consistent format and style for questions/prompts
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-```typescript
-const bread = getBreadcrumb();
-bread(); // ''
-bread('a'); // 'a'
-bread('a', 'b'); // 'a › b'
-bread('a', 'b', 'c'); // 'a › b › c'
-
-const sub = bread.sub('a', 'b');
-sub(); // 'a › b'
-sub('c'); // 'a › b › c'
-sub('c', 'd'); // 'a › b › c › d'
-
-const subsub = sub.sub('c', 'd');
-subsub(); // 'a › b › c › d'
-subsub('e'); // 'a › b › c › d › e'
-```
-
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
-
-## getBreadcrumb
-
-Returns an empty breadcrumb object
-
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
-
-# out
-
-## out.pad
+### pad
+- `out.pad`
 
 Pad before and after the given text with the given character.
 
@@ -360,11 +513,14 @@ pad('foo', 3, 1, '-'); // '---foo-'
 pad('bar', 10, 5, '_'); // '__________bar_____'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.center
+### center
+- `out.center`
 
 Align the given text to the center within the given width of characters/columns
+
+Giving a width of 0 will use the terminal width
 
 ```typescript
 out.center('foo', 10); // '   foo    '
@@ -375,11 +531,14 @@ out.center('lines\n1\n2', 5);
 // '  2  '
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.left
+### left
+- `out.left`
 
 Align the given text to the left within the given width of characters/columns
+
+Giving a width of 0 will use the terminal width
 
 ```typescript
 out.left('foo', 10); // 'foo       '
@@ -390,11 +549,14 @@ out.left('lines\n1\n2', 5);
 // '2    '
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.right
+### right
+- `out.right`
 
 Align the given text to the right within the given width of characters/columns
+
+Giving a width of 0 will use the terminal width
 
 ```typescript
 out.right('foo', 10); // '       foo'
@@ -405,9 +567,10 @@ out.right('lines\n1\n2', 5);
 // '    2'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.justify
+### justify
+- `out.justify`
 
 Evenly space the text horizontally across the given width.
 
@@ -422,9 +585,38 @@ out.justify(out.wrap(lorem, 20), 20);
 // 'adipiscing      elit'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.align
+### leftLines
+- `out.leftLines`
+
+Align each line of the given text to the left within the given width of characters/columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### centerLines
+- `out.centerLines`
+
+Align each line of the given text to the center within the given width of characters/columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### rightLines
+- `out.rightLines`
+
+Align each line of the given text to the right within the given width of characters/columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### justifyLines
+- `out.justifyLines`
+
+Justify align each line of the given text within the given width of characters/columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### align
+- `out.align`
 
 Align the given text to the given alignment within the given width of characters/columns
 
@@ -439,9 +631,17 @@ out.align('lines\n1\n2', 'right', 5);
 // '    2'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.wrap
+### split
+- `out.split`
+
+Split the given text into two parts, left and right, with the given width of characters/columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### wrap
+- `out.wrap`
 
 Wrap the given text to the given width of characters/columns
 
@@ -451,9 +651,10 @@ wrap('This is a sentence', 15);
 // 'a sentence'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.moveUp
+### moveUp
+- `out.moveUp`
 
 Move the terminal cursor up X lines, clearing each row.
 
@@ -463,21 +664,23 @@ Useful for replacing previous lines of output
 moveUp(1);
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.loading
+### loading
+- `out.loading`
 
 Display an animated loading indicator
 
 ```typescript
 const loader = out.loading();
-// Loading...
+// ...
 loader.stop();
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.limitToLength
+### limitToLength
+- `out.limitToLength`
 
 Limit the length of a string to the given length
 
@@ -485,9 +688,17 @@ Limit the length of a string to the given length
 out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.truncate
+### limitToLengthStart
+- `out.limitToLengthStart`
+
+Limit the length of a string to the given length, keeping the end
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### truncate
+- `out.truncate`
 
 Limit the length of a string to the given length, and add an ellipsis if necessary
 
@@ -495,11 +706,193 @@ Limit the length of a string to the given length, and add an ellipsis if necessa
 out.truncate('This is a very long sentence', 15); // 'This is a ve...'
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## out.utils
+### truncateStart
+- `out.truncateStart`
 
-### out.utils.getTerminalWidth
+Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### concatLineGroups
+- `out.concatLineGroups`
+
+Concatenate multiple line groups, aligning them by the longest line
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getResponsiveValue
+- `out.getResponsiveValue`
+
+Get a value based on the terminal width
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### ResponsiveOption<T>
+- `out.ResponsiveOption`
+
+Configuration for a responsive value (see `getResponsiveValue`)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getBreadcrumb
+- `out.getBreadcrumb`
+- `getBreadcrumb`
+
+Provides a consistent format and style for questions/prompts
+
+```typescript
+const bread = getBreadcrumb();
+bread() // ''
+bread('a') // 'a'
+bread('a', 'b') // 'a › b'
+bread('a', 'b', 'c') // 'a › b › c'
+
+const sub = bread.sub('a', 'b');
+sub(); // 'a › b'
+sub('c') // 'a › b › c'
+sub('c', 'd') // 'a › b › c › d'
+
+const subsub = sub.sub('c', 'd');
+subsub(); // 'a › b › c › d'
+subsub('e'); // 'a › b › c › d › e'
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### Breadcrumb
+- `out.Breadcrumb`
+- `Breadcrumb`
+
+Return type for getBreadcrumb
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getLineCounter
+- `out.getLineCounter`
+- `getLineCounter`
+
+Get line counter for counter output lines
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### LineCounter
+- `out.LineCounter`
+- `LineCounter`
+
+Return type for getLineCounter
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.log
+Same as console.log, but adds to the lc counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### move
+Moves the cursor up by a given number of lines
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.wrap
+Wraps a function, and adds a given number to the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.add
+Adds a given number to the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.get
+returns the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### getSince
+Returns the number of lines since a given checkpoint
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.clear
+clears the line counter, and moves the cursor up by the value of the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.clearBack
+Clears a given number of lines, and updates the line counter
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.checkpoint
+Records a 'checkpoint' that can be returned to later
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### lc.clearToCheckpoint
+Clear lines up to a previously recorded checkpoint
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### utils
+
+#### getTerminalWidth
+- `out.utils.getTerminalWidth`
 
 Get maximum terminal width (columns)
 
@@ -507,68 +900,77 @@ Get maximum terminal width (columns)
 print.utils.getTerminalWidth(); // 127
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getLines
+#### getLines
+- `out.utils.getLines`
 
 Split multi-line text into an array of lines
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getNumLines
+#### getNumLines
+- `out.utils.getNumLines`
 
 Get how many lines a string or array of lines has
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getLinesWidth
+#### getLinesWidth
+- `out.utils.getLinesWidth`
 
 Get how wide a string or array of lines has
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getLogLines
+#### getLogLines
+- `out.utils.getLogLines`
 
 Split a log-formatted multi-line text into an array of lines
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getNumLogLines
+#### getNumLogLines
+- `out.utils.getNumLogLines`
 
 Get how many lines a log-formatted string or array of lines has
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.getLogLinesWidth
+#### getLogLinesWidth
+- `out.utils.getLogLinesWidth`
 
 Get how wide a log-formatted string or array of lines has
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.joinLines
+#### joinLines
+- `out.utils.joinLines`
 
 Join an array of lines into a single multi-line string
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### out.utils.hasColor
+#### hasColor
+- `out.utils.hasColor`
 
 Determine whether a given string contains any chalk-ed colours
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# table
+## table
+A simple table generator
 
-## table.print
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### print
+- `table.print`
 
 Print a table
 
 ```typescript
 const header = [['Name', 'Age']];
-const body = [
-  ['John', '25'],
-  ['Jane', '26']
-];
+const body = [['John', '25'], ['Jane', '26']];
 table.print(body, header);
 
 // ┏━━━━━━┳━━━━━┓
@@ -579,29 +981,10 @@ table.print(body, header);
 // └──────┴─────┘
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### table.print Options
-
-| Name            | Default              | Description                                                                |
-| --------------- | -------------------- | -------------------------------------------------------------------------- |
-| wrapperFn       | `fn.noact`           | Function to wrap each line of the table in (e.g. chalk.blue)               |
-| overrideChar    | `''` (`─`, `│`, etc) | Character to use instead of lines                                          |
-| overrideHorChar | `''` (`─`)           | Character to use instead of horizontal lines                               |
-| overrideVerChar | `''` (`│`)           | Character to use instead of vertical lines                                 |
-| drawOuter       | `true`               | Whether to draw the outer border of the table                              |
-| drawRowLines    | `true`               | Whether to draw lines between rows (other than separating header and body) |
-| drawColLines    | `true`               | Whether to draw lines between columns                                      |
-| colWidths       | `[]`                 | Preferred width (in number of characters) of each column                   |
-| align           | `'left'`             | How the table should be aligned on the screen                              |
-| alignCols       | `['left']`           | How each column should be aligned (values repeated for all columns)        |
-| transpose       | `false`              | Change rows into columns and vice versa                                    |
-| transposeBody   | `false`              | Change rows into columns and vice versa (body only)                        |
-| margin          | `0`                  | How much spacing to leave around the outside of the table                  |
-
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
-
-## table.printObjects
+### printObjects
+- `table.printObjects`
 
 Print a table of given objects
 
@@ -618,8 +1001,7 @@ const header = {
   b: 'Col B',
   c: 'Col C'
 };
-const options = {}; // same as table.print options
-table.printObjects(objs, header, options);
+table.printObjects(objs, header);
 
 // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
 // ┃ Col A ┃ Col B ┃ Col C ┃
@@ -634,69 +1016,274 @@ table.printObjects(objs, header, options);
 // └───────┴───────┴───────┘
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## table.utils
+### getLines
+- `table.getLines`
 
-### table.utils.objectsToTable
+Get the lines of a table (rather than printing it)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### TableOptions
+The configuration options for the table
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### wrapperFn
+Function to wrap each line of the table in (e.g. chalk.blue)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### wrapLinesFn
+Function to wrap the lines of the table (between the cells)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideChar
+Character to use instead of lines
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideHorChar
+Character to use instead of horizontal lines
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideVerChar
+Character to use instead of vertical lines
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### drawOuter
+Whether to draw the outer border of the table
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### drawRowLines
+Whether to draw lines between rows (other than separating header and body)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### drawColLines
+Whether to draw lines between columns
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### colWidths
+Preferred width (in number of characters) of each column
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### align
+How the table should be aligned on the screen
+
+left, right, center or justify
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### alignCols
+How each column should be aligned
+
+Array with alignment for each column: left, right, center or justify
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### transpose
+Change rows into columns and vice versa
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### transposeBody
+Change rows into columns and vice versa (body only)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### margin
+The amount of space to leave around the outside of the table
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### cellPadding
+The amount of space to leave around the outside of each cell
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### format
+A set of formatting configurations
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### truncate
+Truncates (cuts the end off) line instead of wrapping
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### maxWidth
+Maximum width of the table
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### TableFormatConfig
+Configuration for formatting a cell
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### formatFn
+A wrapper function to apply to the cell
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### isHeader
+Whether to apply the format to the header
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### isBody
+Whether to apply the format to the body
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### row
+A specific row to apply the format to
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### col
+A specific column to apply the format to
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### utils
+
+#### objectsToTable
+- `table.utils.objectsToTable`
 
 Process an array of objects into a table format (string[][])
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### table.utils.transpose
+#### transpose
+- `table.utils.transpose`
 
 Change rows into columns and vice versa
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### table.utils.concatRows
+#### concatRows
+- `table.utils.concatRows`
 
 Concatenate header and body rows into one list of rows
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# chlk
+#### getFormat
+- `table.utils.getFormat`
 
-A few renames of chalk colours
+A function for simplifying the format configuration
 
-## gray0
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## log
+
+### log
+- `log`
+
+A set of log functions
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### createLogger
+- `createLogger`
+
+Create a logger with custom configs
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### LogOptions
+- `LogOptions`
+
+Options for the log function
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### showDate
+Default: false
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### showTime
+Default: true
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### enableColours
+Default: true
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### LogConfig
+- `LogConfig`
+
+Configuration for the log function
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## chlk
+A collection of colours and styles for use in the console.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray0
+- `chlk.gray0`
+- `clr.gray0`
 
 Gray 0 (0-5). Equivalent to chalk.black
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray1
+### gray1
+- `chlk.gray1`
+- `clr.gray1`
 
 Gray 1 (0-5). Equivalent to chalk.gray.dim
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray2
+### gray2
+- `chlk.gray2`
+- `clr.gray2`
 
 Gray 2 (0-5). Equivalent to chalk.white.dim
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray3
+### gray3
+- `chlk.gray3`
+- `clr.gray3`
 
 Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray4
+### gray4
+- `chlk.gray4`
+- `clr.gray4`
 
 Gray 4 (0-5). Equivalent to chalk.white
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray5
+### gray5
+- `chlk.gray5`
+- `clr.gray5`
 
 Gray 5 (0-5). Equivalent to chalk.whiteBright
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## grays
+### grays
+- `chlk.grays`
 
 Grays between 0 and 5.
 
@@ -704,9 +1291,10 @@ Grays between 0 and 5.
 grays[2]; // gray2
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## gray
+### gray
+- `chlk.gray`
 
 Grays between 0 and 5.
 
@@ -714,102 +1302,252 @@ Grays between 0 and 5.
 gray(2); // gray2
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# clr
+### clear
+- `chlk.clear`
 
+Removes ANSI colours. Not same as chalk.reset
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### not
+- `chlk.not`
+
+Stops and restarts a style around a given string
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### notUnderlined
+- `chlk.notUnderlined`
+
+Dont underline a section of text
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray0
+- `chlk.gray0`
+- `clr.gray0`
+
+Gray 0 (0-5). Equivalent to chalk.black
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray1
+- `chlk.gray1`
+- `clr.gray1`
+
+Gray 1 (0-5). Equivalent to chalk.gray.dim
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray2
+- `chlk.gray2`
+- `clr.gray2`
+
+Gray 2 (0-5). Equivalent to chalk.white.dim
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray3
+- `chlk.gray3`
+- `clr.gray3`
+
+Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray4
+- `chlk.gray4`
+- `clr.gray4`
+
+Gray 4 (0-5). Equivalent to chalk.white
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### gray5
+- `chlk.gray5`
+- `clr.gray5`
+
+Gray 5 (0-5). Equivalent to chalk.whiteBright
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## clr
 A collection of shortcuts and aliases for chalk functions
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# lineCounter
+### hl1
+- `clr.hl1`
 
-## getLineCounter
+Highlight 1
 
-Get line counter for counter output lines
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-```typescript
-const lc = getLineCounter();
-lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-lc.add(1); // 3
-lc.get(); // 3
-lc.clear(); // 0
-```
+### hl2
+- `clr.hl2`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Highlight 2
 
-### lc.log
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Same as console.log, but adds to the lc counter
+### approve
+- `clr.approve`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Approval colour (green)
 
-### lc.wrap
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Wraps a function, and adds a given number (of the result of the function) to the line counter
+### create
+- `clr.create`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Create colour (greenBright)
 
-### lc.add
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Adds a given number to the line counter
+### update
+- `clr.update`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Update colour (yellow)
 
-### lc.get
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-returns the line counter
+### delete
+- `clr.delete`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Delete colour (red)
 
-### lc.clear
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-clears the line counter, and moves the cursor up by the value of the line counter
+### deleteAll
+- `clr.deleteAll`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Delete all colour (red)
 
-### lc.clearBack
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Clears a given number of lines, and updates the line counter
+### blue
+- `clr.blue`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Alias for chalk.blueBright
 
-### lc.checkpoint
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Records a 'checkpoint' that can be returned to later
+### cyan
+- `clr.cyan`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Alias for chalk.cyanBright
 
-### lc.clearToCheckpoint
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-Clear lines up to a previously recorded checkpoint
+### green
+- `clr.green`
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+Alias for chalk.greenBright
 
-# LogUtils
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## LogUtils.getLogStr
+### magenta
+- `clr.magenta`
+
+Alias for chalk.magentaBright
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### red
+- `clr.red`
+
+Alias for chalk.redBright
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### yellow
+- `clr.yellow`
+
+Alias for chalk.yellowBright
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t1
+- `clr.t1`
+
+Theme 1
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t2
+- `clr.t2`
+
+Theme 2
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t3
+- `clr.t3`
+
+Theme 3
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t4
+- `clr.t4`
+
+Theme 4
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t5
+- `clr.t5`
+
+Theme 5
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### t6
+- `clr.t6`
+
+Theme 6
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## LogTools
+A collection of tools for logging
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getLogStr
+- `LogTools.getLogStr`
+- `getLogStr`
 
 Get a string for a given object as it would be printed by console.log
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## LogUtils.processLogContents
+### processLogContents
+- `LogTools.processLogContents`
+- `processLogContents`
 
 Process an item to be logged
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-## LogUtils.getLog
+### getLog
+- `LogTools.getLog`
+- `getLog`
 
 Get a log function for a given prefix
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# PathUtils
+## PathsTools
+A collection of tools for working with paths
 
-## explodePath
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### explodePath
+- `PathsTools.explodePath`
+- `explodePath`
 
 'Explodes' a path into its components
 
@@ -831,12 +1569,109 @@ console.log(filename); // 'file.txt'
 console.log(folders); // ['path', 'to']
 ```
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-# progressBarUtils
+#### ExplodedPath
+- `PathsTools.ExplodedPath`
+- `ExplodedPath`
 
-## getColouredProgressBarOpts
+An object containing the exploded components of a path
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### path
+The full original path as it was passed in.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### dir
+The directory path of the given path
+
+Note: no trailing slash
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### folders
+the ancestral folders of the given dir as an array
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### name
+the name of the file, not including the extension
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### ext
+the extension of the file, not including the dot
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+##### filename
+the full name of the file, including the extension (and dot)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### removeTrailSlash
+- `PathTools.removeTrailSlash`
+
+Remove trailing slash from path (if one exists)
+
+```typescript
+'/path/to/file/' -> '/path/to/file'
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### trailSlash
+- `PathTools.trailSlash`
+
+Ensures there's a trailing slash on path
+
+```typescript
+'/path/to/file' -> '/path/to/file/'
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### removeDoubleSlashes
+- `PathTools.removeDoubleSlashes`
+
+Removes double slashes from path (an bug with Unix paths)
+
+```typescript
+'/path/to//file' -> '/path/to/file'
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## progressBarTools
+A collection of tools for working with progress bars (from swiss-ak)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getColouredProgressBarOpts
+- `progressBarTools.getColouredProgressBarOpts`
 
 Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
 
-[↑ Back to top ↑](#swiss-node-swiss-army-knife-for-node)
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## waiters
+
+### nextTick
+- `nextTick`
+
+Wait for the next tick
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+## keyListener
+
+### getKeyListener
+- `getKeyListener`
+
+Listens for key presses and returns the key name and raw value.
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+<!-- DOCS: MAIN END -->

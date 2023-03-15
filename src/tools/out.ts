@@ -1,73 +1,24 @@
-import { wait, fn, ArrayUtils, zipMax, sortByMapped } from 'swiss-ak';
+import { wait, fn, ArrayTools, zipMax, sortByMapped } from 'swiss-ak';
 import stringWidth from 'string-width';
-import { getLogStr } from './LogUtils';
+import { getLogStr } from './LogTools';
 import { Text } from '../utils/processTableInput';
 import { getLineCounter } from './out/lineCounter';
 import { getBreadcrumb } from './out/breadcrumb';
 import chalk from 'chalk';
 
+//<!-- DOCS: 200 -->
+/**<!-- DOCS: ## -->
+ * out
+ *
+ * A collection of functions to print to the console
+ */
+
 const NEW_LINE = '\n';
 
-const textToString = (text: Text): string => (text instanceof Array ? joinLines(text) : text);
-
-/**
- * out.utils.getTerminalWidth
+/**<!-- DOCS: ### -->
+ * pad
  *
- * Get maximum terminal width (columns)
- *
- * ```typescript
- * print.utils.getTerminalWidth(); // 127
- * ```
- */
-const getTerminalWidth = () => (process?.stdout?.columns ? process.stdout.columns : 100);
-
-/**
- * out.utils.getLines
- *
- * Split multi-line text into an array of lines
- */
-const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
-/**
- * out.utils.getNumLines
- *
- * Get how many lines a string or array of lines has
- */
-const getNumLines = (text: Text): number => getLines(text).length;
-/**
- * out.utils.getLinesWidth
- *
- * Get how wide a string or array of lines has
- */
-const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
-
-/**
- * out.utils.getLogLines
- *
- * Split a log-formatted multi-line text into an array of lines
- */
-const getLogLines = (item: any): string[] => getLines(getLogStr(item));
-/**
- * out.utils.getNumLogLines
- *
- * Get how many lines a log-formatted string or array of lines has
- */
-const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
-/**
- * out.utils.getLogLinesWidth
- *
- * Get how wide a log-formatted string or array of lines has
- */
-const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
-
-/**
- * out.utils.joinLines
- *
- * Join an array of lines into a single multi-line string
- */
-const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(NEW_LINE);
-
-/**
- * out.pad
+ * - `out.pad`
  *
  * Pad before and after the given text with the given character.
  *
@@ -84,8 +35,10 @@ type AlignFunction = (item: any, width?: number, replaceChar?: string, forceWidt
 
 const correctWidth = (width: number): number => (width < 0 || width === Infinity ? getTerminalWidth() : Math.min(width, getTerminalWidth()));
 
-/**
- * out.center
+/**<!-- DOCS: ### -->
+ * center
+ *
+ * - `out.center`
  *
  * Align the given text to the center within the given width of characters/columns
  *
@@ -112,8 +65,10 @@ export const center: AlignFunction = (item: any, width: number = getTerminalWidt
     )
     .join(NEW_LINE);
 
-/**
- * out.left
+/**<!-- DOCS: ### -->
+ * left
+ *
+ * - `out.left`
  *
  * Align the given text to the left within the given width of characters/columns
  *
@@ -133,8 +88,10 @@ export const left: AlignFunction = (item: any, width: number = getTerminalWidth(
     .map((line) => pad(line, 0, forceWidth ? correctWidth(width) - stringWidth(line) : 0, replaceChar))
     .join(NEW_LINE);
 
-/**
- * out.right
+/**<!-- DOCS: ### -->
+ * right
+ *
+ * - `out.right`
  *
  * Align the given text to the right within the given width of characters/columns
  *
@@ -154,8 +111,10 @@ export const right: AlignFunction = (item: any, width: number = getTerminalWidth
     .map((line) => pad(line, correctWidth(width) - stringWidth(line), 0, replaceChar))
     .join(NEW_LINE);
 
-/**
- * out.justify
+/**<!-- DOCS: ### -->
+ * justify
+ *
+ * - `out.justify`
  *
  * Evenly space the text horizontally across the given width.
  *
@@ -183,7 +142,7 @@ export const justify: AlignFunction = (
       const currW = words.map((w) => w.length).reduce(fn.reduces.combine);
       const perSpace = Math.floor((width - currW) / (words.length - 1));
       const remain = (width - currW) % (words.length - 1);
-      const spaces = ArrayUtils.range(words.length - 1)
+      const spaces = ArrayTools.range(words.length - 1)
         .map((i) => perSpace + Number(words.length - 2 - i < remain))
         .map((num) => replaceChar.repeat(num));
       let result = '';
@@ -194,13 +153,43 @@ export const justify: AlignFunction = (
     })
     .join(NEW_LINE);
 
-// TODO docs
 const getLongestLen = (lines: string[]): number => Math.max(...lines.map((line) => stringWidth(line)));
 
-export const leftLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => out.left(line, width));
-export const centerLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => out.center(line, width));
-export const rightLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => out.right(line, width));
-export const justifyLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => out.justify(line, width));
+/**<!-- DOCS: ### -->
+ * leftLines
+ *
+ * - `out.leftLines`
+ *
+ * Align each line of the given text to the left within the given width of characters/columns
+ */
+export const leftLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => left(line, width));
+
+/**<!-- DOCS: ### -->
+ * centerLines
+ *
+ * - `out.centerLines`
+ *
+ * Align each line of the given text to the center within the given width of characters/columns
+ */
+export const centerLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => center(line, width));
+
+/**<!-- DOCS: ### -->
+ * rightLines
+ *
+ * - `out.rightLines`
+ *
+ * Align each line of the given text to the right within the given width of characters/columns
+ */
+export const rightLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => right(line, width));
+
+/**<!-- DOCS: ### -->
+ * justifyLines
+ *
+ * - `out.justifyLines`
+ *
+ * Justify align each line of the given text within the given width of characters/columns
+ */
+export const justifyLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => justify(line, width));
 
 const alignFunc = {
   left,
@@ -209,8 +198,10 @@ const alignFunc = {
   justify
 };
 
-/**
- * out.align
+/**<!-- DOCS: ### -->
+ * align
+ *
+ * - `out.align`
  *
  * Align the given text to the given alignment within the given width of characters/columns
  *
@@ -230,12 +221,20 @@ export const align = (item: any, direction: AlignType, width: number = getTermin
   return func(item, width, replaceChar, forceWidth);
 };
 
-// todo docs
+/**<!-- DOCS: ### -->
+ * split
+ *
+ * - `out.split`
+ *
+ * Split the given text into two parts, left and right, with the given width of characters/columns
+ */
 export const split = (leftItem: any, rightItem: any, width: number = getTerminalWidth(), replaceChar: string = ' ') =>
   `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + '') + stringWidth(rightItem + ''))))}${rightItem + ''}`;
 
-/**
- * out.wrap
+/**<!-- DOCS: ### -->
+ * wrap
+ *
+ * - `out.wrap`
  *
  * Wrap the given text to the given width of characters/columns
  *
@@ -296,8 +295,10 @@ export const wrap = (item: any, width: number = getTerminalWidth(), alignment?: 
     .flat()
     .join(NEW_LINE);
 
-/**
- * out.moveUp
+/**<!-- DOCS: ### -->
+ * moveUp
+ *
+ * - `out.moveUp`
  *
  * Move the terminal cursor up X lines, clearing each row.
  *
@@ -329,15 +330,17 @@ const loadingWords = [
   '𝔩-𝓸-ᴀ-ɖ-𝗶-𝚗-g',
   'l-𝔬-𝓪-ᴅ-ɨ-𝗻-𝚐'
 ].map((word) => word.split('-'));
-const loadingChars = ArrayUtils.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
+const loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
   (word, index) =>
     chalk.bold('loading'.slice(0, Math.floor(Math.floor(index) / loadingWords.length))) +
     word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join('') +
     ['   ', '.  ', '.. ', '...'][Math.floor(index / 3) % 4]
 );
 
-/**
- * out.loading
+/**<!-- DOCS: ### -->
+ * loading
+ *
+ * - `out.loading`
  *
  * Display an animated loading indicator
  *
@@ -369,15 +372,10 @@ export const loading = (action: (s: string) => any = loadingDefault, lines: numb
   };
 };
 
-/**
- * out.utils.hasColor
+/**<!-- DOCS: ### -->
+ * limitToLength
  *
- * Determine whether a given string contains any chalk-ed colours
- */
-export const hasColor = (str: string): boolean => Boolean(str.match(new RegExp(`\\u001b\[[0-9]+m`, 'g')));
-
-/**
- * out.limitToLength
+ * - `out.limitToLength`
  *
  * Limit the length of a string to the given length
  *
@@ -403,8 +401,13 @@ export const limitToLength = (text: string, maxLength: number): string =>
     })
   );
 
-// todo docs
-// todo dry
+/**<!-- DOCS: ### -->
+ * limitToLengthStart
+ *
+ * - `out.limitToLengthStart`
+ *
+ * Limit the length of a string to the given length, keeping the end
+ */
 export const limitToLengthStart = (text: string, maxLength: number): string =>
   joinLines(
     getLines(text).map((line) => {
@@ -423,8 +426,10 @@ export const limitToLengthStart = (text: string, maxLength: number): string =>
     })
   );
 
-/**
- * out.truncate
+/**<!-- DOCS: ### -->
+ * truncate
+ *
+ * - `out.truncate`
  *
  * Limit the length of a string to the given length, and add an ellipsis if necessary
  *
@@ -435,58 +440,152 @@ export const limitToLengthStart = (text: string, maxLength: number): string =>
 export const truncate = (text: string, maxLength: number = getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
   joinLines(getLines(text).map((line) => (stringWidth(line) > maxLength ? limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line)));
 
-// TODO docs
+/**<!-- DOCS: ### -->
+ * truncateStart
+ *
+ * - `out.truncateStart`
+ *
+ * Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
+ */
 export const truncateStart = (text: string, maxLength: number = getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
   joinLines(
     getLines(text).map((line) => (stringWidth(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - stringWidth(suffix)) : line))
   );
 
-// TODO docs
+/**<!-- DOCS: ### -->
+ * concatLineGroups
+ *
+ * - `out.concatLineGroups`
+ *
+ * Concatenate multiple line groups, aligning them by the longest line
+ */
 export const concatLineGroups = (...groups: string[][]) => {
   const maxLen = Math.max(...groups.map((group) => group.length));
   const aligned = groups.map((group) => leftLines([...group, ...Array(maxLen).fill('')].slice(0, maxLen)));
   return zipMax(...aligned).map((line) => line.join(''));
 };
 
-export type ResponsiveOption<T> = { minColumns?: number; value: T };
+/**<!-- DOCS: ### -->
+ * getResponsiveValue
+ *
+ * - `out.getResponsiveValue`
+ *
+ * Get a value based on the terminal width
+ */
 export const getResponsiveValue = <T extends unknown>(options: ResponsiveOption<T>[]): T => {
   const mapped = options.map(({ minColumns, value }) => ({
     min: typeof minColumns === 'number' ? minColumns : 0,
     value
   }));
   const sorted = sortByMapped(mapped, (option) => option.min, fn.desc);
-  const termWidth = out.utils.getTerminalWidth();
+  const termWidth = utils.getTerminalWidth();
   return (sorted.find((option) => termWidth >= option.min) ?? sorted[0]).value;
 };
 
-export const out = {
-  pad,
-  center,
-  left,
-  right,
-  justify,
-  align,
-  split,
-  wrap,
-  moveUp,
-  loading,
-  limitToLength,
-  limitToLengthStart,
-  truncate,
-  truncateStart,
-  getLineCounter,
-  getBreadcrumb,
-  concatLineGroups,
-  getResponsiveValue,
-  utils: {
-    getLines,
-    getNumLines,
-    getLinesWidth,
-    getLogLines,
-    getNumLogLines,
-    getLogLinesWidth,
-    joinLines,
-    getTerminalWidth,
-    hasColor
-  }
+/**<!-- DOCS: #### -->
+ * ResponsiveOption<T>
+ *
+ * - `out.ResponsiveOption`
+ *
+ * Configuration for a responsive value (see `getResponsiveValue`)
+ */
+export type ResponsiveOption<T> = { minColumns?: number; value: T };
+
+/**<!-- DOCS: ### 290 -->
+ * utils
+ */
+
+const textToString = (text: Text): string => (text instanceof Array ? joinLines(text) : text);
+
+/**<!-- DOCS: #### 291 -->
+ * getTerminalWidth
+ *
+ * - `out.utils.getTerminalWidth`
+ *
+ * Get maximum terminal width (columns)
+ *
+ * ```typescript
+ * print.utils.getTerminalWidth(); // 127
+ * ```
+ */
+const getTerminalWidth = () => (process?.stdout?.columns ? process.stdout.columns : 100);
+
+/**<!-- DOCS: #### 291 -->
+ * getLines
+ *
+ * - `out.utils.getLines`
+ *
+ * Split multi-line text into an array of lines
+ */
+const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
+/**<!-- DOCS: #### 291 -->
+ * getNumLines
+ *
+ * - `out.utils.getNumLines`
+ *
+ * Get how many lines a string or array of lines has
+ */
+const getNumLines = (text: Text): number => getLines(text).length;
+/**<!-- DOCS: #### 291 -->
+ * getLinesWidth
+ *
+ * - `out.utils.getLinesWidth`
+ *
+ * Get how wide a string or array of lines has
+ */
+const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
+
+/**<!-- DOCS: #### 291 -->
+ * getLogLines
+ *
+ * - `out.utils.getLogLines`
+ *
+ * Split a log-formatted multi-line text into an array of lines
+ */
+const getLogLines = (item: any): string[] => getLines(getLogStr(item));
+/**<!-- DOCS: #### 291 -->
+ * getNumLogLines
+ *
+ * - `out.utils.getNumLogLines`
+ *
+ * Get how many lines a log-formatted string or array of lines has
+ */
+const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
+/**<!-- DOCS: #### 291 -->
+ * getLogLinesWidth
+ *
+ * - `out.utils.getLogLinesWidth`
+ *
+ * Get how wide a log-formatted string or array of lines has
+ */
+const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
+
+/**<!-- DOCS: #### 291 -->
+ * joinLines
+ *
+ * - `out.utils.joinLines`
+ *
+ * Join an array of lines into a single multi-line string
+ */
+const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(NEW_LINE);
+
+/**<!-- DOCS: #### 291 -->
+ * hasColor
+ *
+ * - `out.utils.hasColor`
+ *
+ * Determine whether a given string contains any chalk-ed colours
+ */
+const hasColor = (str: string): boolean => Boolean(str.match(new RegExp(`\\u001b\[[0-9]+m`, 'g')));
+
+export const utils = {
+  getLines,
+  getNumLines,
+  getLinesWidth,
+  getLogLines,
+  getNumLogLines,
+  getLogLinesWidth,
+  joinLines,
+  getTerminalWidth,
+  hasColor
 };

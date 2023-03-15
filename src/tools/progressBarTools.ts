@@ -1,19 +1,28 @@
 import chalk from 'chalk';
-import { ArrayUtils, ProgressBarOptions } from 'swiss-ak';
+import { ArrayTools, ProgressBarOptions } from 'swiss-ak';
 
 import { truncate } from './out';
 
-/**
+//<!-- DOCS: 800 -->
+/**<!-- DOCS: ## -->
+ * progressBarTools
+ *
+ * A collection of tools for working with progress bars (from swiss-ak)
+ */
+
+/**<!-- DOCS: ### -->
  * getColouredProgressBarOpts
+ *
+ * - `progressBarTools.getColouredProgressBarOpts`
  *
  * Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
  */
-const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean = false) => {
+export const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean = false) => {
   // let wrapperFns = [chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.yellowBright, chalk.magentaBright, chalk.redBright];
   // let wrapperFns = [chalk.yellowBright, chalk.magenta];
   let wrapperFns = [chalk.yellowBright, chalk.magenta, chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.redBright];
   if (randomise) {
-    wrapperFns = ArrayUtils.randomise(wrapperFns);
+    wrapperFns = ArrayTools.randomise(wrapperFns);
   }
   let index = 0;
   return (prefix: string = '', override: ProgressBarOptions = {}, resetColours: boolean = false): ProgressBarOptions => {
@@ -36,8 +45,4 @@ const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean
 
     return result;
   };
-};
-
-export const progressBarUtils = {
-  getColouredProgressBarOpts
 };

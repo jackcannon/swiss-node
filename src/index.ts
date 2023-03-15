@@ -1,16 +1,17 @@
 export * as ask from './tools/ask';
 export * from './tools/out/lineCounter';
 export * from './tools/out/breadcrumb';
-export * from './tools/out';
-export * from './tools/table';
-export * from './tools/progressBar';
+export * as out from './tools/out';
+export * as table from './tools/table';
+export * as progressBarTools from './tools/progressBarTools';
 export * from './tools/clr';
-export * from './tools/LogUtils';
+export * from './tools/LogTools';
 export * from './tools/log';
-export { explodePath, ExplodedPath } from './tools/PathUtils';
+export * from './tools/waiters';
+export { explodePath, ExplodedPath } from './tools/PathTools';
 
-import * as LogUtils from './tools/LogUtils';
-import * as PathUtils from './tools/PathUtils';
-import { getKeyListener } from './utils/keyListener';
+import * as LogTools from './tools/LogTools';
+import * as PathTools from './tools/PathTools';
+import { getKeyListener } from './tools/keyListener';
 
-export { LogUtils, PathUtils, getKeyListener };
+export { LogTools, PathTools, getKeyListener };

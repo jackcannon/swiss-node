@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import * as fsP from 'fs/promises';
 import { fn, tryOr } from 'swiss-ak';
+import { trailSlash } from '../tools/PathTools';
 
 const execute = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -51,18 +52,22 @@ export const mkdir = (dir: string): Promise<string> => {
 };
 
 export const findDirs = async (dir: string = '.'): Promise<string[]> => {
-  const stdout = await tryOr('', async () => await execute(`find ${dir} -type d -maxdepth 1 -execdir echo {} ';'`));
-  return intoLines(stdout);
+  const newDir = trailSlash(dir);
+  const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
+  const lines = intoLines(stdout);
+  return lines;
 };
 
 export const findFiles = async (dir: string = '.'): Promise<string[]> => {
-  const stdout = await tryOr('', async () => await execute(`find ${dir} -type f -maxdepth 1 -execdir echo {} ';'`));
-  return intoLines(stdout);
+  const newDir = trailSlash(dir);
+  const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
+  const lines = intoLines(stdout);
+  return lines;
 };
 
 export const open = async (file: string): Promise<void> => {
   try {
-    await execute(`open ${file}`);
+    await execute(`open "${file}"`);
   } catch (err) {
     // do nothing
   }
@@ -70,7 +75,7 @@ export const open = async (file: string): Promise<void> => {
 
 export const isFileExist = async (file: string) => {
   try {
-    await execute(`[[ -f ${file} ]]`);
+    await execute(`[[ -f "${file}" ]]`);
     return true;
   } catch (e) {
     return false;
@@ -79,7 +84,7 @@ export const isFileExist = async (file: string) => {
 
 export const isDirExist = async (file: string) => {
   try {
-    await execute(`[[ -d ${file} ]]`);
+    await execute(`[[ -d "${file}" ]]`);
     return true;
   } catch (e) {
     return false;

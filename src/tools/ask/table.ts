@@ -1,12 +1,14 @@
 import { fn, getDeferred, RemapOf, symbols } from 'swiss-ak';
 
-import { getKeyListener } from '../../utils/keyListener';
+import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 
-import { table, TableOptions } from '../table';
+import * as table from '../table';
 import { Breadcrumb } from '../out/breadcrumb';
 import chalk from 'chalk';
 import { imitate } from '../ask';
+
+//<!-- DOCS: 130 -->
 
 type ItemToRowMapFunction<T extends unknown> = (item?: T, index?: number, items?: T[]) => any[];
 
@@ -19,7 +21,7 @@ const askTableHandler = <T extends unknown>(
   initial: T[] | number[] = [],
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers: any[][] | RemapOf<T, string> = [],
-  tableOptions: TableOptions = {}
+  tableOptions: table.TableOptions = {}
 ): Promise<T[]> => {
   const questionText = typeof question === 'string' ? question : question.get();
 
@@ -36,7 +38,7 @@ const askTableHandler = <T extends unknown>(
 
   let lastDrawnRows = [];
   const drawTable = () => {
-    const tableOpts: TableOptions = {
+    const tableOpts: table.TableOptions = {
       margin: [1, 0, 0, 0],
       ...tableOptions,
       format: [
@@ -120,24 +122,37 @@ const askTableHandler = <T extends unknown>(
   return deferred.promise;
 };
 
-// TODO docs
-
+/**<!-- DOCS: ### -->
+ * select
+ *
+ * - `ask.table.select`
+ *
+ * Get a single selection from a table.
+ */
 export const select = async <T extends unknown>(
   question: string | Breadcrumb,
   items: T[],
   initial?: T | number,
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers?: any[][] | RemapOf<T, string>,
-  tableOptions?: TableOptions
+  tableOptions?: table.TableOptions
 ): Promise<T> => {
   const results = await askTableHandler(false, question, items, [initial] as number[] | T[], rows, headers, tableOptions);
   return results[0];
 };
+
+/**<!-- DOCS: ### -->
+ * multiselect
+ *
+ * - `ask.table.multiselect`
+ *
+ * Get multiple selections from a table.
+ */
 export const multiselect = <T extends unknown>(
   question: string | Breadcrumb,
   items: T[],
   initial?: T[] | number[],
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers?: any[][] | RemapOf<T, string>,
-  tableOptions?: TableOptions
+  tableOptions?: table.TableOptions
 ): Promise<T[]> => askTableHandler(true, question, items, initial, rows, headers, tableOptions);

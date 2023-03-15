@@ -25,15 +25,11 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
-  LogUtils: () => LogUtils_exports,
-  PathUtils: () => PathUtils_exports,
-  align: () => align,
+  LogTools: () => LogTools_exports,
+  PathTools: () => PathTools_exports,
   ask: () => ask_exports,
-  center: () => center,
-  centerLines: () => centerLines,
   chlk: () => chlk,
   clr: () => clr,
-  concatLineGroups: () => concatLineGroups,
   createLogger: () => createLogger,
   explodePath: () => explodePath,
   getBreadcrumb: () => getBreadcrumb,
@@ -41,28 +37,12 @@ __export(src_exports, {
   getLineCounter: () => getLineCounter,
   getLog: () => getLog,
   getLogStr: () => getLogStr,
-  getResponsiveValue: () => getResponsiveValue,
-  hasColor: () => hasColor,
-  justify: () => justify,
-  justifyLines: () => justifyLines,
-  left: () => left,
-  leftLines: () => leftLines,
-  limitToLength: () => limitToLength,
-  limitToLengthStart: () => limitToLengthStart,
-  loading: () => loading,
   log: () => log,
-  moveUp: () => moveUp,
-  out: () => out,
-  pad: () => pad,
+  nextTick: () => nextTick,
+  out: () => out_exports,
   processLogContents: () => processLogContents,
-  progressBarUtils: () => progressBarUtils,
-  right: () => right,
-  rightLines: () => rightLines,
-  split: () => split,
-  table: () => table,
-  truncate: () => truncate,
-  truncateStart: () => truncateStart,
-  wrap: () => wrap
+  progressBarTools: () => progressBarTools_exports,
+  table: () => table_exports
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -89,27 +69,51 @@ __export(ask_exports, {
   section: () => section,
   select: () => select2,
   separator: () => separator,
-  table: () => table_exports,
+  table: () => table_exports2,
   text: () => text,
   time: () => time,
   trim: () => trim_default,
-  utils: () => utils,
+  utils: () => utils3,
   validate: () => validate,
   wizard: () => wizard
 });
-var import_chalk13 = __toESM(require("chalk"), 1);
+var import_chalk12 = __toESM(require("chalk"), 1);
 var import_string_width5 = __toESM(require("string-width"), 1);
 var import_prompts = __toESM(require("prompts"), 1);
 var import_fuse = __toESM(require("fuse.js"), 1);
-var import_swiss_ak18 = require("swiss-ak");
+var import_swiss_ak17 = require("swiss-ak");
 
 // src/tools/out.ts
-var import_swiss_ak3 = require("swiss-ak");
+var out_exports = {};
+__export(out_exports, {
+  align: () => align,
+  center: () => center,
+  centerLines: () => centerLines,
+  concatLineGroups: () => concatLineGroups,
+  getResponsiveValue: () => getResponsiveValue,
+  justify: () => justify,
+  justifyLines: () => justifyLines,
+  left: () => left,
+  leftLines: () => leftLines,
+  limitToLength: () => limitToLength,
+  limitToLengthStart: () => limitToLengthStart,
+  loading: () => loading,
+  moveUp: () => moveUp,
+  pad: () => pad,
+  right: () => right,
+  rightLines: () => rightLines,
+  split: () => split,
+  truncate: () => truncate,
+  truncateStart: () => truncateStart,
+  utils: () => utils,
+  wrap: () => wrap
+});
+var import_swiss_ak2 = require("swiss-ak");
 var import_string_width = __toESM(require("string-width"), 1);
 
-// src/tools/LogUtils.ts
-var LogUtils_exports = {};
-__export(LogUtils_exports, {
+// src/tools/LogTools.ts
+var LogTools_exports = {};
+__export(LogTools_exports, {
   getLog: () => getLog,
   getLogStr: () => getLogStr,
   processLogContents: () => processLogContents
@@ -130,196 +134,9 @@ var getLog = (prefix, wrapper = import_swiss_ak.fn.noact) => (...args) => {
   console.log(processLogContents(prefix, wrapper, ...args));
 };
 
-// src/tools/out/lineCounter.ts
-var randomID = () => Math.random().toString(36).substring(2);
-var getLineCounter = () => {
-  let lineCount = 0;
-  const checkpoints = {};
-  const log2 = (...args) => {
-    const added = out.utils.getNumLines(args.map(getLogStr).join(" "));
-    lineCount += added;
-    console.log(...args);
-    return added;
-  };
-  const move = (lines) => {
-    if (lines > 0) {
-      log2("\n".repeat(lines - 1));
-    }
-    if (lines < 0) {
-      clearBack(-lines);
-    }
-  };
-  const wrap2 = (newLines = 1, func, ...args) => {
-    const result = func(...args);
-    lineCount += newLines;
-    return result;
-  };
-  const add = (newLines) => {
-    lineCount += newLines;
-  };
-  const get = () => {
-    return lineCount;
-  };
-  const getSince = (checkpointID) => {
-    const checkpointValue = checkpoints[checkpointID];
-    if (checkpointValue === void 0)
-      return 0;
-    const diff = lineCount - checkpointValue;
-    return diff > 0 ? diff : 0;
-  };
-  const checkpoint = (checkpointID = randomID()) => {
-    checkpoints[checkpointID] = lineCount;
-    return checkpointID;
-  };
-  const clearToCheckpoint = (checkpointID) => {
-    const checkpointValue = checkpoints[checkpointID];
-    if (checkpointValue === void 0)
-      return;
-    const diff = lineCount - checkpointValue;
-    if (diff > 0) {
-      clearBack(diff);
-    }
-  };
-  const clearBack = (linesToMoveBack, limitToRecordedLines = true) => {
-    if (limitToRecordedLines)
-      linesToMoveBack = Math.min(lineCount, linesToMoveBack);
-    out.moveUp(linesToMoveBack);
-    lineCount -= linesToMoveBack;
-  };
-  const clear2 = () => {
-    out.moveUp(lineCount);
-    lineCount = 0;
-  };
-  const lc = {
-    log: log2,
-    move,
-    wrap: wrap2,
-    add,
-    get,
-    getSince,
-    checkpoint,
-    clearToCheckpoint,
-    clear: clear2,
-    clearBack
-  };
-  return lc;
-};
-
-// src/tools/out/breadcrumb.ts
-var import_chalk3 = __toESM(require("chalk"), 1);
-var import_swiss_ak2 = require("swiss-ak");
-
-// src/tools/clr.ts
-var import_chalk2 = __toESM(require("chalk"), 1);
-var gray0 = import_chalk2.default.black;
-var gray1 = import_chalk2.default.gray.dim;
-var gray2 = import_chalk2.default.white.dim;
-var gray3 = import_chalk2.default.whiteBright.dim;
-var gray4 = import_chalk2.default.white;
-var gray5 = import_chalk2.default.whiteBright;
-var grays = [
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5
-];
-var gray = (num) => grays[Math.max(0, Math.min(num, grays.length - 1))];
-var clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
-var not = (style) => {
-  const styled = style("**xxx**");
-  const [after, before] = styled.split("**xxx**");
-  return (item) => `${before}${item}${after}`;
-};
-var notUnderlined = not(import_chalk2.default.underline);
-var chlk = {
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5,
-  grays,
-  gray,
-  clear,
-  not,
-  notUnderlined
-};
-var clr = {
-  hl1: import_chalk2.default.yellowBright.bold,
-  hl2: import_chalk2.default.yellow,
-  approve: import_chalk2.default.green.bold,
-  create: import_chalk2.default.greenBright.bold,
-  update: import_chalk2.default.yellow.bold,
-  delete: import_chalk2.default.redBright.bold,
-  deleteAll: import_chalk2.default.redBright.bold,
-  blue: import_chalk2.default.blueBright,
-  cyan: import_chalk2.default.cyanBright,
-  green: import_chalk2.default.greenBright,
-  magenta: import_chalk2.default.magentaBright,
-  red: import_chalk2.default.redBright,
-  yellow: import_chalk2.default.yellowBright,
-  t1: import_chalk2.default.yellowBright,
-  t2: import_chalk2.default.magentaBright,
-  t3: import_chalk2.default.blueBright,
-  t4: import_chalk2.default.redBright,
-  t5: import_chalk2.default.greenBright,
-  t6: import_chalk2.default.cyanBright,
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5
-};
-
-// src/tools/out/breadcrumb.ts
-var seperatorChar = ` ${chlk.gray2(import_swiss_ak2.symbols.CHEV_RGT)} `;
-var getBreadcrumb = (...baseNames) => {
-  let current = [];
-  let colours = ["t1", "t2", "t3", "t4", "t5", "t6"];
-  const setColours = (newColours) => {
-    colours = newColours;
-  };
-  const add = (...names) => current.push(...names);
-  const getColouredName = (name, index, arr) => hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
-  const getColouredNames = (...tempNames) => getNames(...tempNames).map(getColouredName);
-  const getNames = (...tempNames) => [...baseNames, ...current, ...tempNames];
-  const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
-  const otherChars = "?  > ";
-  const spaceForInput = 25;
-  const get = (...tempNames) => import_chalk3.default.bold(
-    truncate(
-      getColouredNames(...tempNames).join(seperatorChar).trim(),
-      out.utils.getTerminalWidth() - (otherChars.length - spaceForInput)
-    )
-  );
-  const result = (...tempNames) => sub(...tempNames);
-  result.setColours = setColours;
-  result.add = add;
-  result.getNames = getNames;
-  result.sub = sub;
-  result.get = get;
-  result.toString = get;
-  return result;
-};
-
 // src/tools/out.ts
-var import_chalk4 = __toESM(require("chalk"), 1);
+var import_chalk2 = __toESM(require("chalk"), 1);
 var NEW_LINE = "\n";
-var textToString = (text2) => text2 instanceof Array ? joinLines(text2) : text2;
-var getTerminalWidth = () => {
-  var _a;
-  return ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) ? process.stdout.columns : 100;
-};
-var getLines = (text2) => textToString(text2).split(NEW_LINE);
-var getNumLines = (text2) => getLines(text2).length;
-var getLinesWidth = (text2) => Math.max(...getLines(text2).map((line) => (0, import_string_width.default)(line)));
-var getLogLines = (item) => getLines(getLogStr(item));
-var getNumLogLines = (item) => getNumLines(getLogStr(item));
-var getLogLinesWidth = (item) => getLinesWidth(getLogStr(item));
-var joinLines = (lines) => lines.map(import_swiss_ak3.fn.maps.toString).join(NEW_LINE);
 var pad = (line, start, end, replaceChar = " ") => `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
 var correctWidth = (width) => width < 0 || width === Infinity ? getTerminalWidth() : Math.min(width, getTerminalWidth());
 var center = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => getLogLines(item).map(
@@ -336,10 +153,10 @@ var justify = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth =
   const words = line.split(" ");
   if (words.length === 1)
     return left(words[0], width, replaceChar, forceWidth);
-  const currW = words.map((w) => w.length).reduce(import_swiss_ak3.fn.reduces.combine);
+  const currW = words.map((w) => w.length).reduce(import_swiss_ak2.fn.reduces.combine);
   const perSpace = Math.floor((width - currW) / (words.length - 1));
   const remain = (width - currW) % (words.length - 1);
-  const spaces = import_swiss_ak3.ArrayUtils.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
+  const spaces = import_swiss_ak2.ArrayTools.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
   let result = "";
   for (let index in words) {
     result += words[index] + (spaces[index] || "");
@@ -347,10 +164,10 @@ var justify = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth =
   return result;
 }).join(NEW_LINE);
 var getLongestLen = (lines) => Math.max(...lines.map((line) => (0, import_string_width.default)(line)));
-var leftLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out.left(line, width));
-var centerLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out.center(line, width));
-var rightLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out.right(line, width));
-var justifyLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out.justify(line, width));
+var leftLines = (lines, width = getLongestLen(lines)) => lines.map((line) => left(line, width));
+var centerLines = (lines, width = getLongestLen(lines)) => lines.map((line) => center(line, width));
+var rightLines = (lines, width = getLongestLen(lines)) => lines.map((line) => right(line, width));
+var justifyLines = (lines, width = getLongestLen(lines)) => lines.map((line) => justify(line, width));
 var alignFunc = {
   left,
   center,
@@ -406,7 +223,7 @@ var moveUp = (lines = 1) => {
     }
   }
 };
-var loadingDefault = (s) => console.log(import_chalk4.default.dim(`${s}`));
+var loadingDefault = (s) => console.log(import_chalk2.default.dim(`${s}`));
 var loadingWords = [
   "\u2113-o-\u{1D51E}-\u{1D4ED}-\u026A-\u057C-\u{1D5F4}",
   "\u{1D695}-\u03C3-a-\u{1D521}-\u{1D4F2}-\u0274-\u0262",
@@ -417,8 +234,8 @@ var loadingWords = [
   "\u{1D529}-\u{1D4F8}-\u1D00-\u0256-\u{1D5F6}-\u{1D697}-g",
   "l-\u{1D52C}-\u{1D4EA}-\u1D05-\u0268-\u{1D5FB}-\u{1D690}"
 ].map((word) => word.split("-"));
-var loadingChars = import_swiss_ak3.ArrayUtils.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
-  (word, index) => import_chalk4.default.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
+var loadingChars = import_swiss_ak2.ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
+  (word, index) => import_chalk2.default.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
 );
 var loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
   let stopped = false;
@@ -429,7 +246,7 @@ var loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
     if (count)
       moveUp(lines);
     action(symbols6[count++ % symbols6.length]);
-    await (0, import_swiss_ak3.wait)(150);
+    await (0, import_swiss_ak2.wait)(150);
     return runLoop();
   };
   runLoop();
@@ -440,7 +257,6 @@ var loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
     }
   };
 };
-var hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
 var limitToLength = (text2, maxLength) => joinLines(
   getLines(text2).map((line) => {
     let specials = "";
@@ -471,77 +287,115 @@ var limitToLengthStart = (text2, maxLength) => joinLines(
     return specials + result;
   })
 );
-var truncate = (text2, maxLength = getTerminalWidth(), suffix = import_chalk4.default.dim("\u2026")) => joinLines(getLines(text2).map((line) => (0, import_string_width.default)(line) > maxLength ? limitToLength(line, maxLength - (0, import_string_width.default)(suffix)) + suffix : line));
-var truncateStart = (text2, maxLength = getTerminalWidth(), suffix = import_chalk4.default.dim("\u2026")) => joinLines(
+var truncate = (text2, maxLength = getTerminalWidth(), suffix = import_chalk2.default.dim("\u2026")) => joinLines(getLines(text2).map((line) => (0, import_string_width.default)(line) > maxLength ? limitToLength(line, maxLength - (0, import_string_width.default)(suffix)) + suffix : line));
+var truncateStart = (text2, maxLength = getTerminalWidth(), suffix = import_chalk2.default.dim("\u2026")) => joinLines(
   getLines(text2).map((line) => (0, import_string_width.default)(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - (0, import_string_width.default)(suffix)) : line)
 );
 var concatLineGroups = (...groups) => {
   const maxLen = Math.max(...groups.map((group) => group.length));
   const aligned = groups.map((group) => leftLines([...group, ...Array(maxLen).fill("")].slice(0, maxLen)));
-  return (0, import_swiss_ak3.zipMax)(...aligned).map((line) => line.join(""));
+  return (0, import_swiss_ak2.zipMax)(...aligned).map((line) => line.join(""));
 };
 var getResponsiveValue = (options) => {
   const mapped = options.map(({ minColumns, value }) => ({
     min: typeof minColumns === "number" ? minColumns : 0,
     value
   }));
-  const sorted = (0, import_swiss_ak3.sortByMapped)(mapped, (option) => option.min, import_swiss_ak3.fn.desc);
-  const termWidth = out.utils.getTerminalWidth();
+  const sorted = (0, import_swiss_ak2.sortByMapped)(mapped, (option) => option.min, import_swiss_ak2.fn.desc);
+  const termWidth = utils.getTerminalWidth();
   return (sorted.find((option) => termWidth >= option.min) ?? sorted[0]).value;
 };
-var out = {
-  pad,
-  center,
-  left,
-  right,
-  justify,
-  align,
-  split,
-  wrap,
-  moveUp,
-  loading,
-  limitToLength,
-  limitToLengthStart,
-  truncate,
-  truncateStart,
-  getLineCounter,
-  getBreadcrumb,
-  concatLineGroups,
-  getResponsiveValue,
-  utils: {
-    getLines,
-    getNumLines,
-    getLinesWidth,
-    getLogLines,
-    getNumLogLines,
-    getLogLinesWidth,
-    joinLines,
-    getTerminalWidth,
-    hasColor
-  }
+var textToString = (text2) => text2 instanceof Array ? joinLines(text2) : text2;
+var getTerminalWidth = () => {
+  var _a;
+  return ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) ? process.stdout.columns : 100;
+};
+var getLines = (text2) => textToString(text2).split(NEW_LINE);
+var getNumLines = (text2) => getLines(text2).length;
+var getLinesWidth = (text2) => Math.max(...getLines(text2).map((line) => (0, import_string_width.default)(line)));
+var getLogLines = (item) => getLines(getLogStr(item));
+var getNumLogLines = (item) => getNumLines(getLogStr(item));
+var getLogLinesWidth = (item) => getLinesWidth(getLogStr(item));
+var joinLines = (lines) => lines.map(import_swiss_ak2.fn.maps.toString).join(NEW_LINE);
+var hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
+var utils = {
+  getLines,
+  getNumLines,
+  getLinesWidth,
+  getLogLines,
+  getNumLogLines,
+  getLogLinesWidth,
+  joinLines,
+  getTerminalWidth,
+  hasColor
 };
 
-// src/tools/PathUtils.ts
-var PathUtils_exports = {};
-__export(PathUtils_exports, {
-  explodePath: () => explodePath,
-  removeDoubleSlashes: () => removeDoubleSlashes,
-  removeTrailSlash: () => removeTrailSlash,
-  trailSlash: () => trailSlash
-});
-var explodePath = (path) => {
-  const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
-  const filename = (path.match(/[^\\\/]*$/) || [])[0];
-  const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
-  const name = filename.replace(ext, "").replace(/[\.]$/, "");
-  const folders = dir.split(/[\\\/]/).filter((x) => x);
-  return { path, dir, folders, name, ext, filename };
+// src/tools/clr.ts
+var import_chalk3 = __toESM(require("chalk"), 1);
+var gray0 = import_chalk3.default.black;
+var gray1 = import_chalk3.default.gray.dim;
+var gray2 = import_chalk3.default.white.dim;
+var gray3 = import_chalk3.default.whiteBright.dim;
+var gray4 = import_chalk3.default.white;
+var gray5 = import_chalk3.default.whiteBright;
+var grays = [
+  gray0,
+  gray1,
+  gray2,
+  gray3,
+  gray4,
+  gray5
+];
+var gray = (num) => grays[Math.max(0, Math.min(num, grays.length - 1))];
+var clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
+var not = (style) => {
+  const styled = style("**xxx**");
+  const [after, before] = styled.split("**xxx**");
+  return (item) => `${before}${item}${after}`;
 };
-var removeTrailSlash = (path) => path.replace(/\/$/, "");
-var trailSlash = (path) => removeTrailSlash(path) + "/";
-var removeDoubleSlashes = (path) => path.replace(/\/\//g, "/");
+var notUnderlined = not(import_chalk3.default.underline);
+var chlk = {
+  gray0,
+  gray1,
+  gray2,
+  gray3,
+  gray4,
+  gray5,
+  grays,
+  gray,
+  clear,
+  not,
+  notUnderlined
+};
+var clr = {
+  hl1: import_chalk3.default.yellowBright.bold,
+  hl2: import_chalk3.default.yellow,
+  approve: import_chalk3.default.green.bold,
+  create: import_chalk3.default.greenBright.bold,
+  update: import_chalk3.default.yellow.bold,
+  delete: import_chalk3.default.redBright.bold,
+  deleteAll: import_chalk3.default.redBright.bold,
+  blue: import_chalk3.default.blueBright,
+  cyan: import_chalk3.default.cyanBright,
+  green: import_chalk3.default.greenBright,
+  magenta: import_chalk3.default.magentaBright,
+  red: import_chalk3.default.redBright,
+  yellow: import_chalk3.default.yellowBright,
+  t1: import_chalk3.default.yellowBright,
+  t2: import_chalk3.default.magentaBright,
+  t3: import_chalk3.default.blueBright,
+  t4: import_chalk3.default.redBright,
+  t5: import_chalk3.default.greenBright,
+  t6: import_chalk3.default.cyanBright,
+  gray0,
+  gray1,
+  gray2,
+  gray3,
+  gray4,
+  gray5
+};
 
-// src/utils/keyListener.ts
+// src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
   const listenFn = (key) => {
     if (isDebugLog) {
@@ -606,14 +460,21 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
 };
 
 // src/tools/ask/trim.ts
-var import_swiss_ak7 = require("swiss-ak");
+var import_swiss_ak6 = require("swiss-ak");
 var import_string_width2 = __toESM(require("string-width"), 1);
 
 // src/tools/table.ts
-var import_swiss_ak6 = require("swiss-ak");
+var table_exports = {};
+__export(table_exports, {
+  getLines: () => getLines2,
+  print: () => print,
+  printObjects: () => printObjects,
+  utils: () => utils2
+});
+var import_swiss_ak5 = require("swiss-ak");
 
 // src/utils/processTableInput.ts
-var import_swiss_ak4 = require("swiss-ak");
+var import_swiss_ak3 = require("swiss-ak");
 var empty = (numCols, char = "") => new Array(numCols).fill(char);
 var showBlank = ["undefined", "null"];
 var showRaw = ["string", "number", "boolean"];
@@ -636,11 +497,11 @@ var fixMixingHeader = (cells) => {
 };
 var transposeTable = (cells, opts) => {
   if (opts.transpose) {
-    const body = table.utils.transpose(table.utils.concatRows(cells));
+    const body = utils2.transpose(utils2.concatRows(cells));
     return { header: [], body };
   }
   if (opts.transposeBody) {
-    const body = table.utils.transpose(cells.body);
+    const body = utils2.transpose(cells.body);
     return { header: cells.header, body };
   }
   return cells;
@@ -661,12 +522,12 @@ var formatCells = (rows, type, format) => {
   }
   return rows;
 };
-var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => out.utils.getLines(cell)));
+var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => utils.getLines(cell)));
 var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight, _mB, marginLeft], maxTotalWidth) => {
-  const transposed = (0, import_swiss_ak4.zip)(...[...cells.header, ...cells.body]);
-  const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => out.utils.getLinesWidth(cell))));
-  const currColWidths = preferredWidths.length ? import_swiss_ak4.ArrayUtils.repeat(numCols, ...preferredWidths) : actualColWidths;
-  const currTotalWidth = currColWidths.length ? currColWidths.reduce(import_swiss_ak4.fn.reduces.combine) + (numCols + 1) * 3 : 0;
+  const transposed = (0, import_swiss_ak3.zip)(...[...cells.header, ...cells.body]);
+  const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => utils.getLinesWidth(cell))));
+  const currColWidths = preferredWidths.length ? import_swiss_ak3.ArrayTools.repeat(numCols, ...preferredWidths) : actualColWidths;
+  const currTotalWidth = currColWidths.length ? currColWidths.reduce(import_swiss_ak3.fn.reduces.combine) + (numCols + 1) * 3 : 0;
   const diff = currTotalWidth - (maxTotalWidth - (marginRight + marginLeft));
   const colWidths = [...currColWidths];
   for (let i = 0; i < diff; i++) {
@@ -675,17 +536,17 @@ var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight
   return colWidths;
 };
 var wrapCells = (rows, type, colWidths, truncate2) => rows.map((row) => {
-  const wrapped = row.map((cell) => out.utils.joinLines(cell)).map((text2, colIndex) => {
+  const wrapped = row.map((cell) => utils.joinLines(cell)).map((text2, colIndex) => {
     if (truncate2 !== false) {
-      return out.truncate(text2, colWidths[colIndex], truncate2);
+      return truncate(text2, colWidths[colIndex], truncate2);
     } else {
-      return out.wrap(text2, colWidths[colIndex]);
+      return wrap(text2, colWidths[colIndex]);
     }
-  }).map((text2) => out.utils.getLines(text2));
+  }).map((text2) => utils.getLines(text2));
   const maxHeight = Math.max(...wrapped.map((cell) => cell.length));
   return wrapped.map((cell) => [...cell, ...empty(maxHeight)].slice(0, maxHeight));
 });
-var seperateLinesIntoRows = (rows, type) => rows.map((row) => (0, import_swiss_ak4.zip)(...row));
+var seperateLinesIntoRows = (rows, type) => rows.map((row) => (0, import_swiss_ak3.zip)(...row));
 var processInput = (cells, opts) => {
   const fixed = fixMixingHeader(cells);
   const transposed = transposeTable(fixed, opts);
@@ -700,7 +561,7 @@ var processInput = (cells, opts) => {
 };
 
 // src/utils/tableCharacters.ts
-var import_swiss_ak5 = require("swiss-ak");
+var import_swiss_ak4 = require("swiss-ak");
 var tableCharactersBasic = () => ({
   hTop: ["\u2501", "\u250F", "\u2533", "\u2513"],
   hNor: [" ", "\u2503", "\u2503", "\u2503"],
@@ -712,7 +573,7 @@ var tableCharactersBasic = () => ({
   bSep: ["\u2500", "\u251C", "\u253C", "\u2524"],
   bBot: ["\u2500", "\u2514", "\u2534", "\u2518"]
 });
-var ovAllCharact = (orig, char) => import_swiss_ak5.ArrayUtils.repeat(4, char);
+var ovAllCharact = (orig, char) => import_swiss_ak4.ArrayTools.repeat(4, char);
 var ovSeperators = (orig, char) => [orig[0], char, char, char];
 var ovOuterChars = (orig, char) => [orig[0], char, orig[2], char];
 var getTableCharacters = (opts) => {
@@ -767,12 +628,7 @@ var getTableCharacters = (opts) => {
 };
 
 // src/tools/table.ts
-var import_chalk5 = __toESM(require("chalk"), 1);
-var toFullFormatConfig = (config) => ({
-  isHeader: false,
-  isBody: true,
-  ...config
-});
+var import_chalk4 = __toESM(require("chalk"), 1);
 var getFullOptions = (opts) => ({
   overrideChar: "",
   overrideHorChar: opts.overrideChar || "",
@@ -782,10 +638,10 @@ var getFullOptions = (opts) => ({
   colWidths: [],
   cellPadding: 1,
   truncate: false,
-  maxWidth: out.utils.getTerminalWidth(),
+  maxWidth: utils.getTerminalWidth(),
   ...opts,
-  wrapperFn: typeof opts.wrapperFn !== "function" ? import_swiss_ak6.fn.noact : opts.wrapperFn,
-  wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? import_swiss_ak6.fn.noact : opts.wrapLinesFn,
+  wrapperFn: typeof opts.wrapperFn !== "function" ? import_swiss_ak5.fn.noact : opts.wrapperFn,
+  wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? import_swiss_ak5.fn.noact : opts.wrapLinesFn,
   drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
   drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
   drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
@@ -802,6 +658,26 @@ var getFullOptions = (opts) => ({
   })(opts.margin)
 });
 var empty2 = (numCols, char = "") => new Array(numCols).fill(char);
+var print = (body, header, options = {}) => {
+  const lines = getLines2(body, header, options);
+  if (lines.length) {
+    console.log(lines.join("\n"));
+  }
+  return lines.length;
+};
+var getAllKeys = (objects) => {
+  const allKeys = {};
+  objects.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      allKeys[key] = true;
+    });
+  });
+  return Object.keys(allKeys);
+};
+var printObjects = (objects, headers = {}, options = {}) => {
+  const { body, header } = objectsToTable(objects, headers);
+  return print(body, header, options);
+};
 var getLines2 = (body, header, options = {}) => {
   const opts = getFullOptions(options);
   const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align: align2, drawRowLines, cellPadding } = opts;
@@ -812,17 +688,17 @@ var getLines2 = (body, header, options = {}) => {
     numCols,
     colWidths
   } = processInput({ header, body }, opts);
-  const alignColumns = import_swiss_ak6.ArrayUtils.repeat(numCols, ...alignCols);
+  const alignColumns = import_swiss_ak5.ArrayTools.repeat(numCols, ...alignCols);
   const tableChars = getTableCharacters(opts);
   const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
     const [norm, strt, sepr, endc] = chars;
     const pad2 = norm.repeat(Math.max(0, cellPadding));
-    let aligned = row.map((cell, col) => out.align(cell || "", alignColumns[col], colWidths[col], norm, true));
+    let aligned = row.map((cell, col) => align(cell || "", alignColumns[col], colWidths[col], norm, true));
     if (textWrapperFn)
       aligned = aligned.map((x) => textWrapperFn(x));
     const inner = aligned.join(wrapLinesFn(`${pad2}${sepr}${pad2}`));
     const str = wrapLinesFn(`${" ".repeat(marginLeft)}${strt}${pad2}`) + inner + wrapLinesFn(`${pad2}${endc}${" ".repeat(marginRight)}`);
-    result.push(out.align(wrapperFn(str), align2, -1, " ", false));
+    result.push(align(wrapperFn(str), align2, -1, " ", false));
   };
   if (marginTop)
     result.push("\n".repeat(marginTop - 1));
@@ -834,7 +710,7 @@ var getLines2 = (body, header, options = {}) => {
       if (Number(index) !== 0 && drawRowLines)
         printLine(empty2(numCols, ""), tableChars.hSep, wrapLinesFn);
       for (let line of row) {
-        printLine(line, tableChars.hNor, import_chalk5.default.bold);
+        printLine(line, tableChars.hNor, import_chalk4.default.bold);
       }
     }
     printLine(empty2(numCols, ""), tableChars.mSep, wrapLinesFn);
@@ -856,22 +732,11 @@ var getLines2 = (body, header, options = {}) => {
     result.push("\n".repeat(marginBottom - 1));
   return result;
 };
-var print = (body, header, options = {}) => {
-  const lines = getLines2(body, header, options);
-  if (lines.length) {
-    console.log(lines.join("\n"));
-  }
-  return lines.length;
-};
-var getAllKeys = (objects) => {
-  const allKeys = {};
-  objects.forEach((obj) => {
-    Object.keys(obj).forEach((key) => {
-      allKeys[key] = true;
-    });
-  });
-  return Object.keys(allKeys);
-};
+var toFullFormatConfig = (config) => ({
+  isHeader: false,
+  isBody: true,
+  ...config
+});
 var objectsToTable = (objects, headers = {}) => {
   const allKeys = getAllKeys(objects);
   const header = [allKeys.map((key) => headers[key] || key)];
@@ -882,7 +747,7 @@ var objectsToTable = (objects, headers = {}) => {
   };
 };
 var transpose = (rows) => {
-  return import_swiss_ak6.ArrayUtils.zip(...rows);
+  return import_swiss_ak5.ArrayTools.zip(...rows);
 };
 var concatRows = (cells) => {
   return [...cells.header || [], ...cells.body];
@@ -899,27 +764,93 @@ var getFormat = (format, row, col, isHeader, isBody) => {
     result.isBody = isBody;
   return result;
 };
-var printObjects = (objects, headers = {}, options = {}) => {
-  const { body, header } = objectsToTable(objects, headers);
-  return print(body, header, options);
+var utils2 = {
+  objectsToTable,
+  transpose,
+  concatRows,
+  getFormat
 };
-var table = {
-  getLines: getLines2,
-  print,
-  printObjects,
-  utils: {
-    objectsToTable,
-    transpose,
-    concatRows,
-    getFormat
-  }
+
+// src/tools/out/lineCounter.ts
+var randomID = () => Math.random().toString(36).substring(2);
+var getLineCounter = () => {
+  let lineCount = 0;
+  const checkpoints = {};
+  const log2 = (...args) => {
+    const added = utils.getNumLines(args.map(getLogStr).join(" "));
+    lineCount += added;
+    console.log(...args);
+    return added;
+  };
+  const move = (lines) => {
+    if (lines > 0) {
+      log2("\n".repeat(lines - 1));
+    }
+    if (lines < 0) {
+      clearBack(-lines);
+    }
+  };
+  const wrap2 = (newLines = 1, func, ...args) => {
+    const result = func(...args);
+    lineCount += newLines;
+    return result;
+  };
+  const add = (newLines) => {
+    lineCount += newLines;
+  };
+  const get = () => {
+    return lineCount;
+  };
+  const getSince = (checkpointID) => {
+    const checkpointValue = checkpoints[checkpointID];
+    if (checkpointValue === void 0)
+      return 0;
+    const diff = lineCount - checkpointValue;
+    return diff > 0 ? diff : 0;
+  };
+  const checkpoint = (checkpointID = randomID()) => {
+    checkpoints[checkpointID] = lineCount;
+    return checkpointID;
+  };
+  const clearToCheckpoint = (checkpointID) => {
+    const checkpointValue = checkpoints[checkpointID];
+    if (checkpointValue === void 0)
+      return;
+    const diff = lineCount - checkpointValue;
+    if (diff > 0) {
+      clearBack(diff);
+    }
+  };
+  const clearBack = (linesToMoveBack, limitToRecordedLines = true) => {
+    if (limitToRecordedLines)
+      linesToMoveBack = Math.min(lineCount, linesToMoveBack);
+    moveUp(linesToMoveBack);
+    lineCount -= linesToMoveBack;
+  };
+  const clear2 = () => {
+    moveUp(lineCount);
+    lineCount = 0;
+  };
+  const lc = {
+    log: log2,
+    move,
+    wrap: wrap2,
+    add,
+    get,
+    getSince,
+    checkpoint,
+    clearToCheckpoint,
+    clear: clear2,
+    clearBack
+  };
+  return lc;
 };
 
 // src/tools/ask/trim.ts
-var import_chalk6 = __toESM(require("chalk"), 1);
+var import_chalk5 = __toESM(require("chalk"), 1);
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
   const frLength = (0, import_string_width2.default)(frameRate + "");
-  const toSecs = (0, import_swiss_ak7.seconds)(Math.floor(frame / frameRate));
+  const toSecs = (0, import_swiss_ak6.seconds)(Math.floor(frame / frameRate));
   const remaining = frame % frameRate;
   let cut = includeHours ? 11 : 14;
   if (!includeMinutes)
@@ -938,16 +869,16 @@ var getFullOptions2 = (opts) => ({
   charTrack: " ",
   charHandle: "\u2503",
   charBar: "\u2588",
-  clrTrack: import_chalk6.default.bgGray,
-  clrHandle: import_chalk6.default.whiteBright,
-  clrBar: import_chalk6.default.white,
+  clrTrack: import_chalk5.default.bgGray,
+  clrHandle: import_chalk5.default.whiteBright,
+  clrBar: import_chalk5.default.white,
   ...opts,
   charActiveHandle: opts.charActiveHandle ?? opts.charHandle ?? "\u2503",
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? "\u2588",
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? "\u2588",
-  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? import_chalk6.default.yellowBright.bold,
-  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? import_chalk6.default.whiteBright,
-  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? import_chalk6.default.yellowBright.bold
+  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? import_chalk5.default.yellowBright.bold,
+  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? import_chalk5.default.whiteBright,
+  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? import_chalk5.default.yellowBright.bold
 });
 var getChars = (opts) => ({
   track: opts.charTrack,
@@ -968,9 +899,9 @@ var getColors = (opts) => ({
 var trim = async (totalFrames, frameRate, options = {}) => {
   const opts = getFullOptions2(options);
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak7.getDeferred)();
-  const totalLength = (0, import_swiss_ak7.seconds)(Math.floor(totalFrames / frameRate));
-  const showHours = totalLength > (0, import_swiss_ak7.hours)(1);
+  const deferred = (0, import_swiss_ak6.getDeferred)();
+  const totalLength = (0, import_swiss_ak6.seconds)(Math.floor(totalFrames / frameRate));
+  const showHours = totalLength > (0, import_swiss_ak6.hours)(1);
   let activeHandle = "start";
   const handles = {
     start: 0,
@@ -980,9 +911,9 @@ var trim = async (totalFrames, frameRate, options = {}) => {
   const display = () => {
     displayCount++;
     lc.clear();
-    const width = out.utils.getTerminalWidth();
+    const width = utils.getTerminalWidth();
     const totalSpace = width - 2;
-    const handlePositions = import_swiss_ak7.ObjectUtils.mapValues(
+    const handlePositions = import_swiss_ak6.ObjectTools.mapValues(
       handles,
       (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
     );
@@ -996,11 +927,11 @@ var trim = async (totalFrames, frameRate, options = {}) => {
     const handStart = activeHandle == "start" ? actvHand : inactvHand;
     const handEnd = activeHandle == "end" ? actvHand : inactvHand;
     const drawHandleLabels = () => {
-      const handleLabelsRaw = import_swiss_ak7.ObjectUtils.mapValues(handles, (_k, value) => [
+      const handleLabelsRaw = import_swiss_ak6.ObjectTools.mapValues(handles, (_k, value) => [
         ` ${toTimeCode(value, frameRate, showHours)} `,
         ""
       ]);
-      const handleLabelWidths = import_swiss_ak7.ObjectUtils.mapValues(
+      const handleLabelWidths = import_swiss_ak6.ObjectTools.mapValues(
         handleLabelsRaw,
         (_k, value) => Math.max(...value.map((s) => (0, import_string_width2.default)(s)))
       );
@@ -1008,9 +939,9 @@ var trim = async (totalFrames, frameRate, options = {}) => {
         start: handleLabelWidths.start > befSpace ? "left" : "right",
         end: handleLabelWidths.end > aftSpace ? "right" : "left"
       };
-      const handleLabels = import_swiss_ak7.ObjectUtils.mapValues(
+      const handleLabels = import_swiss_ak6.ObjectTools.mapValues(
         handleLabelsRaw,
-        (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
+        (key, value) => value.map((l) => align(l, handleAligns[key], handleLabelWidths[key], " ", true))
       );
       const strtBef = handleAligns.start === "right";
       const endBef = handleAligns.end === "right";
@@ -1061,13 +992,13 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       if (opts.showInstructions && displayCount < 5) {
         const body = [
           [
-            import_chalk6.default.gray.dim(`[${import_swiss_ak7.symbols.TRI_LFT}/${import_swiss_ak7.symbols.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            import_chalk6.default.gray.dim(`[${import_swiss_ak7.symbols.TRI_UPP}/${import_swiss_ak7.symbols.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
-            import_chalk6.default.gray.dim(`[TAB] switch handle`),
-            import_chalk6.default.gray.dim(`[ENTER] submit`)
+            import_chalk5.default.gray.dim(`[${import_swiss_ak6.symbols.TRI_LFT}/${import_swiss_ak6.symbols.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
+            import_chalk5.default.gray.dim(`[${import_swiss_ak6.symbols.TRI_UPP}/${import_swiss_ak6.symbols.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
+            import_chalk5.default.gray.dim(`[TAB] switch handle`),
+            import_chalk5.default.gray.dim(`[ENTER] submit`)
           ]
         ];
-        lc.add(table.print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
+        lc.add(print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
       } else {
         lc.log();
       }
@@ -1129,36 +1060,54 @@ var trim_default = trim;
 // src/tools/ask/fileExplorer.ts
 var fsP2 = __toESM(require("fs/promises"), 1);
 var import_string_width3 = __toESM(require("string-width"), 1);
-var import_swiss_ak10 = require("swiss-ak");
+var import_swiss_ak9 = require("swiss-ak");
+var import_chalk7 = __toESM(require("chalk"), 1);
+
+// src/tools/PathTools.ts
+var PathTools_exports = {};
+__export(PathTools_exports, {
+  explodePath: () => explodePath,
+  removeDoubleSlashes: () => removeDoubleSlashes,
+  removeTrailSlash: () => removeTrailSlash,
+  trailSlash: () => trailSlash
+});
+var explodePath = (path) => {
+  const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
+  const filename = (path.match(/[^\\\/]*$/) || [])[0];
+  const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
+  const name = filename.replace(ext, "").replace(/[\.]$/, "");
+  const folders = dir.split(/[\\\/]/).filter((x) => x);
+  return { path, dir, folders, name, ext, filename };
+};
+var removeTrailSlash = (path) => path.replace(/\/$/, "");
+var trailSlash = (path) => removeTrailSlash(path) + "/";
+var removeDoubleSlashes = (path) => path.replace(/\/\//g, "/");
 
 // src/utils/actionBar.ts
-var import_chalk7 = __toESM(require("chalk"), 1);
-var import_swiss_ak8 = require("swiss-ak");
+var import_chalk6 = __toESM(require("chalk"), 1);
+var import_swiss_ak7 = require("swiss-ak");
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
-  const keyList = ids.filter(import_swiss_ak8.fn.isTruthy).filter((key) => config[key]);
+  const keyList = ids.filter(import_swiss_ak7.fn.isTruthy).filter((key) => config[key]);
   const row = keyList.map((key) => {
     const { keys, label } = config[key];
     return ` [ ${keys} ] ${label} `;
   });
   const format = [];
   if (pressedId) {
-    format.push({ formatFn: import_chalk7.default.bgWhite.black, col: keyList.indexOf(pressedId) });
+    format.push({ formatFn: import_chalk6.default.bgWhite.black, col: keyList.indexOf(pressedId) });
   }
   if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: import_chalk7.default.dim.strikethrough, col: keyList.indexOf(key) }));
+    disabledIds.forEach((key) => format.push({ formatFn: import_chalk6.default.dim.strikethrough, col: keyList.indexOf(key) }));
   }
-  return out.utils.joinLines(
-    table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
+  return utils.joinLines(
+    getLines2([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
   );
 };
-
-// src/tools/ask/fileExplorer.ts
-var import_chalk8 = __toESM(require("chalk"), 1);
 
 // src/utils/fsUtils.ts
 var import_child_process = require("child_process");
 var fsP = __toESM(require("fs/promises"), 1);
-var import_swiss_ak9 = require("swiss-ak");
+var import_swiss_ak8 = require("swiss-ak");
 var execute = (command) => {
   return new Promise((resolve, reject) => {
     (0, import_child_process.exec)(command, (error, stdout, stderr) => {
@@ -1174,9 +1123,9 @@ var execute = (command) => {
     });
   });
 };
-var intoLines = (out2) => out2.toString().split("\n").filter(import_swiss_ak9.fn.isTruthy);
+var intoLines = (out) => out.toString().split("\n").filter(import_swiss_ak8.fn.isTruthy);
 var getProbe = async (file) => {
-  const stdout = await (0, import_swiss_ak9.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
+  const stdout = await (0, import_swiss_ak8.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
     stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
   );
@@ -1193,22 +1142,26 @@ var mkdir2 = (dir) => {
   return fsP.mkdir(dir, { recursive: true });
 };
 var findDirs = async (dir = ".") => {
-  const stdout = await (0, import_swiss_ak9.tryOr)("", async () => await execute(`find ${dir} -type d -maxdepth 1 -execdir echo {} ';'`));
-  return intoLines(stdout);
+  const newDir = trailSlash(dir);
+  const stdout = await (0, import_swiss_ak8.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
+  const lines = intoLines(stdout);
+  return lines;
 };
 var findFiles = async (dir = ".") => {
-  const stdout = await (0, import_swiss_ak9.tryOr)("", async () => await execute(`find ${dir} -type f -maxdepth 1 -execdir echo {} ';'`));
-  return intoLines(stdout);
+  const newDir = trailSlash(dir);
+  const stdout = await (0, import_swiss_ak8.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
+  const lines = intoLines(stdout);
+  return lines;
 };
 var open = async (file) => {
   try {
-    await execute(`open ${file}`);
+    await execute(`open "${file}"`);
   } catch (err) {
   }
 };
 var isFileExist = async (file) => {
   try {
-    await execute(`[[ -f ${file} ]]`);
+    await execute(`[[ -f "${file}" ]]`);
     return true;
   } catch (e) {
     return false;
@@ -1216,7 +1169,7 @@ var isFileExist = async (file) => {
 };
 var isDirExist = async (file) => {
   try {
-    await execute(`[[ -d ${file} ]]`);
+    await execute(`[[ -d "${file}" ]]`);
     return true;
   } catch (e) {
     return false;
@@ -1237,12 +1190,18 @@ var forceLoadPathContents = async (path) => {
   try {
     const pathType = await getPathType(path);
     if (pathType === "d") {
-      const lists = await Promise.all([findDirs(path), findFiles(path)]);
-      const [dirs, files] = lists.map((list) => (0, import_swiss_ak10.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
+      const lists = await Promise.all([
+        findDirs(path),
+        findFiles(path)
+      ]);
+      const [dirs, files] = lists.map((list) => (0, import_swiss_ak9.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
       contents = { ...contents, dirs, files };
     }
     if (pathType === "f") {
-      const [stat2, probe] = await Promise.all([(0, import_swiss_ak10.tryOr)(void 0, () => fsP2.stat(path)), (0, import_swiss_ak10.tryOr)(void 0, () => getProbe(path))]);
+      const [stat2, probe] = await Promise.all([
+        (0, import_swiss_ak9.tryOr)(void 0, () => fsP2.stat(path)),
+        (0, import_swiss_ak9.tryOr)(void 0, () => getProbe(path))
+      ]);
       contents = { ...contents, info: { stat: stat2, probe } };
     }
   } catch (err) {
@@ -1256,7 +1215,7 @@ var getPathType = async (path) => {
 };
 var join = (...items) => {
   const result = items.join("/");
-  return PathUtils_exports.removeDoubleSlashes(result || "/");
+  return removeDoubleSlashes(result || "/");
 };
 var keyActionDict = {
   move: {
@@ -1305,10 +1264,10 @@ var getFileIcon = (ext) => {
   const category = getFileCategory(ext);
   const dispExt = ext.length % 2 === 0 ? ext : "." + ext;
   if (category === "image") {
-    return out.left(
+    return left(
       `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551  ${import_chalk8.default.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${import_chalk8.default.whiteBright("\u2600")}  \u2551
-\u2551 ${import_chalk8.default.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${import_chalk8.default.whiteBright("\u2600")}\u2551
+\u2551  ${import_chalk7.default.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${import_chalk7.default.whiteBright("\u2600")}  \u2551
+\u2551 ${import_chalk7.default.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${import_chalk7.default.whiteBright("\u2600")}\u2551
 \u255F\u2500\u2500\u2524\u25AB\u25AA\u2502\u25AB\u25AB\u25AB\u25AB\u251C\u2500\u2500\u2500\u2562
 \u2551\u25AA\u25AB\u2502\u25AB\u25AB\u2502\u25AA\u25AB\u25AB\u25AB\u2502\u25AB\u25AA\u25AB\u2551
 \u255A\u2550\u2550\u2567\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u255D`,
@@ -1316,17 +1275,17 @@ var getFileIcon = (ext) => {
     );
   }
   if (category === "video") {
-    return out.left(
+    return left(
       `\u250F\u2531\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2532\u2513
 \u2523\u252B\u256D\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256E\u2523\u252B
-\u2523\u252B\u2502${out.center(out.limitToLength(dispExt.toUpperCase(), 8), 8)}\u2502\u2523\u252B
+\u2523\u252B\u2502${center(limitToLength(dispExt.toUpperCase(), 8), 8)}\u2502\u2523\u252B
 \u2523\u252B\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256F\u2523\u252B
 \u2517\u2539\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253A\u251B`,
       14
     );
   }
   if (category === "audio") {
-    return out.left(
+    return left(
       `\u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
 \u2502   .\u2219\xAF\xAF\xAF\xAF\u2219.   \u2502
 \u2502  /        \\  \u2502
@@ -1337,10 +1296,10 @@ var getFileIcon = (ext) => {
       16
     );
   }
-  return out.left(
+  return left(
     `,\u254C\u254C\u254C\u254C\u254C.
 \u254E       \u27CD
-\u254E${out.center(out.limitToLengthStart(dispExt, 8), 8)}\u254E
+\u254E${center(limitToLengthStart(dispExt, 8), 8)}\u254E
 \u254E        \u254E
 \u254E        \u254E
 \u02F8\u254C\u254C\u254C\u254C\u254C\u254C\u254C\u254C\u02F8`,
@@ -1349,24 +1308,24 @@ var getFileIcon = (ext) => {
 };
 var humanFileSize = (size) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return import_swiss_ak10.fn.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
+  return import_swiss_ak9.MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
   const { filename, ext } = explodePath(path);
   const { stat: stat2, probe } = ((_a = getPathContents(path)) == null ? void 0 : _a.info) || {};
   const result = [];
-  result.push(out.center(getFileIcon(ext), panelWidth));
+  result.push(center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
-  result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(import_chalk8.default.dim(`${ext.toUpperCase()} ${category ? `${import_swiss_ak10.fn.capitalise(category)} ` : ""}File`), panelWidth));
-  result.push(out.center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
+  result.push(center(wrap(filename, panelWidth), panelWidth));
+  result.push(center(import_chalk7.default.dim(`${ext.toUpperCase()} ${category ? `${import_swiss_ak9.StringTools.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
-    result.push(out.split(`${import_chalk8.default.bold.dim(title)}`, `${value}${extra ? import_chalk8.default.dim(` (${import_chalk8.default.dim(extra)})`) : ""}`, panelWidth));
+    result.push(split(`${import_chalk7.default.bold.dim(title)}`, `${value}${extra ? import_chalk7.default.dim(` (${import_chalk7.default.dim(extra)})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
-    addItem(title, `${import_swiss_ak10.TimeUtils.toReadableDuration(now - time2, false, 2)}${append || ""}`);
+    addItem(title, `${import_swiss_ak9.TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
   };
   if (stat2) {
     addItem(`Size`, `${humanFileSize(stat2.size)}`);
@@ -1377,27 +1336,27 @@ var getFilePanel = (path, panelWidth, maxLines) => {
     if (["image", "video"].includes(category))
       addItem(`Dimensions`, `${probe.width}\xD7${probe.height}`);
     if (["video", "audio"].includes(category))
-      addItem(`Duration`, import_swiss_ak10.TimeUtils.toReadableDuration((0, import_swiss_ak10.seconds)(probe.duration), false, 2));
+      addItem(`Duration`, import_swiss_ak9.TimeTools.toReadableDuration((0, import_swiss_ak9.seconds)(probe.duration), false, 2));
     if (["video"].includes(category))
       addItem(`FPS`, `${probe.framerate}`);
   }
-  const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
-  return import_chalk8.default.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
+  const resultStr = left(wrap(result.join("\n"), panelWidth), panelWidth);
+  return import_chalk7.default.white(utils.joinLines(utils.getLines(resultStr).slice(0, maxLines)));
 };
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
-  const primaryWrapFn = import_chalk8.default.yellowBright;
-  const cursorWrapFn = import_chalk8.default.bgYellow.black;
-  const ancestralCursorWrapFn = import_chalk8.default.bgGray.black;
-  const selectedIconWrapFn = import_chalk8.default.greenBright;
-  const selectedWrapFn = import_chalk8.default.greenBright;
-  const cursorOnSelectedWrapFn = import_chalk8.default.bgGreenBright.black;
+  const primaryWrapFn = import_chalk7.default.yellowBright;
+  const cursorWrapFn = import_chalk7.default.bgYellow.black;
+  const ancestralCursorWrapFn = import_chalk7.default.bgGray.black;
+  const selectedIconWrapFn = import_chalk7.default.greenBright;
+  const selectedWrapFn = import_chalk7.default.greenBright;
+  const cursorOnSelectedWrapFn = import_chalk7.default.bgGreenBright.black;
   const minWidth = 25;
   const maxWidth = 25;
   const maxItems = 15;
-  const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
+  const maxColumns = Math.floor(utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak10.getDeferred)();
+  const deferred = (0, import_swiss_ak9.getDeferred)();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
@@ -1418,11 +1377,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   };
   const loadEssentials = async (executeFn = loadPathContents) => {
     await Promise.all([
-      import_swiss_ak10.PromiseUtils.each(paths, executeFn),
+      import_swiss_ak9.PromiseTools.each(paths, executeFn),
       (async () => {
         const { dirs } = await executeFn(currentPath);
         const list = dirs;
-        return import_swiss_ak10.PromiseUtils.each(
+        return import_swiss_ak9.PromiseTools.each(
           list.map((dir) => join(currentPath, dir)),
           executeFn
         );
@@ -1431,7 +1390,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const parent = explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
-        return import_swiss_ak10.PromiseUtils.each(
+        return import_swiss_ak9.PromiseTools.each(
           list.map((dir) => join(parent, dir)),
           executeFn
         );
@@ -1461,7 +1420,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     display();
     if (!key)
       return;
-    await (0, import_swiss_ak10.wait)((0, import_swiss_ak10.milliseconds)(100));
+    await (0, import_swiss_ak9.wait)((0, import_swiss_ak9.milliseconds)(100));
     if (!loading3) {
       pressed = void 0;
       display();
@@ -1478,8 +1437,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const prefix = isSelected ? selectedPrefix : unselectedPrefix;
       const template = (text2) => `${prefix}${text2} ${symbol} `;
       const extraChars = (0, import_string_width3.default)(template(""));
-      const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-      let wrapFn = import_swiss_ak10.fn.noact;
+      const stretched = template(left(truncate(name, width - extraChars, "\u2026"), width - extraChars));
+      let wrapFn = import_swiss_ak9.fn.noact;
       if (isHighlighted) {
         if (isActiveColumn) {
           wrapFn = isSelected ? cursorOnSelectedWrapFn : cursorWrapFn;
@@ -1495,7 +1454,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       single: {
         d: {
           dir: formatter("\u203A", chlk.gray5),
-          file: formatter(" ", import_chalk8.default.dim)
+          file: formatter(" ", import_chalk7.default.dim)
         },
         f: {
           dir: formatter("\u203A", chlk.gray3),
@@ -1508,16 +1467,16 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       },
       multi: {
         d: {
-          dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak10.symbols.RADIO_FULL)} `, ` ${import_swiss_ak10.symbols.RADIO_EMPTY} `),
-          file: formatter(" ", import_chalk8.default.dim, "   ", "   ")
+          dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak9.symbols.RADIO_FULL)} `, ` ${import_swiss_ak9.symbols.RADIO_EMPTY} `),
+          file: formatter(" ", import_chalk7.default.dim, "   ", "   ")
         },
         f: {
           dir: formatter("\u203A", chlk.gray3, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak10.symbols.RADIO_FULL)} `, ` ${import_swiss_ak10.symbols.RADIO_EMPTY} `)
+          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak9.symbols.RADIO_FULL)} `, ` ${import_swiss_ak9.symbols.RADIO_EMPTY} `)
         },
         df: {
           dir: formatter("\u203A", chlk.gray5, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak10.symbols.RADIO_FULL)} `, ` ${import_swiss_ak10.symbols.RADIO_EMPTY} `)
+          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(import_swiss_ak9.symbols.RADIO_FULL)} `, ` ${import_swiss_ak9.symbols.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
@@ -1543,38 +1502,38 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
         const fullWidth = (0, import_string_width3.default)(formatDir(width, "", false, "")(""));
         if (isScrollUp)
-          slicedLines[0] = import_chalk8.default.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
+          slicedLines[0] = import_chalk7.default.dim(center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
         if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = import_chalk8.default.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
-        return out.utils.joinLines(slicedLines);
+          slicedLines[slicedLines.length - 1] = import_chalk7.default.dim(center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
+        return utils.joinLines(slicedLines);
       }
-      return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
+      return utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
     });
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak10.ArrayUtils.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
-    const termWidth = out.utils.getTerminalWidth();
-    const tableLines = table.getLines([columns], void 0, {
+    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak9.ArrayTools.repeat(maxColumns, utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const termWidth = utils.getTerminalWidth();
+    const tableLines = getLines2([columns], void 0, {
       wrapLinesFn: chlk.gray1,
       drawOuter: true,
       cellPadding: 0,
       truncate: "",
       maxWidth: Infinity
     });
-    const tableOut = out.center(out.limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
+    const tableOut = center(limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
     const tableWidth = (0, import_string_width3.default)(tableLines[Math.floor(tableLines.length / 2)]);
     const infoLine = (() => {
       if (loading3) {
-        return import_chalk8.default.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
+        return import_chalk7.default.dim(center("=".repeat(20) + " Loading... " + "=".repeat(20)));
       }
-      const count = isMulti ? import_chalk8.default.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
-      const curr = out.limitToLengthStart(
-        `${currentPath} ${import_chalk8.default.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
+      const count = isMulti ? import_chalk7.default.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
+      const curr = limitToLengthStart(
+        `${currentPath} ${import_chalk7.default.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
         tableWidth - ((0, import_string_width3.default)(count) + 3)
       );
-      const split2 = out.split(curr, count, tableWidth - 2);
-      return out.center(split2, termWidth);
+      const split2 = split(curr, count, tableWidth - 2);
+      return center(split2, termWidth);
     })();
     const actionBar = getFEActionBar(isMulti, pressed);
     lc.clear();
@@ -1633,7 +1592,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       locked = false;
       if (pressed === "r")
         setPressed(void 0);
-      await import_swiss_ak10.PromiseUtils.eachLimit(32, Array.from(restKeys), async () => {
+      await import_swiss_ak9.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
         return forceLoadPathContents;
@@ -1671,10 +1630,10 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         () => {
           const info2 = chlk.gray3("Enter nothing to cancel");
           const info1Prefix = chlk.gray3("  Adding folder to ");
-          const maxValWidth = out.utils.getTerminalWidth() - ((0, import_string_width3.default)(info1Prefix) + (0, import_string_width3.default)(info2));
-          const info1Value = chlk.gray4(out.truncateStart(PathUtils_exports.trailSlash(basePath), maxValWidth));
+          const maxValWidth = utils.getTerminalWidth() - ((0, import_string_width3.default)(info1Prefix) + (0, import_string_width3.default)(info2));
+          const info1Value = chlk.gray4(truncateStart(trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
-          lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
+          lc.log(split(info1, info2, utils.getTerminalWidth() - 2));
         },
         () => lc.wrap(1, () => text(`What do you want to ${primaryWrapFn("name")} the new folder?`, "")),
         async (newFolderName) => {
@@ -1703,7 +1662,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(chlk.gray3("  Saving file to ") + chlk.gray4(out.truncateStart(PathUtils_exports.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          lc.log(chlk.gray3("  Saving file to ") + chlk.gray4(truncateStart(trailSlash(basePath), utils.getTerminalWidth() - 20)));
         },
         () => lc.wrap(1, () => text(`What do you want to ${primaryWrapFn("name")} the file?`, initial)),
         () => true
@@ -1741,10 +1700,12 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         return userActions.moveVertical(-1);
       case "down":
         return userActions.moveVertical(1);
-      case "right":
-        return userActions.moveRight();
       case "left":
         return userActions.moveLeft();
+    }
+    switch (key) {
+      case "right":
+        return userActions.moveRight();
       case "r":
         return userActions.refresh();
       case "f":
@@ -1771,16 +1732,16 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/section.ts
-var import_swiss_ak11 = require("swiss-ak");
-var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2) => {
+var import_swiss_ak10 = require("swiss-ak");
+var separator = (version = "down", spacing = 8, offset = 0, width = utils.getTerminalWidth() - 2) => {
   const lineChar = "\u2504";
   const chars = {
     down: "\u25BF",
     none: "\u25E6",
     up: "\u25B5"
   };
-  const line = import_swiss_ak11.ArrayUtils.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(chlk.gray1(out.center(line, void 0, lineChar)));
+  const line = import_swiss_ak10.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  console.log(chlk.gray1(center(line, void 0, lineChar)));
   return 1;
 };
 var section = async (question, sectionFn, ...questionFns) => {
@@ -1817,11 +1778,11 @@ var section = async (question, sectionFn, ...questionFns) => {
 };
 
 // src/tools/ask/datetime.ts
-var import_chalk11 = __toESM(require("chalk"), 1);
-var import_swiss_ak16 = require("swiss-ak");
+var import_chalk10 = __toESM(require("chalk"), 1);
+var import_swiss_ak15 = require("swiss-ak");
 
 // src/utils/dynDates.ts
-var import_swiss_ak12 = require("swiss-ak");
+var import_swiss_ak11 = require("swiss-ak");
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -1833,10 +1794,10 @@ var dateToDynTime = (date2) => {
   const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
   return [dateObj.getHours(), dateObj.getMinutes()];
 };
-var sortDynDates = (dates) => (0, import_swiss_ak12.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
+var sortDynDates = (dates) => (0, import_swiss_ak11.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
 var isSameMonth = (aDate, bDate) => aDate[0] === bDate[0] && aDate[1] === bDate[1];
 var isEqualDynDate = (aDate, bDate) => isSameMonth(aDate, bDate) && aDate[2] === bDate[2];
-var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak12.DAY) + 3) % 7;
+var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak11.DAY) + 3) % 7;
 var getDaysInMonth = (year, month, _dy) => {
   if (month !== 2)
     return [0, 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
@@ -1844,9 +1805,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = import_swiss_ak12.fn.clamp(notNaN(inMo), 1, 12);
+  const outMo = import_swiss_ak11.fn.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = import_swiss_ak12.fn.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = import_swiss_ak11.fn.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {
@@ -1855,7 +1816,7 @@ var addMonths = ([yr, mo, dy], add = 1) => {
 };
 var addDays = ([yr, mo, dy], add = 1) => {
   const date2 = dynDateToDate([yr, mo, dy]);
-  const newDate = date2.getTime() + (0, import_swiss_ak12.days)(add);
+  const newDate = date2.getTime() + (0, import_swiss_ak11.days)(add);
   return dateToDynDate(newDate);
 };
 var getIntermediaryDates = (aDate, bDate) => {
@@ -1874,8 +1835,8 @@ var getIntermediaryDates = (aDate, bDate) => {
 };
 
 // src/utils/numberInputter.ts
-var import_swiss_ak13 = require("swiss-ak");
-var getNumberInputter = (timeout = (0, import_swiss_ak13.seconds)(1.5)) => {
+var import_swiss_ak12 = require("swiss-ak");
+var getNumberInputter = (timeout = (0, import_swiss_ak12.seconds)(1.5)) => {
   let lastKeyTimecode = 0;
   let logged = [];
   const get = () => Number(logged.join(""));
@@ -1905,28 +1866,28 @@ var getNumberInputter = (timeout = (0, import_swiss_ak13.seconds)(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-var import_chalk10 = __toESM(require("chalk"), 1);
+var import_chalk9 = __toESM(require("chalk"), 1);
 var import_string_width4 = __toESM(require("string-width"), 1);
-var import_swiss_ak14 = require("swiss-ak");
+var import_swiss_ak13 = require("swiss-ak");
 
 // src/tools/ask/datetime/styles.ts
-var import_chalk9 = __toESM(require("chalk"), 1);
+var import_chalk8 = __toESM(require("chalk"), 1);
 var sectionStyles = {
   sectActive: {
     dark: chlk.gray1,
     mid: chlk.gray3,
-    normal: import_chalk9.default.white,
-    tertiary: import_chalk9.default.yellowBright,
-    secondary: import_chalk9.default.bgWhite.black,
-    primary: import_chalk9.default.bgYellow.black
+    normal: import_chalk8.default.white,
+    tertiary: import_chalk8.default.yellowBright,
+    secondary: import_chalk8.default.bgWhite.black,
+    primary: import_chalk8.default.bgYellow.black
   },
   sectInactive: {
     dark: chlk.gray1,
     mid: chlk.gray2,
     normal: chlk.gray3,
-    tertiary: import_chalk9.default.yellow,
-    secondary: import_chalk9.default.bgGray.black,
-    primary: import_chalk9.default.bgWhite.black
+    tertiary: import_chalk8.default.yellow,
+    secondary: import_chalk8.default.bgGray.black,
+    primary: import_chalk8.default.bgWhite.black
   }
 };
 var getStyles = (active) => active ? sectionStyles.sectActive : sectionStyles.sectInactive;
@@ -1939,11 +1900,11 @@ var getMonthCells = (year, month, _dy) => {
   const startWeekDay = getWeekday([year, month, 1]);
   const thisMonthMax = getDaysInMonth(year, month);
   const prevMonthMax = getDaysInMonth(...addMonths([year, month, 1], -1));
-  const thisMonth = (0, import_swiss_ak14.range)(thisMonthMax, 1, 1);
-  const prevMonth = (0, import_swiss_ak14.range)(prevMonthMax, -1, -1);
-  const nextMonth = (0, import_swiss_ak14.range)(28, -1, -1);
+  const thisMonth = (0, import_swiss_ak13.range)(thisMonthMax, 1, 1);
+  const prevMonth = (0, import_swiss_ak13.range)(prevMonthMax, -1, -1);
+  const nextMonth = (0, import_swiss_ak13.range)(28, -1, -1);
   const allCells = [...startWeekDay ? prevMonth.slice(-startWeekDay) : [], ...thisMonth, ...nextMonth];
-  const byRow = (0, import_swiss_ak14.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
+  const byRow = (0, import_swiss_ak13.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
   return byRow;
 };
 var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy) => {
@@ -1952,28 +1913,28 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const monthCells = getMonthCells(year, month);
   const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
-  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(styles.mid, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(styles.normal, void 0, void 0, true)];
+  const formatNonMonth = nonMonthCoors.map(([x, y]) => utils2.getFormat(styles.mid, y, x));
+  const formatDim = [...formatNonMonth, utils2.getFormat(styles.normal, void 0, void 0, true)];
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => import_chalk10.default.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => utils2.getFormat((s) => import_chalk9.default.reset(styles.primary(s)), y, x)));
   }
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => import_chalk10.default.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(utils2.getFormat((s) => import_chalk9.default.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
     }
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
     const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
-    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(styles.tertiary, y, x));
+    const formatInter = interCoors.map(([x, y]) => utils2.getFormat(styles.tertiary, y, x));
     formatCursor.push(...formatInter);
   }
   const body = monthCells.map((row) => row.map((val) => ` ${(Math.abs(val) + "").padStart(2)} `)).map((row) => row.slice(...slice));
   const headers = [daysOfWeek.slice(...slice)];
-  const lines = table.getLines(body, headers, {
+  const lines = getLines2(body, headers, {
     drawOuter: false,
     drawColLines: false,
     drawRowLines: false,
@@ -1989,10 +1950,10 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const getTitle = (text2, prefix, suffix) => {
     const resPrefix = active ? styles.dark(prefix) : "";
     const resSuffix = active ? styles.dark(suffix) : "";
-    const resText = out.center(styles.normal(text2), monthWidth - ((0, import_string_width4.default)(resPrefix) + (0, import_string_width4.default)(resSuffix)));
+    const resText = center(styles.normal(text2), monthWidth - ((0, import_string_width4.default)(resPrefix) + (0, import_string_width4.default)(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
-  const titleYear = active ? getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ") : out.center(styles.dark(dispYear), monthWidth);
+  const titleYear = active ? getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ") : center(styles.dark(dispYear), monthWidth);
   const titleMonth = getTitle(dispMonth, "  \u25C0 A", "D \u25B6  ");
   return {
     table: [titleYear, titleMonth, ...lines],
@@ -2025,11 +1986,11 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
     recalc(skipDisplay);
   };
   const display = () => {
-    const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
+    const sliceAmount = getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
     tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], ...cursors[selected]);
     tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], ...prevMonth);
     tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], ...nextMonth);
-    displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
+    displayCb(concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
   };
   const userActions = {
     setDate: (date2) => setCursor([cursors[selected][0], cursors[selected][1], date2]),
@@ -2094,12 +2055,12 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
 };
 
 // src/tools/ask/datetime/time.ts
-var import_swiss_ak15 = require("swiss-ak");
+var import_swiss_ak14 = require("swiss-ak");
 var getSingleTimeDial = (value, sectionActive, dialActive, max, label) => {
   const wrappers = getStyles(sectionActive);
   const wrapFns = [wrappers.mid, wrappers.normal, dialActive ? wrappers.primary : wrappers.secondary];
   const showExtra = wrapFns.length - 1;
-  const dialNums = (0, import_swiss_ak15.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
+  const dialNums = (0, import_swiss_ak14.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
   const dial = rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
   const lines = centerLines([wrappers.normal(label), wrappers.dark("\u25E2\u25E3"), ...dial, wrappers.dark("\u25E5\u25E4")], 4);
   return lines;
@@ -2113,7 +2074,7 @@ var timeHandler = (isActive, initial, displayCb) => {
   let active = isActive;
   const display = () => {
     const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i]));
-    const lines = out.concatLineGroups(...dials);
+    const lines = concatLineGroups(...dials);
     const padded = centerLines(lines);
     displayCb(padded);
   };
@@ -2159,7 +2120,7 @@ var timeHandler = (isActive, initial, displayCb) => {
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = (0, import_swiss_ak16.getTimer)("DEBUG", false, import_chalk11.default.red, import_chalk11.default);
+var DEBUG_TIMER = (0, import_swiss_ak15.getTimer)("DEBUG", false, import_chalk10.default.red, import_chalk10.default);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2220,7 +2181,7 @@ var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange) => {
 };
 var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime()) => {
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak16.getDeferred)();
+  const deferred = (0, import_swiss_ak15.getDeferred)();
   const isSwitchable = isDateOn && isTimeOn;
   let activeHandler = isDateOn ? "date" : "time";
   const displayCache = { date: [], time: [] };
@@ -2236,7 +2197,7 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
     if (time2.length)
       sections.push(date2.length ? centerLines(["", "", ...time2]) : time2);
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
-    const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
+    const outMain = center(utils.joinLines(sections.length ? concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
     const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler);
     lc.clear();
     lc.wrap(1, () => imitate(false, questionText, outState));
@@ -2333,18 +2294,18 @@ var dateRange = async (questionText, initialStart, initialEnd) => {
 };
 
 // src/tools/ask/table.ts
-var table_exports = {};
-__export(table_exports, {
+var table_exports2 = {};
+__export(table_exports2, {
   multiselect: () => multiselect,
   select: () => select
 });
-var import_swiss_ak17 = require("swiss-ak");
-var import_chalk12 = __toESM(require("chalk"), 1);
-var highlightFn = import_chalk12.default.cyan.underline;
+var import_swiss_ak16 = require("swiss-ak");
+var import_chalk11 = __toESM(require("chalk"), 1);
+var highlightFn = import_chalk11.default.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak17.getDeferred)();
+  const deferred = (0, import_swiss_ak16.getDeferred)();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
   lc.add(imitate(false, questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`));
@@ -2366,25 +2327,25 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       header = headers;
     } else {
       const isHeaderObj = headers && !(headers instanceof Array);
-      const objTable = table.utils.objectsToTable(items, isHeaderObj ? headers : void 0);
+      const objTable = utils2.objectsToTable(items, isHeaderObj ? headers : void 0);
       body = objTable.body;
       header = isHeaderObj ? objTable.header : headers;
     }
     const finalBody = body.map((row, index) => {
       let firstCell;
       if (isMulti) {
-        const selectedSym = import_swiss_ak17.symbols.RADIO_FULL;
-        const unselectedSym = import_swiss_ak17.symbols.RADIO_EMPTY;
-        firstCell = selectedIndexes.includes(index) ? import_chalk12.default.reset(import_chalk12.default.green(selectedSym)) : import_chalk12.default.reset(unselectedSym);
+        const selectedSym = import_swiss_ak16.symbols.RADIO_FULL;
+        const unselectedSym = import_swiss_ak16.symbols.RADIO_EMPTY;
+        firstCell = selectedIndexes.includes(index) ? import_chalk11.default.reset(import_chalk11.default.green(selectedSym)) : import_chalk11.default.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? import_chalk12.default.reset(import_chalk12.default.cyan(import_swiss_ak17.symbols.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? import_chalk11.default.reset(import_chalk11.default.cyan(import_swiss_ak16.symbols.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
     const finalHeaders = header.length ? header.map((row) => ["", ...row]) : [];
     lastDrawnRows = finalBody;
     lc.clearToCheckpoint("AFTER_Q");
-    lc.add(table.print(finalBody, finalHeaders, tableOpts));
+    lc.add(print(finalBody, finalHeaders, tableOpts));
     lc.checkpoint("AFTER_TABLE");
   };
   drawTable();
@@ -2404,7 +2365,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   };
   const submit = () => {
     kl.stop();
-    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak17.fn.isTruthy);
+    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak16.fn.isTruthy);
     lc.clear();
     imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
     deferred.resolve(results);
@@ -2431,7 +2392,7 @@ var select = async (question, items, initial, rows, headers, tableOptions) => {
 var multiselect = (question, items, initial, rows, headers, tableOptions) => askTableHandler(true, question, items, initial, rows, headers, tableOptions);
 
 // src/tools/ask.ts
-var PROMPT_VALUE_PROPERTY = "SWISS_ZX_PROMPT_VALUE";
+var PROMPT_VALUE_PROPERTY = "SWISS_NODE_PROMPT_VALUE";
 var promptsOptions = {
   onCancel() {
     process.exit(0);
@@ -2586,19 +2547,19 @@ var crud = async (question, itemName = "item", items, options = {}) => {
     canDeleteAll: true,
     ...options
   };
-  const opts = [{ title: import_chalk13.default.dim(`${clr.approve(import_swiss_ak18.symbols.TICK)} [ Finished ]`), value: "none" }];
+  const opts = [{ title: import_chalk12.default.dim(`${clr.approve(import_swiss_ak17.symbols.TICK)} [ Finished ]`), value: "none" }];
   if (fullOptions.canCreate) {
-    opts.push({ title: `${clr.create(import_swiss_ak18.symbols.PLUS)} Add another ${itemName}`, value: "create" });
+    opts.push({ title: `${clr.create(import_swiss_ak17.symbols.PLUS)} Add another ${itemName}`, value: "create" });
   }
   if (items.length > 0) {
     if (fullOptions.canUpdate) {
-      opts.push({ title: `${clr.update(import_swiss_ak18.symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
+      opts.push({ title: `${clr.update(import_swiss_ak17.symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
     }
     if (fullOptions.canDelete) {
-      opts.push({ title: `${clr.delete(import_swiss_ak18.symbols.CROSS)} Remove ${itemName}`, value: "delete" });
+      opts.push({ title: `${clr.delete(import_swiss_ak17.symbols.CROSS)} Remove ${itemName}`, value: "delete" });
     }
     if (fullOptions.canDeleteAll) {
-      opts.push({ title: `${clr.deleteAll(import_swiss_ak18.symbols.TIMES)} Remove all`, value: "delete-all" });
+      opts.push({ title: `${clr.deleteAll(import_swiss_ak17.symbols.TIMES)} Remove all`, value: "delete-all" });
     }
   }
   return await select2(question, opts, "none");
@@ -2612,13 +2573,13 @@ var validate = async (askFunc, validateFn) => {
     } else {
       const message = validateResponse || "";
       moveUp(1 + extraLines);
-      console.log(import_chalk13.default.red(message));
+      console.log(import_chalk12.default.red(message));
       return runLoop(input, message.split("\n").length);
     }
   };
   return runLoop();
 };
-var imitateHighlight = import_chalk13.default.cyanBright.bold.underline;
+var imitateHighlight = import_chalk12.default.cyanBright.bold.underline;
 var getImitateResultText = (result, isChild = false) => {
   if (result instanceof Array) {
     if (result.length > 3)
@@ -2648,12 +2609,12 @@ var getImitateResultText = (result, isChild = false) => {
 var imitate = (done, question, result) => {
   const message = typeof question === "string" ? question : question.get();
   const resultText = getImitateResultText(result);
-  const prefix = done ? import_chalk13.default.green("\u2714") : import_chalk13.default.cyan("?");
-  const questionText = import_chalk13.default.whiteBright.bold(message);
-  const joiner = resultText ? import_chalk13.default.gray(done ? "\u2026 " : "\u203A ") : "";
+  const prefix = done ? import_chalk12.default.green("\u2714") : import_chalk12.default.cyan("?");
+  const questionText = import_chalk12.default.whiteBright.bold(message);
+  const joiner = resultText ? import_chalk12.default.gray(done ? "\u2026 " : "\u203A ") : "";
   const mainLength = (0, import_string_width5.default)(`${prefix} ${questionText} ${joiner}`);
-  const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
-  let resultWrapper = hasColor(resultText) ? import_swiss_ak18.fn.noact : done ? import_chalk13.default.white : import_chalk13.default.gray;
+  const maxLength = utils.getTerminalWidth() - mainLength - 1;
+  let resultWrapper = utils.hasColor(resultText) ? import_swiss_ak17.fn.noact : done ? import_chalk12.default.white : import_chalk12.default.gray;
   const resultOut = resultText ? truncate(`${resultWrapper(resultText)}`, maxLength) : "";
   console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
   return 1;
@@ -2669,7 +2630,7 @@ var loading2 = (question) => loading((s) => imitate(false, question, `[${s}]`));
 var pause = async (text2 = "Press enter to continue...") => {
   return new Promise((resolve) => {
     const message = typeof text2 === "string" ? text2 : text2.get();
-    console.log(import_chalk13.default.gray(message));
+    console.log(import_chalk12.default.gray(message));
     const finish = () => {
       kl.stop();
       resolve();
@@ -2689,8 +2650,8 @@ var countdown = async (totalSeconds, template = (s) => `Starting in ${s}s...`, c
     const textValue = template(s);
     moveUp(lines);
     lines = textValue.split("\n").length;
-    console.log(import_chalk13.default.blackBright(textValue));
-    await (0, import_swiss_ak18.wait)((0, import_swiss_ak18.seconds)(1));
+    console.log(import_chalk12.default.blackBright(textValue));
+    await (0, import_swiss_ak17.wait)((0, import_swiss_ak17.seconds)(1));
   }
   moveUp(lines);
   if (complete) {
@@ -2720,17 +2681,54 @@ var wizard = (startObj = {}) => {
 var itemsToPromptObjects = (items, titles = [], titleFn) => {
   return items.map((item, index, arr) => ({ title: titleFn && titleFn(item, index, arr) || titles[index] || item + "", value: item }));
 };
-var utils = {
+var utils3 = {
   itemsToPromptObjects
 };
 
-// src/tools/progressBar.ts
+// src/tools/out/breadcrumb.ts
+var import_chalk13 = __toESM(require("chalk"), 1);
+var import_swiss_ak18 = require("swiss-ak");
+var seperatorChar = ` ${chlk.gray2(import_swiss_ak18.symbols.CHEV_RGT)} `;
+var getBreadcrumb = (...baseNames) => {
+  let current = [];
+  let colours = ["t1", "t2", "t3", "t4", "t5", "t6"];
+  const setColours = (newColours) => {
+    colours = newColours;
+  };
+  const add = (...names) => current.push(...names);
+  const getColouredName = (name, index, arr) => utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
+  const getColouredNames = (...tempNames) => getNames(...tempNames).map(getColouredName);
+  const getNames = (...tempNames) => [...baseNames, ...current, ...tempNames];
+  const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
+  const otherChars = "?  > ";
+  const spaceForInput = 25;
+  const get = (...tempNames) => import_chalk13.default.bold(
+    truncate(
+      getColouredNames(...tempNames).join(seperatorChar).trim(),
+      utils.getTerminalWidth() - (otherChars.length - spaceForInput)
+    )
+  );
+  const result = (...tempNames) => sub(...tempNames);
+  result.setColours = setColours;
+  result.add = add;
+  result.getNames = getNames;
+  result.sub = sub;
+  result.get = get;
+  result.toString = get;
+  return result;
+};
+
+// src/tools/progressBarTools.ts
+var progressBarTools_exports = {};
+__export(progressBarTools_exports, {
+  getColouredProgressBarOpts: () => getColouredProgressBarOpts
+});
 var import_chalk14 = __toESM(require("chalk"), 1);
 var import_swiss_ak19 = require("swiss-ak");
 var getColouredProgressBarOpts = (opts, randomise = false) => {
   let wrapperFns = [import_chalk14.default.yellowBright, import_chalk14.default.magenta, import_chalk14.default.blueBright, import_chalk14.default.cyanBright, import_chalk14.default.greenBright, import_chalk14.default.redBright];
   if (randomise) {
-    wrapperFns = import_swiss_ak19.ArrayUtils.randomise(wrapperFns);
+    wrapperFns = import_swiss_ak19.ArrayTools.randomise(wrapperFns);
   }
   let index = 0;
   return (prefix = "", override = {}, resetColours = false) => {
@@ -2751,9 +2749,6 @@ var getColouredProgressBarOpts = (opts, randomise = false) => {
     }
     return result;
   };
-};
-var progressBarUtils = {
-  getColouredProgressBarOpts
 };
 
 // src/tools/log.ts
@@ -2831,7 +2826,7 @@ var formatLog = (args, config, completeOptions, longestName = 1) => {
   const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
   const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
-  const nameStr = ` ${out.center(`${name}`, longestName)} `;
+  const nameStr = ` ${center(`${name}`, longestName)} `;
   const prefixRaw = `${dateStr}${nameStr} `;
   const prefix = `${dateWrapper(dateStr)}${nameWrapper(nameStr)} `;
   return args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixRaw.length) : prefix) + contentWrapper(line)).join("\n");
@@ -2840,7 +2835,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return import_swiss_ak20.ObjectUtils.mapValues(allConfigs, (key, config) => {
+  return import_swiss_ak20.ObjectTools.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -2849,17 +2844,16 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   });
 };
 var log = createLogger({});
+
+// src/tools/waiters.ts
+var nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  LogUtils,
-  PathUtils,
-  align,
+  LogTools,
+  PathTools,
   ask,
-  center,
-  centerLines,
   chlk,
   clr,
-  concatLineGroups,
   createLogger,
   explodePath,
   getBreadcrumb,
@@ -2867,26 +2861,10 @@ var log = createLogger({});
   getLineCounter,
   getLog,
   getLogStr,
-  getResponsiveValue,
-  hasColor,
-  justify,
-  justifyLines,
-  left,
-  leftLines,
-  limitToLength,
-  limitToLengthStart,
-  loading,
   log,
-  moveUp,
+  nextTick,
   out,
-  pad,
   processLogContents,
-  progressBarUtils,
-  right,
-  rightLines,
-  split,
-  table,
-  truncate,
-  truncateStart,
-  wrap
+  progressBarTools,
+  table
 });

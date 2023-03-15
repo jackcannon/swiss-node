@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { fn } from 'swiss-ak';
-import { out } from '../tools/out';
-import { table, TableFormatConfig } from '../tools/table';
+import * as out from '../tools/out';
+import * as table from '../tools/table';
 
 type actionBarId = string;
 
@@ -25,7 +25,7 @@ export const getActionBar = (
     return ` [ ${keys} ] ${label} `;
   });
 
-  const format: TableFormatConfig[] = [];
+  const format: table.TableFormatConfig[] = [];
 
   if (pressedId) {
     format.push({ formatFn: chalk.bgWhite.black, col: keyList.indexOf(pressedId) });

@@ -1,120 +1,19 @@
-import { Partial, fn, ArrayUtils } from 'swiss-ak';
+import { Partial, fn, ArrayTools } from 'swiss-ak';
 import { getLineCounter } from './out/lineCounter';
-import { out, AlignType } from './out';
+import * as out from './out';
 import { processInput } from '../utils/processTableInput';
 import { getTableCharacters } from '../utils/tableCharacters';
 import { clr, Colour } from './clr';
 import chalk from 'chalk';
 
-const toFullFormatConfig = (config: Partial<TableFormatConfig>) =>
-  ({
-    isHeader: false,
-    isBody: true,
-    ...config
-  } as TableFormatConfigFull);
+//<!-- DOCS: 300 -->
+/**<!-- DOCS: ## -->
+ * table
+ *
+ * A simple table generator
+ */
 
-// TODO docs
-export interface TableFormatConfig {
-  formatFn: Function;
-  isHeader?: boolean;
-  isBody?: boolean;
-  row?: number;
-  col?: number;
-}
-interface TableFormatConfigFull extends TableFormatConfig {
-  isHeader: boolean;
-  isBody: boolean;
-}
-
-export interface FullTableOptions {
-  /**
-   * Function to wrap each line of the table in (e.g. chalk.blue)
-   */
-  wrapperFn: Function;
-
-  // todo docs
-  wrapLinesFn: Function;
-
-  /**
-   * Character to use instead of lines
-   */
-  overrideChar: string;
-
-  /**
-   * Character to use instead of horizontal lines
-   */
-  overrideHorChar: string;
-
-  /**
-   * Character to use instead of vertical lines
-   */
-  overrideVerChar: string;
-
-  /**
-   * Whether to draw the outer border of the table
-   */
-  drawOuter: boolean;
-
-  /**
-   * Whether to draw lines between rows (other than separating header and body)
-   */
-  drawRowLines: boolean;
-
-  /**
-   * Whether to draw lines between columns
-   */
-  drawColLines: boolean;
-
-  /**
-   * Preferred width (in number of characters) of each column
-   */
-  colWidths: number[];
-
-  /**
-   * How the table should be aligned on the screen
-   *
-   * left, right, center or justify
-   */
-  align: AlignType;
-
-  /**
-   * How each column should be aligned
-   *
-   * Array with alignment for each column: left, right, center or justify
-   */
-  alignCols: AlignType[];
-
-  /**
-   * Change rows into columns and vice versa
-   */
-  transpose: boolean;
-
-  /**
-   * Change rows into columns and vice versa (body only)
-   */
-  transposeBody: boolean;
-
-  /**
-   * How much spacing to leave around the outside of the table
-   * todo update docs for multiple margins
-   */
-  margin: number | number[];
-
-  // todo docs
-  cellPadding: number;
-
-  // TODO docs
-  format: TableFormatConfig[];
-
-  // TODO docs
-  // truncates line instead of wrapping
-  truncate: false | string;
-
-  // TODO docs
-  maxWidth: number;
-}
-
-export type TableOptions = Partial<FullTableOptions>;
+//<!-- DOCS: 300 -->
 
 const getFullOptions = (opts: TableOptions): FullTableOptions => ({
   overrideChar: '',
@@ -149,7 +48,92 @@ const getFullOptions = (opts: TableOptions): FullTableOptions => ({
 
 const empty = (numCols: number, char: string = '') => new Array(numCols).fill(char);
 
-const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
+/**<!-- DOCS: ### -->
+ * print
+ *
+ * - `table.print`
+ *
+ * Print a table
+ *
+ * ```typescript
+ * const header = [['Name', 'Age']];
+ * const body = [['John', '25'], ['Jane', '26']];
+ * table.print(body, header);
+ *
+ * // ┏━━━━━━┳━━━━━┓
+ * // ┃ Name ┃ Age ┃
+ * // ┡━━━━━━╇━━━━━┩
+ * // │ John │ 25  │
+ * // │ Jane │ 26  │
+ * // └──────┴─────┘
+ * ```
+ */
+export const print = (body: any[][], header?: any[][], options: TableOptions = {}): number => {
+  const lines = getLines(body, header, options);
+  if (lines.length) {
+    console.log(lines.join('\n'));
+  }
+  return lines.length;
+};
+
+const getAllKeys = (objects) => {
+  const allKeys = {};
+  objects.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      allKeys[key] = true;
+    });
+  });
+  return Object.keys(allKeys);
+};
+
+/**<!-- DOCS: ### -->
+ * printObjects
+ *
+ * - `table.printObjects`
+ *
+ * Print a table of given objects
+ *
+ * ```typescript
+ * const objs = [
+ *   // objs
+ *   { a: '1', b: '2', c: '3' },
+ *   { a: '0', c: '2' },
+ *   { b: '4' },
+ *   { a: '6' }
+ * ];
+ * const header = {
+ *   a: 'Col A',
+ *   b: 'Col B',
+ *   c: 'Col C'
+ * };
+ * table.printObjects(objs, header);
+ *
+ * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
+ * // ┃ Col A ┃ Col B ┃ Col C ┃
+ * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
+ * // │ 1     │ 2     │ 3     │
+ * // ├───────┼───────┼───────┤
+ * // │ 0     │       │ 2     │
+ * // ├───────┼───────┼───────┤
+ * // │       │ 4     │       │
+ * // ├───────┼───────┼───────┤
+ * // │ 6     │       │       │
+ * // └───────┴───────┴───────┘
+ * ```
+ */
+export const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
+  const { body, header } = objectsToTable(objects, headers);
+  return print(body, header, options);
+};
+
+/**<!-- DOCS: ### -->
+ * getLines
+ *
+ * - `table.getLines`
+ *
+ * Get the lines of a table (rather than printing it)
+ */
+export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
   // const lc = getLineCounter();
   const opts = getFullOptions(options);
   const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
@@ -164,7 +148,7 @@ const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): 
     colWidths
   } = processInput({ header, body }, opts);
 
-  const alignColumns = ArrayUtils.repeat(numCols, ...alignCols);
+  const alignColumns = ArrayTools.repeat(numCols, ...alignCols);
   const tableChars = getTableCharacters(opts);
 
   const printLine = (row = empty(numCols), chars = tableChars.bNor, textWrapperFn?: Function) => {
@@ -207,44 +191,206 @@ const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): 
   return result;
 };
 
-/**
- * table.print
+//<!-- DOCS: 390 -->
+export interface FullTableOptions {
+  /**<!-- DOCS: #### -->
+   * wrapperFn
+   *
+   * Function to wrap each line of the table in (e.g. chalk.blue)
+   */
+  wrapperFn: Function;
+
+  /**<!-- DOCS: #### -->
+   * wrapLinesFn
+   *
+   * Function to wrap the lines of the table (between the cells)
+   */
+  wrapLinesFn: Function;
+
+  /**<!-- DOCS: #### -->
+   * overrideChar
+   *
+   * Character to use instead of lines
+   */
+  overrideChar: string;
+
+  /**<!-- DOCS: #### -->
+   * overrideHorChar
+   *
+   * Character to use instead of horizontal lines
+   */
+  overrideHorChar: string;
+
+  /**<!-- DOCS: #### -->
+   * overrideVerChar
+   *
+   * Character to use instead of vertical lines
+   */
+  overrideVerChar: string;
+
+  /**<!-- DOCS: #### -->
+   * drawOuter
+   *
+   * Whether to draw the outer border of the table
+   */
+  drawOuter: boolean;
+
+  /**<!-- DOCS: #### -->
+   * drawRowLines
+   *
+   * Whether to draw lines between rows (other than separating header and body)
+   */
+  drawRowLines: boolean;
+
+  /**<!-- DOCS: #### -->
+   * drawColLines
+   *
+   * Whether to draw lines between columns
+   */
+  drawColLines: boolean;
+
+  /**<!-- DOCS: #### -->
+   * colWidths
+   *
+   * Preferred width (in number of characters) of each column
+   */
+  colWidths: number[];
+
+  /**<!-- DOCS: #### -->
+   * align
+   *
+   * How the table should be aligned on the screen
+   *
+   * left, right, center or justify
+   */
+  align: out.AlignType;
+
+  /**<!-- DOCS: #### -->
+   * alignCols
+   *
+   * How each column should be aligned
+   *
+   * Array with alignment for each column: left, right, center or justify
+   */
+  alignCols: out.AlignType[];
+
+  /**<!-- DOCS: #### -->
+   * transpose
+   *
+   * Change rows into columns and vice versa
+   */
+  transpose: boolean;
+
+  /**<!-- DOCS: #### -->
+   * transposeBody
+   *
+   * Change rows into columns and vice versa (body only)
+   */
+  transposeBody: boolean;
+
+  /**<!-- DOCS: #### -->
+   * margin
+   *
+   * The amount of space to leave around the outside of the table
+   */
+  margin: number | number[];
+
+  /**<!-- DOCS: #### -->
+   * cellPadding
+   *
+   * The amount of space to leave around the outside of each cell
+   */
+  cellPadding: number;
+
+  /**<!-- DOCS: #### -->
+   * format
+   *
+   * A set of formatting configurations
+   */
+  format: TableFormatConfig[];
+
+  /**<!-- DOCS: #### -->
+   * truncate
+   *
+   * Truncates (cuts the end off) line instead of wrapping
+   */
+  truncate: false | string;
+
+  /**<!-- DOCS: #### -->
+   * maxWidth
+   *
+   * Maximum width of the table
+   */
+  maxWidth: number;
+}
+
+/**<!-- DOCS: ### 380 -->
+ * TableOptions
  *
- * Print a table
- *
- * ```typescript
- * const header = [['Name', 'Age']];
- * const body = [['John', '25'], ['Jane', '26']];
- * table.print(body, header);
- *
- * // ┏━━━━━━┳━━━━━┓
- * // ┃ Name ┃ Age ┃
- * // ┡━━━━━━╇━━━━━┩
- * // │ John │ 25  │
- * // │ Jane │ 26  │
- * // └──────┴─────┘
- * ```
+ * The configuration options for the table
  */
-const print = (body: any[][], header?: any[][], options: TableOptions = {}): number => {
-  const lines = getLines(body, header, options);
-  if (lines.length) {
-    console.log(lines.join('\n'));
-  }
-  return lines.length;
-};
+export type TableOptions = Partial<FullTableOptions>;
 
-const getAllKeys = (objects) => {
-  const allKeys = {};
-  objects.forEach((obj) => {
-    Object.keys(obj).forEach((key) => {
-      allKeys[key] = true;
-    });
-  });
-  return Object.keys(allKeys);
-};
+const toFullFormatConfig = (config: Partial<TableFormatConfig>) =>
+  ({
+    isHeader: false,
+    isBody: true,
+    ...config
+  } as TableFormatConfigFull);
 
-/**
- * table.utils.objectsToTable
+/**<!-- DOCS: ### -->
+ * TableFormatConfig
+ *
+ * Configuration for formatting a cell
+ */
+export interface TableFormatConfig {
+  /**<!-- DOCS: #### -->
+   * formatFn
+   *
+   * A wrapper function to apply to the cell
+   */
+  formatFn: Function;
+
+  /**<!-- DOCS: #### -->
+   * isHeader
+   *
+   * Whether to apply the format to the header
+   */
+  isHeader?: boolean;
+
+  /**<!-- DOCS: #### -->
+   * isBody
+   *
+   * Whether to apply the format to the body
+   */
+  isBody?: boolean;
+
+  /**<!-- DOCS: #### -->
+   * row
+   *
+   * A specific row to apply the format to
+   */
+  row?: number;
+
+  /**<!-- DOCS: #### -->
+   * col
+   *
+   * A specific column to apply the format to
+   */
+  col?: number;
+}
+interface TableFormatConfigFull extends TableFormatConfig {
+  isHeader: boolean;
+  isBody: boolean;
+}
+
+/**<!-- DOCS: ### -->
+ * utils
+ */
+/**<!-- DOCS: #### -->
+ * objectsToTable
+ *
+ * - `table.utils.objectsToTable`
  *
  * Process an array of objects into a table format (string[][])
  */
@@ -260,17 +406,21 @@ const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[
   };
 };
 
-/**
- * table.utils.transpose
+/**<!-- DOCS: #### -->
+ * transpose
+ *
+ * - `table.utils.transpose`
  *
  * Change rows into columns and vice versa
  */
 const transpose = (rows: any[][]): any[][] => {
-  return ArrayUtils.zip(...rows);
+  return ArrayTools.zip(...rows);
 };
 
-/**
- * table.utils.concatRows
+/**<!-- DOCS: #### -->
+ * concatRows
+ *
+ * - `table.utils.concatRows`
  *
  * Concatenate header and body rows into one list of rows
  */
@@ -278,8 +428,13 @@ const concatRows = (cells: { header: any[][]; body: any[][] }): any[][] => {
   return [...(cells.header || []), ...cells.body] as any[][];
 };
 
-// TODO docs
-
+/**<!-- DOCS: #### -->
+ * getFormat
+ *
+ * - `table.utils.getFormat`
+ *
+ * A function for simplifying the format configuration
+ */
 const getFormat = (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
   const result: TableFormatConfig = {
     formatFn: typeof format === 'function' ? format : clr[format],
@@ -291,52 +446,9 @@ const getFormat = (format: Function | Colour, row?: number, col?: number, isHead
   return result;
 };
 
-/**
- * table.printObjects
- *
- * Print a table of given objects
- *
- * ```typescript
- * const objs = [
- *   // objs
- *   { a: '1', b: '2', c: '3' },
- *   { a: '0', c: '2' },
- *   { b: '4' },
- *   { a: '6' }
- * ];
- * const header = {
- *   a: 'Col A',
- *   b: 'Col B',
- *   c: 'Col C'
- * };
- * table.printObjects(objs, header);
- *
- * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
- * // ┃ Col A ┃ Col B ┃ Col C ┃
- * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
- * // │ 1     │ 2     │ 3     │
- * // ├───────┼───────┼───────┤
- * // │ 0     │       │ 2     │
- * // ├───────┼───────┼───────┤
- * // │       │ 4     │       │
- * // ├───────┼───────┼───────┤
- * // │ 6     │       │       │
- * // └───────┴───────┴───────┘
- * ```
- */
-const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
-  const { body, header } = objectsToTable(objects, headers);
-  return print(body, header, options);
-};
-
-export const table = {
-  getLines,
-  print,
-  printObjects,
-  utils: {
-    objectsToTable,
-    transpose,
-    concatRows,
-    getFormat
-  }
+export const utils = {
+  objectsToTable,
+  transpose,
+  concatRows,
+  getFormat
 };

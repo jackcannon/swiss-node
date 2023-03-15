@@ -1,6 +1,6 @@
 import { range } from 'swiss-ak';
 import { DynTime } from '../../../utils/dynDates';
-import { centerLines, out, rightLines } from '../../out';
+import * as out from '../../out';
 import { getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 
@@ -12,9 +12,9 @@ const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: bo
 
   const dialNums = range(showExtra * 2 + 1, undefined, value - showExtra).map((v) => (v + max) % max);
 
-  const dial = rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + '').padStart(2)} `)));
+  const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + '').padStart(2)} `)));
 
-  const lines = centerLines([wrappers.normal(label), wrappers.dark('◢◣'), ...dial, wrappers.dark('◥◤')], 4);
+  const lines = out.centerLines([wrappers.normal(label), wrappers.dark('◢◣'), ...dial, wrappers.dark('◥◤')], 4);
 
   return lines;
 };
@@ -37,7 +37,7 @@ export const timeHandler: DateTimeHandler<DynTime> = (
     const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i]));
     const lines = out.concatLineGroups(...dials);
 
-    const padded = centerLines(lines);
+    const padded = out.centerLines(lines);
 
     displayCb(padded);
   };

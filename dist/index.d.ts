@@ -63,42 +63,226 @@ declare const chlk: {
     not: (style: Function) => (item: string) => string;
     notUnderlined: (item: string) => string;
 };
-/**
+/**<!-- DOCS: ## -->
  * clr
  *
  * A collection of shortcuts and aliases for chalk functions
  */
 declare const clr: {
+    /**<!-- DOCS: ### -->
+     * hl1
+     *
+     * - `clr.hl1`
+     *
+     * Highlight 1
+     */
     hl1: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * hl2
+     *
+     * - `clr.hl2`
+     *
+     * Highlight 2
+     */
     hl2: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * approve
+     *
+     * - `clr.approve`
+     *
+     * Approval colour (green)
+     */
     approve: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * create
+     *
+     * - `clr.create`
+     *
+     * Create colour (greenBright)
+     */
     create: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * update
+     *
+     * - `clr.update`
+     *
+     * Update colour (yellow)
+     */
     update: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * delete
+     *
+     * - `clr.delete`
+     *
+     * Delete colour (red)
+     */
     delete: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * deleteAll
+     *
+     * - `clr.deleteAll`
+     *
+     * Delete all colour (red)
+     */
     deleteAll: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * blue
+     *
+     * - `clr.blue`
+     *
+     * Alias for chalk.blueBright
+     */
     blue: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * cyan
+     *
+     * - `clr.cyan`
+     *
+     * Alias for chalk.cyanBright
+     */
     cyan: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * green
+     *
+     * - `clr.green`
+     *
+     * Alias for chalk.greenBright
+     */
     green: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * magenta
+     *
+     * - `clr.magenta`
+     *
+     * Alias for chalk.magentaBright
+     */
     magenta: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * red
+     *
+     * - `clr.red`
+     *
+     * Alias for chalk.redBright
+     */
     red: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * yellow
+     *
+     * - `clr.yellow`
+     *
+     * Alias for chalk.yellowBright
+     */
     yellow: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t1
+     *
+     * - `clr.t1`
+     *
+     * Theme 1
+     */
     t1: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t2
+     *
+     * - `clr.t2`
+     *
+     * Theme 2
+     */
     t2: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t3
+     *
+     * - `clr.t3`
+     *
+     * Theme 3
+     */
     t3: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t4
+     *
+     * - `clr.t4`
+     *
+     * Theme 4
+     */
     t4: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t5
+     *
+     * - `clr.t5`
+     *
+     * Theme 5
+     */
     t5: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * t6
+     *
+     * - `clr.t6`
+     *
+     * Theme 6
+     */
     t6: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray0
+     *
+     * - `chlk.gray0`
+     * - `clr.gray0`
+     *
+     * Gray 0 (0-5). Equivalent to chalk.black
+     */
     gray0: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray1
+     *
+     * - `chlk.gray1`
+     * - `clr.gray1`
+     *
+     * Gray 1 (0-5). Equivalent to chalk.gray.dim
+     */
     gray1: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray2
+     *
+     * - `chlk.gray2`
+     * - `clr.gray2`
+     *
+     * Gray 2 (0-5). Equivalent to chalk.white.dim
+     */
     gray2: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray3
+     *
+     * - `chlk.gray3`
+     * - `clr.gray3`
+     *
+     * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+     */
     gray3: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray4
+     *
+     * - `chlk.gray4`
+     * - `clr.gray4`
+     *
+     * Gray 4 (0-5). Equivalent to chalk.white
+     */
     gray4: ChalkFn;
+    /**<!-- DOCS: ### -->
+     * gray5
+     *
+     * - `chlk.gray5`
+     * - `clr.gray5`
+     *
+     * Gray 5 (0-5). Equivalent to chalk.whiteBright
+     */
     gray5: ChalkFn;
 };
 declare type Colour = keyof typeof clr;
 
-/**
- * Breadcrumb
+/**<!-- DOCS: ### -->
+ * getBreadcrumb
+ *
+ * - `out.getBreadcrumb`
+ * - `getBreadcrumb`
  *
  * Provides a consistent format and style for questions/prompts
  *
@@ -119,6 +303,15 @@ declare type Colour = keyof typeof clr;
  * subsub('e'); // 'a › b › c › d › e'
  * ```
  */
+declare const getBreadcrumb: (...baseNames: string[]) => Breadcrumb;
+/**<!-- DOCS: #### -->
+ * Breadcrumb
+ *
+ * - `out.Breadcrumb`
+ * - `Breadcrumb`
+ *
+ * Return type for getBreadcrumb
+ */
 declare type Breadcrumb = {
     (...tempNames: string[]): Breadcrumb;
     setColours: (colours: Colour[]) => void;
@@ -128,12 +321,6 @@ declare type Breadcrumb = {
     get(...tempNames: string[]): string;
     toString(): string;
 };
-/**
- * getBreadcrumb
- *
- * Returns an empty breadcrumb object
- */
-declare const getBreadcrumb: (...baseNames: string[]) => Breadcrumb;
 
 interface Handles<T = any> {
     start: T;
@@ -156,14 +343,68 @@ interface AskTrimOptions {
     clrHandleBase: Function;
     clrActiveHandleBase: Function;
 }
+/**<!-- DOCS: ### -->
+ * trim
+ *
+ * - `ask.trim`
+ *
+ * Get a start and end frame from the user
+ */
 declare const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
 
+/**<!-- DOCS: ### -->
+ * fileExplorer
+ *
+ * - `ask.fileExplorer`
+ *
+ * Get a file or folder path from the user.
+ */
 declare const fileExplorer: (questionText: string | Breadcrumb, selectType?: 'd' | 'f', startPath?: string) => Promise<string>;
+/**<!-- DOCS: ### -->
+ * multiFileExplorer
+ *
+ * - `ask.multiFileExplorer`
+ *
+ * Get multiple file or folder paths from the user.
+ */
 declare const multiFileExplorer: (questionText: string | Breadcrumb, selectType?: 'd' | 'f', startPath?: string) => Promise<string[]>;
+/**<!-- DOCS: ### -->
+ * saveFileExplorer
+ *
+ * - `ask.saveFileExplorer`
+ *
+ * Get a file path from the user, with the intention of saving a file to that path.
+ */
 declare const saveFileExplorer: (questionText: string | Breadcrumb, startPath?: string, suggestedFileName?: string) => Promise<string>;
 
+/**<!-- DOCS: ### -->
+ * getLineCounter
+ *
+ * - `out.getLineCounter`
+ * - `getLineCounter`
+ *
+ * Get line counter for counter output lines
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
+ */
+declare const getLineCounter: () => LineCounter;
+/**<!-- DOCS: #### -->
+ * LineCounter
+ *
+ * - `out.LineCounter`
+ * - `LineCounter`
+ *
+ * Return type for getLineCounter
+ */
 interface LineCounter {
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.log
      *
      * Same as console.log, but adds to the lc counter
@@ -178,8 +419,13 @@ interface LineCounter {
      * ```
      */
     log(...args: any[]): number;
+    /**<!-- DOCS: ##### -->
+     * move
+     *
+     * Moves the cursor up by a given number of lines
+     */
     move(lines: number): void;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.wrap
      *
      * Wraps a function, and adds a given number to the line counter
@@ -194,7 +440,7 @@ interface LineCounter {
      * ```
      */
     wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.add
      *
      * Adds a given number to the line counter
@@ -209,7 +455,7 @@ interface LineCounter {
      * ```
      */
     add(newLines: number): void;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.get
      *
      * returns the line counter
@@ -224,8 +470,13 @@ interface LineCounter {
      * ```
      */
     get(): number;
+    /**<!-- DOCS: ##### -->
+     * getSince
+     *
+     * Returns the number of lines since a given checkpoint
+     */
     getSince(checkpointID: string): number;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.clear
      *
      * clears the line counter, and moves the cursor up by the value of the line counter
@@ -240,46 +491,40 @@ interface LineCounter {
      * ```
      */
     clear(): void;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.clearBack
      *
      * Clears a given number of lines, and updates the line counter
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.checkpoint
      *
      * Records a 'checkpoint' that can be returned to later
      */
     checkpoint(checkpointID?: string): string;
-    /**
+    /**<!-- DOCS: ##### -->
      * lc.clearToCheckpoint
      *
      * Clear lines up to a previously recorded checkpoint
      */
     clearToCheckpoint(checkpointID: string): void;
 }
-/**
- * getLineCounter
- *
- * Get line counter for counter output lines
- *
- * ```typescript
- * const lc = getLineCounter();
- * lc.log('hello'); // 1
- * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
- * lc.add(1);
- * lc.get(); // 3
- * lc.clear();
- * ```
- */
-declare const getLineCounter: () => LineCounter;
 
+/**<!-- DOCS: ### -->
+ * separator
+ *
+ * - `ask.separator`
+ *
+ * Prints a separator line to the console.
+ */
 declare const separator: (version?: 'down' | 'none' | 'up', spacing?: number, offset?: number, width?: number) => number;
 declare type UnwrapPromFunc<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
 declare type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...infer Tail] ? [UnwrapPromFunc<Head>, ...UnwrapPromFuncs<Tail>] : [];
-/**
- * ask.section
+/**<!-- DOCS: ### -->
+ * section
+ *
+ * - `ask.section`
  *
  * Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
  *
@@ -313,15 +558,45 @@ declare type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...i
  */
 declare const section: <QuesT extends ((qst?: string | Breadcrumb, results?: any[], lc?: LineCounter, separator?: () => void) => Promise<any>)[]>(question: string | Breadcrumb, sectionFn?: (lc: LineCounter, separator: () => void) => void | Promise<any>, ...questionFns: QuesT) => Promise<UnwrapPromFuncs<QuesT>>;
 
+/**<!-- DOCS: ### -->
+ * date
+ *
+ * - `ask.date`
+ *
+ * Get a date input from the user.
+ */
 declare const date: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
+/**<!-- DOCS: ### -->
+ * time
+ *
+ * - `ask.time`
+ *
+ * Get a time input from the user.
+ */
 declare const time: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
+/**<!-- DOCS: ### -->
+ * datetime
+ *
+ * - `ask.datetime`
+ *
+ * Get a date and time input from the user.
+ */
 declare const datetime: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
+/**<!-- DOCS: ### -->
+ * dateRange
+ *
+ * - `ask.dateRange`
+ *
+ * Get a date range input from the user.
+ */
 declare const dateRange: (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
 
 declare type Text = string | string[];
 
-/**
- * out.pad
+/**<!-- DOCS: ### -->
+ * pad
+ *
+ * - `out.pad`
  *
  * Pad before and after the given text with the given character.
  *
@@ -333,8 +608,10 @@ declare type Text = string | string[];
 declare const pad: (line: string, start: number, end: number, replaceChar?: string) => string;
 declare type AlignType = 'left' | 'right' | 'center' | 'justify';
 declare type AlignFunction = (item: any, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
-/**
- * out.center
+/**<!-- DOCS: ### -->
+ * center
+ *
+ * - `out.center`
  *
  * Align the given text to the center within the given width of characters/columns
  *
@@ -350,8 +627,10 @@ declare type AlignFunction = (item: any, width?: number, replaceChar?: string, f
  * ```
  */
 declare const center: AlignFunction;
-/**
- * out.left
+/**<!-- DOCS: ### -->
+ * left
+ *
+ * - `out.left`
  *
  * Align the given text to the left within the given width of characters/columns
  *
@@ -367,8 +646,10 @@ declare const center: AlignFunction;
  * ```
  */
 declare const left: AlignFunction;
-/**
- * out.right
+/**<!-- DOCS: ### -->
+ * right
+ *
+ * - `out.right`
  *
  * Align the given text to the right within the given width of characters/columns
  *
@@ -384,8 +665,10 @@ declare const left: AlignFunction;
  * ```
  */
 declare const right: AlignFunction;
-/**
- * out.justify
+/**<!-- DOCS: ### -->
+ * justify
+ *
+ * - `out.justify`
  *
  * Evenly space the text horizontally across the given width.
  *
@@ -401,12 +684,42 @@ declare const right: AlignFunction;
  * ```
  */
 declare const justify: AlignFunction;
+/**<!-- DOCS: ### -->
+ * leftLines
+ *
+ * - `out.leftLines`
+ *
+ * Align each line of the given text to the left within the given width of characters/columns
+ */
 declare const leftLines: (lines: string[], width?: number) => string[];
+/**<!-- DOCS: ### -->
+ * centerLines
+ *
+ * - `out.centerLines`
+ *
+ * Align each line of the given text to the center within the given width of characters/columns
+ */
 declare const centerLines: (lines: string[], width?: number) => string[];
+/**<!-- DOCS: ### -->
+ * rightLines
+ *
+ * - `out.rightLines`
+ *
+ * Align each line of the given text to the right within the given width of characters/columns
+ */
 declare const rightLines: (lines: string[], width?: number) => string[];
+/**<!-- DOCS: ### -->
+ * justifyLines
+ *
+ * - `out.justifyLines`
+ *
+ * Justify align each line of the given text within the given width of characters/columns
+ */
 declare const justifyLines: (lines: string[], width?: number) => string[];
-/**
- * out.align
+/**<!-- DOCS: ### -->
+ * align
+ *
+ * - `out.align`
  *
  * Align the given text to the given alignment within the given width of characters/columns
  *
@@ -422,9 +735,18 @@ declare const justifyLines: (lines: string[], width?: number) => string[];
  * ```
  */
 declare const align: (item: any, direction: AlignType, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
+/**<!-- DOCS: ### -->
+ * split
+ *
+ * - `out.split`
+ *
+ * Split the given text into two parts, left and right, with the given width of characters/columns
+ */
 declare const split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
-/**
- * out.wrap
+/**<!-- DOCS: ### -->
+ * wrap
+ *
+ * - `out.wrap`
  *
  * Wrap the given text to the given width of characters/columns
  *
@@ -435,8 +757,10 @@ declare const split: (leftItem: any, rightItem: any, width?: number, replaceChar
  * ```
  */
 declare const wrap: (item: any, width?: number, alignment?: AlignType, forceWidth?: boolean) => string;
-/**
- * out.moveUp
+/**<!-- DOCS: ### -->
+ * moveUp
+ *
+ * - `out.moveUp`
  *
  * Move the terminal cursor up X lines, clearing each row.
  *
@@ -447,8 +771,10 @@ declare const wrap: (item: any, width?: number, alignment?: AlignType, forceWidt
  * ```
  */
 declare const moveUp: (lines?: number) => void;
-/**
- * out.loading
+/**<!-- DOCS: ### -->
+ * loading
+ *
+ * - `out.loading`
  *
  * Display an animated loading indicator
  *
@@ -461,14 +787,10 @@ declare const moveUp: (lines?: number) => void;
 declare const loading$1: (action?: (s: string) => any, lines?: number, symbols?: string[]) => {
     stop: () => void;
 };
-/**
- * out.utils.hasColor
+/**<!-- DOCS: ### -->
+ * limitToLength
  *
- * Determine whether a given string contains any chalk-ed colours
- */
-declare const hasColor: (str: string) => boolean;
-/**
- * out.limitToLength
+ * - `out.limitToLength`
  *
  * Limit the length of a string to the given length
  *
@@ -477,9 +799,18 @@ declare const hasColor: (str: string) => boolean;
  * ```
  */
 declare const limitToLength: (text: string, maxLength: number) => string;
+/**<!-- DOCS: ### -->
+ * limitToLengthStart
+ *
+ * - `out.limitToLengthStart`
+ *
+ * Limit the length of a string to the given length, keeping the end
+ */
 declare const limitToLengthStart: (text: string, maxLength: number) => string;
-/**
- * out.truncate
+/**<!-- DOCS: ### -->
+ * truncate
+ *
+ * - `out.truncate`
  *
  * Limit the length of a string to the given length, and add an ellipsis if necessary
  *
@@ -488,139 +819,371 @@ declare const limitToLengthStart: (text: string, maxLength: number) => string;
  * ```
  */
 declare const truncate: (text: string, maxLength?: number, suffix?: string) => string;
+/**<!-- DOCS: ### -->
+ * truncateStart
+ *
+ * - `out.truncateStart`
+ *
+ * Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
+ */
 declare const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
+/**<!-- DOCS: ### -->
+ * concatLineGroups
+ *
+ * - `out.concatLineGroups`
+ *
+ * Concatenate multiple line groups, aligning them by the longest line
+ */
 declare const concatLineGroups: (...groups: string[][]) => string[];
+/**<!-- DOCS: ### -->
+ * getResponsiveValue
+ *
+ * - `out.getResponsiveValue`
+ *
+ * Get a value based on the terminal width
+ */
+declare const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
+/**<!-- DOCS: #### -->
+ * ResponsiveOption<T>
+ *
+ * - `out.ResponsiveOption`
+ *
+ * Configuration for a responsive value (see `getResponsiveValue`)
+ */
 declare type ResponsiveOption<T> = {
     minColumns?: number;
     value: T;
 };
-declare const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
-declare const out: {
-    pad: (line: string, start: number, end: number, replaceChar?: string) => string;
-    center: AlignFunction;
-    left: AlignFunction;
-    right: AlignFunction;
-    justify: AlignFunction;
-    align: (item: any, direction: AlignType, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
-    split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
-    wrap: (item: any, width?: number, alignment?: AlignType, forceWidth?: boolean) => string;
-    moveUp: (lines?: number) => void;
-    loading: (action?: (s: string) => any, lines?: number, symbols?: string[]) => {
-        stop: () => void;
-    };
-    limitToLength: (text: string, maxLength: number) => string;
-    limitToLengthStart: (text: string, maxLength: number) => string;
-    truncate: (text: string, maxLength?: number, suffix?: string) => string;
-    truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
-    getLineCounter: () => LineCounter;
-    getBreadcrumb: (...baseNames: string[]) => Breadcrumb;
-    concatLineGroups: (...groups: string[][]) => string[];
-    getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
-    utils: {
-        getLines: (text: Text) => string[];
-        getNumLines: (text: Text) => number;
-        getLinesWidth: (text: Text) => number;
-        getLogLines: (item: any) => string[];
-        getNumLogLines: (item: Text) => number;
-        getLogLinesWidth: (item: Text) => number;
-        joinLines: (lines: string[]) => string;
-        getTerminalWidth: () => number;
-        hasColor: (str: string) => boolean;
-    };
+declare const utils$2: {
+    getLines: (text: Text) => string[];
+    getNumLines: (text: Text) => number;
+    getLinesWidth: (text: Text) => number;
+    getLogLines: (item: any) => string[];
+    getNumLogLines: (item: Text) => number;
+    getLogLinesWidth: (item: Text) => number;
+    joinLines: (lines: string[]) => string;
+    getTerminalWidth: () => number;
+    hasColor: (str: string) => boolean;
 };
 
-interface TableFormatConfig {
-    formatFn: Function;
-    isHeader?: boolean;
-    isBody?: boolean;
-    row?: number;
-    col?: number;
+declare const out_pad: typeof pad;
+type out_AlignType = AlignType;
+declare const out_center: typeof center;
+declare const out_left: typeof left;
+declare const out_right: typeof right;
+declare const out_justify: typeof justify;
+declare const out_leftLines: typeof leftLines;
+declare const out_centerLines: typeof centerLines;
+declare const out_rightLines: typeof rightLines;
+declare const out_justifyLines: typeof justifyLines;
+declare const out_align: typeof align;
+declare const out_split: typeof split;
+declare const out_wrap: typeof wrap;
+declare const out_moveUp: typeof moveUp;
+declare const out_limitToLength: typeof limitToLength;
+declare const out_limitToLengthStart: typeof limitToLengthStart;
+declare const out_truncate: typeof truncate;
+declare const out_truncateStart: typeof truncateStart;
+declare const out_concatLineGroups: typeof concatLineGroups;
+declare const out_getResponsiveValue: typeof getResponsiveValue;
+type out_ResponsiveOption<T> = ResponsiveOption<T>;
+declare namespace out {
+  export {
+    out_pad as pad,
+    out_AlignType as AlignType,
+    out_center as center,
+    out_left as left,
+    out_right as right,
+    out_justify as justify,
+    out_leftLines as leftLines,
+    out_centerLines as centerLines,
+    out_rightLines as rightLines,
+    out_justifyLines as justifyLines,
+    out_align as align,
+    out_split as split,
+    out_wrap as wrap,
+    out_moveUp as moveUp,
+    loading$1 as loading,
+    out_limitToLength as limitToLength,
+    out_limitToLengthStart as limitToLengthStart,
+    out_truncate as truncate,
+    out_truncateStart as truncateStart,
+    out_concatLineGroups as concatLineGroups,
+    out_getResponsiveValue as getResponsiveValue,
+    out_ResponsiveOption as ResponsiveOption,
+    utils$2 as utils,
+  };
 }
+
+/**<!-- DOCS: ### -->
+ * print
+ *
+ * - `table.print`
+ *
+ * Print a table
+ *
+ * ```typescript
+ * const header = [['Name', 'Age']];
+ * const body = [['John', '25'], ['Jane', '26']];
+ * table.print(body, header);
+ *
+ * // ┏━━━━━━┳━━━━━┓
+ * // ┃ Name ┃ Age ┃
+ * // ┡━━━━━━╇━━━━━┩
+ * // │ John │ 25  │
+ * // │ Jane │ 26  │
+ * // └──────┴─────┘
+ * ```
+ */
+declare const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
+/**<!-- DOCS: ### -->
+ * printObjects
+ *
+ * - `table.printObjects`
+ *
+ * Print a table of given objects
+ *
+ * ```typescript
+ * const objs = [
+ *   // objs
+ *   { a: '1', b: '2', c: '3' },
+ *   { a: '0', c: '2' },
+ *   { b: '4' },
+ *   { a: '6' }
+ * ];
+ * const header = {
+ *   a: 'Col A',
+ *   b: 'Col B',
+ *   c: 'Col C'
+ * };
+ * table.printObjects(objs, header);
+ *
+ * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
+ * // ┃ Col A ┃ Col B ┃ Col C ┃
+ * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
+ * // │ 1     │ 2     │ 3     │
+ * // ├───────┼───────┼───────┤
+ * // │ 0     │       │ 2     │
+ * // ├───────┼───────┼───────┤
+ * // │       │ 4     │       │
+ * // ├───────┼───────┼───────┤
+ * // │ 6     │       │       │
+ * // └───────┴───────┴───────┘
+ * ```
+ */
+declare const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
+/**<!-- DOCS: ### -->
+ * getLines
+ *
+ * - `table.getLines`
+ *
+ * Get the lines of a table (rather than printing it)
+ */
+declare const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
 interface FullTableOptions {
-    /**
+    /**<!-- DOCS: #### -->
+     * wrapperFn
+     *
      * Function to wrap each line of the table in (e.g. chalk.blue)
      */
     wrapperFn: Function;
+    /**<!-- DOCS: #### -->
+     * wrapLinesFn
+     *
+     * Function to wrap the lines of the table (between the cells)
+     */
     wrapLinesFn: Function;
-    /**
+    /**<!-- DOCS: #### -->
+     * overrideChar
+     *
      * Character to use instead of lines
      */
     overrideChar: string;
-    /**
+    /**<!-- DOCS: #### -->
+     * overrideHorChar
+     *
      * Character to use instead of horizontal lines
      */
     overrideHorChar: string;
-    /**
+    /**<!-- DOCS: #### -->
+     * overrideVerChar
+     *
      * Character to use instead of vertical lines
      */
     overrideVerChar: string;
-    /**
+    /**<!-- DOCS: #### -->
+     * drawOuter
+     *
      * Whether to draw the outer border of the table
      */
     drawOuter: boolean;
-    /**
+    /**<!-- DOCS: #### -->
+     * drawRowLines
+     *
      * Whether to draw lines between rows (other than separating header and body)
      */
     drawRowLines: boolean;
-    /**
+    /**<!-- DOCS: #### -->
+     * drawColLines
+     *
      * Whether to draw lines between columns
      */
     drawColLines: boolean;
-    /**
+    /**<!-- DOCS: #### -->
+     * colWidths
+     *
      * Preferred width (in number of characters) of each column
      */
     colWidths: number[];
-    /**
+    /**<!-- DOCS: #### -->
+     * align
+     *
      * How the table should be aligned on the screen
      *
      * left, right, center or justify
      */
     align: AlignType;
-    /**
+    /**<!-- DOCS: #### -->
+     * alignCols
+     *
      * How each column should be aligned
      *
      * Array with alignment for each column: left, right, center or justify
      */
     alignCols: AlignType[];
-    /**
+    /**<!-- DOCS: #### -->
+     * transpose
+     *
      * Change rows into columns and vice versa
      */
     transpose: boolean;
-    /**
+    /**<!-- DOCS: #### -->
+     * transposeBody
+     *
      * Change rows into columns and vice versa (body only)
      */
     transposeBody: boolean;
-    /**
-     * How much spacing to leave around the outside of the table
-     * todo update docs for multiple margins
+    /**<!-- DOCS: #### -->
+     * margin
+     *
+     * The amount of space to leave around the outside of the table
      */
     margin: number | number[];
+    /**<!-- DOCS: #### -->
+     * cellPadding
+     *
+     * The amount of space to leave around the outside of each cell
+     */
     cellPadding: number;
+    /**<!-- DOCS: #### -->
+     * format
+     *
+     * A set of formatting configurations
+     */
     format: TableFormatConfig[];
+    /**<!-- DOCS: #### -->
+     * truncate
+     *
+     * Truncates (cuts the end off) line instead of wrapping
+     */
     truncate: false | string;
+    /**<!-- DOCS: #### -->
+     * maxWidth
+     *
+     * Maximum width of the table
+     */
     maxWidth: number;
 }
+/**<!-- DOCS: ### 380 -->
+ * TableOptions
+ *
+ * The configuration options for the table
+ */
 declare type TableOptions = Partial$1<FullTableOptions>;
-declare const table$1: {
-    getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
-    print: (body: any[][], header?: any[][], options?: TableOptions) => number;
-    printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
-    utils: {
-        objectsToTable: (objects: Object[], headers?: Object) => {
-            header: any[][];
-            body: any[][];
-        };
-        transpose: (rows: any[][]) => any[][];
-        concatRows: (cells: {
-            header: any[][];
-            body: any[][];
-        }) => any[][];
-        getFormat: (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
+/**<!-- DOCS: ### -->
+ * TableFormatConfig
+ *
+ * Configuration for formatting a cell
+ */
+interface TableFormatConfig {
+    /**<!-- DOCS: #### -->
+     * formatFn
+     *
+     * A wrapper function to apply to the cell
+     */
+    formatFn: Function;
+    /**<!-- DOCS: #### -->
+     * isHeader
+     *
+     * Whether to apply the format to the header
+     */
+    isHeader?: boolean;
+    /**<!-- DOCS: #### -->
+     * isBody
+     *
+     * Whether to apply the format to the body
+     */
+    isBody?: boolean;
+    /**<!-- DOCS: #### -->
+     * row
+     *
+     * A specific row to apply the format to
+     */
+    row?: number;
+    /**<!-- DOCS: #### -->
+     * col
+     *
+     * A specific column to apply the format to
+     */
+    col?: number;
+}
+declare const utils$1: {
+    objectsToTable: (objects: Object[], headers?: Object) => {
+        header: any[][];
+        body: any[][];
     };
+    transpose: (rows: any[][]) => any[][];
+    concatRows: (cells: {
+        header: any[][];
+        body: any[][];
+    }) => any[][];
+    getFormat: (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
 };
 
+declare const table$1_print: typeof print;
+declare const table$1_printObjects: typeof printObjects;
+declare const table$1_getLines: typeof getLines;
+type table$1_FullTableOptions = FullTableOptions;
+type table$1_TableOptions = TableOptions;
+type table$1_TableFormatConfig = TableFormatConfig;
+declare namespace table$1 {
+  export {
+    table$1_print as print,
+    table$1_printObjects as printObjects,
+    table$1_getLines as getLines,
+    table$1_FullTableOptions as FullTableOptions,
+    table$1_TableOptions as TableOptions,
+    table$1_TableFormatConfig as TableFormatConfig,
+    utils$1 as utils,
+  };
+}
+
 declare type ItemToRowMapFunction<T extends unknown> = (item?: T, index?: number, items?: T[]) => any[];
+/**<!-- DOCS: ### -->
+ * select
+ *
+ * - `ask.table.select`
+ *
+ * Get a single selection from a table.
+ */
 declare const select$1: <T extends unknown>(question: string | Breadcrumb, items: T[], initial?: number | T, rows?: any[][] | ItemToRowMapFunction<T>, headers?: any[][] | RemapOf<T, string>, tableOptions?: TableOptions) => Promise<T>;
+/**<!-- DOCS: ### -->
+ * multiselect
+ *
+ * - `ask.table.multiselect`
+ *
+ * Get multiple selections from a table.
+ */
 declare const multiselect$1: <T extends unknown>(question: string | Breadcrumb, items: T[], initial?: number[] | T[], rows?: any[][] | ItemToRowMapFunction<T>, headers?: any[][] | RemapOf<T, string>, tableOptions?: TableOptions) => Promise<T[]>;
 
 declare namespace table {
@@ -636,8 +1199,10 @@ interface PromptChoiceObject<T = string> {
     selected?: boolean;
 }
 declare type PromptChoice<T = string> = string | PromptChoiceObject<T>;
-/**
- * ask.text
+/**<!-- DOCS: ### -->
+ * text
+ *
+ * - `ask.text`
  *
  * Get a text input from the user.
  *
@@ -646,8 +1211,10 @@ declare type PromptChoice<T = string> = string | PromptChoiceObject<T>;
  * ```
  */
 declare const text: (question: string | Breadcrumb, initial?: string) => Promise<string>;
-/**
- * ask.autotext
+/**<!-- DOCS: ### -->
+ * autotext
+ *
+ * - `ask.autotext`
  *
  * Get a text input from the user, with auto-completion.
  *
@@ -656,8 +1223,10 @@ declare const text: (question: string | Breadcrumb, initial?: string) => Promise
  * ```
  */
 declare const autotext: <T = string>(question: string | Breadcrumb, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
-/**
- * ask.number
+/**<!-- DOCS: ### -->
+ * number
+ *
+ * - `ask.number`
  *
  * Get a number input from the user.
  *
@@ -666,8 +1235,10 @@ declare const autotext: <T = string>(question: string | Breadcrumb, choices: Pro
  * ```
  */
 declare const number: (question: string | Breadcrumb, initial?: number) => Promise<number>;
-/**
- * ask.boolean
+/**<!-- DOCS: ### -->
+ * boolean
+ *
+ * - `ask.boolean`
  *
  * Get a boolean input from the user (yes or no)
  *
@@ -676,8 +1247,10 @@ declare const number: (question: string | Breadcrumb, initial?: number) => Promi
  * ```
  */
 declare const boolean: (question: string | Breadcrumb, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
-/**
- * ask.booleanAlt
+/**<!-- DOCS: ### -->
+ * booleanAlt
+ *
+ * - `ask.booleanAlt`
  *
  * Get a boolean input from the user (yes or no)
  *
@@ -688,8 +1261,10 @@ declare const boolean: (question: string | Breadcrumb, initial?: boolean, yesTxt
  * ```
  */
 declare const booleanAlt: (question: string | Breadcrumb, initial?: boolean) => Promise<boolean>;
-/**
- * ask.select
+/**<!-- DOCS: ### -->
+ * select
+ *
+ * - `ask.select`
  *
  * Get the user to select an option from a list.
  *
@@ -698,8 +1273,10 @@ declare const booleanAlt: (question: string | Breadcrumb, initial?: boolean) => 
  * ```
  */
 declare const select: <T = string>(question: string | Breadcrumb, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
-/**
- * ask.multiselect
+/**<!-- DOCS: ### -->
+ * multiselect
+ *
+ * - `ask.multiselect`
  *
  * Get the user to select multiple opts from a list.
  *
@@ -715,8 +1292,10 @@ interface CRUDOptions {
     canDeleteAll: boolean;
 }
 declare type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
-/**
- * ask.crud
+/**<!-- DOCS: ### -->
+ * crud
+ *
+ * - `ask.crud`
  *
  * Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
  *
@@ -727,8 +1306,10 @@ declare type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
  * ```
  */
 declare const crud: (question: string | Breadcrumb, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
-/**
- * ask.validate
+/**<!-- DOCS: ### -->
+ * validate
+ *
+ * - `ask.validate`
  *
  * Validate the result of an `ask` prompt
  *
@@ -740,18 +1321,24 @@ declare const crud: (question: string | Breadcrumb, itemName?: string, items?: a
  * ```
  */
 declare const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
-/**
- * ask.imitate
+/**<!-- DOCS: ### -->
+ * imitate
+ *
+ * - `ask.imitate`
  *
  * Imitate the display of a prompt
  *
  * ```typescript
+ * imitate(true, 'What is your name?', 'Jack');
+ *
  * ask.imitate(true, 'What is your name?', 'Jack');
  * ```
  */
 declare const imitate: (done: boolean, question: string | Breadcrumb, result?: any) => number;
-/**
- * ask.prefill
+/**<!-- DOCS: ### -->
+ * prefill
+ *
+ * - `ask.prefill`
  *
  * Auto-fills an ask prompt with the provided value, if defined.
  *
@@ -768,8 +1355,10 @@ declare const imitate: (done: boolean, question: string | Breadcrumb, result?: a
  * ```
  */
 declare const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb, askFn: (question: string | Breadcrumb) => T | Promise<T>) => Promise<T>;
-/**
- * ask.loading
+/**<!-- DOCS: ### -->
+ * loading
+ *
+ * - `ask.loading`
  *
  * Display an animated loading indicator that imitates the display of a prompt
  *
@@ -782,8 +1371,10 @@ declare const prefill: <T extends unknown = string>(value: T, question: string |
 declare const loading: (question: string | Breadcrumb) => {
     stop: () => void;
 };
-/**
- * ask.pause
+/**<!-- DOCS: ### -->
+ * pause
+ *
+ * - `ask.pause`
  *
  * Pause the program until the user presses enter
  *
@@ -792,8 +1383,10 @@ declare const loading: (question: string | Breadcrumb) => {
  * ```
  */
 declare const pause: (text?: string | Breadcrumb) => Promise<void>;
-/**
- * ask.countdown
+/**<!-- DOCS: ### -->
+ * countdown
+ *
+ * - `ask.countdown`
  *
  * Animated countdown for a given number of seconds
  *
@@ -802,6 +1395,13 @@ declare const pause: (text?: string | Breadcrumb) => Promise<void>;
  * ```
  */
 declare const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
+/**<!-- DOCS: ### -->
+ * wizard
+ *
+ * - `ask.wizard`
+ *
+ * Create a wizard object that can be used to build up a complex object
+ */
 declare const wizard: <T extends unknown>(startObj?: Partial<T>) => {
     add(partial: Partial<T>): void;
     getPartial(): Partial<T>;
@@ -878,64 +1478,71 @@ declare namespace ask {
   };
 }
 
-declare const progressBarUtils: {
-    getColouredProgressBarOpts: (opts: ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: ProgressBarOptions, resetColours?: boolean) => ProgressBarOptions;
-};
+/**<!-- DOCS: ## -->
+ * progressBarTools
+ *
+ * A collection of tools for working with progress bars (from swiss-ak)
+ */
+/**<!-- DOCS: ### -->
+ * getColouredProgressBarOpts
+ *
+ * - `progressBarTools.getColouredProgressBarOpts`
+ *
+ * Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
+ */
+declare const getColouredProgressBarOpts: (opts: ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: ProgressBarOptions, resetColours?: boolean) => ProgressBarOptions;
 
-/**
- * LogUtils.getLogStr
+declare const progressBarTools_getColouredProgressBarOpts: typeof getColouredProgressBarOpts;
+declare namespace progressBarTools {
+  export {
+    progressBarTools_getColouredProgressBarOpts as getColouredProgressBarOpts,
+  };
+}
+
+/**<!-- DOCS: ## -->
+ * LogTools
+ *
+ * A collection of tools for logging
+ */
+/**<!-- DOCS: ### -->
+ * getLogStr
+ *
+ * - `LogTools.getLogStr`
+ * - `getLogStr`
  *
  * Get a string for a given object as it would be printed by console.log
  */
 declare const getLogStr: (item: any) => string;
-/**
- * LogUtils.processLogContents
+/**<!-- DOCS: ### -->
+ * processLogContents
+ *
+ * - `LogTools.processLogContents`
+ * - `processLogContents`
  *
  * Process an item to be logged
  */
 declare const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
-/**
- * LogUtils.getLog
+/**<!-- DOCS: ### -->
+ * getLog
+ *
+ * - `LogTools.getLog`
+ * - `getLog`
  *
  * Get a log function for a given prefix
  */
 declare const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) => void;
 
-declare const LogUtils_getLogStr: typeof getLogStr;
-declare const LogUtils_processLogContents: typeof processLogContents;
-declare const LogUtils_getLog: typeof getLog;
-declare namespace LogUtils {
+declare const LogTools_getLogStr: typeof getLogStr;
+declare const LogTools_processLogContents: typeof processLogContents;
+declare const LogTools_getLog: typeof getLog;
+declare namespace LogTools {
   export {
-    LogUtils_getLogStr as getLogStr,
-    LogUtils_processLogContents as processLogContents,
-    LogUtils_getLog as getLog,
+    LogTools_getLogStr as getLogStr,
+    LogTools_processLogContents as processLogContents,
+    LogTools_getLog as getLog,
   };
 }
 
-interface LogOptions {
-    /**
-     * Default: false
-     */
-    showDate?: boolean;
-    /**
-     * Default: true
-     */
-    showTime?: boolean;
-    /**
-     * Default: true
-     */
-    enableColours?: boolean;
-}
-interface LogConfigs {
-    [key: string]: LogConfig;
-}
-interface LogConfig {
-    name: string;
-    nameColour?: Function;
-    showDate?: boolean;
-    showTime?: boolean;
-    contentColour?: Function;
-}
 declare const defaultConfigs: {
     readonly blank: LogConfig;
     readonly log: LogConfig;
@@ -950,6 +1557,13 @@ declare const defaultConfigs: {
 declare type LogFunction = (...args: any[]) => void;
 declare type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
 declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
+/**<!-- DOCS: ### 401 -->
+ * createLogger
+ *
+ * - `createLogger`
+ *
+ * Create a logger with custom configs
+ */
 declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
     readonly blank: LogConfig;
     readonly log: LogConfig;
@@ -961,6 +1575,13 @@ declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: L
     readonly warn: LogConfig;
     readonly error: LogConfig;
 } & T, LogFunction>;
+/**<!-- DOCS: ### 400 -->
+ * log
+ *
+ * - `log`
+ *
+ * A set of log functions
+ */
 declare const log: OfType<{
     readonly blank: LogConfig;
     readonly log: LogConfig;
@@ -972,37 +1593,73 @@ declare const log: OfType<{
     readonly warn: LogConfig;
     readonly error: LogConfig;
 }, LogFunction>;
-
-interface ExplodedPath {
-    /**
-     * The full original path as it was passed in.
-     */
-    path: string;
-    /**
-     * The directory path of the given path
+/**<!-- DOCS: ### 450 -->
+ * LogOptions
+ *
+ * - `LogOptions`
+ *
+ * Options for the log function
+ */
+interface LogOptions {
+    /**<!-- DOCS: #### 451 -->
+     * showDate
      *
-     * Note: no trailing slash
+     * Default: false
      */
-    dir: string;
-    /**
-     * the ancestral folders of the given dir as an array
+    showDate?: boolean;
+    /**<!-- DOCS: #### 451 -->
+     * showTime
+     *
+     * Default: true
      */
-    folders: string[];
-    /**
-     * the name of the file, not including the extension
+    showTime?: boolean;
+    /**<!-- DOCS: #### 451 -->
+     * enableColours
+     *
+     * Default: true
      */
-    name: string;
-    /**
-     * the extension of the file, not including the dot
-     */
-    ext: string;
-    /**
-     * the full name of the file, including the extension (and dot)
-     */
-    filename: string;
+    enableColours?: boolean;
 }
-/**
+interface LogConfigs {
+    [key: string]: LogConfig;
+}
+/**<!-- DOCS: ### 460 -->
+ * LogConfig
+ *
+ * - `LogConfig`
+ *
+ * Configuration for the log function
+ */
+interface LogConfig {
+    name: string;
+    nameColour?: Function;
+    showDate?: boolean;
+    showTime?: boolean;
+    contentColour?: Function;
+}
+
+/**<!-- DOCS: ## -->
+ * waiters
+ */
+/**<!-- DOCS: ### -->
+ * nextTick
+ *
+ * - `nextTick`
+ *
+ * Wait for the next tick
+ */
+declare const nextTick: () => Promise<unknown>;
+
+/**<!-- DOCS: ## -->
+ * PathsTools
+ *
+ * A collection of tools for working with paths
+ */
+/**<!-- DOCS: ### -->
  * explodePath
+ *
+ * - `PathsTools.explodePath`
+ * - `explodePath`
  *
  * 'Explodes' a path into its components
  *
@@ -1025,8 +1682,58 @@ interface ExplodedPath {
  * ```
  */
 declare const explodePath: (path: string) => ExplodedPath;
-/**
- * PathUtils.removeTrailSlash
+/**<!-- DOCS: #### -->
+ * ExplodedPath
+ *
+ * - `PathsTools.ExplodedPath`
+ * - `ExplodedPath`
+ *
+ * An object containing the exploded components of a path
+ */
+interface ExplodedPath {
+    /**<!-- DOCS: ##### -->
+     * path
+     *
+     * The full original path as it was passed in.
+     */
+    path: string;
+    /**<!-- DOCS: ##### -->
+     * dir
+     *
+     * The directory path of the given path
+     *
+     * Note: no trailing slash
+     */
+    dir: string;
+    /**<!-- DOCS: ##### -->
+     * folders
+     *
+     * the ancestral folders of the given dir as an array
+     */
+    folders: string[];
+    /**<!-- DOCS: ##### -->
+     * name
+     *
+     * the name of the file, not including the extension
+     */
+    name: string;
+    /**<!-- DOCS: ##### -->
+     * ext
+     *
+     * the extension of the file, not including the dot
+     */
+    ext: string;
+    /**<!-- DOCS: ##### -->
+     * filename
+     *
+     * the full name of the file, including the extension (and dot)
+     */
+    filename: string;
+}
+/**<!-- DOCS: ### -->
+ * removeTrailSlash
+ *
+ * - `PathTools.removeTrailSlash`
  *
  * Remove trailing slash from path (if one exists)
  *
@@ -1035,8 +1742,10 @@ declare const explodePath: (path: string) => ExplodedPath;
  * ```
  */
 declare const removeTrailSlash: (path: string) => string;
-/**
- * PathUtils.trailSlash
+/**<!-- DOCS: ### -->
+ * trailSlash
+ *
+ * - `PathTools.trailSlash`
  *
  * Ensures there's a trailing slash on path
  *
@@ -1045,8 +1754,10 @@ declare const removeTrailSlash: (path: string) => string;
  * ```
  */
 declare const trailSlash: (path: string) => string;
-/**
- * PathUtils.removeDoubleSlashes
+/**<!-- DOCS: ### -->
+ * removeDoubleSlashes
+ *
+ * - `PathTools.removeDoubleSlashes`
  *
  * Removes double slashes from path (an bug with Unix paths)
  *
@@ -1056,18 +1767,18 @@ declare const trailSlash: (path: string) => string;
  */
 declare const removeDoubleSlashes: (path: string) => string;
 
-type PathUtils_ExplodedPath = ExplodedPath;
-declare const PathUtils_explodePath: typeof explodePath;
-declare const PathUtils_removeTrailSlash: typeof removeTrailSlash;
-declare const PathUtils_trailSlash: typeof trailSlash;
-declare const PathUtils_removeDoubleSlashes: typeof removeDoubleSlashes;
-declare namespace PathUtils {
+declare const PathTools_explodePath: typeof explodePath;
+type PathTools_ExplodedPath = ExplodedPath;
+declare const PathTools_removeTrailSlash: typeof removeTrailSlash;
+declare const PathTools_trailSlash: typeof trailSlash;
+declare const PathTools_removeDoubleSlashes: typeof removeDoubleSlashes;
+declare namespace PathTools {
   export {
-    PathUtils_ExplodedPath as ExplodedPath,
-    PathUtils_explodePath as explodePath,
-    PathUtils_removeTrailSlash as removeTrailSlash,
-    PathUtils_trailSlash as trailSlash,
-    PathUtils_removeDoubleSlashes as removeDoubleSlashes,
+    PathTools_explodePath as explodePath,
+    PathTools_ExplodedPath as ExplodedPath,
+    PathTools_removeTrailSlash as removeTrailSlash,
+    PathTools_trailSlash as trailSlash,
+    PathTools_removeDoubleSlashes as removeDoubleSlashes,
   };
 }
 
@@ -1075,6 +1786,16 @@ interface KeyListener {
     start(): void;
     stop(): void;
 }
+/**<!-- DOCS: ## -->
+ * keyListener
+ */
+/**<!-- DOCS: ### -->
+ * getKeyListener
+ *
+ * - `getKeyListener`
+ *
+ * Listens for key presses and returns the key name and raw value.
+ */
 declare const getKeyListener: (callback: (keyName?: string, rawValue?: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 
-export { AlignType, Breadcrumb, Colour, DefaultLogger, ExplodedPath, FullTableOptions, LineCounter, LogConfig, LogConfigs, LogOptions, LogUtils, Logger, PathUtils, ResponsiveOption, TableFormatConfig, TableOptions, align, ask, center, centerLines, chlk, clr, concatLineGroups, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, getResponsiveValue, hasColor, justify, justifyLines, left, leftLines, limitToLength, limitToLengthStart, loading$1 as loading, log, moveUp, out, pad, processLogContents, progressBarUtils, right, rightLines, split, table$1 as table, truncate, truncateStart, wrap };
+export { Breadcrumb, Colour, DefaultLogger, ExplodedPath, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, ask, chlk, clr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table$1 as table };

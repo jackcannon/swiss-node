@@ -1,35 +1,18 @@
 import chalk from 'chalk';
-import stringWidth from 'string-width';
-import { DAY, days, fn, getDeferred, getTimer, ms, range, seconds, sortByMapped, zipMax } from 'swiss-ak';
+import { getDeferred, getTimer } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
-import {
-  addDays,
-  addMonths,
-  correctDate,
-  dateToDynDate,
-  dateToDynTime,
-  DynDate,
-  dynDateToDate,
-  DynTime,
-  getDaysInMonth,
-  getIntermediaryDates,
-  getWeekday,
-  isSameMonth,
-  sortDynDates
-} from '../../utils/dynDates';
-import { getKeyListener } from '../../utils/keyListener';
+import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '../../utils/dynDates';
+import { getKeyListener } from '../keyListener';
 import { getNumberInputter } from '../../utils/numberInputter';
 import { imitate } from '../ask';
-import { chlk } from '../clr';
-import { out, leftLines, centerLines, rightLines } from '../out';
+import * as out from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { getLineCounter } from '../out/lineCounter';
-import { table, TableFormatConfig } from '../table';
 import { dateHandler } from './datetime/date';
 import { timeHandler } from './datetime/time';
 import { DateTimeHandlerObj } from './datetime/types';
 
-// TODO docs
+//<!-- DOCS: 110 -->
 
 type DateTimeSection = 'date' | 'time';
 
@@ -129,8 +112,8 @@ const overallHandler = (
 
     const sections = [];
     if (date.length) sections.push(date);
-    if (date.length && time.length) sections.push(centerLines([''], 8));
-    if (time.length) sections.push(date.length ? centerLines(['', '', ...time]) : time); // add 2 lines to top of time if date is on
+    if (date.length && time.length) sections.push(out.centerLines([''], 8));
+    if (time.length) sections.push(date.length ? out.centerLines(['', '', ...time]) : time); // add 2 lines to top of time if date is on
 
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), undefined, undefined, false);
@@ -213,12 +196,27 @@ const overallHandler = (
   return deferred.promise;
 };
 
+/**<!-- DOCS: ### -->
+ * date
+ *
+ * - `ask.date`
+ *
+ * Get a date input from the user.
+ */
 export const date = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
   const [[ddate]] = await overallHandler(questionText, true, false, false, [initDate, initDate]);
   return dynDateToDate(ddate);
 };
+
+/**<!-- DOCS: ### -->
+ * time
+ *
+ * - `ask.time`
+ *
+ * Get a time input from the user.
+ */
 export const time = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
@@ -226,6 +224,14 @@ export const time = async (questionText?: string | Breadcrumb, initial?: Date): 
   const [_d, dtime] = await overallHandler(questionText, false, true, false, [initDate, initDate], initTime);
   return dynDateToDate(dateToDynDate(initDateObj), dtime);
 };
+
+/**<!-- DOCS: ### -->
+ * datetime
+ *
+ * - `ask.datetime`
+ *
+ * Get a date and time input from the user.
+ */
 export const datetime = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
@@ -233,6 +239,14 @@ export const datetime = async (questionText?: string | Breadcrumb, initial?: Dat
   const [[ddate], dtime] = await overallHandler(questionText, true, true, false, [initDate, initDate], initTime);
   return dynDateToDate(ddate, dtime);
 };
+
+/**<!-- DOCS: ### -->
+ * dateRange
+ *
+ * - `ask.dateRange`
+ *
+ * Get a date range input from the user.
+ */
 export const dateRange = async (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date): Promise<[Date, Date]> => {
   const initDateObj1 = initialStart || new Date();
   const initDateObj2 = initialEnd || new Date();

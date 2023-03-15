@@ -1,39 +1,15 @@
-export interface ExplodedPath {
-  /**
-   * The full original path as it was passed in.
-   */
-  path: string;
+//<!-- DOCS: 700 -->
+/**<!-- DOCS: ## -->
+ * PathsTools
+ *
+ * A collection of tools for working with paths
+ */
 
-  /**
-   * The directory path of the given path
-   *
-   * Note: no trailing slash
-   */
-  dir: string;
-
-  /**
-   * the ancestral folders of the given dir as an array
-   */
-  folders: string[];
-
-  /**
-   * the name of the file, not including the extension
-   */
-  name: string;
-
-  /**
-   * the extension of the file, not including the dot
-   */
-  ext: string;
-
-  /**
-   * the full name of the file, including the extension (and dot)
-   */
-  filename: string;
-}
-
-/**
+/**<!-- DOCS: ### -->
  * explodePath
+ *
+ * - `PathsTools.explodePath`
+ * - `explodePath`
  *
  * 'Explodes' a path into its components
  *
@@ -67,8 +43,64 @@ export const explodePath = (path: string): ExplodedPath => {
   return { path, dir, folders, name, ext, filename };
 };
 
-/**
- * PathUtils.removeTrailSlash
+/**<!-- DOCS: #### -->
+ * ExplodedPath
+ *
+ * - `PathsTools.ExplodedPath`
+ * - `ExplodedPath`
+ *
+ * An object containing the exploded components of a path
+ */
+export interface ExplodedPath {
+  /**<!-- DOCS: ##### -->
+   * path
+   *
+   * The full original path as it was passed in.
+   */
+  path: string;
+
+  /**<!-- DOCS: ##### -->
+   * dir
+   *
+   * The directory path of the given path
+   *
+   * Note: no trailing slash
+   */
+  dir: string;
+
+  /**<!-- DOCS: ##### -->
+   * folders
+   *
+   * the ancestral folders of the given dir as an array
+   */
+  folders: string[];
+
+  /**<!-- DOCS: ##### -->
+   * name
+   *
+   * the name of the file, not including the extension
+   */
+  name: string;
+
+  /**<!-- DOCS: ##### -->
+   * ext
+   *
+   * the extension of the file, not including the dot
+   */
+  ext: string;
+
+  /**<!-- DOCS: ##### -->
+   * filename
+   *
+   * the full name of the file, including the extension (and dot)
+   */
+  filename: string;
+}
+
+/**<!-- DOCS: ### -->
+ * removeTrailSlash
+ *
+ * - `PathTools.removeTrailSlash`
  *
  * Remove trailing slash from path (if one exists)
  *
@@ -78,8 +110,10 @@ export const explodePath = (path: string): ExplodedPath => {
  */
 export const removeTrailSlash = (path: string) => path.replace(/\/$/, '');
 
-/**
- * PathUtils.trailSlash
+/**<!-- DOCS: ### -->
+ * trailSlash
+ *
+ * - `PathTools.trailSlash`
  *
  * Ensures there's a trailing slash on path
  *
@@ -89,8 +123,10 @@ export const removeTrailSlash = (path: string) => path.replace(/\/$/, '');
  */
 export const trailSlash = (path: string) => removeTrailSlash(path) + '/';
 
-/**
- * PathUtils.removeDoubleSlashes
+/**<!-- DOCS: ### -->
+ * removeDoubleSlashes
+ *
+ * - `PathTools.removeDoubleSlashes`
  *
  * Removes double slashes from path (an bug with Unix paths)
  *

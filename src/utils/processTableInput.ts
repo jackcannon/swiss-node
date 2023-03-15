@@ -1,7 +1,7 @@
-import { table, TableFormatConfig, FullTableOptions } from '../tools/table';
-import { out } from '../tools/out';
-import { zip, fn, ArrayUtils } from 'swiss-ak';
-import { getLogStr } from '../tools/LogUtils';
+import * as table from '../tools/table';
+import * as out from '../tools/out';
+import { zip, fn, ArrayTools } from 'swiss-ak';
+import { getLogStr } from '../tools/LogTools';
 
 export type Text = string | string[];
 
@@ -31,7 +31,7 @@ const fixMixingHeader = (cells: Cells) => {
   };
 };
 
-const transposeTable = (cells: Cells, opts: FullTableOptions): Cells => {
+const transposeTable = (cells: Cells, opts: table.FullTableOptions): Cells => {
   if (opts.transpose) {
     const body = table.utils.transpose(table.utils.concatRows(cells));
     return { header: [], body };
@@ -47,7 +47,7 @@ const transposeTable = (cells: Cells, opts: FullTableOptions): Cells => {
 const ensureStringForEveryCell = (rows: string[][], type: SectionType, numCols: number) =>
   rows.map((row) => [...row, ...empty(numCols)].slice(0, numCols).map((cell) => itemToString(cell)));
 
-const formatCells = (rows: string[][][], type: SectionType, format: TableFormatConfig[]) => {
+const formatCells = (rows: string[][][], type: SectionType, format: table.TableFormatConfig[]) => {
   const applicable = format.filter((f) => (f.isHeader && type === 'header') || (f.isBody && type === 'body'));
 
   for (let frmt of applicable) {
@@ -77,7 +77,7 @@ const getDesiredColumnWidths = (
   const transposed = zip(...[...cells.header, ...cells.body]);
 
   const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => out.utils.getLinesWidth(cell))));
-  const currColWidths = preferredWidths.length ? ArrayUtils.repeat(numCols, ...preferredWidths) : actualColWidths;
+  const currColWidths = preferredWidths.length ? ArrayTools.repeat(numCols, ...preferredWidths) : actualColWidths;
   const currTotalWidth = currColWidths.length ? currColWidths.reduce(fn.reduces.combine) + (numCols + 1) * 3 : 0;
 
   const diff = currTotalWidth - (maxTotalWidth - (marginRight + marginLeft));
@@ -107,7 +107,7 @@ const wrapCells = (rows: string[][][], type: SectionType, colWidths: number[], t
 
 const seperateLinesIntoRows = (rows: string[][][], type: SectionType) => rows.map((row) => zip(...row));
 
-export const processInput = (cells: Cells, opts: FullTableOptions) => {
+export const processInput = (cells: Cells, opts: table.FullTableOptions) => {
   const fixed = fixMixingHeader(cells);
 
   const transposed = transposeTable(fixed, opts);

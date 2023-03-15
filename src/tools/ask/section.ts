@@ -1,10 +1,18 @@
-import { ArrayUtils } from 'swiss-ak';
+import { ArrayTools } from 'swiss-ak';
 import { chlk } from '../clr';
 import { getLineCounter, LineCounter } from '../out/lineCounter';
-import { out } from '../out';
+import * as out from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { imitate } from '../ask';
 
+//<!-- DOCS: 150 -->
+/**<!-- DOCS: ### -->
+ * separator
+ *
+ * - `ask.separator`
+ *
+ * Prints a separator line to the console.
+ */
 export const separator = (
   version: 'down' | 'none' | 'up' = 'down',
   spacing: number = 8,
@@ -18,7 +26,7 @@ export const separator = (
     none: '◦',
     up: '▵'
   };
-  const line = ArrayUtils.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  const line = ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
   console.log(chlk.gray1(out.center(line, undefined, lineChar)));
   return 1;
 };
@@ -27,8 +35,10 @@ type UnwrapPromFunc<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
 
 type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...infer Tail] ? [UnwrapPromFunc<Head>, ...UnwrapPromFuncs<Tail>] : [];
 
-/**
- * ask.section
+/**<!-- DOCS: ### -->
+ * section
+ *
+ * - `ask.section`
  *
  * Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
  *

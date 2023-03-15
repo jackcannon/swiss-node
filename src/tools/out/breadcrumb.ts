@@ -1,12 +1,16 @@
 import chalk from 'chalk';
 import { symbols } from 'swiss-ak';
 import { chlk, clr, Colour } from '../clr';
-import { hasColor, out, truncate } from '../out';
+import * as out from '../out';
 
 const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
 
-/**
- * Breadcrumb
+//<!-- DOCS: 250 -->
+/**<!-- DOCS: ### -->
+ * getBreadcrumb
+ *
+ * - `out.getBreadcrumb`
+ * - `getBreadcrumb`
  *
  * Provides a consistent format and style for questions/prompts
  *
@@ -27,21 +31,6 @@ const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
  * subsub('e'); // 'a › b › c › d › e'
  * ```
  */
-export type Breadcrumb = {
-  (...tempNames: string[]): Breadcrumb;
-  setColours: (colours: Colour[]) => void;
-  add: (...names: string[]) => number;
-  getNames: (...tempNames: string[]) => any[];
-  sub: (...tempNames: string[]) => Breadcrumb;
-  get(...tempNames: string[]): string;
-  toString(): string;
-};
-
-/**
- * getBreadcrumb
- *
- * Returns an empty breadcrumb object
- */
 export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   let current = [];
   let colours: Colour[] = ['t1', 't2', 't3', 't4', 't5', 't6'];
@@ -53,7 +42,7 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   const add = (...names: string[]) => current.push(...names);
 
   const getColouredName = (name: string, index: number, arr: string[]) =>
-    hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
+    out.utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
   const getColouredNames = (...tempNames: string[]) => getNames(...tempNames).map(getColouredName);
 
   const getNames = (...tempNames: string[]) => [...baseNames, ...current, ...tempNames];
@@ -65,7 +54,7 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
 
   const get = (...tempNames: string[]) =>
     chalk.bold(
-      truncate(
+      out.truncate(
         getColouredNames(...tempNames)
           .join(seperatorChar)
           .trim(),
@@ -83,4 +72,22 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   result.toString = get;
 
   return result;
+};
+
+/**<!-- DOCS: #### -->
+ * Breadcrumb
+ *
+ * - `out.Breadcrumb`
+ * - `Breadcrumb`
+ *
+ * Return type for getBreadcrumb
+ */
+export type Breadcrumb = {
+  (...tempNames: string[]): Breadcrumb;
+  setColours: (colours: Colour[]) => void;
+  add: (...names: string[]) => number;
+  getNames: (...tempNames: string[]) => any[];
+  sub: (...tempNames: string[]) => Breadcrumb;
+  get(...tempNames: string[]): string;
+  toString(): string;
 };

@@ -1,44 +1,19 @@
-// TODO logs
-
 import util from 'util';
 import chalk from 'chalk';
-import { out } from './out';
-import { KeysOnly, ObjectUtils, OfType } from 'swiss-ak';
+import { ObjectTools, OfType } from 'swiss-ak';
 
-export interface LogOptions {
-  /**
-   * Default: false
-   */
-  showDate?: boolean;
+import * as out from './out';
 
-  /**
-   * Default: true
-   */
-  showTime?: boolean;
-
-  /**
-   * Default: true
-   */
-  enableColours?: boolean;
-}
+//<!-- DOCS: 400 -->
+/**<!-- DOCS: ## -->
+ * log
+ */
 
 const defaultOptions: LogOptions = {
   showDate: false,
   showTime: true,
   enableColours: true
 };
-
-export interface LogConfigs {
-  [key: string]: LogConfig;
-}
-
-export interface LogConfig {
-  name: string;
-  nameColour?: Function;
-  showDate?: boolean;
-  showTime?: boolean;
-  contentColour?: Function;
-}
 
 const defaultConfigs = {
   blank: {
@@ -132,13 +107,20 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
     .join('\n');
 };
 
+/**<!-- DOCS: ### 401 -->
+ * createLogger
+ *
+ * - `createLogger`
+ *
+ * Create a logger with custom configs
+ */
 export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, options: LogOptions = {}): Logger<T> => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
 
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
 
-  return ObjectUtils.mapValues(allConfigs, (key, config: LogConfig) => {
+  return ObjectTools.mapValues(allConfigs, (key, config: LogConfig) => {
     const func: LogFunction = (...args: any[]) => {
       const log = formatLog(args, config, completeOptions, longestName);
       console.log(log);
@@ -147,4 +129,60 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
   }) as Logger<T>;
 };
 
+/**<!-- DOCS: ### 400 -->
+ * log
+ *
+ * - `log`
+ *
+ * A set of log functions
+ */
 export const log = createLogger({}) as DefaultLogger;
+
+/**<!-- DOCS: ### 450 -->
+ * LogOptions
+ *
+ * - `LogOptions`
+ *
+ * Options for the log function
+ */
+export interface LogOptions {
+  /**<!-- DOCS: #### 451 -->
+   * showDate
+   *
+   * Default: false
+   */
+  showDate?: boolean;
+
+  /**<!-- DOCS: #### 451 -->
+   * showTime
+   *
+   * Default: true
+   */
+  showTime?: boolean;
+
+  /**<!-- DOCS: #### 451 -->
+   * enableColours
+   *
+   * Default: true
+   */
+  enableColours?: boolean;
+}
+
+interface LogConfigs {
+  [key: string]: LogConfig;
+}
+
+/**<!-- DOCS: ### 460 -->
+ * LogConfig
+ *
+ * - `LogConfig`
+ *
+ * Configuration for the log function
+ */
+export interface LogConfig {
+  name: string;
+  nameColour?: Function;
+  showDate?: boolean;
+  showTime?: boolean;
+  contentColour?: Function;
+}

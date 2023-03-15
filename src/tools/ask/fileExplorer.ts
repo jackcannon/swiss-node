@@ -3,22 +3,37 @@ import * as fsP from 'fs/promises';
 
 import stringWidth from 'string-width';
 
-// TODO - replace $$ with fs
-
-import { ArrayUtils, fn, getDeferred, milliseconds, ms, PromiseUtils, seconds, sortNumberedText, symbols, TimeUtils, tryOr, wait } from 'swiss-ak';
+import {
+  ArrayTools,
+  fn,
+  getDeferred,
+  MathsTools,
+  milliseconds,
+  ms,
+  PromiseTools,
+  seconds,
+  sortNumberedText,
+  StringTools,
+  symbols,
+  TimeTools,
+  tryOr,
+  wait
+} from 'swiss-ak';
+import chalk from 'chalk';
 
 import * as ask from '../ask';
-import { out } from '../out';
+import * as out from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { chlk } from '../clr';
-import { explodePath } from '../PathUtils';
-import { getKeyListener } from '../../utils/keyListener';
+import { explodePath, removeDoubleSlashes, trailSlash } from '../PathTools';
+import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
-import { table } from '../table';
+import * as table from '../table';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
-import chalk from 'chalk';
 import { findDirs, findFiles, getProbe, isDirExist, isFileExist, MiniProbeResult, mkdir, open } from '../../utils/fsUtils';
-import { PathUtils } from '../..';
+import { nextTick } from '../waiters';
+
+//<!-- DOCS: 120 -->
 
 // TODO configurable styles
 interface PathContents {
@@ -46,14 +61,22 @@ const forceLoadPathContents = async (path: string): Promise<PathContents> => {
     const pathType = await getPathType(path);
 
     if (pathType === 'd') {
-      const lists = await Promise.all([findDirs(path), findFiles(path)]);
+      const lists = await Promise.all([
+        //
+        findDirs(path),
+        findFiles(path)
+      ]);
 
       const [dirs, files] = lists.map((list) => sortNumberedText(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, ' ')));
 
       contents = { ...contents, dirs, files };
     }
     if (pathType === 'f') {
-      const [stat, probe] = await Promise.all([tryOr(undefined, () => fsP.stat(path)), tryOr(undefined, () => getProbe(path))]);
+      const [stat, probe] = await Promise.all([
+        //
+        tryOr(undefined, () => fsP.stat(path)),
+        tryOr(undefined, () => getProbe(path))
+      ]);
       contents = { ...contents, info: { stat, probe } };
     }
   } catch (err) {
@@ -72,7 +95,7 @@ const getPathType = async (path: string): Promise<'d' | 'f'> => {
 
 const join = (...items: string[]) => {
   const result = items.join('/');
-  return PathUtils.removeDoubleSlashes(result || '/');
+  return removeDoubleSlashes(result || '/');
 };
 
 const keyActionDict: ActionBarConfig = {
@@ -179,7 +202,7 @@ const getFileIcon = (ext: string) => {
 
 const humanFileSize = (size: number) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return fn.roundTo(0.01, size / Math.pow(1024, i)) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+  return MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 };
 
 const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
@@ -193,7 +216,7 @@ const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
 
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(chalk.dim(`${ext.toUpperCase()} ${category ? `${fn.capitalise(category)} ` : ''}File`), panelWidth));
+  result.push(out.center(chalk.dim(`${ext.toUpperCase()} ${category ? `${StringTools.capitalise(category)} ` : ''}File`), panelWidth));
 
   result.push(out.center(chlk.gray1('─'.repeat(Math.round(panelWidth * 0.75))), panelWidth));
 
@@ -203,7 +226,7 @@ const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
     result.push(out.split(`${chalk.bold.dim(title)}`, `${value}${extra ? chalk.dim(` (${chalk.dim(extra)})`) : ''}`, panelWidth));
   };
   const addTimeItem = (title: string, time: ms, append?: string) => {
-    addItem(title, `${TimeUtils.toReadableDuration(now - time, false, 2)}${append || ''}`);
+    addItem(title, `${TimeTools.toReadableDuration(now - time, false, 2)}${append || ''}`);
   };
 
   if (stat) {
@@ -213,7 +236,7 @@ const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
   }
   if (probe) {
     if (['image', 'video'].includes(category)) addItem(`Dimensions`, `${probe.width}×${probe.height}`);
-    if (['video', 'audio'].includes(category)) addItem(`Duration`, TimeUtils.toReadableDuration(seconds(probe.duration), false, 2));
+    if (['video', 'audio'].includes(category)) addItem(`Duration`, TimeTools.toReadableDuration(seconds(probe.duration), false, 2));
     if (['video'].includes(category)) addItem(`FPS`, `${probe.framerate}`);
   }
 
@@ -277,12 +300,12 @@ const fileExplorerHandler = async (
 
   const loadEssentials = async (executeFn: (path: string) => Promise<PathContents> = loadPathContents) => {
     await Promise.all([
-      PromiseUtils.each(paths, executeFn),
+      PromiseTools.each(paths, executeFn),
       (async () => {
         // current dir
         const { dirs } = await executeFn(currentPath);
         const list = dirs;
-        return PromiseUtils.each(
+        return PromiseTools.each(
           list.map((dir) => join(currentPath, dir)),
           executeFn
         );
@@ -292,7 +315,7 @@ const fileExplorerHandler = async (
         const parent = explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
-        return PromiseUtils.each(
+        return PromiseTools.each(
           list.map((dir) => join(parent, dir)),
           executeFn
         );
@@ -445,7 +468,7 @@ const fileExplorerHandler = async (
     }
 
     // show exactly x columns
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayUtils.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
 
     const termWidth = out.utils.getTerminalWidth();
 
@@ -535,7 +558,7 @@ const fileExplorerHandler = async (
       locked = false;
       if (pressed === 'r') setPressed(undefined);
 
-      await PromiseUtils.eachLimit(32, Array.from(restKeys), async () => {
+      await PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted) return;
         return forceLoadPathContents;
       });
@@ -586,7 +609,7 @@ const fileExplorerHandler = async (
 
           const info1Prefix = chlk.gray3('  Adding folder to ');
           const maxValWidth = out.utils.getTerminalWidth() - (stringWidth(info1Prefix) + stringWidth(info2));
-          const info1Value = chlk.gray4(out.truncateStart(PathUtils.trailSlash(basePath), maxValWidth));
+          const info1Value = chlk.gray4(out.truncateStart(trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
 
           lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
@@ -620,7 +643,7 @@ const fileExplorerHandler = async (
 
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(chlk.gray3('  Saving file to ') + chlk.gray4(out.truncateStart(PathUtils.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          lc.log(chlk.gray3('  Saving file to ') + chlk.gray4(out.truncateStart(trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
         },
         () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn('name')} the file?`, initial)),
         () => true
@@ -660,10 +683,12 @@ const fileExplorerHandler = async (
         return userActions.moveVertical(-1);
       case 'down':
         return userActions.moveVertical(1);
-      case 'right':
-        return userActions.moveRight();
       case 'left':
         return userActions.moveLeft();
+    }
+    switch (key) {
+      case 'right':
+        return userActions.moveRight();
       case 'r':
         return userActions.refresh();
       case 'f':
@@ -682,7 +707,13 @@ const fileExplorerHandler = async (
   return deferred.promise;
 };
 
-// todo update docs
+/**<!-- DOCS: ### -->
+ * fileExplorer
+ *
+ * - `ask.fileExplorer`
+ *
+ * Get a file or folder path from the user.
+ */
 export const fileExplorer = async (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
@@ -692,14 +723,26 @@ export const fileExplorer = async (
   return arr[0];
 };
 
-// todo update docs
+/**<!-- DOCS: ### -->
+ * multiFileExplorer
+ *
+ * - `ask.multiFileExplorer`
+ *
+ * Get multiple file or folder paths from the user.
+ */
 export const multiFileExplorer = (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
   startPath: string = process.cwd()
 ): Promise<string[]> => fileExplorerHandler(true, false, questionText, selectType, startPath);
 
-// todo add docs
+/**<!-- DOCS: ### -->
+ * saveFileExplorer
+ *
+ * - `ask.saveFileExplorer`
+ *
+ * Get a file path from the user, with the intention of saving a file to that path.
+ */
 export const saveFileExplorer = async (
   questionText: string | Breadcrumb,
   startPath: string = process.cwd(),

@@ -3,7 +3,17 @@ export interface KeyListener {
   stop(): void;
 }
 
-// TODO docs
+/**<!-- DOCS: ## -->
+ * keyListener
+ */
+
+/**<!-- DOCS: ### -->
+ * getKeyListener
+ *
+ * - `getKeyListener`
+ *
+ * Listens for key presses and returns the key name and raw value.
+ */
 export const getKeyListener = (
   callback: (keyName?: string, rawValue?: string) => void,
   isStart: boolean = true,

@@ -1,119 +1,15 @@
-import { getLogStr } from '../LogUtils';
-import { out } from '../out';
+import { getLogStr } from '../LogTools';
+import * as out from '../out';
 
-export interface LineCounter {
-  /**
-   * lc.log
-   *
-   * Same as console.log, but adds to the lc counter
-   *
-   * ```typescript
-   * const lc = getLineCounter();
-   * lc.log('hello'); // 1
-   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-   * lc.add(1);
-   * lc.get(); // 3
-   * lc.clear();
-   * ```
-   */
-  log(...args: any[]): number;
-
-  // TODO docs
-  move(lines: number): void;
-
-  /**
-   * lc.wrap
-   *
-   * Wraps a function, and adds a given number to the line counter
-   *
-   * ```typescript
-   * const lc = getLineCounter();
-   * lc.log('hello'); // 1
-   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-   * lc.add(1);
-   * lc.get(); // 3
-   * lc.clear();
-   * ```
-   */
-  wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-
-  /**
-   * lc.add
-   *
-   * Adds a given number to the line counter
-   *
-   * ```typescript
-   * const lc = getLineCounter();
-   * lc.log('hello'); // 1
-   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-   * lc.add(1);
-   * lc.get(); // 3
-   * lc.clear();
-   * ```
-   */
-  add(newLines: number): void;
-
-  /**
-   * lc.get
-   *
-   * returns the line counter
-   *
-   * ```typescript
-   * const lc = getLineCounter();
-   * lc.log('hello'); // 1
-   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-   * lc.add(1);
-   * lc.get(); // 3
-   * lc.clear();
-   * ```
-   */
-  get(): number;
-
-  // TODO docs
-  getSince(checkpointID: string): number;
-
-  /**
-   * lc.clear
-   *
-   * clears the line counter, and moves the cursor up by the value of the line counter
-   *
-   * ```typescript
-   * const lc = getLineCounter();
-   * lc.log('hello'); // 1
-   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-   * lc.add(1);
-   * lc.get(); // 3
-   * lc.clear();
-   * ```
-   */
-  clear(): void;
-
-  /**
-   * lc.clearBack
-   *
-   * Clears a given number of lines, and updates the line counter
-   */
-  clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-
-  /**
-   * lc.checkpoint
-   *
-   * Records a 'checkpoint' that can be returned to later
-   */
-  checkpoint(checkpointID?: string): string;
-
-  /**
-   * lc.clearToCheckpoint
-   *
-   * Clear lines up to a previously recorded checkpoint
-   */
-  clearToCheckpoint(checkpointID: string): void;
-}
+//<!-- DOCS: 260 -->
 
 const randomID = () => Math.random().toString(36).substring(2);
 
-/**
+/**<!-- DOCS: ### -->
  * getLineCounter
+ *
+ * - `out.getLineCounter`
+ * - `getLineCounter`
  *
  * Get line counter for counter output lines
  *
@@ -206,3 +102,128 @@ export const getLineCounter = (): LineCounter => {
   };
   return lc;
 };
+
+/**<!-- DOCS: #### -->
+ * LineCounter
+ *
+ * - `out.LineCounter`
+ * - `LineCounter`
+ *
+ * Return type for getLineCounter
+ */
+export interface LineCounter {
+  /**<!-- DOCS: ##### -->
+   * lc.log
+   *
+   * Same as console.log, but adds to the lc counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.add(1);
+   * lc.get(); // 3
+   * lc.clear();
+   * ```
+   */
+  log(...args: any[]): number;
+
+  /**<!-- DOCS: ##### -->
+   * move
+   *
+   * Moves the cursor up by a given number of lines
+   */
+  move(lines: number): void;
+
+  /**<!-- DOCS: ##### -->
+   * lc.wrap
+   *
+   * Wraps a function, and adds a given number to the line counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.add(1);
+   * lc.get(); // 3
+   * lc.clear();
+   * ```
+   */
+  wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
+
+  /**<!-- DOCS: ##### -->
+   * lc.add
+   *
+   * Adds a given number to the line counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.add(1);
+   * lc.get(); // 3
+   * lc.clear();
+   * ```
+   */
+  add(newLines: number): void;
+
+  /**<!-- DOCS: ##### -->
+   * lc.get
+   *
+   * returns the line counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.add(1);
+   * lc.get(); // 3
+   * lc.clear();
+   * ```
+   */
+  get(): number;
+
+  /**<!-- DOCS: ##### -->
+   * getSince
+   *
+   * Returns the number of lines since a given checkpoint
+   */
+  getSince(checkpointID: string): number;
+
+  /**<!-- DOCS: ##### -->
+   * lc.clear
+   *
+   * clears the line counter, and moves the cursor up by the value of the line counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.add(1);
+   * lc.get(); // 3
+   * lc.clear();
+   * ```
+   */
+  clear(): void;
+
+  /**<!-- DOCS: ##### -->
+   * lc.clearBack
+   *
+   * Clears a given number of lines, and updates the line counter
+   */
+  clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
+
+  /**<!-- DOCS: ##### -->
+   * lc.checkpoint
+   *
+   * Records a 'checkpoint' that can be returned to later
+   */
+  checkpoint(checkpointID?: string): string;
+
+  /**<!-- DOCS: ##### -->
+   * lc.clearToCheckpoint
+   *
+   * Clear lines up to a previously recorded checkpoint
+   */
+  clearToCheckpoint(checkpointID: string): void;
+}

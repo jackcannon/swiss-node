@@ -4,12 +4,11 @@ import prompts from 'prompts';
 import Fuse from 'fuse.js'; // fuzzy-search
 import { second, seconds, wait, fn, symbols } from 'swiss-ak';
 
-import { moveUp, loading as loadingOut, truncate, hasColor } from './out';
+import * as out from './out';
 import { chlk, clr } from './clr';
-import { ExplodedPath, explodePath } from './PathUtils';
-import { out } from './out';
+import { ExplodedPath, explodePath } from './PathTools';
 import { Breadcrumb } from './out/breadcrumb';
-import { getKeyListener } from '../utils/keyListener';
+import { getKeyListener } from './keyListener';
 
 export { default as trim } from './ask/trim';
 export { fileExplorer, multiFileExplorer, saveFileExplorer } from './ask/fileExplorer';
@@ -17,7 +16,14 @@ export { section, separator } from './ask/section';
 export { date, time, datetime, dateRange } from './ask/datetime';
 export * as table from './ask/table';
 
-const PROMPT_VALUE_PROPERTY = 'SWISS_ZX_PROMPT_VALUE';
+const PROMPT_VALUE_PROPERTY = 'SWISS_NODE_PROMPT_VALUE';
+
+//<!-- DOCS: 100 -->
+/**<!-- DOCS: ## -->
+ * ask
+ *
+ * A collection of functions to ask the user for input.
+ */
 
 const promptsOptions = {
   onCancel() {
@@ -33,8 +39,10 @@ interface PromptChoiceObject<T = string> {
 
 type PromptChoice<T = string> = string | PromptChoiceObject<T>;
 
-/**
- * ask.text
+/**<!-- DOCS: ### -->
+ * text
+ *
+ * - `ask.text`
  *
  * Get a text input from the user.
  *
@@ -57,8 +65,10 @@ export const text = async (question: string | Breadcrumb, initial?: string): Pro
   return '' + response[PROMPT_VALUE_PROPERTY];
 };
 
-/**
- * ask.autotext
+/**<!-- DOCS: ### -->
+ * autotext
+ *
+ * - `ask.autotext`
  *
  * Get a text input from the user, with auto-completion.
  *
@@ -106,8 +116,10 @@ export const autotext = async <T = string>(
   return response[PROMPT_VALUE_PROPERTY];
 };
 
-/**
- * ask.number
+/**<!-- DOCS: ### -->
+ * number
+ *
+ * - `ask.number`
  *
  * Get a number input from the user.
  *
@@ -129,8 +141,10 @@ export const number = async (question: string | Breadcrumb, initial: number = 1)
   return Number(response[PROMPT_VALUE_PROPERTY]);
 };
 
-/**
- * ask.boolean
+/**<!-- DOCS: ### -->
+ * boolean
+ *
+ * - `ask.boolean`
  *
  * Get a boolean input from the user (yes or no)
  *
@@ -159,8 +173,10 @@ export const boolean = async (
   return !Boolean(response[PROMPT_VALUE_PROPERTY]);
 };
 
-/**
- * ask.booleanAlt
+/**<!-- DOCS: ### -->
+ * booleanAlt
+ *
+ * - `ask.booleanAlt`
  *
  * Get a boolean input from the user (yes or no)
  *
@@ -184,8 +200,10 @@ export const booleanAlt = async (question: string | Breadcrumb, initial: boolean
   return Boolean(response[PROMPT_VALUE_PROPERTY]);
 };
 
-/**
- * ask.select
+/**<!-- DOCS: ### -->
+ * select
+ *
+ * - `ask.select`
  *
  * Get the user to select an option from a list.
  *
@@ -216,8 +234,10 @@ export const select = async <T = string>(question: string | Breadcrumb, choices:
   return typeof value === 'number' ? choiceObjs[value] : value;
 };
 
-/**
- * ask.multiselect
+/**<!-- DOCS: ### -->
+ * multiselect
+ *
+ * - `ask.multiselect`
  *
  * Get the user to select multiple opts from a list.
  *
@@ -275,8 +295,10 @@ export interface CRUDOptions {
   canDeleteAll: boolean;
 }
 export type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
-/**
- * ask.crud
+/**<!-- DOCS: ### -->
+ * crud
+ *
+ * - `ask.crud`
  *
  * Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
  *
@@ -319,8 +341,10 @@ export const crud = async (
   return await select(question, opts, 'none');
 };
 
-/**
- * ask.validate
+/**<!-- DOCS: ### -->
+ * validate
+ *
+ * - `ask.validate`
  *
  * Validate the result of an `ask` prompt
  *
@@ -342,7 +366,7 @@ export const validate = async <T = string, I = string>(
       return input;
     } else {
       const message = validateResponse || '';
-      moveUp(1 + extraLines);
+      out.moveUp(1 + extraLines);
       console.log(chalk.red(message));
       return runLoop(input, message.split('\n').length);
     }
@@ -380,12 +404,16 @@ const getImitateResultText = (result: any, isChild: boolean = false): string => 
   return 'done';
 };
 
-/**
- * ask.imitate
+/**<!-- DOCS: ### -->
+ * imitate
+ *
+ * - `ask.imitate`
  *
  * Imitate the display of a prompt
  *
  * ```typescript
+ * imitate(true, 'What is your name?', 'Jack');
+ *
  * ask.imitate(true, 'What is your name?', 'Jack');
  * ```
  */
@@ -399,16 +427,18 @@ export const imitate = (done: boolean, question: string | Breadcrumb, result?: a
   const mainLength = stringWidth(`${prefix} ${questionText} ${joiner}`);
   const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
 
-  let resultWrapper = hasColor(resultText) ? fn.noact : done ? chalk.white : chalk.gray;
+  let resultWrapper = out.utils.hasColor(resultText) ? fn.noact : done ? chalk.white : chalk.gray;
 
-  const resultOut = resultText ? truncate(`${resultWrapper(resultText)}`, maxLength) : '';
+  const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : '';
 
   console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
   return 1;
 };
 
-/**
- * ask.prefill
+/**<!-- DOCS: ### -->
+ * prefill
+ *
+ * - `ask.prefill`
  *
  * Auto-fills an ask prompt with the provided value, if defined.
  *
@@ -436,8 +466,10 @@ export const prefill = async <T extends unknown = string>(
   return askFn(question);
 };
 
-/**
- * ask.loading
+/**<!-- DOCS: ### -->
+ * loading
+ *
+ * - `ask.loading`
  *
  * Display an animated loading indicator that imitates the display of a prompt
  *
@@ -447,10 +479,12 @@ export const prefill = async <T extends unknown = string>(
  * loader.stop();
  * ```
  */
-export const loading = (question: string | Breadcrumb) => loadingOut((s) => imitate(false, question, `[${s}]`));
+export const loading = (question: string | Breadcrumb) => out.loading((s) => imitate(false, question, `[${s}]`));
 
-/**
- * ask.pause
+/**<!-- DOCS: ### -->
+ * pause
+ *
+ * - `ask.pause`
  *
  * Pause the program until the user presses enter
  *
@@ -477,8 +511,10 @@ export const pause = async (text: string | Breadcrumb = 'Press enter to continue
   });
 };
 
-/**
- * ask.countdown
+/**<!-- DOCS: ### -->
+ * countdown
+ *
+ * - `ask.countdown`
  *
  * Animated countdown for a given number of seconds
  *
@@ -496,28 +532,24 @@ export const countdown = async (
   let lines = 1;
   for (let s = totalSeconds; s > 0; s--) {
     const textValue = template(s);
-    moveUp(lines);
+    out.moveUp(lines);
     lines = textValue.split('\n').length;
     console.log(chalk.blackBright(textValue));
     await wait(seconds(1));
   }
-  moveUp(lines);
+  out.moveUp(lines);
   if (complete) {
     console.log(complete);
   }
 };
 
-const getRenameObj = (bef: string, aft: (before: ExplodedPath) => string) => {
-  const befExp = explodePath(bef);
-  const aftName = aft(befExp);
-
-  return {
-    before: { name: befExp.filename, path: bef },
-    after: { name: aftName, path: `${befExp.dir}/${aftName}` }
-  };
-};
-
-// TODO docs
+/**<!-- DOCS: ### -->
+ * wizard
+ *
+ * - `ask.wizard`
+ *
+ * Create a wizard object that can be used to build up a complex object
+ */
 export const wizard = <T extends unknown>(startObj: Partial<T> = {}) => {
   let obj: Partial<T> = { ...startObj };
   const history: Partial<T>[] = [];
@@ -541,8 +573,13 @@ export const wizard = <T extends unknown>(startObj: Partial<T> = {}) => {
 };
 
 type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
-/**
- * ask.utils.itemsToPromptObjects
+/**<!-- DOCS: ### 199 -->
+ * utils
+ */
+/**<!-- DOCS: #### 199 -->
+ * itemsToPromptObjects
+ *
+ * - `ask.utils.itemsToPromptObjects`
  *
  * Take an array of items and convert them to an array of prompt objects
  */
@@ -553,32 +590,3 @@ const itemsToPromptObjects = <T = string>(items: T[], titles: string[] = [], tit
 export const utils = {
   itemsToPromptObjects
 };
-
-// export const ask = {
-//   text,
-//   autotext,
-//   number,
-//   boolean,
-//   booleanAlt,
-//   select,
-//   multiselect,
-//   crud,
-//   validate,
-//   imitate,
-//   prefill,
-//   loading,
-//   pause,
-//   countdown,
-//   fileExplorer,
-//   multiFileExplorer,
-//   saveFileExplorer,
-//   wizard,
-//   section,
-//   separator,
-//   trim: askTrim,
-//   date: askDate,
-//   time: askTime,
-//   datetime: askDateTime,
-//   dateRange: askDateRange,
-
-// };

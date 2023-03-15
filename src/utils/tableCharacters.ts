@@ -1,4 +1,4 @@
-import { ArrayUtils } from 'swiss-ak';
+import { ArrayTools } from 'swiss-ak';
 import { FullTableOptions } from '../tools/table';
 
 interface CharLookup<T> {
@@ -27,7 +27,7 @@ const tableCharactersBasic = (): CharLookup<string[]> => ({
   bBot: ['─', '└', '┴', '┘']
 });
 
-const ovAllCharact = (orig: string[], char: string) => ArrayUtils.repeat(4, char);
+const ovAllCharact = (orig: string[], char: string) => ArrayTools.repeat(4, char);
 const ovSeperators = (orig: string[], char: string) => [orig[0], char, char, char];
 const ovOuterChars = (orig: string[], char: string) => [orig[0], char, orig[2], char];
 
