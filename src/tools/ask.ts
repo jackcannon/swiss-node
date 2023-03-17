@@ -549,6 +549,28 @@ export const countdown = async (
  * - `ask.wizard`
  *
  * Create a wizard object that can be used to build up a complex object
+ *
+ * ```typescript
+ * interface Example {
+ *   foo: string;
+ *   bar: number;
+ *   baz: string;
+ * }
+ *
+ * const base: Partial<Example> = {
+ *   baz: 'baz'
+ * };
+ *
+ * const wiz = ask.wizard<Example>(base);
+ *
+ * const foo = await ask.text('What is foo?'); // User input: foo
+ * wiz.add({ foo });
+ *
+ * const bar = await ask.number('What is bar?'); // User input: 123
+ * wiz.add({ bar });
+ *
+ * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
+ * ```
  */
 export const wizard = <T extends unknown>(startObj: Partial<T> = {}) => {
   let obj: Partial<T> = { ...startObj };
@@ -582,6 +604,29 @@ type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
  * - `ask.utils.itemsToPromptObjects`
  *
  * Take an array of items and convert them to an array of prompt objects
+ *
+ * ```typescript
+ * ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'])
+ * // [
+ * //   { title: 'lorem', value: 'lorem' },
+ * //   { title: 'ipsum', value: 'ipsum' },
+ * //   { title: 'dolor', value: 'dolor' }
+ * // ]
+ *
+ * ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], ['Lorem', 'Ipsum', 'Dolor'])
+ * // [
+ * //   { title: 'Lorem', value: 'lorem' },
+ * //   { title: 'Ipsum', value: 'ipsum' },
+ * //   { title: 'Dolor', value: 'dolor' }
+ * // ]
+ *
+ * ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.toUpperCase())
+ * // [
+ * //   { title: 'LOREM', value: 'lorem' },
+ * //   { title: 'IPSUM', value: 'ipsum' },
+ * //   { title: 'DOLOR', value: 'dolor' }
+ * // ]
+ * ```
  */
 const itemsToPromptObjects = <T = string>(items: T[], titles: string[] = [], titleFn?: TitleFn<T>): { title: string; value: T }[] => {
   return items.map((item, index, arr) => ({ title: (titleFn && titleFn(item, index, arr)) || titles[index] || item + '', value: item as T }));

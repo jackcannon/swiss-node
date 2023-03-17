@@ -113,6 +113,20 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
  * - `createLogger`
  *
  * Create a logger with custom configs
+ *
+ * ```typescript
+ * const log = createLogger({
+ *   myLog: {
+ *     name: 'MYLOG',
+ *     nameColour: chalk.magenta,
+ *     showDate: false,
+ *     showTime: true,
+ *     contentColour: chalk.yellowBright
+ *   }
+ * });
+ *
+ * log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
+ * ```
  */
 export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, options: LogOptions = {}): Logger<T> => {
   const completeOptions = { ...defaultOptions, ...options };
@@ -135,6 +149,18 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
  * - `log`
  *
  * A set of log functions
+ *
+ * ```typescript
+ * log.blank('This is blank');     //                       This is blank
+ * log.log('This is log');         // [12:00:00.123]  LOG   This is log
+ * log.out('This is out');         // [12:00:00.123]  OUT   This is out
+ * log.normal('This is normal');   // [12:00:00.123]  LOG   This is normal
+ * log.verbose('This is verbose'); // [12:00:00.123]  LOG   This is verbose
+ * log.debug('This is debug');     // [12:00:00.123]  DBUG  This is debug
+ * log.info('This is info');       // [12:00:00.123]  INFO  This is info
+ * log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
+ * log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+ * ```
  */
 export const log = createLogger({}) as DefaultLogger;
 
@@ -146,25 +172,8 @@ export const log = createLogger({}) as DefaultLogger;
  * Options for the log function
  */
 export interface LogOptions {
-  /**<!-- DOCS: #### 451 -->
-   * showDate
-   *
-   * Default: false
-   */
   showDate?: boolean;
-
-  /**<!-- DOCS: #### 451 -->
-   * showTime
-   *
-   * Default: true
-   */
   showTime?: boolean;
-
-  /**<!-- DOCS: #### 451 -->
-   * enableColours
-   *
-   * Default: true
-   */
   enableColours?: boolean;
 }
 
@@ -178,6 +187,8 @@ interface LogConfigs {
  * - `LogConfig`
  *
  * Configuration for the log function
+ *
+ * See createLogger
  */
 export interface LogConfig {
   name: string;

@@ -16,6 +16,39 @@ import { fn } from 'swiss-ak';
  * - `getLogStr`
  *
  * Get a string for a given object as it would be printed by console.log
+ *
+ * ```typescript
+ * getLogStr(true); // true
+ * getLogStr(1); // 1
+ * getLogStr('foobar'); // foobar
+ * getLogStr({ test: 'test' }); // { test: 'test' }
+ * getLogStr(['a', 'b', 'c']); // [ 'a', 'b', 'c' ]
+ *
+ * getLogStr([
+ *   [
+ *     [
+ *       ['a', 'b', 'c'],
+ *       ['d', 'e', 'f']
+ *     ],
+ *     [
+ *       ['g', 'h', 'i'],
+ *       ['j', 'k', 'l']
+ *     ]
+ *   ],
+ *   [
+ *     [
+ *       ['m', 'n', 'o']
+ *     ]
+ *   ]
+ * ]);
+ * // [
+ * //   [
+ * //     [ [ 'a', 'b', 'c' ], [ 'd', 'e', 'f' ] ],
+ * //     [ [ 'g', 'h', 'i' ], [ 'j', 'k', 'l' ] ]
+ * //   ],
+ * //   [ [ [ 'm', 'n', 'o' ] ] ]
+ * // ]
+ * ```
  */
 export const getLogStr = (item: any): string => {
   const inspectList = ['object', 'boolean', 'number'];

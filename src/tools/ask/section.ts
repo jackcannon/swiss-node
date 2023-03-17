@@ -12,6 +12,17 @@ import { imitate } from '../ask';
  * - `ask.separator`
  *
  * Prints a separator line to the console.
+ *
+ * ```typescript
+ * ask.separator('down');
+ * // ┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄
+ *
+ * ask.separator('none', 15);
+ * // ┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄
+ *
+ * ask.separator('up', 5, 2);
+ * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
+ * ```
  */
 export const separator = (
   version: 'down' | 'none' | 'up' = 'down',

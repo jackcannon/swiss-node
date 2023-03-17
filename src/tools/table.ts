@@ -58,12 +58,13 @@ const empty = (numCols: number, char: string = '') => new Array(numCols).fill(ch
  * ```typescript
  * const header = [['Name', 'Age']];
  * const body = [['John', '25'], ['Jane', '26']];
- * table.print(body, header);
+ * table.print(body, header); // 7
  *
  * // ┏━━━━━━┳━━━━━┓
  * // ┃ Name ┃ Age ┃
  * // ┡━━━━━━╇━━━━━┩
  * // │ John │ 25  │
+ * // ├──────┼─────┤
  * // │ Jane │ 26  │
  * // └──────┴─────┘
  * ```
@@ -106,7 +107,7 @@ const getAllKeys = (objects) => {
  *   b: 'Col B',
  *   c: 'Col C'
  * };
- * table.printObjects(objs, header);
+ * table.printObjects(objs, header); // 11
  *
  * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
  * // ┃ Col A ┃ Col B ┃ Col C ┃
@@ -132,6 +133,21 @@ export const printObjects = (objects: Object[], headers: Object = {}, options: T
  * - `table.getLines`
  *
  * Get the lines of a table (rather than printing it)
+ *
+ * ```typescript
+ * const header = [['Name', 'Age']];
+ * const body = [['John', '25'], ['Jane', '26']];
+ * table.getLines(body, header);
+ * // [
+ * //   '┏━━━━━━┳━━━━━┓',
+ * //   '┃ \x1B[1mName\x1B[22m ┃ \x1B[1mAge\x1B[22m ┃',
+ * //   '┡━━━━━━╇━━━━━┩',
+ * //   '│ John │ 25  │',
+ * //   '├──────┼─────┤',
+ * //   '│ Jane │ 26  │',
+ * //   '└──────┴─────┘'
+ * // ]
+ * ```
  */
 export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
   // const lc = getLineCounter();
@@ -393,6 +409,18 @@ interface TableFormatConfigFull extends TableFormatConfig {
  * - `table.utils.objectsToTable`
  *
  * Process an array of objects into a table format (string[][])
+ *
+ * ```typescript
+ * const objs = [
+ *   { name: 'John', age: 25 },
+ *   { name: 'Jane', age: 26 }
+ * ];
+ * table.utils.objectsToTable(objs)
+ * // {
+ * //   header: [ [ 'name', 'age' ] ],
+ * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
+ * // }
+ * ```
  */
 const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[][]; body: any[][] } => {
   const allKeys = getAllKeys(objects);
@@ -412,6 +440,19 @@ const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[
  * - `table.utils.transpose`
  *
  * Change rows into columns and vice versa
+ *
+ * ```typescript
+ * const input = [
+ *   ['John', 25],
+ *   ['Jane', 26],
+ *   ['Derek', 27]
+ * ];
+ * table.utils.transpose(input)
+ * // [
+ * //   [ 'John', 'Jane', 'Derek' ],
+ * //   [ 25, 26, 27 ]
+ * // ]
+ * ```
  */
 const transpose = (rows: any[][]): any[][] => {
   return ArrayTools.zip(...rows);
@@ -423,6 +464,22 @@ const transpose = (rows: any[][]): any[][] => {
  * - `table.utils.concatRows`
  *
  * Concatenate header and body rows into one list of rows
+ *
+ * ```typescript
+ * const header = [['Name', 'Age']];
+ * const body = [
+ *   ['John', 25],
+ *   ['Jane', 26],
+ *   ['Derek', 27]
+ * ];
+ * table.utils.concatRows({header, body})
+ * // [
+ * //   [ 'Name', 'Age' ],
+ * //   [ 'John', 25 ],
+ * //   [ 'Jane', 26 ],
+ * //   [ 'Derek', 27 ]
+ * // ]
+ * ```
  */
 const concatRows = (cells: { header: any[][]; body: any[][] }): any[][] => {
   return [...(cells.header || []), ...cells.body] as any[][];
@@ -434,6 +491,34 @@ const concatRows = (cells: { header: any[][]; body: any[][] }): any[][] => {
  * - `table.utils.getFormat`
  *
  * A function for simplifying the format configuration
+ *
+ * ```typescript
+ * const wrap = (str: string) => 'X';
+ *
+ * const format = [table.utils.getFormat(wrap, 0, 0), table.utils.getFormat(wrap, 1, 1, false, true), table.utils.getFormat(wrap, 2, 2, true, false)];
+ * // [
+ * //   { formatFn: wrap, row: 0, col: 0 },
+ * //   { formatFn: wrap, row: 1, col: 1, isHeader: false, isBody: true },
+ * //   { formatFn: wrap, row: 2, col: 2, isHeader: true, isBody: false }
+ * // ]
+ *
+ * const header = partition(range(9), 3);
+ * const body = partition(range(9), 3);
+ * table.print(header, body, {format})
+ * // ┏━━━┳━━━┳━━━┓
+ * // ┃ 0 ┃ 1 ┃ 2 ┃
+ * // ┣━━━╋━━━╋━━━┫
+ * // ┃ 3 ┃ 4 ┃ 5 ┃
+ * // ┣━━━╋━━━╋━━━┫
+ * // ┃ 6 ┃ 7 ┃ X ┃
+ * // ┡━━━╇━━━╇━━━┩
+ * // │ X │ 1 │ 2 │
+ * // ├───┼───┼───┤
+ * // │ 3 │ X │ 5 │
+ * // ├───┼───┼───┤
+ * // │ 6 │ 7 │ 8 │
+ * // └───┴───┴───┘
+ * ```
  */
 const getFormat = (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
   const result: TableFormatConfig = {

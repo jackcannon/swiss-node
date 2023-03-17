@@ -50,6 +50,8 @@ export const explodePath = (path: string): ExplodedPath => {
  * - `ExplodedPath`
  *
  * An object containing the exploded components of a path
+ *
+ * See `explodePath` for more details
  */
 export interface ExplodedPath {
   /**<!-- DOCS: ##### -->

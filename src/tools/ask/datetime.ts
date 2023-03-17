@@ -202,6 +202,11 @@ const overallHandler = (
  * - `ask.date`
  *
  * Get a date input from the user.
+ *
+ * ```typescript
+ * const date = await ask.date('Whats the date?');
+ * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
+ * ```
  */
 export const date = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -216,6 +221,14 @@ export const date = async (questionText?: string | Breadcrumb, initial?: Date): 
  * - `ask.time`
  *
  * Get a time input from the user.
+ *
+ * ```typescript
+ * const time = await ask.time('Whats the time?');
+ * // [Date: 2023-01-01T12:00:00.000Z] (user inputted time, with todays date)
+ *
+ * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
+ * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
+ * ```
  */
 export const time = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -231,6 +244,11 @@ export const time = async (questionText?: string | Breadcrumb, initial?: Date): 
  * - `ask.datetime`
  *
  * Get a date and time input from the user.
+ *
+ * ```typescript
+ * const when = await ask.datetime('Whats the date/time?');
+ * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
+ * ```
  */
 export const datetime = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -246,6 +264,14 @@ export const datetime = async (questionText?: string | Breadcrumb, initial?: Dat
  * - `ask.dateRange`
  *
  * Get a date range input from the user.
+ *
+ * ```typescript
+const range = await ask.dateRange('When is the festival?');
+// [
+//   [Date: 2023-03-01T12:00:00.000Z],
+//   [Date: 2023-03-31T12:00:00.000Z]
+// ]
+ * ```
  */
 export const dateRange = async (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date): Promise<[Date, Date]> => {
   const initDateObj1 = initialStart || new Date();

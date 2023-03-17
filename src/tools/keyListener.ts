@@ -13,6 +13,18 @@ export interface KeyListener {
  * - `getKeyListener`
  *
  * Listens for key presses and returns the key name and raw value.
+ *
+ * ```typescript
+ * const kl = getKeyListener((keyName, rawValue) => {
+ *   // do something with keyName and rawValue
+ * });
+ *
+ * kl.start();
+ *
+ * // later...
+ *
+ * kl.stop();
+ * ```
  */
 export const getKeyListener = (
   callback: (keyName?: string, rawValue?: string) => void,

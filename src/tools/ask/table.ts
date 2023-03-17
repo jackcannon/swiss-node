@@ -128,6 +128,28 @@ const askTableHandler = <T extends unknown>(
  * - `ask.table.select`
  *
  * Get a single selection from a table.
+ *
+ * ```typescript
+ * const items = [
+ *   { name: 'John', age: 25 },
+ *   { name: 'Jane', age: 26 },
+ *   { name: 'Derek', age: 27 }
+ * ];
+ * const headers = [['Name', 'Age']];
+ * const itemToRow = ({ name, age }) => [name, age];
+ *
+ * const answer = await ask.table.select('Who?', items, undefined, itemToRow, headers);
+ * // ┏━━━┳━━━━━━━┳━━━━━┓
+ * // ┃   ┃ Name  ┃ Age ┃
+ * // ┡━━━╇━━━━━━━╇━━━━━┩
+ * // │   │ John  │ 25  │
+ * // ├───┼───────┼─────┤
+ * // │ ❯ │ Jane  │ 26  │
+ * // ├───┼───────┼─────┤
+ * // │   │ Derek │ 27  │
+ * // └───┴───────┴─────┘
+ * // Returns: { name: 'Jane', age: 26 }
+ * ```
  */
 export const select = async <T extends unknown>(
   question: string | Breadcrumb,
@@ -147,6 +169,31 @@ export const select = async <T extends unknown>(
  * - `ask.table.multiselect`
  *
  * Get multiple selections from a table.
+ *
+ * ```typescript
+ * const items = [
+ *   { name: 'John', age: 25 },
+ *   { name: 'Jane', age: 26 },
+ *   { name: 'Derek', age: 27 }
+ * ];
+ * const headers = [['Name', 'Age']];
+ * const itemToRow = ({ name, age }) => [name, age];
+ *
+ * const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, headers);
+ * ┏━━━┳━━━━━━━┳━━━━━┓
+ * ┃   ┃ Name  ┃ Age ┃
+ * ┡━━━╇━━━━━━━╇━━━━━┩
+ * │ ◉ │ John  │ 25  │
+ * ├───┼───────┼─────┤
+ * │ ◯ │ Jane  │ 26  │
+ * ├───┼───────┼─────┤
+ * │ ◉ │ Derek │ 27  │
+ * └───┴───────┴─────┘
+ * // [
+ * //   { name: 'John', age: 25 },
+ * //   { name: 'Derek', age: 27 }
+ * // ]
+ * ```
  */
 export const multiselect = <T extends unknown>(
   question: string | Breadcrumb,

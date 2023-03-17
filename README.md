@@ -123,9 +123,6 @@ Uses `swiss-ak`
       - [log](#log)
       - [createLogger](#createlogger)
       - [LogOptions](#logoptions)
-        - [showDate](#showdate)
-        - [showTime](#showtime)
-        - [enableColours](#enablecolours)
       - [LogConfig](#logconfig)
     - [chlk](#chlk)
       - [gray0](#gray0)
@@ -375,12 +372,39 @@ await ask.countdown(5);
 
 Create a wizard object that can be used to build up a complex object
 
+```typescript
+interface Example {
+  foo: string;
+  bar: number;
+  baz: string;
+}
+
+const base: Partial<Example> = {
+  baz: 'baz'
+};
+
+const wiz = ask.wizard<Example>(base);
+
+const foo = await ask.text('What is foo?'); // User input: foo
+wiz.add({ foo });
+
+const bar = await ask.number('What is bar?'); // User input: 123
+wiz.add({ bar });
+
+const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### date
 - `ask.date`
 
 Get a date input from the user.
+
+```typescript
+const date = await ask.date('Whats the date?');
+// [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -389,12 +413,25 @@ Get a date input from the user.
 
 Get a time input from the user.
 
+```typescript
+const time = await ask.time('Whats the time?');
+// [Date: 2023-01-01T12:00:00.000Z] (user inputted time, with todays date)
+
+const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
+// [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### datetime
 - `ask.datetime`
 
 Get a date and time input from the user.
+
+```typescript
+const when = await ask.datetime('Whats the date/time?');
+// [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -403,12 +440,28 @@ Get a date and time input from the user.
 
 Get a date range input from the user.
 
+```typescript
+const range = await ask.dateRange('When is the festival?');
+// [
+//   [Date: 2023-03-01T12:00:00.000Z],
+//   [Date: 2023-03-31T12:00:00.000Z]
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### fileExplorer
 - `ask.fileExplorer`
 
 Get a file or folder path from the user.
+
+```typescript
+const file = await ask.fileExplorer('What file?', 'f');
+// '/Users/user/Documents/some_file.txt'
+
+const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
+// '/Users/jackcannon/Documents/some_folder'
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -417,12 +470,27 @@ Get a file or folder path from the user.
 
 Get multiple file or folder paths from the user.
 
+```typescript
+const files = await ask.multiFileExplorer('What files?', 'f');
+// [
+//   '/Users/user/Documents/some_file_1.txt',
+//   '/Users/user/Documents/some_file_2.txt',
+//   '/Users/user/Documents/some_file_3.txt'
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### saveFileExplorer
 - `ask.saveFileExplorer`
 
 Get a file path from the user, with the intention of saving a file to that path.
+
+```typescript
+const HOME_DIR = '/Users/user/Documents';
+const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
+// '/Users/user/Documents/data.json'
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -431,12 +499,59 @@ Get a file path from the user, with the intention of saving a file to that path.
 
 Get a single selection from a table.
 
+```typescript
+const items = [
+  { name: 'John', age: 25 },
+  { name: 'Jane', age: 26 },
+  { name: 'Derek', age: 27 }
+];
+const headers = [['Name', 'Age']];
+const itemToRow = ({ name, age }) => [name, age];
+
+const answer = await ask.table.select('Who?', items, undefined, itemToRow, headers);
+// ┏━━━┳━━━━━━━┳━━━━━┓
+// ┃   ┃ Name  ┃ Age ┃
+// ┡━━━╇━━━━━━━╇━━━━━┩
+// │   │ John  │ 25  │
+// ├───┼───────┼─────┤
+// │ ❯ │ Jane  │ 26  │
+// ├───┼───────┼─────┤
+// │   │ Derek │ 27  │
+// └───┴───────┴─────┘
+// Returns: { name: 'Jane', age: 26 }
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### multiselect
 - `ask.table.multiselect`
 
 Get multiple selections from a table.
+
+```typescript
+const items = [
+  { name: 'John', age: 25 },
+  { name: 'Jane', age: 26 },
+  { name: 'Derek', age: 27 }
+];
+const headers = [['Name', 'Age']];
+const itemToRow = ({ name, age }) => [name, age];
+
+const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, headers);
+┏━━━┳━━━━━━━┳━━━━━┓
+┃   ┃ Name  ┃ Age ┃
+┡━━━╇━━━━━━━╇━━━━━┩
+│ ◉ │ John  │ 25  │
+├───┼───────┼─────┤
+│ ◯ │ Jane  │ 26  │
+├───┼───────┼─────┤
+│ ◉ │ Derek │ 27  │
+└───┴───────┴─────┘
+// [
+//   { name: 'John', age: 25 },
+//   { name: 'Derek', age: 27 }
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -451,6 +566,17 @@ Get a start and end frame from the user
 - `ask.separator`
 
 Prints a separator line to the console.
+
+```typescript
+ask.separator('down');
+// ┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄
+
+ask.separator('none', 15);
+// ┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄
+
+ask.separator('up', 5, 2);
+// ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -495,6 +621,29 @@ Question 2a: [ answer2, answer2b ]
 - `ask.utils.itemsToPromptObjects`
 
 Take an array of items and convert them to an array of prompt objects
+
+```typescript
+ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'])
+// [
+//   { title: 'lorem', value: 'lorem' },
+//   { title: 'ipsum', value: 'ipsum' },
+//   { title: 'dolor', value: 'dolor' }
+// ]
+
+ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], ['Lorem', 'Ipsum', 'Dolor'])
+// [
+//   { title: 'Lorem', value: 'lorem' },
+//   { title: 'Ipsum', value: 'ipsum' },
+//   { title: 'Dolor', value: 'dolor' }
+// ]
+
+ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.toUpperCase())
+// [
+//   { title: 'LOREM', value: 'lorem' },
+//   { title: 'IPSUM', value: 'ipsum' },
+//   { title: 'DOLOR', value: 'dolor' }
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -592,12 +741,30 @@ out.justify(out.wrap(lorem, 20), 20);
 
 Align each line of the given text to the left within the given width of characters/columns
 
+```typescript
+out.leftLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+// [
+//   'This is line 1         ',
+//   'This is a longer line 2',
+//   'Line 3                 '
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### centerLines
 - `out.centerLines`
 
 Align each line of the given text to the center within the given width of characters/columns
+
+```typescript
+out.rightLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+// [
+//   '         This is line 1',
+//   'This is a longer line 2',
+//   '                 Line 3'
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -606,12 +773,30 @@ Align each line of the given text to the center within the given width of charac
 
 Align each line of the given text to the right within the given width of characters/columns
 
+```typescript
+out.centerLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+// [
+//   '    This is line 1     ',
+//   'This is a longer line 2',
+//   '        Line 3         '
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### justifyLines
 - `out.justifyLines`
 
 Justify align each line of the given text within the given width of characters/columns
+
+```typescript
+out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+// [
+//   'This    is    line    1',
+//   'This is a longer line 2',
+//   'Line                  3'
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -637,6 +822,10 @@ out.align('lines\n1\n2', 'right', 5);
 - `out.split`
 
 Split the given text into two parts, left and right, with the given width of characters/columns
+
+```typescript
+out.split('Left', 'Right', 15); // Left      Right
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -695,6 +884,10 @@ out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
 
 Limit the length of a string to the given length, keeping the end
 
+```typescript
+out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### truncate
@@ -713,12 +906,21 @@ out.truncate('This is a very long sentence', 15); // 'This is a ve...'
 
 Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
 
+```typescript
+out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### concatLineGroups
 - `out.concatLineGroups`
 
 Concatenate multiple line groups, aligning them by the longest line
+
+```typescript
+out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
+// [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -727,12 +929,23 @@ Concatenate multiple line groups, aligning them by the longest line
 
 Get a value based on the terminal width
 
+```typescript
+out.getResponsiveValue([
+  {minColumns: 0, value: 'a'},
+  {minColumns: 10, value: 'b'},
+  {minColumns: 100, value: 'c'},
+  {minColumns: 1000, value: 'd'}
+]) // c
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### ResponsiveOption<T>
 - `out.ResponsiveOption`
 
 Configuration for a responsive value (see `getResponsiveValue`)
+
+See getResponsiveValue for an example
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -791,6 +1004,15 @@ lc.clear();
 - `LineCounter`
 
 Return type for getLineCounter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.add(1);
+lc.get(); // 3
+lc.clear();
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -858,6 +1080,17 @@ lc.clear();
 ##### getSince
 Returns the number of lines since a given checkpoint
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.checkpoint('test-a');
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.checkpoint('test-b');
+lc.add(1);
+lc.getSince('test-a'); // 2
+lc.getSince('test-b'); // 1
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ##### lc.clear
@@ -877,15 +1110,45 @@ lc.clear();
 ##### lc.clearBack
 Clears a given number of lines, and updates the line counter
 
+```typescript
+const lc = getLineCounter();
+lc.log('line 1'); // 1
+lc.log('line 2'); // 1
+lc.log('line 3'); // 1
+lc.log('line 4'); // 1
+lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ##### lc.checkpoint
 Records a 'checkpoint' that can be returned to later
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.checkpoint('test-a');
+lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.checkpoint('test-b');
+lc.add(1);
+lc.getSince('test-a'); // 2
+lc.getSince('test-b'); // 1
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ##### lc.clearToCheckpoint
 Clear lines up to a previously recorded checkpoint
+
+```typescript
+const lc = getLineCounter();
+lc.log('line 1'); // 1
+lc.log('line 2'); // 1
+lc.checkpoint('test');
+lc.log('line 3'); // 1
+lc.log('line 4'); // 1
+lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -907,12 +1170,26 @@ print.utils.getTerminalWidth(); // 127
 
 Split multi-line text into an array of lines
 
+```typescript
+out.utils.getLines(`
+this is line 1
+this is line 2
+`); // [ '', 'this is line 1', 'this is line 2', '' ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### getNumLines
 - `out.utils.getNumLines`
 
 Get how many lines a string or array of lines has
+
+```typescript
+out.utils.getNumLines(`
+this is line 1
+this is line 2
+`); // 4
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -921,12 +1198,26 @@ Get how many lines a string or array of lines has
 
 Get how wide a string or array of lines has
 
+```typescript
+out.utils.getLinesWidth(`
+this is line 1
+this is line 2
+`) // 14
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### getLogLines
 - `out.utils.getLogLines`
 
 Split a log-formatted multi-line text into an array of lines
+
+```typescript
+out.utils.getLogLines(`
+this is line 1
+this is line 2
+`); // [ '', 'this is line 1', 'this is line 2', '' ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -935,12 +1226,26 @@ Split a log-formatted multi-line text into an array of lines
 
 Get how many lines a log-formatted string or array of lines has
 
+```typescript
+out.utils.getNumLogLines(`
+this is line 1
+this is line 2
+`); // 4
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### getLogLinesWidth
 - `out.utils.getLogLinesWidth`
 
 Get how wide a log-formatted string or array of lines has
+
+```typescript
+out.utils.getLogLinesWidth(`
+this is line 1
+this is line 2
+`) // 14
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -949,12 +1254,23 @@ Get how wide a log-formatted string or array of lines has
 
 Join an array of lines into a single multi-line string
 
+```typescript
+out.utils.joinLines(['this is line 1', 'this is line 2'])
+// 'this is line 1' + '\n' +
+// 'this is line 2'
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### hasColor
 - `out.utils.hasColor`
 
 Determine whether a given string contains any chalk-ed colours
+
+```typescript
+out.utils.hasColor('this is line 1') // false
+out.utils.hasColor(chalk.red('this is line 1')) // true
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -971,12 +1287,13 @@ Print a table
 ```typescript
 const header = [['Name', 'Age']];
 const body = [['John', '25'], ['Jane', '26']];
-table.print(body, header);
+table.print(body, header); // 7
 
 // ┏━━━━━━┳━━━━━┓
 // ┃ Name ┃ Age ┃
 // ┡━━━━━━╇━━━━━┩
 // │ John │ 25  │
+// ├──────┼─────┤
 // │ Jane │ 26  │
 // └──────┴─────┘
 ```
@@ -1001,7 +1318,7 @@ const header = {
   b: 'Col B',
   c: 'Col C'
 };
-table.printObjects(objs, header);
+table.printObjects(objs, header); // 11
 
 // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
 // ┃ Col A ┃ Col B ┃ Col C ┃
@@ -1022,6 +1339,21 @@ table.printObjects(objs, header);
 - `table.getLines`
 
 Get the lines of a table (rather than printing it)
+
+```typescript
+const header = [['Name', 'Age']];
+const body = [['John', '25'], ['Jane', '26']];
+table.getLines(body, header);
+// [
+//   '┏━━━━━━┳━━━━━┓',
+//   '┃ \x1B[1mName\x1B[22m ┃ \x1B[1mAge\x1B[22m ┃',
+//   '┡━━━━━━╇━━━━━┩',
+//   '│ John │ 25  │',
+//   '├──────┼─────┤',
+//   '│ Jane │ 26  │',
+//   '└──────┴─────┘'
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1161,12 +1493,37 @@ A specific column to apply the format to
 
 Process an array of objects into a table format (string[][])
 
+```typescript
+const objs = [
+  { name: 'John', age: 25 },
+  { name: 'Jane', age: 26 }
+];
+table.utils.objectsToTable(objs)
+// {
+//   header: [ [ 'name', 'age' ] ],
+//   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
+// }
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### transpose
 - `table.utils.transpose`
 
 Change rows into columns and vice versa
+
+```typescript
+const input = [
+  ['John', 25],
+  ['Jane', 26],
+  ['Derek', 27]
+];
+table.utils.transpose(input)
+// [
+//   [ 'John', 'Jane', 'Derek' ],
+//   [ 25, 26, 27 ]
+// ]
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1175,12 +1532,56 @@ Change rows into columns and vice versa
 
 Concatenate header and body rows into one list of rows
 
+```typescript
+const header = [['Name', 'Age']];
+const body = [
+  ['John', 25],
+  ['Jane', 26],
+  ['Derek', 27]
+];
+table.utils.concatRows({header, body})
+// [
+//   [ 'Name', 'Age' ],
+//   [ 'John', 25 ],
+//   [ 'Jane', 26 ],
+//   [ 'Derek', 27 ]
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### getFormat
 - `table.utils.getFormat`
 
 A function for simplifying the format configuration
+
+```typescript
+const wrap = (str: string) => 'X';
+
+const format = [table.utils.getFormat(wrap, 0, 0), table.utils.getFormat(wrap, 1, 1, false, true), table.utils.getFormat(wrap, 2, 2, true, false)];
+// [
+//   { formatFn: wrap, row: 0, col: 0 },
+//   { formatFn: wrap, row: 1, col: 1, isHeader: false, isBody: true },
+//   { formatFn: wrap, row: 2, col: 2, isHeader: true, isBody: false }
+// ]
+
+const header = partition(range(9), 3);
+const body = partition(range(9), 3);
+table.print(header, body, {format})
+// ┏━━━┳━━━┳━━━┓
+// ┃ 0 ┃ 1 ┃ 2 ┃
+// ┣━━━╋━━━╋━━━┫
+// ┃ 3 ┃ 4 ┃ 5 ┃
+// ┣━━━╋━━━╋━━━┫
+// ┃ 6 ┃ 7 ┃ X ┃
+// ┡━━━╇━━━╇━━━┩
+// │ X │ 1 │ 2 │
+// ├───┼───┼───┤
+// │ 3 │ X │ 5 │
+// ├───┼───┼───┤
+// │ 6 │ 7 │ 8 │
+// └───┴───┴───┘
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1191,12 +1592,38 @@ A function for simplifying the format configuration
 
 A set of log functions
 
+```typescript
+log.blank('This is blank');     //                       This is blank
+log.log('This is log');         // [12:00:00.123]  LOG   This is log
+log.out('This is out');         // [12:00:00.123]  OUT   This is out
+log.normal('This is normal');   // [12:00:00.123]  LOG   This is normal
+log.verbose('This is verbose'); // [12:00:00.123]  LOG   This is verbose
+log.debug('This is debug');     // [12:00:00.123]  DBUG  This is debug
+log.info('This is info');       // [12:00:00.123]  INFO  This is info
+log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
+log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### createLogger
 - `createLogger`
 
 Create a logger with custom configs
+
+```typescript
+const log = createLogger({
+  myLog: {
+    name: 'MYLOG',
+    nameColour: chalk.magenta,
+    showDate: false,
+    showTime: true,
+    contentColour: chalk.yellowBright
+  }
+});
+
+log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1207,25 +1634,12 @@ Options for the log function
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-#### showDate
-Default: false
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
-#### showTime
-Default: true
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
-#### enableColours
-Default: true
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
 ### LogConfig
 - `LogConfig`
 
 Configuration for the log function
+
+See createLogger
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1522,6 +1936,39 @@ A collection of tools for logging
 
 Get a string for a given object as it would be printed by console.log
 
+```typescript
+getLogStr(true); // true
+getLogStr(1); // 1
+getLogStr('foobar'); // foobar
+getLogStr({ test: 'test' }); // { test: 'test' }
+getLogStr(['a', 'b', 'c']); // [ 'a', 'b', 'c' ]
+
+getLogStr([
+  [
+    [
+      ['a', 'b', 'c'],
+      ['d', 'e', 'f']
+    ],
+    [
+      ['g', 'h', 'i'],
+      ['j', 'k', 'l']
+    ]
+  ],
+  [
+    [
+      ['m', 'n', 'o']
+    ]
+  ]
+]);
+// [
+//   [
+//     [ [ 'a', 'b', 'c' ], [ 'd', 'e', 'f' ] ],
+//     [ [ 'g', 'h', 'i' ], [ 'j', 'k', 'l' ] ]
+//   ],
+//   [ [ [ 'm', 'n', 'o' ] ] ]
+// ]
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### processLogContents
@@ -1576,6 +2023,8 @@ console.log(folders); // ['path', 'to']
 - `ExplodedPath`
 
 An object containing the exploded components of a path
+
+See `explodePath` for more details
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1654,6 +2103,16 @@ A collection of tools for working with progress bars (from swiss-ak)
 
 Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
 
+```typescript
+const progOpts = progressBarTools.getColouredProgressBarOpts({
+  showCount: true,
+  showPercent: true,
+});
+// later...
+const progressBar = getProgressBar(numThings, progOpts('Things'));
+progressBar.update();
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ## waiters
@@ -1663,6 +2122,10 @@ Helper for providing a consistent set of options for a progress bar, and colouri
 
 Wait for the next tick
 
+```typescript
+wait nextTick();
+```
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ## keyListener
@@ -1671,6 +2134,18 @@ Wait for the next tick
 - `getKeyListener`
 
 Listens for key presses and returns the key name and raw value.
+
+```typescript
+const kl = getKeyListener((keyName, rawValue) => {
+  // do something with keyName and rawValue
+});
+
+kl.start();
+
+// later...
+
+kl.stop();
+```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 

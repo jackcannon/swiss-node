@@ -1805,9 +1805,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = import_swiss_ak11.fn.clamp(notNaN(inMo), 1, 12);
+  const outMo = import_swiss_ak11.MathsTools.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = import_swiss_ak11.fn.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = import_swiss_ak11.MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {

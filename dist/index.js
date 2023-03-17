@@ -1754,7 +1754,7 @@ import chalk10 from "chalk";
 import { getDeferred as getDeferred3, getTimer } from "swiss-ak";
 
 // src/utils/dynDates.ts
-import { DAY, days, fn as fn8, sortByMapped as sortByMapped2 } from "swiss-ak";
+import { DAY, MathsTools as MathsTools2, days, sortByMapped as sortByMapped2 } from "swiss-ak";
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -1777,9 +1777,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = fn8.clamp(notNaN(inMo), 1, 12);
+  const outMo = MathsTools2.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = fn8.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = MathsTools2.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {

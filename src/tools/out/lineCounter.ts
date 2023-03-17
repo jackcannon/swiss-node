@@ -110,6 +110,15 @@ export const getLineCounter = (): LineCounter => {
  * - `LineCounter`
  *
  * Return type for getLineCounter
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
  */
 export interface LineCounter {
   /**<!-- DOCS: ##### -->
@@ -187,6 +196,17 @@ export interface LineCounter {
    * getSince
    *
    * Returns the number of lines since a given checkpoint
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.checkpoint('test-a');
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.checkpoint('test-b');
+   * lc.add(1);
+   * lc.getSince('test-a'); // 2
+   * lc.getSince('test-b'); // 1
+   * ```
    */
   getSince(checkpointID: string): number;
 
@@ -210,6 +230,15 @@ export interface LineCounter {
    * lc.clearBack
    *
    * Clears a given number of lines, and updates the line counter
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('line 1'); // 1
+   * lc.log('line 2'); // 1
+   * lc.log('line 3'); // 1
+   * lc.log('line 4'); // 1
+   * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+   * ```
    */
   clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
 
@@ -217,6 +246,17 @@ export interface LineCounter {
    * lc.checkpoint
    *
    * Records a 'checkpoint' that can be returned to later
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.checkpoint('test-a');
+   * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+   * lc.checkpoint('test-b');
+   * lc.add(1);
+   * lc.getSince('test-a'); // 2
+   * lc.getSince('test-b'); // 1
+   * ```
    */
   checkpoint(checkpointID?: string): string;
 
@@ -224,6 +264,16 @@ export interface LineCounter {
    * lc.clearToCheckpoint
    *
    * Clear lines up to a previously recorded checkpoint
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('line 1'); // 1
+   * lc.log('line 2'); // 1
+   * lc.checkpoint('test');
+   * lc.log('line 3'); // 1
+   * lc.log('line 4'); // 1
+   * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+   * ```
    */
   clearToCheckpoint(checkpointID: string): void;
 }

@@ -713,6 +713,14 @@ const fileExplorerHandler = async (
  * - `ask.fileExplorer`
  *
  * Get a file or folder path from the user.
+ *
+ * ```typescript
+const file = await ask.fileExplorer('What file?', 'f');
+// '/Users/user/Documents/some_file.txt'
+
+const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
+// '/Users/jackcannon/Documents/some_folder'
+ * ```
  */
 export const fileExplorer = async (
   questionText: string | Breadcrumb,
@@ -729,6 +737,15 @@ export const fileExplorer = async (
  * - `ask.multiFileExplorer`
  *
  * Get multiple file or folder paths from the user.
+ *
+ * ```typescript
+ * const files = await ask.multiFileExplorer('What files?', 'f');
+ * // [
+ * //   '/Users/user/Documents/some_file_1.txt',
+ * //   '/Users/user/Documents/some_file_2.txt',
+ * //   '/Users/user/Documents/some_file_3.txt'
+ * // ]
+ * ```
  */
 export const multiFileExplorer = (
   questionText: string | Breadcrumb,
@@ -742,6 +759,12 @@ export const multiFileExplorer = (
  * - `ask.saveFileExplorer`
  *
  * Get a file path from the user, with the intention of saving a file to that path.
+ *
+ * ```typescript
+const HOME_DIR = '/Users/user/Documents';
+const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
+// '/Users/user/Documents/data.json'
+ * ```
  */
 export const saveFileExplorer = async (
   questionText: string | Breadcrumb,

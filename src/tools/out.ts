@@ -161,6 +161,15 @@ const getLongestLen = (lines: string[]): number => Math.max(...lines.map((line) 
  * - `out.leftLines`
  *
  * Align each line of the given text to the left within the given width of characters/columns
+ *
+ * ```typescript
+ * out.leftLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   'This is line 1         ',
+ * //   'This is a longer line 2',
+ * //   'Line 3                 '
+ * // ]
+ * ```
  */
 export const leftLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => left(line, width));
 
@@ -170,6 +179,15 @@ export const leftLines = (lines: string[], width: number = getLongestLen(lines))
  * - `out.centerLines`
  *
  * Align each line of the given text to the center within the given width of characters/columns
+ *
+ * ```typescript
+ * out.rightLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   '         This is line 1',
+ * //   'This is a longer line 2',
+ * //   '                 Line 3'
+ * // ]
+ * ```
  */
 export const centerLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => center(line, width));
 
@@ -179,6 +197,15 @@ export const centerLines = (lines: string[], width: number = getLongestLen(lines
  * - `out.rightLines`
  *
  * Align each line of the given text to the right within the given width of characters/columns
+ *
+ * ```typescript
+ * out.centerLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   '    This is line 1     ',
+ * //   'This is a longer line 2',
+ * //   '        Line 3         '
+ * // ]
+ * ```
  */
 export const rightLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => right(line, width));
 
@@ -188,6 +215,15 @@ export const rightLines = (lines: string[], width: number = getLongestLen(lines)
  * - `out.justifyLines`
  *
  * Justify align each line of the given text within the given width of characters/columns
+ *
+ * ```typescript
+ * out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   'This    is    line    1',
+ * //   'This is a longer line 2',
+ * //   'Line                  3'
+ * // ]
+ * ```
  */
 export const justifyLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => justify(line, width));
 
@@ -227,6 +263,10 @@ export const align = (item: any, direction: AlignType, width: number = getTermin
  * - `out.split`
  *
  * Split the given text into two parts, left and right, with the given width of characters/columns
+ *
+ * ```typescript
+ * out.split('Left', 'Right', 15); // Left      Right
+ * ```
  */
 export const split = (leftItem: any, rightItem: any, width: number = getTerminalWidth(), replaceChar: string = ' ') =>
   `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + '') + stringWidth(rightItem + ''))))}${rightItem + ''}`;
@@ -407,6 +447,10 @@ export const limitToLength = (text: string, maxLength: number): string =>
  * - `out.limitToLengthStart`
  *
  * Limit the length of a string to the given length, keeping the end
+ *
+ * ```typescript
+ * out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
+ * ```
  */
 export const limitToLengthStart = (text: string, maxLength: number): string =>
   joinLines(
@@ -446,6 +490,10 @@ export const truncate = (text: string, maxLength: number = getTerminalWidth(), s
  * - `out.truncateStart`
  *
  * Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
+ *
+ * ```typescript
+ * out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
+ * ```
  */
 export const truncateStart = (text: string, maxLength: number = getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
   joinLines(
@@ -458,6 +506,11 @@ export const truncateStart = (text: string, maxLength: number = getTerminalWidth
  * - `out.concatLineGroups`
  *
  * Concatenate multiple line groups, aligning them by the longest line
+ *
+ * ```typescript
+ * out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
+ * // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
+ * ```
  */
 export const concatLineGroups = (...groups: string[][]) => {
   const maxLen = Math.max(...groups.map((group) => group.length));
@@ -471,6 +524,15 @@ export const concatLineGroups = (...groups: string[][]) => {
  * - `out.getResponsiveValue`
  *
  * Get a value based on the terminal width
+ *
+ * ```typescript
+ * out.getResponsiveValue([
+ *   {minColumns: 0, value: 'a'},
+ *   {minColumns: 10, value: 'b'},
+ *   {minColumns: 100, value: 'c'},
+ *   {minColumns: 1000, value: 'd'}
+ * ]) // c
+ * ```
  */
 export const getResponsiveValue = <T extends unknown>(options: ResponsiveOption<T>[]): T => {
   const mapped = options.map(({ minColumns, value }) => ({
@@ -488,6 +550,8 @@ export const getResponsiveValue = <T extends unknown>(options: ResponsiveOption<
  * - `out.ResponsiveOption`
  *
  * Configuration for a responsive value (see `getResponsiveValue`)
+ *
+ * See getResponsiveValue for an example
  */
 export type ResponsiveOption<T> = { minColumns?: number; value: T };
 
@@ -516,6 +580,13 @@ const getTerminalWidth = () => (process?.stdout?.columns ? process.stdout.column
  * - `out.utils.getLines`
  *
  * Split multi-line text into an array of lines
+ *
+ * ```typescript
+ * out.utils.getLines(`
+ * this is line 1
+ * this is line 2
+ * `); // [ '', 'this is line 1', 'this is line 2', '' ]
+ * ```
  */
 const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
 /**<!-- DOCS: #### 291 -->
@@ -524,6 +595,13 @@ const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
  * - `out.utils.getNumLines`
  *
  * Get how many lines a string or array of lines has
+ *
+ * ```typescript
+ * out.utils.getNumLines(`
+ * this is line 1
+ * this is line 2
+ * `); // 4
+ * ```
  */
 const getNumLines = (text: Text): number => getLines(text).length;
 /**<!-- DOCS: #### 291 -->
@@ -532,6 +610,13 @@ const getNumLines = (text: Text): number => getLines(text).length;
  * - `out.utils.getLinesWidth`
  *
  * Get how wide a string or array of lines has
+ *
+ * ```typescript
+ * out.utils.getLinesWidth(`
+ * this is line 1
+ * this is line 2
+ * `) // 14
+ * ```
  */
 const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
 
@@ -541,6 +626,13 @@ const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((li
  * - `out.utils.getLogLines`
  *
  * Split a log-formatted multi-line text into an array of lines
+ *
+ * ```typescript
+ * out.utils.getLogLines(`
+ * this is line 1
+ * this is line 2
+ * `); // [ '', 'this is line 1', 'this is line 2', '' ]
+ * ```
  */
 const getLogLines = (item: any): string[] => getLines(getLogStr(item));
 /**<!-- DOCS: #### 291 -->
@@ -549,6 +641,13 @@ const getLogLines = (item: any): string[] => getLines(getLogStr(item));
  * - `out.utils.getNumLogLines`
  *
  * Get how many lines a log-formatted string or array of lines has
+ *
+ * ```typescript
+ * out.utils.getNumLogLines(`
+ * this is line 1
+ * this is line 2
+ * `); // 4
+ * ```
  */
 const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
 /**<!-- DOCS: #### 291 -->
@@ -557,6 +656,13 @@ const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
  * - `out.utils.getLogLinesWidth`
  *
  * Get how wide a log-formatted string or array of lines has
+ *
+ * ```typescript
+ * out.utils.getLogLinesWidth(`
+ * this is line 1
+ * this is line 2
+ * `) // 14
+ * ```
  */
 const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
 
@@ -566,6 +672,12 @@ const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
  * - `out.utils.joinLines`
  *
  * Join an array of lines into a single multi-line string
+ *
+ * ```typescript
+ * out.utils.joinLines(['this is line 1', 'this is line 2'])
+ * // 'this is line 1' + '\n' +
+ * // 'this is line 2'
+ * ```
  */
 const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(NEW_LINE);
 
@@ -575,6 +687,11 @@ const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(
  * - `out.utils.hasColor`
  *
  * Determine whether a given string contains any chalk-ed colours
+ *
+ * ```typescript
+ * out.utils.hasColor('this is line 1') // false
+ * out.utils.hasColor(chalk.red('this is line 1')) // true
+ * ```
  */
 const hasColor = (str: string): boolean => Boolean(str.match(new RegExp(`\\u001b\[[0-9]+m`, 'g')));
 

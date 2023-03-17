@@ -1,4 +1,4 @@
-import { DAY, days, fn, sortByMapped } from 'swiss-ak';
+import { DAY, MathsTools, days, fn, sortByMapped } from 'swiss-ak';
 
 export type DynDate = [number, number, number]; // year, month [1-12], day [1-31]
 export type DynTime = [number, number]; // hours [0-23], minutes [0-59]
@@ -28,9 +28,9 @@ export const getDaysInMonth = (year: number, month: number, _dy?: number): numbe
 };
 export const correctDate = ([inYr, inMo, inDy]: DynDate): DynDate => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = fn.clamp(notNaN(inMo), 1, 12);
+  const outMo = MathsTools.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = fn.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 

@@ -358,6 +358,14 @@ declare const trim: (totalFrames: number, frameRate: number, options?: Partial<A
  * - `ask.fileExplorer`
  *
  * Get a file or folder path from the user.
+ *
+ * ```typescript
+const file = await ask.fileExplorer('What file?', 'f');
+// '/Users/user/Documents/some_file.txt'
+
+const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
+// '/Users/jackcannon/Documents/some_folder'
+ * ```
  */
 declare const fileExplorer: (questionText: string | Breadcrumb, selectType?: 'd' | 'f', startPath?: string) => Promise<string>;
 /**<!-- DOCS: ### -->
@@ -366,6 +374,15 @@ declare const fileExplorer: (questionText: string | Breadcrumb, selectType?: 'd'
  * - `ask.multiFileExplorer`
  *
  * Get multiple file or folder paths from the user.
+ *
+ * ```typescript
+ * const files = await ask.multiFileExplorer('What files?', 'f');
+ * // [
+ * //   '/Users/user/Documents/some_file_1.txt',
+ * //   '/Users/user/Documents/some_file_2.txt',
+ * //   '/Users/user/Documents/some_file_3.txt'
+ * // ]
+ * ```
  */
 declare const multiFileExplorer: (questionText: string | Breadcrumb, selectType?: 'd' | 'f', startPath?: string) => Promise<string[]>;
 /**<!-- DOCS: ### -->
@@ -374,6 +391,12 @@ declare const multiFileExplorer: (questionText: string | Breadcrumb, selectType?
  * - `ask.saveFileExplorer`
  *
  * Get a file path from the user, with the intention of saving a file to that path.
+ *
+ * ```typescript
+const HOME_DIR = '/Users/user/Documents';
+const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
+// '/Users/user/Documents/data.json'
+ * ```
  */
 declare const saveFileExplorer: (questionText: string | Breadcrumb, startPath?: string, suggestedFileName?: string) => Promise<string>;
 
@@ -402,6 +425,15 @@ declare const getLineCounter: () => LineCounter;
  * - `LineCounter`
  *
  * Return type for getLineCounter
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
  */
 interface LineCounter {
     /**<!-- DOCS: ##### -->
@@ -474,6 +506,17 @@ interface LineCounter {
      * getSince
      *
      * Returns the number of lines since a given checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
      */
     getSince(checkpointID: string): number;
     /**<!-- DOCS: ##### -->
@@ -495,18 +538,48 @@ interface LineCounter {
      * lc.clearBack
      *
      * Clears a given number of lines, and updates the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+     * ```
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
     /**<!-- DOCS: ##### -->
      * lc.checkpoint
      *
      * Records a 'checkpoint' that can be returned to later
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
      */
     checkpoint(checkpointID?: string): string;
     /**<!-- DOCS: ##### -->
      * lc.clearToCheckpoint
      *
      * Clear lines up to a previously recorded checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.checkpoint('test');
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+     * ```
      */
     clearToCheckpoint(checkpointID: string): void;
 }
@@ -517,6 +590,17 @@ interface LineCounter {
  * - `ask.separator`
  *
  * Prints a separator line to the console.
+ *
+ * ```typescript
+ * ask.separator('down');
+ * // ┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄┄▿┄┄┄┄┄┄
+ *
+ * ask.separator('none', 15);
+ * // ┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄┄┄┄┄
+ *
+ * ask.separator('up', 5, 2);
+ * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
+ * ```
  */
 declare const separator: (version?: 'down' | 'none' | 'up', spacing?: number, offset?: number, width?: number) => number;
 declare type UnwrapPromFunc<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
@@ -564,6 +648,11 @@ declare const section: <QuesT extends ((qst?: string | Breadcrumb, results?: any
  * - `ask.date`
  *
  * Get a date input from the user.
+ *
+ * ```typescript
+ * const date = await ask.date('Whats the date?');
+ * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
+ * ```
  */
 declare const date: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
 /**<!-- DOCS: ### -->
@@ -572,6 +661,14 @@ declare const date: (questionText?: string | Breadcrumb, initial?: Date) => Prom
  * - `ask.time`
  *
  * Get a time input from the user.
+ *
+ * ```typescript
+ * const time = await ask.time('Whats the time?');
+ * // [Date: 2023-01-01T12:00:00.000Z] (user inputted time, with todays date)
+ *
+ * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
+ * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
+ * ```
  */
 declare const time: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
 /**<!-- DOCS: ### -->
@@ -580,6 +677,11 @@ declare const time: (questionText?: string | Breadcrumb, initial?: Date) => Prom
  * - `ask.datetime`
  *
  * Get a date and time input from the user.
+ *
+ * ```typescript
+ * const when = await ask.datetime('Whats the date/time?');
+ * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
+ * ```
  */
 declare const datetime: (questionText?: string | Breadcrumb, initial?: Date) => Promise<Date>;
 /**<!-- DOCS: ### -->
@@ -588,6 +690,14 @@ declare const datetime: (questionText?: string | Breadcrumb, initial?: Date) => 
  * - `ask.dateRange`
  *
  * Get a date range input from the user.
+ *
+ * ```typescript
+const range = await ask.dateRange('When is the festival?');
+// [
+//   [Date: 2023-03-01T12:00:00.000Z],
+//   [Date: 2023-03-31T12:00:00.000Z]
+// ]
+ * ```
  */
 declare const dateRange: (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
 
@@ -690,6 +800,15 @@ declare const justify: AlignFunction;
  * - `out.leftLines`
  *
  * Align each line of the given text to the left within the given width of characters/columns
+ *
+ * ```typescript
+ * out.leftLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   'This is line 1         ',
+ * //   'This is a longer line 2',
+ * //   'Line 3                 '
+ * // ]
+ * ```
  */
 declare const leftLines: (lines: string[], width?: number) => string[];
 /**<!-- DOCS: ### -->
@@ -698,6 +817,15 @@ declare const leftLines: (lines: string[], width?: number) => string[];
  * - `out.centerLines`
  *
  * Align each line of the given text to the center within the given width of characters/columns
+ *
+ * ```typescript
+ * out.rightLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   '         This is line 1',
+ * //   'This is a longer line 2',
+ * //   '                 Line 3'
+ * // ]
+ * ```
  */
 declare const centerLines: (lines: string[], width?: number) => string[];
 /**<!-- DOCS: ### -->
@@ -706,6 +834,15 @@ declare const centerLines: (lines: string[], width?: number) => string[];
  * - `out.rightLines`
  *
  * Align each line of the given text to the right within the given width of characters/columns
+ *
+ * ```typescript
+ * out.centerLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   '    This is line 1     ',
+ * //   'This is a longer line 2',
+ * //   '        Line 3         '
+ * // ]
+ * ```
  */
 declare const rightLines: (lines: string[], width?: number) => string[];
 /**<!-- DOCS: ### -->
@@ -714,6 +851,15 @@ declare const rightLines: (lines: string[], width?: number) => string[];
  * - `out.justifyLines`
  *
  * Justify align each line of the given text within the given width of characters/columns
+ *
+ * ```typescript
+ * out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
+ * // [
+ * //   'This    is    line    1',
+ * //   'This is a longer line 2',
+ * //   'Line                  3'
+ * // ]
+ * ```
  */
 declare const justifyLines: (lines: string[], width?: number) => string[];
 /**<!-- DOCS: ### -->
@@ -741,6 +887,10 @@ declare const align: (item: any, direction: AlignType, width?: number, replaceCh
  * - `out.split`
  *
  * Split the given text into two parts, left and right, with the given width of characters/columns
+ *
+ * ```typescript
+ * out.split('Left', 'Right', 15); // Left      Right
+ * ```
  */
 declare const split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
 /**<!-- DOCS: ### -->
@@ -805,6 +955,10 @@ declare const limitToLength: (text: string, maxLength: number) => string;
  * - `out.limitToLengthStart`
  *
  * Limit the length of a string to the given length, keeping the end
+ *
+ * ```typescript
+ * out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
+ * ```
  */
 declare const limitToLengthStart: (text: string, maxLength: number) => string;
 /**<!-- DOCS: ### -->
@@ -825,6 +979,10 @@ declare const truncate: (text: string, maxLength?: number, suffix?: string) => s
  * - `out.truncateStart`
  *
  * Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
+ *
+ * ```typescript
+ * out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
+ * ```
  */
 declare const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
 /**<!-- DOCS: ### -->
@@ -833,6 +991,11 @@ declare const truncateStart: (text: string, maxLength?: number, suffix?: string)
  * - `out.concatLineGroups`
  *
  * Concatenate multiple line groups, aligning them by the longest line
+ *
+ * ```typescript
+ * out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
+ * // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
+ * ```
  */
 declare const concatLineGroups: (...groups: string[][]) => string[];
 /**<!-- DOCS: ### -->
@@ -841,6 +1004,15 @@ declare const concatLineGroups: (...groups: string[][]) => string[];
  * - `out.getResponsiveValue`
  *
  * Get a value based on the terminal width
+ *
+ * ```typescript
+ * out.getResponsiveValue([
+ *   {minColumns: 0, value: 'a'},
+ *   {minColumns: 10, value: 'b'},
+ *   {minColumns: 100, value: 'c'},
+ *   {minColumns: 1000, value: 'd'}
+ * ]) // c
+ * ```
  */
 declare const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
 /**<!-- DOCS: #### -->
@@ -849,6 +1021,8 @@ declare const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<
  * - `out.ResponsiveOption`
  *
  * Configuration for a responsive value (see `getResponsiveValue`)
+ *
+ * See getResponsiveValue for an example
  */
 declare type ResponsiveOption<T> = {
     minColumns?: number;
@@ -925,12 +1099,13 @@ declare namespace out {
  * ```typescript
  * const header = [['Name', 'Age']];
  * const body = [['John', '25'], ['Jane', '26']];
- * table.print(body, header);
+ * table.print(body, header); // 7
  *
  * // ┏━━━━━━┳━━━━━┓
  * // ┃ Name ┃ Age ┃
  * // ┡━━━━━━╇━━━━━┩
  * // │ John │ 25  │
+ * // ├──────┼─────┤
  * // │ Jane │ 26  │
  * // └──────┴─────┘
  * ```
@@ -956,7 +1131,7 @@ declare const print: (body: any[][], header?: any[][], options?: TableOptions) =
  *   b: 'Col B',
  *   c: 'Col C'
  * };
- * table.printObjects(objs, header);
+ * table.printObjects(objs, header); // 11
  *
  * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
  * // ┃ Col A ┃ Col B ┃ Col C ┃
@@ -978,6 +1153,21 @@ declare const printObjects: (objects: Object[], headers?: Object, options?: Tabl
  * - `table.getLines`
  *
  * Get the lines of a table (rather than printing it)
+ *
+ * ```typescript
+ * const header = [['Name', 'Age']];
+ * const body = [['John', '25'], ['Jane', '26']];
+ * table.getLines(body, header);
+ * // [
+ * //   '┏━━━━━━┳━━━━━┓',
+ * //   '┃ \x1B[1mName\x1B[22m ┃ \x1B[1mAge\x1B[22m ┃',
+ * //   '┡━━━━━━╇━━━━━┩',
+ * //   '│ John │ 25  │',
+ * //   '├──────┼─────┤',
+ * //   '│ Jane │ 26  │',
+ * //   '└──────┴─────┘'
+ * // ]
+ * ```
  */
 declare const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
 interface FullTableOptions {
@@ -1175,6 +1365,28 @@ declare type ItemToRowMapFunction<T extends unknown> = (item?: T, index?: number
  * - `ask.table.select`
  *
  * Get a single selection from a table.
+ *
+ * ```typescript
+ * const items = [
+ *   { name: 'John', age: 25 },
+ *   { name: 'Jane', age: 26 },
+ *   { name: 'Derek', age: 27 }
+ * ];
+ * const headers = [['Name', 'Age']];
+ * const itemToRow = ({ name, age }) => [name, age];
+ *
+ * const answer = await ask.table.select('Who?', items, undefined, itemToRow, headers);
+ * // ┏━━━┳━━━━━━━┳━━━━━┓
+ * // ┃   ┃ Name  ┃ Age ┃
+ * // ┡━━━╇━━━━━━━╇━━━━━┩
+ * // │   │ John  │ 25  │
+ * // ├───┼───────┼─────┤
+ * // │ ❯ │ Jane  │ 26  │
+ * // ├───┼───────┼─────┤
+ * // │   │ Derek │ 27  │
+ * // └───┴───────┴─────┘
+ * // Returns: { name: 'Jane', age: 26 }
+ * ```
  */
 declare const select$1: <T extends unknown>(question: string | Breadcrumb, items: T[], initial?: number | T, rows?: any[][] | ItemToRowMapFunction<T>, headers?: any[][] | RemapOf<T, string>, tableOptions?: TableOptions) => Promise<T>;
 /**<!-- DOCS: ### -->
@@ -1183,6 +1395,31 @@ declare const select$1: <T extends unknown>(question: string | Breadcrumb, items
  * - `ask.table.multiselect`
  *
  * Get multiple selections from a table.
+ *
+ * ```typescript
+ * const items = [
+ *   { name: 'John', age: 25 },
+ *   { name: 'Jane', age: 26 },
+ *   { name: 'Derek', age: 27 }
+ * ];
+ * const headers = [['Name', 'Age']];
+ * const itemToRow = ({ name, age }) => [name, age];
+ *
+ * const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, headers);
+ * ┏━━━┳━━━━━━━┳━━━━━┓
+ * ┃   ┃ Name  ┃ Age ┃
+ * ┡━━━╇━━━━━━━╇━━━━━┩
+ * │ ◉ │ John  │ 25  │
+ * ├───┼───────┼─────┤
+ * │ ◯ │ Jane  │ 26  │
+ * ├───┼───────┼─────┤
+ * │ ◉ │ Derek │ 27  │
+ * └───┴───────┴─────┘
+ * // [
+ * //   { name: 'John', age: 25 },
+ * //   { name: 'Derek', age: 27 }
+ * // ]
+ * ```
  */
 declare const multiselect$1: <T extends unknown>(question: string | Breadcrumb, items: T[], initial?: number[] | T[], rows?: any[][] | ItemToRowMapFunction<T>, headers?: any[][] | RemapOf<T, string>, tableOptions?: TableOptions) => Promise<T[]>;
 
@@ -1401,6 +1638,28 @@ declare const countdown: (totalSeconds: number, template?: (s: second) => string
  * - `ask.wizard`
  *
  * Create a wizard object that can be used to build up a complex object
+ *
+ * ```typescript
+ * interface Example {
+ *   foo: string;
+ *   bar: number;
+ *   baz: string;
+ * }
+ *
+ * const base: Partial<Example> = {
+ *   baz: 'baz'
+ * };
+ *
+ * const wiz = ask.wizard<Example>(base);
+ *
+ * const foo = await ask.text('What is foo?'); // User input: foo
+ * wiz.add({ foo });
+ *
+ * const bar = await ask.number('What is bar?'); // User input: 123
+ * wiz.add({ bar });
+ *
+ * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
+ * ```
  */
 declare const wizard: <T extends unknown>(startObj?: Partial<T>) => {
     add(partial: Partial<T>): void;
@@ -1489,6 +1748,16 @@ declare namespace ask {
  * - `progressBarTools.getColouredProgressBarOpts`
  *
  * Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
+ *
+ * ```typescript
+ * const progOpts = progressBarTools.getColouredProgressBarOpts({
+ *   showCount: true,
+ *   showPercent: true,
+ * });
+ * // later...
+ * const progressBar = getProgressBar(numThings, progOpts('Things'));
+ * progressBar.update();
+ * ```
  */
 declare const getColouredProgressBarOpts: (opts: ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: ProgressBarOptions, resetColours?: boolean) => ProgressBarOptions;
 
@@ -1511,6 +1780,39 @@ declare namespace progressBarTools {
  * - `getLogStr`
  *
  * Get a string for a given object as it would be printed by console.log
+ *
+ * ```typescript
+ * getLogStr(true); // true
+ * getLogStr(1); // 1
+ * getLogStr('foobar'); // foobar
+ * getLogStr({ test: 'test' }); // { test: 'test' }
+ * getLogStr(['a', 'b', 'c']); // [ 'a', 'b', 'c' ]
+ *
+ * getLogStr([
+ *   [
+ *     [
+ *       ['a', 'b', 'c'],
+ *       ['d', 'e', 'f']
+ *     ],
+ *     [
+ *       ['g', 'h', 'i'],
+ *       ['j', 'k', 'l']
+ *     ]
+ *   ],
+ *   [
+ *     [
+ *       ['m', 'n', 'o']
+ *     ]
+ *   ]
+ * ]);
+ * // [
+ * //   [
+ * //     [ [ 'a', 'b', 'c' ], [ 'd', 'e', 'f' ] ],
+ * //     [ [ 'g', 'h', 'i' ], [ 'j', 'k', 'l' ] ]
+ * //   ],
+ * //   [ [ [ 'm', 'n', 'o' ] ] ]
+ * // ]
+ * ```
  */
 declare const getLogStr: (item: any) => string;
 /**<!-- DOCS: ### -->
@@ -1563,6 +1865,20 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  * - `createLogger`
  *
  * Create a logger with custom configs
+ *
+ * ```typescript
+ * const log = createLogger({
+ *   myLog: {
+ *     name: 'MYLOG',
+ *     nameColour: chalk.magenta,
+ *     showDate: false,
+ *     showTime: true,
+ *     contentColour: chalk.yellowBright
+ *   }
+ * });
+ *
+ * log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
+ * ```
  */
 declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
     readonly blank: LogConfig;
@@ -1581,6 +1897,18 @@ declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: L
  * - `log`
  *
  * A set of log functions
+ *
+ * ```typescript
+ * log.blank('This is blank');     //                       This is blank
+ * log.log('This is log');         // [12:00:00.123]  LOG   This is log
+ * log.out('This is out');         // [12:00:00.123]  OUT   This is out
+ * log.normal('This is normal');   // [12:00:00.123]  LOG   This is normal
+ * log.verbose('This is verbose'); // [12:00:00.123]  LOG   This is verbose
+ * log.debug('This is debug');     // [12:00:00.123]  DBUG  This is debug
+ * log.info('This is info');       // [12:00:00.123]  INFO  This is info
+ * log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
+ * log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+ * ```
  */
 declare const log: OfType<{
     readonly blank: LogConfig;
@@ -1601,23 +1929,8 @@ declare const log: OfType<{
  * Options for the log function
  */
 interface LogOptions {
-    /**<!-- DOCS: #### 451 -->
-     * showDate
-     *
-     * Default: false
-     */
     showDate?: boolean;
-    /**<!-- DOCS: #### 451 -->
-     * showTime
-     *
-     * Default: true
-     */
     showTime?: boolean;
-    /**<!-- DOCS: #### 451 -->
-     * enableColours
-     *
-     * Default: true
-     */
     enableColours?: boolean;
 }
 interface LogConfigs {
@@ -1629,6 +1942,8 @@ interface LogConfigs {
  * - `LogConfig`
  *
  * Configuration for the log function
+ *
+ * See createLogger
  */
 interface LogConfig {
     name: string;
@@ -1647,6 +1962,10 @@ interface LogConfig {
  * - `nextTick`
  *
  * Wait for the next tick
+ *
+ * ```typescript
+ * wait nextTick();
+ * ```
  */
 declare const nextTick: () => Promise<unknown>;
 
@@ -1689,6 +2008,8 @@ declare const explodePath: (path: string) => ExplodedPath;
  * - `ExplodedPath`
  *
  * An object containing the exploded components of a path
+ *
+ * See `explodePath` for more details
  */
 interface ExplodedPath {
     /**<!-- DOCS: ##### -->
@@ -1795,6 +2116,18 @@ interface KeyListener {
  * - `getKeyListener`
  *
  * Listens for key presses and returns the key name and raw value.
+ *
+ * ```typescript
+ * const kl = getKeyListener((keyName, rawValue) => {
+ *   // do something with keyName and rawValue
+ * });
+ *
+ * kl.start();
+ *
+ * // later...
+ *
+ * kl.stop();
+ * ```
  */
 declare const getKeyListener: (callback: (keyName?: string, rawValue?: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 

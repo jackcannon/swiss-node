@@ -16,6 +16,16 @@ import { truncate } from './out';
  * - `progressBarTools.getColouredProgressBarOpts`
  *
  * Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
+ *
+ * ```typescript
+ * const progOpts = progressBarTools.getColouredProgressBarOpts({
+ *   showCount: true,
+ *   showPercent: true,
+ * });
+ * // later...
+ * const progressBar = getProgressBar(numThings, progOpts('Things'));
+ * progressBar.update();
+ * ```
  */
 export const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean = false) => {
   // let wrapperFns = [chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.yellowBright, chalk.magentaBright, chalk.redBright];
