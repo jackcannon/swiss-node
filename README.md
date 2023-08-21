@@ -87,14 +87,21 @@ Uses `swiss-ak`
         - [hasColor](#hascolor)
     - [table](#table)
       - [print](#print)
+      - [markdown](#markdown)
       - [printObjects](#printobjects)
       - [getLines](#getlines)
       - [TableOptions](#tableoptions)
         - [wrapperFn](#wrapperfn)
         - [wrapLinesFn](#wraplinesfn)
+        - [wrapHeaderLinesFn](#wrapheaderlinesfn)
+        - [wrapBodyLinesFn](#wrapbodylinesfn)
         - [overrideChar](#overridechar)
         - [overrideHorChar](#overridehorchar)
         - [overrideVerChar](#overrideverchar)
+        - [overrideCornChar](#overridecornchar)
+        - [overrideOuterChar](#overrideouterchar)
+        - [overrideCharSet](#overridecharset)
+        - [overridePrioritiseVer](#overrideprioritisever)
         - [drawOuter](#drawouter)
         - [drawRowLines](#drawrowlines)
         - [drawColLines](#drawcollines)
@@ -119,6 +126,7 @@ Uses `swiss-ak`
         - [transpose](#transpose)
         - [concatRows](#concatrows)
         - [getFormat](#getformat)
+      - [TableCharLookup](#tablecharlookup)
     - [log](#log)
       - [log](#log)
       - [createLogger](#createlogger)
@@ -1300,6 +1308,28 @@ table.print(body, header); // 7
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
+### markdown
+- `table.markdown`
+
+Generate a markdown table
+
+```typescript
+const header = [['Name', 'Age (in years)', 'Job']];
+const body = [
+  ['Alexander', '25', 'Builder'],
+  ['Jane', '26', 'Software Engineer']
+];
+const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
+console.log(md.join('\n'));
+
+// |      Name | Age (in years) | Job               |
+// |----------:|:--------------:|:------------------|
+// | Alexander |       25       | Builder           |
+// |      Jane |       26       | Software Engineer |
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
 ### printObjects
 - `table.printObjects`
 
@@ -1363,27 +1393,94 @@ The configuration options for the table
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### wrapperFn
-Function to wrap each line of the table in (e.g. chalk.blue)
+Function to wrap each line of the output in (e.g. chalk.blue)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### wrapLinesFn
-Function to wrap the lines of the table (between the cells)
+Function to wrap the output lines of each cell of the table (e.g. chalk.blue)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### wrapHeaderLinesFn
+Function to wrap the output lines of each cell of the header of the table (e.g. chalk.blue)
+
+Default: `chalk.bold`
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### wrapBodyLinesFn
+Function to wrap the output lines of each cell of the body of the table (e.g. chalk.blue)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### overrideChar
 Character to use instead of lines
 
+Override character options are applied in the following order (later options have higher priority):
+overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### overrideHorChar
 Character to use instead of horizontal lines
 
+Override character options are applied in the following order (later options have higher priority):
+overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 #### overrideVerChar
 Character to use instead of vertical lines
+
+Override character options are applied in the following order (later options have higher priority):
+overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideCornChar
+Character to use instead of corner and intersecting lines (┌, ┬, ┐, ├, ┼, ┤, └, ┴, ┘)
+
+Override character options are applied in the following order (later options have higher priority):
+overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideOuterChar
+Character to use instead of lines on the outside of the table (┌, ┬, ┐, ├, ┤, └, ┴, ┘)
+
+Override character options are applied in the following order (later options have higher priority):
+overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overrideCharSet
+Completely override all the characters used in the table.
+
+See TableCharLookup for more information.
+
+Default:
+```
+{
+  hTop: ['━', '┏', '┳', '┓'],
+  hNor: [' ', '┃', '┃', '┃'],
+  hSep: ['━', '┣', '╋', '┫'],
+  hBot: ['━', '┗', '┻', '┛'],
+  mSep: ['━', '┡', '╇', '┩'],
+  bTop: ['─', '┌', '┬', '┐'],
+  bNor: [' ', '│', '│', '│'],
+  bSep: ['─', '├', '┼', '┤'],
+  bBot: ['─', '└', '┴', '┘']
+}
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+#### overridePrioritiseVer
+By default, if not overrideHorChar and overrideVerChar are set, overrideHorChar will be prioritised (and used where both are applicable).
+Setting this to true will prioritise overrideVerChar instead.
+
+Default: `false`
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -1582,6 +1679,34 @@ table.print(header, body, {format})
 // │ 6 │ 7 │ 8 │
 // └───┴───┴───┘
 ```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### TableCharLookup
+The configuration for the table line characters
+
+Each property in the object represents a row type:
+
+| Type   | Description                                                       | Example     |
+|:------:|-------------------------------------------------------------------|:-----------:|
+| `hTop` | Lines at the top of the table, if there's a header                | `┏━━━┳━━━┓` |
+| `hNor` | Regular lines of cells in a header cell                           | `┃...┃...┃` |
+| `hSep` | Lines between rows of the header                                  | `┣━━━╋━━━┫` |
+| `hBot` | Lines at the bottom of the table, if there's a header but no body | `┗━━━┻━━━┛` |
+| `mSep` | Lines between the header and the body if both are there           | `┡━━━╇━━━┩` |
+| `bTop` | Lines at the top of the table, if there's not a header            | `┌───┬───┐` |
+| `bNor` | Regular lines of cells in a body cell                             | `│...│...│` |
+| `bSep` | Lines between rows of the body                                    | `├───┼───┤` |
+| `bBot` | Lines at the bottom of the table                                  | `└───┴───┘` |
+
+Each item in each array is a character to use for the row type:
+
+| Index | Description                                                               | Example |
+|:-----:|---------------------------------------------------------------------------|:-------:|
+| `0`   | A regular character for the row (gets repeated for the width of the cell) | `━`     |
+| `1`   | A border line at the start of the row                                     | `┣`     |
+| `2`   | A border line between cells                                               | `╋`     |
+| `3`   | A border line at the end of the row                                       | `┫`     |
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 

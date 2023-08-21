@@ -1089,6 +1089,18 @@ declare namespace out {
   };
 }
 
+interface CharLookup<T> {
+    hTop: T;
+    hNor: T;
+    hSep: T;
+    hBot: T;
+    mSep: T;
+    bTop: T;
+    bNor: T;
+    bSep: T;
+    bBot: T;
+}
+
 /**<!-- DOCS: ### -->
  * print
  *
@@ -1111,6 +1123,29 @@ declare namespace out {
  * ```
  */
 declare const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
+/**<!-- DOCS: ### -->
+ * markdown
+ *
+ * - `table.markdown`
+ *
+ * Generate a markdown table
+ *
+ * ```typescript
+ * const header = [['Name', 'Age (in years)', 'Job']];
+ * const body = [
+ *   ['Alexander', '25', 'Builder'],
+ *   ['Jane', '26', 'Software Engineer']
+ * ];
+ * const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
+ * console.log(md.join('\n'));
+ *
+ * // |      Name | Age (in years) | Job               |
+ * // |----------:|:--------------:|:------------------|
+ * // | Alexander |       25       | Builder           |
+ * // |      Jane |       26       | Software Engineer |
+ * ```
+ */
+declare const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
 /**<!-- DOCS: ### -->
  * printObjects
  *
@@ -1174,33 +1209,106 @@ interface FullTableOptions {
     /**<!-- DOCS: #### -->
      * wrapperFn
      *
-     * Function to wrap each line of the table in (e.g. chalk.blue)
+     * Function to wrap each line of the output in (e.g. chalk.blue)
      */
     wrapperFn: Function;
     /**<!-- DOCS: #### -->
      * wrapLinesFn
      *
-     * Function to wrap the lines of the table (between the cells)
+     * Function to wrap the output lines of each cell of the table (e.g. chalk.blue)
      */
     wrapLinesFn: Function;
+    /**<!-- DOCS: #### -->
+     * wrapHeaderLinesFn
+     *
+     * Function to wrap the output lines of each cell of the header of the table (e.g. chalk.blue)
+     *
+     * Default: `chalk.bold`
+     */
+    wrapHeaderLinesFn: Function;
+    /**<!-- DOCS: #### -->
+     * wrapBodyLinesFn
+     *
+     * Function to wrap the output lines of each cell of the body of the table (e.g. chalk.blue)
+     */
+    wrapBodyLinesFn: Function;
     /**<!-- DOCS: #### -->
      * overrideChar
      *
      * Character to use instead of lines
+     *
+     * Override character options are applied in the following order (later options have higher priority):
+     * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
      */
     overrideChar: string;
     /**<!-- DOCS: #### -->
      * overrideHorChar
      *
      * Character to use instead of horizontal lines
+     *
+     * Override character options are applied in the following order (later options have higher priority):
+     * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
      */
     overrideHorChar: string;
     /**<!-- DOCS: #### -->
      * overrideVerChar
      *
      * Character to use instead of vertical lines
+     *
+     * Override character options are applied in the following order (later options have higher priority):
+     * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
      */
     overrideVerChar: string;
+    /**<!-- DOCS: #### -->
+     * overrideCornChar
+     *
+     * Character to use instead of corner and intersecting lines (┌, ┬, ┐, ├, ┼, ┤, └, ┴, ┘)
+     *
+     * Override character options are applied in the following order (later options have higher priority):
+     * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+     */
+    overrideCornChar: string;
+    /**<!-- DOCS: #### -->
+     * overrideOuterChar
+     *
+     * Character to use instead of lines on the outside of the table (┌, ┬, ┐, ├, ┤, └, ┴, ┘)
+     *
+     * Override character options are applied in the following order (later options have higher priority):
+     * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+     */
+    overrideOuterChar: string;
+    /**<!-- DOCS: #### -->
+     * overrideCharSet
+     *
+     * Completely override all the characters used in the table.
+     *
+     * See TableCharLookup for more information.
+     *
+     * Default:
+     * ```
+     * {
+     *   hTop: ['━', '┏', '┳', '┓'],
+     *   hNor: [' ', '┃', '┃', '┃'],
+     *   hSep: ['━', '┣', '╋', '┫'],
+     *   hBot: ['━', '┗', '┻', '┛'],
+     *   mSep: ['━', '┡', '╇', '┩'],
+     *   bTop: ['─', '┌', '┬', '┐'],
+     *   bNor: [' ', '│', '│', '│'],
+     *   bSep: ['─', '├', '┼', '┤'],
+     *   bBot: ['─', '└', '┴', '┘']
+     * }
+     * ```
+     */
+    overrideCharSet: TableCharLookup;
+    /**<!-- DOCS: #### -->
+     * overridePrioritiseVer
+     *
+     * By default, if not overrideHorChar and overrideVerChar are set, overrideHorChar will be prioritised (and used where both are applicable).
+     * Setting this to true will prioritise overrideVerChar instead.
+     *
+     * Default: `false`
+     */
+    overridePrioritiseVer: boolean;
     /**<!-- DOCS: #### -->
      * drawOuter
      *
@@ -1290,6 +1398,35 @@ interface FullTableOptions {
  * The configuration options for the table
  */
 declare type TableOptions = Partial$1<FullTableOptions>;
+/**<!-- DOCS: ### 391 -->
+ * TableCharLookup
+ *
+ * The configuration for the table line characters
+ *
+ * Each property in the object represents a row type:
+ *
+ * | Type   | Description                                                       | Example     |
+ * |:------:|-------------------------------------------------------------------|:-----------:|
+ * | `hTop` | Lines at the top of the table, if there's a header                | `┏━━━┳━━━┓` |
+ * | `hNor` | Regular lines of cells in a header cell                           | `┃...┃...┃` |
+ * | `hSep` | Lines between rows of the header                                  | `┣━━━╋━━━┫` |
+ * | `hBot` | Lines at the bottom of the table, if there's a header but no body | `┗━━━┻━━━┛` |
+ * | `mSep` | Lines between the header and the body if both are there           | `┡━━━╇━━━┩` |
+ * | `bTop` | Lines at the top of the table, if there's not a header            | `┌───┬───┐` |
+ * | `bNor` | Regular lines of cells in a body cell                             | `│...│...│` |
+ * | `bSep` | Lines between rows of the body                                    | `├───┼───┤` |
+ * | `bBot` | Lines at the bottom of the table                                  | `└───┴───┘` |
+ *
+ * Each item in each array is a character to use for the row type:
+ *
+ * | Index | Description                                                               | Example |
+ * |:-----:|---------------------------------------------------------------------------|:-------:|
+ * | `0`   | A regular character for the row (gets repeated for the width of the cell) | `━`     |
+ * | `1`   | A border line at the start of the row                                     | `┣`     |
+ * | `2`   | A border line between cells                                               | `╋`     |
+ * | `3`   | A border line at the end of the row                                       | `┫`     |
+ */
+declare type TableCharLookup = Partial$1<CharLookup<string[]>>;
 /**<!-- DOCS: ### -->
  * TableFormatConfig
  *
@@ -1341,18 +1478,22 @@ declare const utils$1: {
 };
 
 declare const table$1_print: typeof print;
+declare const table$1_markdown: typeof markdown;
 declare const table$1_printObjects: typeof printObjects;
 declare const table$1_getLines: typeof getLines;
 type table$1_FullTableOptions = FullTableOptions;
 type table$1_TableOptions = TableOptions;
+type table$1_TableCharLookup = TableCharLookup;
 type table$1_TableFormatConfig = TableFormatConfig;
 declare namespace table$1 {
   export {
     table$1_print as print,
+    table$1_markdown as markdown,
     table$1_printObjects as printObjects,
     table$1_getLines as getLines,
     table$1_FullTableOptions as FullTableOptions,
     table$1_TableOptions as TableOptions,
+    table$1_TableCharLookup as TableCharLookup,
     table$1_TableFormatConfig as TableFormatConfig,
     utils$1 as utils,
   };

@@ -467,6 +467,7 @@ var import_string_width2 = __toESM(require("string-width"), 1);
 var table_exports = {};
 __export(table_exports, {
   getLines: () => getLines2,
+  markdown: () => markdown,
   print: () => print,
   printObjects: () => printObjects,
   utils: () => utils2
@@ -475,7 +476,7 @@ var import_swiss_ak5 = require("swiss-ak");
 
 // src/utils/processTableInput.ts
 var import_swiss_ak3 = require("swiss-ak");
-var empty = (numCols, char = "") => new Array(numCols).fill(char);
+var empty = (numCols, char = "") => import_swiss_ak3.ArrayTools.create(numCols, char);
 var showBlank = ["undefined", "null"];
 var showRaw = ["string", "number", "boolean"];
 var itemToString = (item) => {
@@ -576,11 +577,10 @@ var tableCharactersBasic = () => ({
 var ovAllCharact = (orig, char) => import_swiss_ak4.ArrayTools.repeat(4, char);
 var ovSeperators = (orig, char) => [orig[0], char, char, char];
 var ovOuterChars = (orig, char) => [orig[0], char, orig[2], char];
-var getTableCharacters = (opts) => {
-  let mapped = tableCharactersBasic();
-  const normalRows = ["hNor", "bNor"];
-  const outerRows = ["hTop", "hBot", "bTop", "bBot"];
-  const rowTypes = Object.keys(mapped);
+var normalRows = ["hNor", "bNor"];
+var outerRows = ["hTop", "hBot", "bTop", "bBot"];
+var rowTypes = ["hTop", "hNor", "hSep", "hBot", "mSep", "bTop", "bNor", "bSep", "bBot"];
+var applyOverrideChar = (mapped, opts) => {
   if (opts.overrideChar) {
     for (const rowType of rowTypes) {
       if (normalRows.includes(rowType)) {
@@ -590,16 +590,18 @@ var getTableCharacters = (opts) => {
       }
     }
   }
+  return mapped;
+};
+var applyOverrideVerChar = (mapped, opts) => {
   if (opts.overrideVerChar || !opts.drawColLines) {
     const ovrd = opts.overrideVerChar || " ";
     for (const rowType of rowTypes) {
-      if (normalRows.includes(rowType)) {
-        mapped[rowType] = ovSeperators(mapped[rowType], ovrd);
-      } else {
-        mapped[rowType] = ovAllCharact(mapped[rowType], mapped[rowType][0]);
-      }
+      mapped[rowType] = ovSeperators(mapped[rowType], ovrd);
     }
   }
+  return mapped;
+};
+var applyOverrideHorChar = (mapped, opts) => {
   if (opts.overrideHorChar || !opts.drawRowLines) {
     const ovrd = opts.overrideHorChar;
     const copyVertsFrom = ["hNor", "hNor", "hNor", "hNor", "mSep", "bNor", "bNor", "bNor", "bNor"];
@@ -607,7 +609,7 @@ var getTableCharacters = (opts) => {
       const rowType = rowTypes[rowIndex];
       if (normalRows.includes(rowType)) {
       } else {
-        if (opts.overrideHorChar) {
+        if (ovrd) {
           mapped[rowType] = ovAllCharact(mapped[rowType], ovrd);
         } else {
           mapped[rowType] = [...mapped[copyVertsFrom[rowIndex]]];
@@ -615,6 +617,33 @@ var getTableCharacters = (opts) => {
       }
     }
   }
+  return mapped;
+};
+var applyOverrideCornChar = (mapped, opts) => {
+  if (opts.overrideCornChar) {
+    const ovrd = opts.overrideCornChar || " ";
+    for (const rowType of rowTypes) {
+      if (!normalRows.includes(rowType)) {
+        mapped[rowType] = ovSeperators(mapped[rowType], ovrd);
+      }
+    }
+  }
+  return mapped;
+};
+var applyOverrideOuterChar = (mapped, opts) => {
+  if (opts.overrideOuterChar) {
+    const ovrd = opts.overrideOuterChar;
+    for (const rowType of rowTypes) {
+      if (outerRows.includes(rowType)) {
+        mapped[rowType] = ovAllCharact(mapped[rowType], ovrd);
+      } else {
+        mapped[rowType] = ovOuterChars(mapped[rowType], ovrd);
+      }
+    }
+  }
+  return mapped;
+};
+var applyDrawOuter = (mapped, opts) => {
   if (!opts.drawOuter) {
     for (const rowType of rowTypes) {
       if (outerRows.includes(rowType)) {
@@ -626,6 +655,46 @@ var getTableCharacters = (opts) => {
   }
   return mapped;
 };
+var applyOverrideCharSet = (mapped, opts) => {
+  if (opts.overrideCharSet) {
+    const ovrd = opts.overrideCharSet;
+    const ovrdRowTypes = Object.keys(ovrd);
+    for (const rowType of ovrdRowTypes) {
+      const ovrdRow = ovrd[rowType];
+      if (rowTypes.includes(rowType) && ovrdRow && ovrdRow instanceof Array && ovrdRow.length) {
+        mapped[rowType] = mapped[rowType].map((c, i) => ovrdRow[i] ?? c);
+      }
+    }
+  }
+  return mapped;
+};
+var getTableCharacters = (opts) => {
+  let mapped = tableCharactersBasic();
+  console.log("starting", mapped);
+  mapped = applyOverrideChar(mapped, opts);
+  console.log("after overrideChar", mapped);
+  mapped = applyOverrideOuterChar(mapped, opts);
+  console.log("after overrideOuterChar", mapped);
+  if (opts.overridePrioritiseVer) {
+    mapped = applyOverrideHorChar(mapped, opts);
+    console.log("after overrideHorChar", mapped);
+    mapped = applyOverrideVerChar(mapped, opts);
+    console.log("after overrideVerChar", mapped);
+  } else {
+    mapped = applyOverrideVerChar(mapped, opts);
+    console.log("after overrideVerChar", mapped);
+    mapped = applyOverrideHorChar(mapped, opts);
+    console.log("after overrideHorChar", mapped);
+  }
+  mapped = applyOverrideCornChar(mapped, opts);
+  console.log("after overrideCornChar", mapped);
+  mapped = applyDrawOuter(mapped, opts);
+  console.log("after drawOuter", mapped);
+  mapped = applyOverrideCharSet(mapped, opts);
+  console.log("after overrideCharSet", mapped);
+  console.log("final", mapped);
+  return mapped;
+};
 
 // src/tools/table.ts
 var import_chalk4 = __toESM(require("chalk"), 1);
@@ -633,6 +702,10 @@ var getFullOptions = (opts) => ({
   overrideChar: "",
   overrideHorChar: opts.overrideChar || "",
   overrideVerChar: opts.overrideChar || "",
+  overrideCornChar: opts.overrideChar || "",
+  overrideOuterChar: opts.overrideChar || "",
+  overrideCharSet: void 0,
+  overridePrioritiseVer: false,
   align: "left",
   alignCols: ["left"],
   colWidths: [],
@@ -642,6 +715,8 @@ var getFullOptions = (opts) => ({
   ...opts,
   wrapperFn: typeof opts.wrapperFn !== "function" ? import_swiss_ak5.fn.noact : opts.wrapperFn,
   wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? import_swiss_ak5.fn.noact : opts.wrapLinesFn,
+  wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? import_chalk4.default.bold : opts.wrapHeaderLinesFn,
+  wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? import_swiss_ak5.fn.noact : opts.wrapBodyLinesFn,
   drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
   drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
   drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
@@ -657,13 +732,57 @@ var getFullOptions = (opts) => ({
     return [top, right2, bottom, left2];
   })(opts.margin)
 });
-var empty2 = (numCols, char = "") => new Array(numCols).fill(char);
+var empty2 = (numCols, char = "") => import_swiss_ak5.ArrayTools.create(numCols, char);
 var print = (body, header, options = {}) => {
   const lines = getLines2(body, header, options);
   if (lines.length) {
     console.log(lines.join("\n"));
   }
   return lines.length;
+};
+var markdown = (body, header, options = {}) => {
+  const defaultMarkdownOptions = {
+    overrideCharSet: {
+      hTop: [" ", " ", " ", " "],
+      hNor: [" ", "|", "|", "|"],
+      hSep: [" ", " ", " ", " "],
+      hBot: [" ", " ", " ", " "],
+      mSep: ["-", "|", "|", "|"],
+      bTop: [" ", " ", " ", " "],
+      bNor: [" ", "|", "|", "|"],
+      bSep: [" ", " ", " ", " "],
+      bBot: [" ", " ", " ", " "]
+    },
+    drawRowLines: false,
+    margin: 0,
+    wrapHeaderLinesFn: import_swiss_ak5.fn.noact
+  };
+  const lines = getLines2(body, header, {
+    ...defaultMarkdownOptions,
+    ...options
+  });
+  if (options.alignCols) {
+    const sepIndex = lines[1].startsWith("|--") ? 1 : lines.findIndex((line) => line.startsWith("|--"));
+    const sepLine = lines[sepIndex];
+    const sepSections = sepLine.split("|").filter(import_swiss_ak5.fn.isTruthy);
+    const numCols = sepSections.length;
+    const alignColumns = import_swiss_ak5.ArrayTools.repeat(numCols, ...options.alignCols);
+    const alignedSepSections = sepSections.map((section2, index) => {
+      const algn = alignColumns[index];
+      const width = section2.length;
+      let firstChar = "-";
+      let lastChar = "-";
+      if (algn === "left" || algn === "center") {
+        firstChar = ":";
+      }
+      if (algn === "right" || algn === "center") {
+        lastChar = ":";
+      }
+      return `${firstChar}${"-".repeat(Math.max(0, width - 2))}${lastChar}`.slice(0, width);
+    });
+    lines[sepIndex] = ["", ...alignedSepSections, ""].join("|");
+  }
+  return lines;
 };
 var getAllKeys = (objects) => {
   const allKeys = {};
@@ -683,25 +802,29 @@ var getLines2 = (body, header, options = {}) => {
   const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align: align2, drawRowLines, cellPadding } = opts;
   const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
   const result = [];
+  console.log("A");
   const {
     cells: { header: pHeader, body: pBody },
     numCols,
     colWidths
   } = processInput({ header, body }, opts);
+  console.log("B");
   const alignColumns = import_swiss_ak5.ArrayTools.repeat(numCols, ...alignCols);
+  console.log("C");
   const tableChars = getTableCharacters(opts);
+  console.log("D");
   const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
     const [norm, strt, sepr, endc] = chars;
-    const pad2 = norm.repeat(Math.max(0, cellPadding));
+    const pad2 = import_swiss_ak5.StringTools.repeat(cellPadding, norm);
     let aligned = row.map((cell, col) => align(cell || "", alignColumns[col], colWidths[col], norm, true));
     if (textWrapperFn)
       aligned = aligned.map((x) => textWrapperFn(x));
     const inner = aligned.join(wrapLinesFn(`${pad2}${sepr}${pad2}`));
-    const str = wrapLinesFn(`${" ".repeat(marginLeft)}${strt}${pad2}`) + inner + wrapLinesFn(`${pad2}${endc}${" ".repeat(marginRight)}`);
+    const str = wrapLinesFn(`${import_swiss_ak5.StringTools.repeat(marginLeft, " ")}${strt}${pad2}`) + inner + wrapLinesFn(`${pad2}${endc}${import_swiss_ak5.StringTools.repeat(marginRight, " ")}`);
     result.push(align(wrapperFn(str), align2, -1, " ", false));
   };
   if (marginTop)
-    result.push("\n".repeat(marginTop - 1));
+    result.push(import_swiss_ak5.StringTools.repeat(marginTop - 1, "\n"));
   if (pHeader.length) {
     if (drawOuter && drawRowLines)
       printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
@@ -710,7 +833,7 @@ var getLines2 = (body, header, options = {}) => {
       if (Number(index) !== 0 && drawRowLines)
         printLine(empty2(numCols, ""), tableChars.hSep, wrapLinesFn);
       for (let line of row) {
-        printLine(line, tableChars.hNor, import_chalk4.default.bold);
+        printLine(line, tableChars.hNor, opts.wrapHeaderLinesFn);
       }
     }
     printLine(empty2(numCols, ""), tableChars.mSep, wrapLinesFn);
@@ -723,13 +846,13 @@ var getLines2 = (body, header, options = {}) => {
     if (Number(index) !== 0 && drawRowLines)
       printLine(empty2(numCols, ""), tableChars.bSep, wrapLinesFn);
     for (let line of row) {
-      printLine(line, tableChars.bNor);
+      printLine(line, tableChars.bNor, opts.wrapBodyLinesFn);
     }
   }
   if (drawOuter && drawRowLines)
     printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
   if (marginBottom)
-    result.push("\n".repeat(marginBottom - 1));
+    result.push(import_swiss_ak5.StringTools.repeat(marginBottom - 1, "\n"));
   return result;
 };
 var toFullFormatConfig = (config) => ({

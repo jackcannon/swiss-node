@@ -7,7 +7,7 @@ export type Text = string | string[];
 
 export type Cells = { header: Text[][]; body: Text[][] };
 
-const empty = (numCols: number, char: string = '') => new Array(numCols).fill(char);
+const empty = (numCols: number, char: string = '') => ArrayTools.create(numCols, char);
 
 const showBlank = ['undefined', 'null'];
 const showRaw = ['string', 'number', 'boolean'];
