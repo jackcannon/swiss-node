@@ -670,29 +670,18 @@ var applyOverrideCharSet = (mapped, opts) => {
 };
 var getTableCharacters = (opts) => {
   let mapped = tableCharactersBasic();
-  console.log("starting", mapped);
   mapped = applyOverrideChar(mapped, opts);
-  console.log("after overrideChar", mapped);
   mapped = applyOverrideOuterChar(mapped, opts);
-  console.log("after overrideOuterChar", mapped);
   if (opts.overridePrioritiseVer) {
     mapped = applyOverrideHorChar(mapped, opts);
-    console.log("after overrideHorChar", mapped);
     mapped = applyOverrideVerChar(mapped, opts);
-    console.log("after overrideVerChar", mapped);
   } else {
     mapped = applyOverrideVerChar(mapped, opts);
-    console.log("after overrideVerChar", mapped);
     mapped = applyOverrideHorChar(mapped, opts);
-    console.log("after overrideHorChar", mapped);
   }
   mapped = applyOverrideCornChar(mapped, opts);
-  console.log("after overrideCornChar", mapped);
   mapped = applyDrawOuter(mapped, opts);
-  console.log("after drawOuter", mapped);
   mapped = applyOverrideCharSet(mapped, opts);
-  console.log("after overrideCharSet", mapped);
-  console.log("final", mapped);
   return mapped;
 };
 
@@ -802,17 +791,13 @@ var getLines2 = (body, header, options = {}) => {
   const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align: align2, drawRowLines, cellPadding } = opts;
   const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
   const result = [];
-  console.log("A");
   const {
     cells: { header: pHeader, body: pBody },
     numCols,
     colWidths
   } = processInput({ header, body }, opts);
-  console.log("B");
   const alignColumns = import_swiss_ak5.ArrayTools.repeat(numCols, ...alignCols);
-  console.log("C");
   const tableChars = getTableCharacters(opts);
-  console.log("D");
   const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
     const [norm, strt, sepr, endc] = chars;
     const pad2 = import_swiss_ak5.StringTools.repeat(cellPadding, norm);
