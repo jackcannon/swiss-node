@@ -1124,29 +1124,6 @@ interface CharLookup<T> {
  */
 declare const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
 /**<!-- DOCS: ### -->
- * markdown
- *
- * - `table.markdown`
- *
- * Generate a markdown table
- *
- * ```typescript
- * const header = [['Name', 'Age (in years)', 'Job']];
- * const body = [
- *   ['Alexander', '25', 'Builder'],
- *   ['Jane', '26', 'Software Engineer']
- * ];
- * const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
- * console.log(md.join('\n'));
- *
- * // |      Name | Age (in years) | Job               |
- * // |----------:|:--------------:|:------------------|
- * // | Alexander |       25       | Builder           |
- * // |      Jane |       26       | Software Engineer |
- * ```
- */
-declare const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
-/**<!-- DOCS: ### -->
  * printObjects
  *
  * - `table.printObjects`
@@ -1182,6 +1159,29 @@ declare const markdown: (body: any[][], header?: any[][], options?: TableOptions
  * ```
  */
 declare const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
+/**<!-- DOCS: ### -->
+ * markdown
+ *
+ * - `table.markdown`
+ *
+ * Generate a markdown table
+ *
+ * ```typescript
+ * const header = [['Name', 'Age (in years)', 'Job']];
+ * const body = [
+ *   ['Alexander', '25', 'Builder'],
+ *   ['Jane', '26', 'Software Engineer']
+ * ];
+ * const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
+ * console.log(md.join('\n'));
+ *
+ * // |      Name | Age (in years) | Job               |
+ * // |----------:|:--------------:|:------------------|
+ * // | Alexander |       25       | Builder           |
+ * // |      Jane |       26       | Software Engineer |
+ * ```
+ */
+declare const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
 /**<!-- DOCS: ### -->
  * getLines
  *
@@ -1478,8 +1478,8 @@ declare const utils$1: {
 };
 
 declare const table$1_print: typeof print;
-declare const table$1_markdown: typeof markdown;
 declare const table$1_printObjects: typeof printObjects;
+declare const table$1_markdown: typeof markdown;
 declare const table$1_getLines: typeof getLines;
 type table$1_FullTableOptions = FullTableOptions;
 type table$1_TableOptions = TableOptions;
@@ -1488,8 +1488,8 @@ type table$1_TableFormatConfig = TableFormatConfig;
 declare namespace table$1 {
   export {
     table$1_print as print,
-    table$1_markdown as markdown,
     table$1_printObjects as printObjects,
+    table$1_markdown as markdown,
     table$1_getLines as getLines,
     table$1_FullTableOptions as FullTableOptions,
     table$1_TableOptions as TableOptions,

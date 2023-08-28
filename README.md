@@ -87,8 +87,8 @@ Uses `swiss-ak`
         - [hasColor](#hascolor)
     - [table](#table)
       - [print](#print)
-      - [markdown](#markdown)
       - [printObjects](#printobjects)
+      - [markdown](#markdown)
       - [getLines](#getlines)
       - [TableOptions](#tableoptions)
         - [wrapperFn](#wrapperfn)
@@ -1308,28 +1308,6 @@ table.print(body, header); // 7
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### markdown
-- `table.markdown`
-
-Generate a markdown table
-
-```typescript
-const header = [['Name', 'Age (in years)', 'Job']];
-const body = [
-  ['Alexander', '25', 'Builder'],
-  ['Jane', '26', 'Software Engineer']
-];
-const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
-console.log(md.join('\n'));
-
-// |      Name | Age (in years) | Job               |
-// |----------:|:--------------:|:------------------|
-// | Alexander |       25       | Builder           |
-// |      Jane |       26       | Software Engineer |
-```
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
 ### printObjects
 - `table.printObjects`
 
@@ -1361,6 +1339,28 @@ table.printObjects(objs, header); // 11
 // ├───────┼───────┼───────┤
 // │ 6     │       │       │
 // └───────┴───────┴───────┘
+```
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### markdown
+- `table.markdown`
+
+Generate a markdown table
+
+```typescript
+const header = [['Name', 'Age (in years)', 'Job']];
+const body = [
+  ['Alexander', '25', 'Builder'],
+  ['Jane', '26', 'Software Engineer']
+];
+const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
+console.log(md.join('\n'));
+
+// |      Name | Age (in years) | Job               |
+// |----------:|:--------------:|:------------------|
+// | Alexander |       25       | Builder           |
+// |      Jane |       26       | Software Engineer |
 ```
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>

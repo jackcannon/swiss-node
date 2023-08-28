@@ -83,6 +83,56 @@ export const print = (body: any[][], header?: any[][], options: TableOptions = {
   return lines.length;
 };
 
+const getAllKeys = (objects) => {
+  const allKeys = {};
+  objects.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      allKeys[key] = true;
+    });
+  });
+  return Object.keys(allKeys);
+};
+
+/**<!-- DOCS: ### -->
+ * printObjects
+ *
+ * - `table.printObjects`
+ *
+ * Print a table of given objects
+ *
+ * ```typescript
+ * const objs = [
+ *   // objs
+ *   { a: '1', b: '2', c: '3' },
+ *   { a: '0', c: '2' },
+ *   { b: '4' },
+ *   { a: '6' }
+ * ];
+ * const header = {
+ *   a: 'Col A',
+ *   b: 'Col B',
+ *   c: 'Col C'
+ * };
+ * table.printObjects(objs, header); // 11
+ *
+ * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
+ * // ┃ Col A ┃ Col B ┃ Col C ┃
+ * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
+ * // │ 1     │ 2     │ 3     │
+ * // ├───────┼───────┼───────┤
+ * // │ 0     │       │ 2     │
+ * // ├───────┼───────┼───────┤
+ * // │       │ 4     │       │
+ * // ├───────┼───────┼───────┤
+ * // │ 6     │       │       │
+ * // └───────┴───────┴───────┘
+ * ```
+ */
+export const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
+  const { body, header } = objectsToTable(objects, headers);
+  return print(body, header, options);
+};
+
 /**<!-- DOCS: ### -->
  * markdown
  *
@@ -152,56 +202,6 @@ export const markdown = (body: any[][], header?: any[][], options: TableOptions 
   }
 
   return lines;
-};
-
-const getAllKeys = (objects) => {
-  const allKeys = {};
-  objects.forEach((obj) => {
-    Object.keys(obj).forEach((key) => {
-      allKeys[key] = true;
-    });
-  });
-  return Object.keys(allKeys);
-};
-
-/**<!-- DOCS: ### -->
- * printObjects
- *
- * - `table.printObjects`
- *
- * Print a table of given objects
- *
- * ```typescript
- * const objs = [
- *   // objs
- *   { a: '1', b: '2', c: '3' },
- *   { a: '0', c: '2' },
- *   { b: '4' },
- *   { a: '6' }
- * ];
- * const header = {
- *   a: 'Col A',
- *   b: 'Col B',
- *   c: 'Col C'
- * };
- * table.printObjects(objs, header); // 11
- *
- * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
- * // ┃ Col A ┃ Col B ┃ Col C ┃
- * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
- * // │ 1     │ 2     │ 3     │
- * // ├───────┼───────┼───────┤
- * // │ 0     │       │ 2     │
- * // ├───────┼───────┼───────┤
- * // │       │ 4     │       │
- * // ├───────┼───────┼───────┤
- * // │ 6     │       │       │
- * // └───────┴───────┴───────┘
- * ```
- */
-export const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
-  const { body, header } = objectsToTable(objects, headers);
-  return print(body, header, options);
 };
 
 /**<!-- DOCS: ### -->

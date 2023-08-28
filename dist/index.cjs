@@ -729,6 +729,19 @@ var print = (body, header, options = {}) => {
   }
   return lines.length;
 };
+var getAllKeys = (objects) => {
+  const allKeys = {};
+  objects.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      allKeys[key] = true;
+    });
+  });
+  return Object.keys(allKeys);
+};
+var printObjects = (objects, headers = {}, options = {}) => {
+  const { body, header } = objectsToTable(objects, headers);
+  return print(body, header, options);
+};
 var markdown = (body, header, options = {}) => {
   const defaultMarkdownOptions = {
     overrideCharSet: {
@@ -772,19 +785,6 @@ var markdown = (body, header, options = {}) => {
     lines[sepIndex] = ["", ...alignedSepSections, ""].join("|");
   }
   return lines;
-};
-var getAllKeys = (objects) => {
-  const allKeys = {};
-  objects.forEach((obj) => {
-    Object.keys(obj).forEach((key) => {
-      allKeys[key] = true;
-    });
-  });
-  return Object.keys(allKeys);
-};
-var printObjects = (objects, headers = {}, options = {}) => {
-  const { body, header } = objectsToTable(objects, headers);
-  return print(body, header, options);
 };
 var getLines2 = (body, header, options = {}) => {
   const opts = getFullOptions(options);
