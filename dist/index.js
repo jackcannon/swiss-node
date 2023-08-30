@@ -1,61 +1,5 @@
-// src/tools/clr.ts
-import chalk from "chalk";
-var chlk;
-((chlk2) => {
-  chlk2.gray0 = chalk.black;
-  chlk2.gray1 = chalk.gray.dim;
-  chlk2.gray2 = chalk.white.dim;
-  chlk2.gray3 = chalk.whiteBright.dim;
-  chlk2.gray4 = chalk.white;
-  chlk2.gray5 = chalk.whiteBright;
-  chlk2.grays = [
-    chlk2.gray0,
-    chlk2.gray1,
-    chlk2.gray2,
-    chlk2.gray3,
-    chlk2.gray4,
-    chlk2.gray5
-  ];
-  chlk2.gray = (num) => chlk2.grays[Math.max(0, Math.min(num, chlk2.grays.length - 1))];
-  chlk2.clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
-  chlk2.not = (style) => {
-    const styled = style("**xxx**");
-    const [after, before] = styled.split("**xxx**");
-    return (item) => `${before}${item}${after}`;
-  };
-  chlk2.notUnderlined = chlk2.not(chalk.underline);
-})(chlk || (chlk = {}));
-var clr;
-((clr2) => {
-  clr2.hl1 = chalk.yellowBright.bold;
-  clr2.hl2 = chalk.yellow;
-  clr2.approve = chalk.green.bold;
-  clr2.create = chalk.greenBright.bold;
-  clr2.update = chalk.yellow.bold;
-  clr2.remove = chalk.redBright.bold;
-  clr2.removeAll = chalk.redBright.bold;
-  clr2.blue = chalk.blueBright;
-  clr2.cyan = chalk.cyanBright;
-  clr2.green = chalk.greenBright;
-  clr2.magenta = chalk.magentaBright;
-  clr2.red = chalk.redBright;
-  clr2.yellow = chalk.yellowBright;
-  clr2.t1 = chalk.yellowBright;
-  clr2.t2 = chalk.magentaBright;
-  clr2.t3 = chalk.blueBright;
-  clr2.t4 = chalk.redBright;
-  clr2.t5 = chalk.greenBright;
-  clr2.t6 = chalk.cyanBright;
-  clr2.gray0 = chlk.gray0;
-  clr2.gray1 = chlk.gray1;
-  clr2.gray2 = chlk.gray2;
-  clr2.gray3 = chlk.gray3;
-  clr2.gray4 = chlk.gray4;
-  clr2.gray5 = chlk.gray5;
-})(clr || (clr = {}));
-
 // src/tools/ask.ts
-import chalk13 from "chalk";
+import chalk14 from "chalk";
 import stringWidth5 from "string-width";
 import prompts from "prompts";
 import Fuse from "fuse.js";
@@ -67,7 +11,7 @@ import stringWidth from "string-width";
 
 // src/tools/LogTools.ts
 import { inspect } from "util";
-import chalk2 from "chalk";
+import chalk from "chalk";
 import { fn } from "swiss-ak";
 var LogTools;
 ((LogTools2) => {
@@ -79,7 +23,7 @@ var LogTools;
       return item + "";
     }
   };
-  LogTools2.processLogContents = (prefix, wrapper = fn.noact, ...args) => args.map(LogTools2.getLogStr).join(" ").split("\n").map((line, index) => chalk2.bold(index ? " ".repeat(prefix.length) : prefix) + " " + wrapper(line)).join("\n");
+  LogTools2.processLogContents = (prefix, wrapper = fn.noact, ...args) => args.map(LogTools2.getLogStr).join(" ").split("\n").map((line, index) => chalk.bold(index ? " ".repeat(prefix.length) : prefix) + " " + wrapper(line)).join("\n");
   LogTools2.getLog = (prefix, wrapper = fn.noact) => (...args) => {
     console.log(LogTools2.processLogContents(prefix, wrapper, ...args));
   };
@@ -164,8 +108,71 @@ var getLineCounter = () => {
 };
 
 // src/tools/out/breadcrumb.ts
-import chalk3 from "chalk";
+import chalk4 from "chalk";
 import { symbols } from "swiss-ak";
+
+// src/tools/clr.ts
+import chalk3 from "chalk";
+
+// src/tools/chlk.ts
+import chalk2 from "chalk";
+var chlk;
+((chlk2) => {
+  chlk2.gray0 = chalk2.black;
+  chlk2.gray1 = chalk2.gray.dim;
+  chlk2.gray2 = chalk2.white.dim;
+  chlk2.gray3 = chalk2.whiteBright.dim;
+  chlk2.gray4 = chalk2.white;
+  chlk2.gray5 = chalk2.whiteBright;
+  chlk2.grays = [
+    chlk2.gray0,
+    chlk2.gray1,
+    chlk2.gray2,
+    chlk2.gray3,
+    chlk2.gray4,
+    chlk2.gray5
+  ];
+  chlk2.gray = (num) => chlk2.grays[Math.max(0, Math.min(num, chlk2.grays.length - 1))];
+  chlk2.clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
+  chlk2.not = (style) => {
+    const styled = style("**xxx**");
+    const [after, before] = styled.split("**xxx**");
+    return (item) => `${before}${item}${after}`;
+  };
+  chlk2.notUnderlined = chlk2.not(chalk2.underline);
+})(chlk || (chlk = {}));
+
+// src/tools/clr.ts
+var clr;
+((clr2) => {
+  clr2.hl1 = chalk3.yellowBright.bold;
+  clr2.hl2 = chalk3.yellow;
+  clr2.approve = chalk3.green.bold;
+  clr2.create = chalk3.greenBright.bold;
+  clr2.update = chalk3.yellow.bold;
+  clr2.remove = chalk3.redBright.bold;
+  clr2.removeAll = chalk3.redBright.bold;
+  clr2.blue = chalk3.blueBright;
+  clr2.cyan = chalk3.cyanBright;
+  clr2.green = chalk3.greenBright;
+  clr2.magenta = chalk3.magentaBright;
+  clr2.red = chalk3.redBright;
+  clr2.yellow = chalk3.yellowBright;
+  clr2.t1 = chalk3.yellowBright;
+  clr2.t2 = chalk3.magentaBright;
+  clr2.t3 = chalk3.blueBright;
+  clr2.t4 = chalk3.redBright;
+  clr2.t5 = chalk3.greenBright;
+  clr2.t6 = chalk3.cyanBright;
+  clr2.gray0 = chlk.gray0;
+  clr2.gray1 = chlk.gray1;
+  clr2.gray2 = chlk.gray2;
+  clr2.gray3 = chlk.gray3;
+  clr2.gray4 = chlk.gray4;
+  clr2.gray5 = chlk.gray5;
+})(clr || (clr = {}));
+
+// src/tools/out/breadcrumb.ts
 var seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
 var getBreadcrumb = (...baseNames) => {
   let current = [];
@@ -180,7 +187,7 @@ var getBreadcrumb = (...baseNames) => {
   const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
   const otherChars = "?  > ";
   const spaceForInput = 25;
-  const get = (...tempNames) => chalk3.bold(
+  const get = (...tempNames) => chalk4.bold(
     out.truncate(
       getColouredNames(...tempNames).join(seperatorChar).trim(),
       out.utils.getTerminalWidth() - (otherChars.length - spaceForInput)
@@ -197,7 +204,7 @@ var getBreadcrumb = (...baseNames) => {
 };
 
 // src/tools/out.ts
-import chalk4 from "chalk";
+import chalk5 from "chalk";
 var out;
 ((out2) => {
   const NEW_LINE = "\n";
@@ -287,7 +294,7 @@ var out;
       }
     }
   };
-  const loadingDefault = (s) => console.log(chalk4.dim(`${s}`));
+  const loadingDefault = (s) => console.log(chalk5.dim(`${s}`));
   const loadingWords = [
     "\u2113-o-\u{1D51E}-\u{1D4ED}-\u026A-\u057C-\u{1D5F4}",
     "\u{1D695}-\u03C3-a-\u{1D521}-\u{1D4F2}-\u0274-\u0262",
@@ -299,7 +306,7 @@ var out;
     "l-\u{1D52C}-\u{1D4EA}-\u1D05-\u0268-\u{1D5FB}-\u{1D690}"
   ].map((word) => word.split("-"));
   const loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
-    (word, index) => chalk4.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
+    (word, index) => chalk5.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
   out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
     let stopped = false;
@@ -351,10 +358,10 @@ var out;
       return specials + result;
     })
   );
-  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk4.dim("\u2026")) => utils.joinLines(
+  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk5.dim("\u2026")) => utils.joinLines(
     utils.getLines(text).map((line) => stringWidth(line) > maxLength ? out2.limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line)
   );
-  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk4.dim("\u2026")) => utils.joinLines(
+  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk5.dim("\u2026")) => utils.joinLines(
     utils.getLines(text).map((line) => stringWidth(line) > maxLength ? suffix + out2.limitToLengthStart(line, maxLength - stringWidth(suffix)) : line)
   );
   out2.concatLineGroups = (...groups) => {
@@ -676,7 +683,7 @@ var getTableCharacters = (opts) => {
 };
 
 // src/tools/table.ts
-import chalk5 from "chalk";
+import chalk6 from "chalk";
 var table;
 ((table2) => {
   const getFullOptions2 = (opts) => ({
@@ -696,7 +703,7 @@ var table;
     ...opts,
     wrapperFn: typeof opts.wrapperFn !== "function" ? fn4.noact : opts.wrapperFn,
     wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn4.noact : opts.wrapLinesFn,
-    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk5.bold : opts.wrapHeaderLinesFn,
+    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk6.bold : opts.wrapHeaderLinesFn,
     wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn4.noact : opts.wrapBodyLinesFn,
     drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
     drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
@@ -870,7 +877,7 @@ var table;
 })(table || (table = {}));
 
 // src/tools/ask/trim.ts
-import chalk6 from "chalk";
+import chalk7 from "chalk";
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
   const frLength = stringWidth2(frameRate + "");
   const toSecs = seconds(Math.floor(frame / frameRate));
@@ -892,16 +899,16 @@ var getFullOptions = (opts) => ({
   charTrack: " ",
   charHandle: "\u2503",
   charBar: "\u2588",
-  clrTrack: chalk6.bgGray,
-  clrHandle: chalk6.whiteBright,
-  clrBar: chalk6.white,
+  clrTrack: chalk7.bgGray,
+  clrHandle: chalk7.whiteBright,
+  clrBar: chalk7.white,
   ...opts,
   charActiveHandle: opts.charActiveHandle ?? opts.charHandle ?? "\u2503",
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? "\u2588",
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? "\u2588",
-  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk6.yellowBright.bold,
-  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk6.whiteBright,
-  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk6.yellowBright.bold
+  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk7.yellowBright.bold,
+  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk7.whiteBright,
+  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk7.yellowBright.bold
 });
 var getChars = (opts) => ({
   track: opts.charTrack,
@@ -1015,10 +1022,10 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       if (opts.showInstructions && displayCount < 5) {
         const body = [
           [
-            chalk6.gray.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            chalk6.gray.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
-            chalk6.gray.dim(`[TAB] switch handle`),
-            chalk6.gray.dim(`[ENTER] submit`)
+            chalk7.gray.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
+            chalk7.gray.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
+            chalk7.gray.dim(`[TAB] switch handle`),
+            chalk7.gray.dim(`[ENTER] submit`)
           ]
         ];
         lc.add(table.print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
@@ -1097,7 +1104,7 @@ import {
   tryOr as tryOr2,
   wait as wait2
 } from "swiss-ak";
-import chalk8 from "chalk";
+import chalk9 from "chalk";
 
 // src/tools/PathTools.ts
 var PathTools;
@@ -1117,7 +1124,7 @@ var PathTools;
 var explodePath = PathTools.explodePath;
 
 // src/utils/actionBar.ts
-import chalk7 from "chalk";
+import chalk8 from "chalk";
 import { fn as fn5 } from "swiss-ak";
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   const keyList = ids.filter(fn5.isTruthy).filter((key) => config[key]);
@@ -1127,10 +1134,10 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   });
   const format = [];
   if (pressedId) {
-    format.push({ formatFn: chalk7.bgWhite.black, col: keyList.indexOf(pressedId) });
+    format.push({ formatFn: chalk8.bgWhite.black, col: keyList.indexOf(pressedId) });
   }
   if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: chalk7.dim.strikethrough, col: keyList.indexOf(key) }));
+    disabledIds.forEach((key) => format.push({ formatFn: chalk8.dim.strikethrough, col: keyList.indexOf(key) }));
   }
   return out.utils.joinLines(
     table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
@@ -1299,8 +1306,8 @@ var getFileIcon = (ext) => {
   if (category === "image") {
     return out.left(
       `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551  ${chalk8.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk8.whiteBright("\u2600")}  \u2551
-\u2551 ${chalk8.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk8.whiteBright("\u2600")}\u2551
+\u2551  ${chalk9.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk9.whiteBright("\u2600")}  \u2551
+\u2551 ${chalk9.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk9.whiteBright("\u2600")}\u2551
 \u255F\u2500\u2500\u2524\u25AB\u25AA\u2502\u25AB\u25AB\u25AB\u25AB\u251C\u2500\u2500\u2500\u2562
 \u2551\u25AA\u25AB\u2502\u25AB\u25AB\u2502\u25AA\u25AB\u25AB\u25AB\u2502\u25AB\u25AA\u25AB\u2551
 \u255A\u2550\u2550\u2567\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u255D`,
@@ -1351,11 +1358,11 @@ var getFilePanel = (path, panelWidth, maxLines) => {
   result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(chalk8.dim(`${ext.toUpperCase()} ${category ? `${StringTools2.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(chalk9.dim(`${ext.toUpperCase()} ${category ? `${StringTools2.capitalise(category)} ` : ""}File`), panelWidth));
   result.push(out.center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
-    result.push(out.split(`${chalk8.bold.dim(title)}`, `${value}${extra ? chalk8.dim(` (${chalk8.dim(extra)})`) : ""}`, panelWidth));
+    result.push(out.split(`${chalk9.bold.dim(title)}`, `${value}${extra ? chalk9.dim(` (${chalk9.dim(extra)})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
     addItem(title, `${TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
@@ -1374,15 +1381,15 @@ var getFilePanel = (path, panelWidth, maxLines) => {
       addItem(`FPS`, `${probe.framerate}`);
   }
   const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
-  return chalk8.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
+  return chalk9.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
-  const primaryWrapFn = chalk8.yellowBright;
-  const cursorWrapFn = chalk8.bgYellow.black;
-  const ancestralCursorWrapFn = chalk8.bgGray.black;
-  const selectedIconWrapFn = chalk8.greenBright;
-  const selectedWrapFn = chalk8.greenBright;
-  const cursorOnSelectedWrapFn = chalk8.bgGreenBright.black;
+  const primaryWrapFn = chalk9.yellowBright;
+  const cursorWrapFn = chalk9.bgYellow.black;
+  const ancestralCursorWrapFn = chalk9.bgGray.black;
+  const selectedIconWrapFn = chalk9.greenBright;
+  const selectedWrapFn = chalk9.greenBright;
+  const cursorOnSelectedWrapFn = chalk9.bgGreenBright.black;
   const minWidth = 25;
   const maxWidth = 25;
   const maxItems = 15;
@@ -1487,7 +1494,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       single: {
         d: {
           dir: formatter("\u203A", chlk.gray5),
-          file: formatter(" ", chalk8.dim)
+          file: formatter(" ", chalk9.dim)
         },
         f: {
           dir: formatter("\u203A", chlk.gray3),
@@ -1501,7 +1508,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       multi: {
         d: {
           dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `),
-          file: formatter(" ", chalk8.dim, "   ", "   ")
+          file: formatter(" ", chalk9.dim, "   ", "   ")
         },
         f: {
           dir: formatter("\u203A", chlk.gray3, "   ", "   "),
@@ -1535,9 +1542,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
         const fullWidth = stringWidth3(formatDir(width, "", false, "")(""));
         if (isScrollUp)
-          slicedLines[0] = chalk8.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
+          slicedLines[0] = chalk9.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
         if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = chalk8.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
+          slicedLines[slicedLines.length - 1] = chalk9.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
         return out.utils.joinLines(slicedLines);
       }
       return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
@@ -1558,11 +1565,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     const tableWidth = stringWidth3(tableLines[Math.floor(tableLines.length / 2)]);
     const infoLine = (() => {
       if (loading) {
-        return chalk8.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
+        return chalk9.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
       }
-      const count = isMulti ? chalk8.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
+      const count = isMulti ? chalk9.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
       const curr = out.limitToLengthStart(
-        `${currentPath} ${chalk8.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
+        `${currentPath} ${chalk9.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
         tableWidth - (stringWidth3(count) + 3)
       );
       const split = out.split(curr, count, tableWidth - 2);
@@ -1765,7 +1772,7 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/datetime.ts
-import chalk11 from "chalk";
+import chalk12 from "chalk";
 import { getDeferred as getDeferred3, getTimer } from "swiss-ak";
 
 // src/utils/dynDates.ts
@@ -1853,28 +1860,28 @@ var getNumberInputter = (timeout = seconds3(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-import chalk10 from "chalk";
+import chalk11 from "chalk";
 import stringWidth4 from "string-width";
 import { range } from "swiss-ak";
 
 // src/tools/ask/datetime/styles.ts
-import chalk9 from "chalk";
+import chalk10 from "chalk";
 var sectionStyles = {
   sectActive: {
     dark: chlk.gray1,
     mid: chlk.gray3,
-    normal: chalk9.white,
-    tertiary: chalk9.yellowBright,
-    secondary: chalk9.bgWhite.black,
-    primary: chalk9.bgYellow.black
+    normal: chalk10.white,
+    tertiary: chalk10.yellowBright,
+    secondary: chalk10.bgWhite.black,
+    primary: chalk10.bgYellow.black
   },
   sectInactive: {
     dark: chlk.gray1,
     mid: chlk.gray2,
     normal: chlk.gray3,
-    tertiary: chalk9.yellow,
-    secondary: chalk9.bgGray.black,
-    primary: chalk9.bgWhite.black
+    tertiary: chalk10.yellow,
+    secondary: chalk10.bgGray.black,
+    primary: chalk10.bgWhite.black
   }
 };
 var getStyles = (active) => active ? sectionStyles.sectActive : sectionStyles.sectInactive;
@@ -1905,13 +1912,13 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk10.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk11.reset(styles.primary(s)), y, x)));
   }
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => chalk10.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat((s) => chalk11.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
     }
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
@@ -2107,7 +2114,7 @@ var timeHandler = (isActive, initial, displayCb) => {
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = getTimer("DEBUG", false, chalk11.red, chalk11);
+var DEBUG_TIMER = getTimer("DEBUG", false, chalk12.red, chalk12);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2328,8 +2335,8 @@ var section = async (question, sectionFn, ...questionFns) => {
 
 // src/tools/ask/table.ts
 import { fn as fn9, getDeferred as getDeferred4, symbols as symbols4 } from "swiss-ak";
-import chalk12 from "chalk";
-var highlightFn = chalk12.cyan.underline;
+import chalk13 from "chalk";
+var highlightFn = chalk13.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
@@ -2364,9 +2371,9 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       if (isMulti) {
         const selectedSym = symbols4.RADIO_FULL;
         const unselectedSym = symbols4.RADIO_EMPTY;
-        firstCell = selectedIndexes.includes(index) ? chalk12.reset(chalk12.green(selectedSym)) : chalk12.reset(unselectedSym);
+        firstCell = selectedIndexes.includes(index) ? chalk13.reset(chalk13.green(selectedSym)) : chalk13.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? chalk12.reset(chalk12.cyan(symbols4.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? chalk13.reset(chalk13.cyan(symbols4.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
@@ -2577,7 +2584,7 @@ var ask;
       canDeleteAll: true,
       ...options
     };
-    const opts = [{ title: chalk13.dim(`${clr.approve(symbols5.TICK)} [ Finished ]`), value: "none" }];
+    const opts = [{ title: chalk14.dim(`${clr.approve(symbols5.TICK)} [ Finished ]`), value: "none" }];
     if (fullOptions.canCreate) {
       opts.push({ title: `${clr.create(symbols5.PLUS)} Add another ${itemName}`, value: "create" });
     }
@@ -2603,13 +2610,13 @@ var ask;
       } else {
         const message = validateResponse || "";
         out.moveUp(1 + extraLines);
-        console.log(chalk13.red(message));
+        console.log(chalk14.red(message));
         return runLoop(input, message.split("\n").length);
       }
     };
     return runLoop();
   };
-  const imitateHighlight = chalk13.cyanBright.bold.underline;
+  const imitateHighlight = chalk14.cyanBright.bold.underline;
   const getImitateResultText = (result, isChild = false) => {
     if (result instanceof Array) {
       if (result.length > 3)
@@ -2639,12 +2646,12 @@ var ask;
   ask2.imitate = (done, question, result) => {
     const message = typeof question === "string" ? question : question.get();
     const resultText = getImitateResultText(result);
-    const prefix = done ? chalk13.green("\u2714") : chalk13.cyan("?");
-    const questionText = chalk13.whiteBright.bold(message);
-    const joiner = resultText ? chalk13.gray(done ? "\u2026 " : "\u203A ") : "";
+    const prefix = done ? chalk14.green("\u2714") : chalk14.cyan("?");
+    const questionText = chalk14.whiteBright.bold(message);
+    const joiner = resultText ? chalk14.gray(done ? "\u2026 " : "\u203A ") : "";
     const mainLength = stringWidth5(`${prefix} ${questionText} ${joiner}`);
     const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
-    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? chalk13.white : chalk13.gray;
+    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? chalk14.white : chalk14.gray;
     const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : "";
     console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
     return 1;
@@ -2660,7 +2667,7 @@ var ask;
   ask2.pause = async (text2 = "Press enter to continue...") => {
     return new Promise((resolve) => {
       const message = typeof text2 === "string" ? text2 : text2.get();
-      console.log(chalk13.gray(message));
+      console.log(chalk14.gray(message));
       const finish = () => {
         kl.stop();
         resolve();
@@ -2680,7 +2687,7 @@ var ask;
       const textValue = template(s);
       out.moveUp(lines);
       lines = textValue.split("\n").length;
-      console.log(chalk13.blackBright(textValue));
+      console.log(chalk14.blackBright(textValue));
       await wait3(seconds4(1));
     }
     out.moveUp(lines);
@@ -2733,7 +2740,7 @@ var ask;
 
 // src/tools/log.ts
 import util from "util";
-import chalk14 from "chalk";
+import chalk15 from "chalk";
 import { ObjectTools as ObjectTools2 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -2743,41 +2750,41 @@ var defaultOptions = {
 var defaultConfigs = {
   blank: {
     name: "",
-    nameColour: chalk14,
+    nameColour: chalk15,
     showDate: false,
     showTime: false
   },
   log: {
     name: "LOG",
-    nameColour: chalk14.bgWhite.black
+    nameColour: chalk15.bgWhite.black
   },
   out: {
     name: "OUT",
-    nameColour: chalk14.bgWhite.black
+    nameColour: chalk15.bgWhite.black
   },
   normal: {
     name: "LOG",
-    nameColour: chalk14.bgWhite.black
+    nameColour: chalk15.bgWhite.black
   },
   verbose: {
     name: "LOG",
-    nameColour: chalk14.bgWhite.black
+    nameColour: chalk15.bgWhite.black
   },
   debug: {
     name: "DBUG",
-    nameColour: chalk14.bgMagenta.whiteBright
+    nameColour: chalk15.bgMagenta.whiteBright
   },
   info: {
     name: "INFO",
-    nameColour: chalk14.bgBlue.whiteBright
+    nameColour: chalk15.bgBlue.whiteBright
   },
   warn: {
     name: "WARN",
-    nameColour: chalk14.bgYellowBright.black
+    nameColour: chalk15.bgYellowBright.black
   },
   error: {
     name: "ERRR",
-    nameColour: chalk14.bgRed.whiteBright
+    nameColour: chalk15.bgRed.whiteBright
   }
 };
 var getStr = (enableColours) => (item) => {
@@ -2802,7 +2809,7 @@ var formatLog = (args, config, completeOptions, longestName = 1) => {
   const now = new Date();
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
   const { name, nameColour, contentColour, showDate, showTime } = config;
-  const dateWrapper = enableColours ? chalk14.dim : (str) => str;
+  const dateWrapper = enableColours ? chalk15.dim : (str) => str;
   const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
   const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
@@ -2826,12 +2833,12 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBarTools.ts
-import chalk15 from "chalk";
+import chalk16 from "chalk";
 import { ArrayTools as ArrayTools7 } from "swiss-ak";
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
-    let wrapperFns = [chalk15.yellowBright, chalk15.magenta, chalk15.blueBright, chalk15.cyanBright, chalk15.greenBright, chalk15.redBright];
+    let wrapperFns = [chalk16.yellowBright, chalk16.magenta, chalk16.blueBright, chalk16.cyanBright, chalk16.greenBright, chalk16.redBright];
     if (randomise) {
       wrapperFns = ArrayTools7.randomise(wrapperFns);
     }

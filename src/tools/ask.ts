@@ -5,7 +5,8 @@ import Fuse from 'fuse.js'; // fuzzy-search
 import { second, seconds, wait, fn, symbols } from 'swiss-ak';
 
 import { out } from './out';
-import { chlk, clr } from './clr';
+import { clr } from './clr';
+import { chlk } from './chlk';
 import { Breadcrumb } from './out/breadcrumb';
 import { getKeyListener } from './keyListener';
 

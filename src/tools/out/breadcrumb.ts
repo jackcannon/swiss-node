@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import { symbols } from 'swiss-ak';
-import { chlk, clr, Colour } from '../clr';
+import { clr, Colour } from '../clr';
+import { chlk } from '../chlk';
 import { out } from '../out';
 
 const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;

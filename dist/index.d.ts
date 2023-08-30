@@ -1,6 +1,196 @@
 import * as swiss_ak from 'swiss-ak';
 import { Partial as Partial$1, second, OfType, ProgressBarOptions } from 'swiss-ak';
 
+/**<!-- DOCS: out.LineCounter #### -->
+ * LineCounter
+ *
+ * - `out.LineCounter`
+ * - `LineCounter`
+ *
+ * Return type for getLineCounter
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
+ */
+interface LineCounter$1 {
+    /**<!-- DOCS: out.LineCounter.log ##### -->
+     * lc.log
+     *
+     * Same as console.log, but adds to the lc counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * lc.clear();
+     * ```
+     */
+    log(...args: any[]): number;
+    /**<!-- DOCS: out.LineCounter.move ##### -->
+     * lc.move
+     *
+     * Moves the cursor up by a given number of lines
+     */
+    move(lines: number): void;
+    /**<!-- DOCS: out.LineCounter.wrap ##### -->
+     * lc.wrap
+     *
+     * Wraps a function, and adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * lc.clear();
+     * ```
+     */
+    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
+    /**<!-- DOCS: out.LineCounter.add ##### -->
+     * lc.add
+     *
+     * Adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * lc.clear();
+     * ```
+     */
+    add(newLines: number): void;
+    /**<!-- DOCS: out.LineCounter.get ##### -->
+     * lc.get
+     *
+     * returns the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * lc.clear();
+     * ```
+     */
+    get(): number;
+    /**<!-- DOCS: out.LineCounter.getSince ##### -->
+     * lc.getSince
+     *
+     * Returns the number of lines since a given checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     */
+    getSince(checkpointID: string): number;
+    /**<!-- DOCS: out.LineCounter.clear ##### -->
+     * lc.clear
+     *
+     * clears the line counter, and moves the cursor up by the value of the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * lc.clear();
+     * ```
+     */
+    clear(): void;
+    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
+     * lc.clearBack
+     *
+     * Clears a given number of lines, and updates the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+     * ```
+     */
+    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
+    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
+     * lc.checkpoint
+     *
+     * Records a 'checkpoint' that can be returned to later
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     */
+    checkpoint(checkpointID?: string): string;
+    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
+     * lc.clearToCheckpoint
+     *
+     * Clear lines up to a previously recorded checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.checkpoint('test');
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+     * ```
+     */
+    clearToCheckpoint(checkpointID: string): void;
+}
+
+interface Handles<T = any> {
+    start: T;
+    end: T;
+}
+interface AskTrimOptions {
+    speed: number;
+    fastSpeed: number;
+    showInstructions: boolean;
+    charTrack: string;
+    charHandle: string;
+    charActiveHandle: string;
+    charBar: string;
+    charHandleBase: string;
+    charActiveHandleBase: string;
+    clrTrack: Function;
+    clrHandle: Function;
+    clrActiveHandle: Function;
+    clrBar: Function;
+    clrHandleBase: Function;
+    clrActiveHandleBase: Function;
+}
+
+declare type Text = string | string[];
+
 interface ChalkFn {
     (...text: string[]): string;
     level: 0 | 1 | 2 | 3;
@@ -51,115 +241,7 @@ interface ChalkFn {
     readonly bgCyanBright: this;
     readonly bgWhiteBright: this;
 }
-/**<!-- DOCS: clr.chlk ##! -->
- * chlk
- *
- * A collection of colours and styles for use in the console.
- */
-declare namespace chlk {
-    /**<!-- DOCS: clr.gray0 ### -->
-     * gray0
-     *
-     * - `chlk.gray0`
-     * - `clr.gray0`
-     *
-     * Gray 0 (0-5). Equivalent to chalk.black
-     */
-    const gray0: ChalkFn;
-    /**<!-- DOCS: clr.gray1 ### -->
-     * gray1
-     *
-     * - `chlk.gray1`
-     * - `clr.gray1`
-     *
-     * Gray 1 (0-5). Equivalent to chalk.gray.dim
-     */
-    const gray1: ChalkFn;
-    /**<!-- DOCS: clr.gray2 ### -->
-     * gray2
-     *
-     * - `chlk.gray2`
-     * - `clr.gray2`
-     *
-     * Gray 2 (0-5). Equivalent to chalk.white.dim
-     */
-    const gray2: ChalkFn;
-    /**<!-- DOCS: clr.gray3 ### -->
-     * gray3
-     *
-     * - `chlk.gray3`
-     * - `clr.gray3`
-     *
-     * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
-     */
-    const gray3: ChalkFn;
-    /**<!-- DOCS: clr.gray4 ### -->
-     * gray4
-     *
-     * - `chlk.gray4`
-     * - `clr.gray4`
-     *
-     * Gray 4 (0-5). Equivalent to chalk.white
-     */
-    const gray4: ChalkFn;
-    /**<!-- DOCS: clr.gray5 ### -->
-     * gray5
-     *
-     * - `chlk.gray5`
-     * - `clr.gray5`
-     *
-     * Gray 5 (0-5). Equivalent to chalk.whiteBright
-     */
-    const gray5: ChalkFn;
-    /**<!-- DOCS: clr.grays ### -->
-     * grays
-     *
-     * - `chlk.grays`
-     *
-     * Grays between 0 and 5.
-     *
-     * ```typescript
-     * grays[2]; // gray2
-     * ```
-     */
-    const grays: ChalkFn[];
-    /**<!-- DOCS: clr.gray ### -->
-     * gray
-     *
-     * - `chlk.gray`
-     *
-     * Grays between 0 and 5.
-     *
-     * ```typescript
-     * gray(2); // gray2
-     * ```
-     */
-    const gray: (num: number) => ChalkFn;
-    /**<!-- DOCS: clr.clear ### -->
-     * clear
-     *
-     * - `chlk.clear`
-     *
-     * Removes ANSI colours. Not same as chalk.reset
-     */
-    const clear: (str: string) => string;
-    /**<!-- DOCS: clr.not ### -->
-     * not
-     *
-     * - `chlk.not`
-     *
-     * Stops and restarts a style around a given string
-     */
-    const not: (style: Function) => (item: string) => string;
-    /**<!-- DOCS: clr.notUnderlined ### -->
-     * notUnderlined
-     *
-     * - `chlk.notUnderlined`
-     *
-     * Dont underline a section of text
-     */
-    const notUnderlined: (item: string) => string;
-}
+
 /**<!-- DOCS: clr ##! -->
  * clr
  *
@@ -374,196 +456,6 @@ declare namespace clr {
     const gray5: ChalkFn;
 }
 declare type Colour = keyof typeof clr;
-
-/**<!-- DOCS: out.LineCounter #### -->
- * LineCounter
- *
- * - `out.LineCounter`
- * - `LineCounter`
- *
- * Return type for getLineCounter
- *
- * ```typescript
- * const lc = getLineCounter();
- * lc.log('hello'); // 1
- * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
- * lc.add(1);
- * lc.get(); // 3
- * lc.clear();
- * ```
- */
-interface LineCounter$1 {
-    /**<!-- DOCS: out.LineCounter.log ##### -->
-     * lc.log
-     *
-     * Same as console.log, but adds to the lc counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
-     * ```
-     */
-    log(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.move ##### -->
-     * lc.move
-     *
-     * Moves the cursor up by a given number of lines
-     */
-    move(lines: number): void;
-    /**<!-- DOCS: out.LineCounter.wrap ##### -->
-     * lc.wrap
-     *
-     * Wraps a function, and adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
-     * ```
-     */
-    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-    /**<!-- DOCS: out.LineCounter.add ##### -->
-     * lc.add
-     *
-     * Adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
-     * ```
-     */
-    add(newLines: number): void;
-    /**<!-- DOCS: out.LineCounter.get ##### -->
-     * lc.get
-     *
-     * returns the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
-     * ```
-     */
-    get(): number;
-    /**<!-- DOCS: out.LineCounter.getSince ##### -->
-     * lc.getSince
-     *
-     * Returns the number of lines since a given checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     */
-    getSince(checkpointID: string): number;
-    /**<!-- DOCS: out.LineCounter.clear ##### -->
-     * lc.clear
-     *
-     * clears the line counter, and moves the cursor up by the value of the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
-     * ```
-     */
-    clear(): void;
-    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
-     * lc.clearBack
-     *
-     * Clears a given number of lines, and updates the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
-     * ```
-     */
-    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
-     * lc.checkpoint
-     *
-     * Records a 'checkpoint' that can be returned to later
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     */
-    checkpoint(checkpointID?: string): string;
-    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
-     * lc.clearToCheckpoint
-     *
-     * Clear lines up to a previously recorded checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.checkpoint('test');
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
-     * ```
-     */
-    clearToCheckpoint(checkpointID: string): void;
-}
-
-interface Handles<T = any> {
-    start: T;
-    end: T;
-}
-interface AskTrimOptions {
-    speed: number;
-    fastSpeed: number;
-    showInstructions: boolean;
-    charTrack: string;
-    charHandle: string;
-    charActiveHandle: string;
-    charBar: string;
-    charHandleBase: string;
-    charActiveHandleBase: string;
-    clrTrack: Function;
-    clrHandle: Function;
-    clrActiveHandle: Function;
-    clrBar: Function;
-    clrHandleBase: Function;
-    clrActiveHandleBase: Function;
-}
-
-declare type Text = string | string[];
 
 /**<!-- DOCS: out.Breadcrumb #### -->
  * Breadcrumb
@@ -2215,6 +2107,116 @@ declare namespace ask {
         export {};
     }
     export {};
+}
+
+/**<!-- DOCS: clr.chlk ##! -->
+ * chlk
+ *
+ * A collection of colours and styles for use in the console.
+ */
+declare namespace chlk {
+    /**<!-- DOCS: clr.gray0 ### -->
+     * gray0
+     *
+     * - `chlk.gray0`
+     * - `clr.gray0`
+     *
+     * Gray 0 (0-5). Equivalent to chalk.black
+     */
+    const gray0: ChalkFn;
+    /**<!-- DOCS: clr.gray1 ### -->
+     * gray1
+     *
+     * - `chlk.gray1`
+     * - `clr.gray1`
+     *
+     * Gray 1 (0-5). Equivalent to chalk.gray.dim
+     */
+    const gray1: ChalkFn;
+    /**<!-- DOCS: clr.gray2 ### -->
+     * gray2
+     *
+     * - `chlk.gray2`
+     * - `clr.gray2`
+     *
+     * Gray 2 (0-5). Equivalent to chalk.white.dim
+     */
+    const gray2: ChalkFn;
+    /**<!-- DOCS: clr.gray3 ### -->
+     * gray3
+     *
+     * - `chlk.gray3`
+     * - `clr.gray3`
+     *
+     * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+     */
+    const gray3: ChalkFn;
+    /**<!-- DOCS: clr.gray4 ### -->
+     * gray4
+     *
+     * - `chlk.gray4`
+     * - `clr.gray4`
+     *
+     * Gray 4 (0-5). Equivalent to chalk.white
+     */
+    const gray4: ChalkFn;
+    /**<!-- DOCS: clr.gray5 ### -->
+     * gray5
+     *
+     * - `chlk.gray5`
+     * - `clr.gray5`
+     *
+     * Gray 5 (0-5). Equivalent to chalk.whiteBright
+     */
+    const gray5: ChalkFn;
+    /**<!-- DOCS: clr.grays ### -->
+     * grays
+     *
+     * - `chlk.grays`
+     *
+     * Grays between 0 and 5.
+     *
+     * ```typescript
+     * grays[2]; // gray2
+     * ```
+     */
+    const grays: ChalkFn[];
+    /**<!-- DOCS: clr.gray ### -->
+     * gray
+     *
+     * - `chlk.gray`
+     *
+     * Grays between 0 and 5.
+     *
+     * ```typescript
+     * gray(2); // gray2
+     * ```
+     */
+    const gray: (num: number) => ChalkFn;
+    /**<!-- DOCS: clr.clear ### -->
+     * clear
+     *
+     * - `chlk.clear`
+     *
+     * Removes ANSI colours. Not same as chalk.reset
+     */
+    const clear: (str: string) => string;
+    /**<!-- DOCS: clr.not ### -->
+     * not
+     *
+     * - `chlk.not`
+     *
+     * Stops and restarts a style around a given string
+     */
+    const not: (style: Function) => (item: string) => string;
+    /**<!-- DOCS: clr.notUnderlined ### -->
+     * notUnderlined
+     *
+     * - `chlk.notUnderlined`
+     *
+     * Dont underline a section of text
+     */
+    const notUnderlined: (item: string) => string;
 }
 
 declare const defaultConfigs: {

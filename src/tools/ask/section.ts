@@ -1,5 +1,5 @@
 import { ArrayTools } from 'swiss-ak';
-import { chlk } from '../clr';
+import { chlk } from '../chlk';
 import { getLineCounter, LineCounter } from '../out/lineCounter';
 import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';

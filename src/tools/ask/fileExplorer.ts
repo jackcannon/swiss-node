@@ -24,7 +24,7 @@ import chalk from 'chalk';
 import { ask } from '../ask';
 import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
-import { chlk } from '../clr';
+import { chlk } from '../chlk';
 import { PathTools } from '../PathTools';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';

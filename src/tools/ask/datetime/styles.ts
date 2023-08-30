@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { chlk } from '../../clr';
+import { chlk } from '../../chlk';
 
 interface SectionStyle {
   dark: Function;
