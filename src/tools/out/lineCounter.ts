@@ -5,7 +5,7 @@ import { out } from '../out';
 
 const randomID = () => Math.random().toString(36).substring(2);
 
-/**<!-- DOCS: out.getLineCounter ### -->
+/**<!-- DOCS: out.getLineCounter ### 260 -->
  * getLineCounter
  *
  * - `out.getLineCounter`
@@ -103,7 +103,8 @@ export const getLineCounter = (): LineCounter => {
   return lc;
 };
 
-/**<!-- DOCS: out.LineCounter #### -->
+// SWISS-DOCS-JSDOC-REMOVE-START
+/**<!-- DOCS: out.LineCounter #### 261 -->
  * LineCounter
  *
  * - `out.LineCounter`
@@ -121,7 +122,7 @@ export const getLineCounter = (): LineCounter => {
  * ```
  */
 export interface LineCounter {
-  /**<!-- DOCS: out.LineCounter.log ##### -->
+  /**<!-- DOCS: out.LineCounter.log ##### 262 -->
    * lc.log
    *
    * Same as console.log, but adds to the lc counter
@@ -137,14 +138,14 @@ export interface LineCounter {
    */
   log(...args: any[]): number;
 
-  /**<!-- DOCS: out.LineCounter.move ##### -->
+  /**<!-- DOCS: out.LineCounter.move ##### 262 -->
    * lc.move
    *
    * Moves the cursor up by a given number of lines
    */
   move(lines: number): void;
 
-  /**<!-- DOCS: out.LineCounter.wrap ##### -->
+  /**<!-- DOCS: out.LineCounter.wrap ##### 262 -->
    * lc.wrap
    *
    * Wraps a function, and adds a given number to the line counter
@@ -160,7 +161,7 @@ export interface LineCounter {
    */
   wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
 
-  /**<!-- DOCS: out.LineCounter.add ##### -->
+  /**<!-- DOCS: out.LineCounter.add ##### 262 -->
    * lc.add
    *
    * Adds a given number to the line counter
@@ -176,7 +177,7 @@ export interface LineCounter {
    */
   add(newLines: number): void;
 
-  /**<!-- DOCS: out.LineCounter.get ##### -->
+  /**<!-- DOCS: out.LineCounter.get ##### 262 -->
    * lc.get
    *
    * returns the line counter
@@ -192,7 +193,7 @@ export interface LineCounter {
    */
   get(): number;
 
-  /**<!-- DOCS: out.LineCounter.getSince ##### -->
+  /**<!-- DOCS: out.LineCounter.getSince ##### 262 -->
    * lc.getSince
    *
    * Returns the number of lines since a given checkpoint
@@ -210,7 +211,7 @@ export interface LineCounter {
    */
   getSince(checkpointID: string): number;
 
-  /**<!-- DOCS: out.LineCounter.clear ##### -->
+  /**<!-- DOCS: out.LineCounter.clear ##### 262 -->
    * lc.clear
    *
    * clears the line counter, and moves the cursor up by the value of the line counter
@@ -226,7 +227,7 @@ export interface LineCounter {
    */
   clear(): void;
 
-  /**<!-- DOCS: out.LineCounter.clearBack ##### -->
+  /**<!-- DOCS: out.LineCounter.clearBack ##### 262 -->
    * lc.clearBack
    *
    * Clears a given number of lines, and updates the line counter
@@ -242,7 +243,7 @@ export interface LineCounter {
    */
   clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
 
-  /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
+  /**<!-- DOCS: out.LineCounter.checkpoint ##### 262 -->
    * lc.checkpoint
    *
    * Records a 'checkpoint' that can be returned to later
@@ -260,7 +261,7 @@ export interface LineCounter {
    */
   checkpoint(checkpointID?: string): string;
 
-  /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
+  /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### 262 -->
    * lc.clearToCheckpoint
    *
    * Clear lines up to a previously recorded checkpoint
@@ -277,3 +278,4 @@ export interface LineCounter {
    */
   clearToCheckpoint(checkpointID: string): void;
 }
+// SWISS-DOCS-JSDOC-REMOVE-END
