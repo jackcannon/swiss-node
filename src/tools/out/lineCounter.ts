@@ -1,11 +1,11 @@
 import { getLogStr } from '../LogTools';
-import * as out from '../out';
+import { out } from '../out';
 
 //<!-- DOCS: 260 -->
 
 const randomID = () => Math.random().toString(36).substring(2);
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: out.getLineCounter ### -->
  * getLineCounter
  *
  * - `out.getLineCounter`
@@ -103,7 +103,7 @@ export const getLineCounter = (): LineCounter => {
   return lc;
 };
 
-/**<!-- DOCS: #### -->
+/**<!-- DOCS: out.LineCounter #### -->
  * LineCounter
  *
  * - `out.LineCounter`
@@ -121,7 +121,7 @@ export const getLineCounter = (): LineCounter => {
  * ```
  */
 export interface LineCounter {
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.log ##### -->
    * lc.log
    *
    * Same as console.log, but adds to the lc counter
@@ -137,14 +137,14 @@ export interface LineCounter {
    */
   log(...args: any[]): number;
 
-  /**<!-- DOCS: ##### -->
-   * move
+  /**<!-- DOCS: out.LineCounter.move ##### -->
+   * lc.move
    *
    * Moves the cursor up by a given number of lines
    */
   move(lines: number): void;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.wrap ##### -->
    * lc.wrap
    *
    * Wraps a function, and adds a given number to the line counter
@@ -160,7 +160,7 @@ export interface LineCounter {
    */
   wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.add ##### -->
    * lc.add
    *
    * Adds a given number to the line counter
@@ -176,7 +176,7 @@ export interface LineCounter {
    */
   add(newLines: number): void;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.get ##### -->
    * lc.get
    *
    * returns the line counter
@@ -192,8 +192,8 @@ export interface LineCounter {
    */
   get(): number;
 
-  /**<!-- DOCS: ##### -->
-   * getSince
+  /**<!-- DOCS: out.LineCounter.getSince ##### -->
+   * lc.getSince
    *
    * Returns the number of lines since a given checkpoint
    *
@@ -210,7 +210,7 @@ export interface LineCounter {
    */
   getSince(checkpointID: string): number;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.clear ##### -->
    * lc.clear
    *
    * clears the line counter, and moves the cursor up by the value of the line counter
@@ -226,7 +226,7 @@ export interface LineCounter {
    */
   clear(): void;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.clearBack ##### -->
    * lc.clearBack
    *
    * Clears a given number of lines, and updates the line counter
@@ -242,7 +242,7 @@ export interface LineCounter {
    */
   clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
    * lc.checkpoint
    *
    * Records a 'checkpoint' that can be returned to later
@@ -260,7 +260,7 @@ export interface LineCounter {
    */
   checkpoint(checkpointID?: string): string;
 
-  /**<!-- DOCS: ##### -->
+  /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
    * lc.clearToCheckpoint
    *
    * Clear lines up to a previously recorded checkpoint

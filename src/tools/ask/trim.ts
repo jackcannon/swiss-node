@@ -1,8 +1,8 @@
 import { getDeferred, hours, ms, ObjectTools, seconds, symbols } from 'swiss-ak';
 import stringWidth from 'string-width';
 
-import * as table from '../table';
-import * as out from '../out';
+import { table } from '../table';
+import { out } from '../out';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 import chalk from 'chalk';
@@ -91,14 +91,14 @@ const getColors = (opts: AskTrimOptions) => ({
   activeHandleBase: opts.clrActiveHandleBase
 });
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.trim ### -->
  * trim
  *
  * - `ask.trim`
  *
  * Get a start and end frame from the user
  */
-const trim = async (totalFrames: number, frameRate: number, options: Partial<AskTrimOptions> = {}): Promise<Handles<number>> => {
+export const trim = async (totalFrames: number, frameRate: number, options: Partial<AskTrimOptions> = {}): Promise<Handles<number>> => {
   const opts = getFullOptions(options);
   const lc = getLineCounter();
 
@@ -288,5 +288,3 @@ const trim = async (totalFrames: number, frameRate: number, options: Partial<Ask
 
   return deferred.promise;
 };
-
-export default trim;

@@ -1,12 +1,12 @@
 import { ArrayTools } from 'swiss-ak';
 import { chlk } from '../clr';
 import { getLineCounter, LineCounter } from '../out/lineCounter';
-import * as out from '../out';
+import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
-import { imitate } from '../ask';
+import { ask } from '../ask';
 
 //<!-- DOCS: 150 -->
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.separator ### -->
  * separator
  *
  * - `ask.separator`
@@ -46,7 +46,7 @@ type UnwrapPromFunc<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
 
 type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...infer Tail] ? [UnwrapPromFunc<Head>, ...UnwrapPromFuncs<Tail>] : [];
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.section ### -->
  * section
  *
  * - `ask.section`
@@ -120,7 +120,7 @@ export const section = async <
       resultOut = results;
     }
 
-    imitate(true, question, resultOut);
+    ask.imitate(true, question, resultOut);
   }
   return results as UnwrapPromFuncs<QuesT>;
 };

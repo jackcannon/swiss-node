@@ -1,5 +1,5 @@
-import * as table from '../tools/table';
-import * as out from '../tools/out';
+import { table } from '../tools/table';
+import { out } from '../tools/out';
 import { zip, fn, ArrayTools } from 'swiss-ak';
 import { getLogStr } from '../tools/LogTools';
 

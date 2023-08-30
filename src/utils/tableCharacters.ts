@@ -1,5 +1,5 @@
 import { ArrayTools } from 'swiss-ak';
-import { FullTableOptions } from '../tools/table';
+import { table } from '../tools/table';
 
 export interface CharLookup<T> {
   hTop: T;
@@ -36,7 +36,7 @@ const outerRows = ['hTop', 'hBot', 'bTop', 'bBot'];
 
 const rowTypes: (keyof CharLookup<string[]>)[] = ['hTop', 'hNor', 'hSep', 'hBot', 'mSep', 'bTop', 'bNor', 'bSep', 'bBot'];
 
-const applyOverrideChar = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideChar) {
     for (const rowType of rowTypes) {
       if (normalRows.includes(rowType)) {
@@ -48,7 +48,7 @@ const applyOverrideChar = (mapped: CharLookup<string[]>, opts: FullTableOptions)
   }
   return mapped;
 };
-const applyOverrideVerChar = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideVerChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideVerChar || !opts.drawColLines) {
     const ovrd = opts.overrideVerChar || ' ';
 
@@ -66,7 +66,7 @@ const applyOverrideVerChar = (mapped: CharLookup<string[]>, opts: FullTableOptio
   }
   return mapped;
 };
-const applyOverrideHorChar = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideHorChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideHorChar || !opts.drawRowLines) {
     const ovrd = opts.overrideHorChar;
 
@@ -88,7 +88,7 @@ const applyOverrideHorChar = (mapped: CharLookup<string[]>, opts: FullTableOptio
   }
   return mapped;
 };
-const applyOverrideCornChar = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideCornChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideCornChar) {
     const ovrd = opts.overrideCornChar || ' ';
 
@@ -101,7 +101,7 @@ const applyOverrideCornChar = (mapped: CharLookup<string[]>, opts: FullTableOpti
   }
   return mapped;
 };
-const applyOverrideOuterChar = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideOuterChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideOuterChar) {
     const ovrd = opts.overrideOuterChar;
 
@@ -117,7 +117,7 @@ const applyOverrideOuterChar = (mapped: CharLookup<string[]>, opts: FullTableOpt
   }
   return mapped;
 };
-const applyDrawOuter = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyDrawOuter = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (!opts.drawOuter) {
     for (const rowType of rowTypes) {
       if (outerRows.includes(rowType)) {
@@ -132,7 +132,7 @@ const applyDrawOuter = (mapped: CharLookup<string[]>, opts: FullTableOptions): C
   return mapped;
 };
 
-const applyOverrideCharSet = (mapped: CharLookup<string[]>, opts: FullTableOptions): CharLookup<string[]> => {
+const applyOverrideCharSet = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
   if (opts.overrideCharSet) {
     const ovrd = opts.overrideCharSet;
     const ovrdRowTypes = Object.keys(ovrd) as (keyof CharLookup<string[]>)[];
@@ -148,7 +148,7 @@ const applyOverrideCharSet = (mapped: CharLookup<string[]>, opts: FullTableOptio
   return mapped;
 };
 
-export const getTableCharacters = (opts: FullTableOptions): CharLookup<string[]> => {
+export const getTableCharacters = (opts: table.FullTableOptions): CharLookup<string[]> => {
   let mapped = tableCharactersBasic();
 
   mapped = applyOverrideChar(mapped, opts);

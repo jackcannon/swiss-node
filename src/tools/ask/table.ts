@@ -3,10 +3,10 @@ import { fn, getDeferred, RemapOf, symbols } from 'swiss-ak';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 
-import * as table from '../table';
+import { table as tableOut } from '../table';
 import { Breadcrumb } from '../out/breadcrumb';
 import chalk from 'chalk';
-import { imitate } from '../ask';
+import { ask } from '../ask';
 
 //<!-- DOCS: 130 -->
 
@@ -21,7 +21,7 @@ const askTableHandler = <T extends unknown>(
   initial: T[] | number[] = [],
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers: any[][] | RemapOf<T, string> = [],
-  tableOptions: table.TableOptions = {}
+  tableOptions: tableOut.TableOptions = {}
 ): Promise<T[]> => {
   const questionText = typeof question === 'string' ? question : question.get();
 
@@ -33,12 +33,12 @@ const askTableHandler = <T extends unknown>(
 
   let selectedIndexes: number[] = initial.map((i) => (typeof i === 'number' ? i : items.indexOf(i as T))).filter((i) => i !== -1);
 
-  lc.add(imitate(false, questionText, `- Use arrow-keys. ${isMulti ? 'Space to select. ' : ''}Enter to ${isMulti ? 'confirm' : 'select'}.`));
+  lc.add(ask.imitate(false, questionText, `- Use arrow-keys. ${isMulti ? 'Space to select. ' : ''}Enter to ${isMulti ? 'confirm' : 'select'}.`));
   lc.checkpoint('AFTER_Q');
 
   let lastDrawnRows = [];
   const drawTable = () => {
-    const tableOpts: table.TableOptions = {
+    const tableOpts: tableOut.TableOptions = {
       margin: [1, 0, 0, 0],
       ...tableOptions,
       format: [
@@ -55,7 +55,7 @@ const askTableHandler = <T extends unknown>(
       header = headers;
     } else {
       const isHeaderObj = headers && !(headers instanceof Array);
-      const objTable = table.utils.objectsToTable(items, isHeaderObj ? (headers as RemapOf<T, string>) : undefined);
+      const objTable = tableOut.utils.objectsToTable(items, isHeaderObj ? (headers as RemapOf<T, string>) : undefined);
       body = objTable.body;
       header = isHeaderObj ? objTable.header : headers;
     }
@@ -78,7 +78,7 @@ const askTableHandler = <T extends unknown>(
     lastDrawnRows = finalBody;
 
     lc.clearToCheckpoint('AFTER_Q');
-    lc.add(table.print(finalBody, finalHeaders, tableOpts));
+    lc.add(tableOut.print(finalBody, finalHeaders, tableOpts));
     lc.checkpoint('AFTER_TABLE');
   };
   drawTable();
@@ -101,7 +101,7 @@ const askTableHandler = <T extends unknown>(
     kl.stop();
     const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn.isTruthy);
     lc.clear();
-    imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
+    ask.imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
     deferred.resolve(results);
   };
 
@@ -122,7 +122,13 @@ const askTableHandler = <T extends unknown>(
   return deferred.promise;
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.table ### -->
+ * table (ask)
+ *
+ * A collection of functions for asking questions with tables.
+ */
+
+/**<!-- DOCS: ask.table.select #### -->
  * select
  *
  * - `ask.table.select`
@@ -157,13 +163,13 @@ export const select = async <T extends unknown>(
   initial?: T | number,
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers?: any[][] | RemapOf<T, string>,
-  tableOptions?: table.TableOptions
+  tableOptions?: tableOut.TableOptions
 ): Promise<T> => {
   const results = await askTableHandler(false, question, items, [initial] as number[] | T[], rows, headers, tableOptions);
   return results[0];
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.table.multiselect #### -->
  * multiselect
  *
  * - `ask.table.multiselect`
@@ -201,5 +207,5 @@ export const multiselect = <T extends unknown>(
   initial?: T[] | number[],
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers?: any[][] | RemapOf<T, string>,
-  tableOptions?: table.TableOptions
+  tableOptions?: tableOut.TableOptions
 ): Promise<T[]> => askTableHandler(true, question, items, initial, rows, headers, tableOptions);

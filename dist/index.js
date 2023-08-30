@@ -1,357 +1,397 @@
-var __defProp = Object.defineProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
+// src/tools/clr.ts
+import chalk from "chalk";
+var chlk;
+((chlk2) => {
+  chlk2.gray0 = chalk.black;
+  chlk2.gray1 = chalk.gray.dim;
+  chlk2.gray2 = chalk.white.dim;
+  chlk2.gray3 = chalk.whiteBright.dim;
+  chlk2.gray4 = chalk.white;
+  chlk2.gray5 = chalk.whiteBright;
+  chlk2.grays = [
+    chlk2.gray0,
+    chlk2.gray1,
+    chlk2.gray2,
+    chlk2.gray3,
+    chlk2.gray4,
+    chlk2.gray5
+  ];
+  chlk2.gray = (num) => chlk2.grays[Math.max(0, Math.min(num, chlk2.grays.length - 1))];
+  chlk2.clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
+  chlk2.not = (style) => {
+    const styled = style("**xxx**");
+    const [after, before] = styled.split("**xxx**");
+    return (item) => `${before}${item}${after}`;
+  };
+  chlk2.notUnderlined = chlk2.not(chalk.underline);
+})(chlk || (chlk = {}));
+var clr;
+((clr2) => {
+  clr2.hl1 = chalk.yellowBright.bold;
+  clr2.hl2 = chalk.yellow;
+  clr2.approve = chalk.green.bold;
+  clr2.create = chalk.greenBright.bold;
+  clr2.update = chalk.yellow.bold;
+  clr2.remove = chalk.redBright.bold;
+  clr2.removeAll = chalk.redBright.bold;
+  clr2.blue = chalk.blueBright;
+  clr2.cyan = chalk.cyanBright;
+  clr2.green = chalk.greenBright;
+  clr2.magenta = chalk.magentaBright;
+  clr2.red = chalk.redBright;
+  clr2.yellow = chalk.yellowBright;
+  clr2.t1 = chalk.yellowBright;
+  clr2.t2 = chalk.magentaBright;
+  clr2.t3 = chalk.blueBright;
+  clr2.t4 = chalk.redBright;
+  clr2.t5 = chalk.greenBright;
+  clr2.t6 = chalk.cyanBright;
+  clr2.gray0 = chlk.gray0;
+  clr2.gray1 = chlk.gray1;
+  clr2.gray2 = chlk.gray2;
+  clr2.gray3 = chlk.gray3;
+  clr2.gray4 = chlk.gray4;
+  clr2.gray5 = chlk.gray5;
+})(clr || (clr = {}));
 
 // src/tools/ask.ts
-var ask_exports = {};
-__export(ask_exports, {
-  autotext: () => autotext,
-  boolean: () => boolean,
-  booleanAlt: () => booleanAlt,
-  countdown: () => countdown,
-  crud: () => crud,
-  date: () => date,
-  dateRange: () => dateRange,
-  datetime: () => datetime,
-  fileExplorer: () => fileExplorer,
-  imitate: () => imitate,
-  loading: () => loading2,
-  multiFileExplorer: () => multiFileExplorer,
-  multiselect: () => multiselect2,
-  number: () => number,
-  pause: () => pause,
-  prefill: () => prefill,
-  saveFileExplorer: () => saveFileExplorer,
-  section: () => section,
-  select: () => select2,
-  separator: () => separator,
-  table: () => table_exports2,
-  text: () => text,
-  time: () => time,
-  trim: () => trim_default,
-  utils: () => utils3,
-  validate: () => validate,
-  wizard: () => wizard
-});
-import chalk12 from "chalk";
+import chalk13 from "chalk";
 import stringWidth5 from "string-width";
 import prompts from "prompts";
 import Fuse from "fuse.js";
-import { seconds as seconds4, wait as wait3, fn as fn10, symbols as symbols4 } from "swiss-ak";
+import { seconds as seconds4, wait as wait3, fn as fn10, symbols as symbols5 } from "swiss-ak";
 
 // src/tools/out.ts
-var out_exports = {};
-__export(out_exports, {
-  align: () => align,
-  center: () => center,
-  centerLines: () => centerLines,
-  concatLineGroups: () => concatLineGroups,
-  getResponsiveValue: () => getResponsiveValue,
-  justify: () => justify,
-  justifyLines: () => justifyLines,
-  left: () => left,
-  leftLines: () => leftLines,
-  limitToLength: () => limitToLength,
-  limitToLengthStart: () => limitToLengthStart,
-  loading: () => loading,
-  moveUp: () => moveUp,
-  pad: () => pad,
-  right: () => right,
-  rightLines: () => rightLines,
-  split: () => split,
-  truncate: () => truncate,
-  truncateStart: () => truncateStart,
-  utils: () => utils,
-  wrap: () => wrap
-});
 import { wait, fn as fn2, ArrayTools, zipMax, sortByMapped } from "swiss-ak";
 import stringWidth from "string-width";
 
 // src/tools/LogTools.ts
-var LogTools_exports = {};
-__export(LogTools_exports, {
-  getLog: () => getLog,
-  getLogStr: () => getLogStr,
-  processLogContents: () => processLogContents
-});
 import { inspect } from "util";
-import chalk from "chalk";
+import chalk2 from "chalk";
 import { fn } from "swiss-ak";
-var getLogStr = (item) => {
-  const inspectList = ["object", "boolean", "number"];
-  if (inspectList.includes(typeof item) && !(item instanceof Date)) {
-    return inspect(item, { colors: false, depth: null });
-  } else {
-    return item + "";
-  }
+var LogTools;
+((LogTools2) => {
+  LogTools2.getLogStr = (item) => {
+    const inspectList = ["object", "boolean", "number"];
+    if (inspectList.includes(typeof item) && !(item instanceof Date)) {
+      return inspect(item, { colors: false, depth: null });
+    } else {
+      return item + "";
+    }
+  };
+  LogTools2.processLogContents = (prefix, wrapper = fn.noact, ...args) => args.map(LogTools2.getLogStr).join(" ").split("\n").map((line, index) => chalk2.bold(index ? " ".repeat(prefix.length) : prefix) + " " + wrapper(line)).join("\n");
+  LogTools2.getLog = (prefix, wrapper = fn.noact) => (...args) => {
+    console.log(LogTools2.processLogContents(prefix, wrapper, ...args));
+  };
+})(LogTools || (LogTools = {}));
+var getLogStr = LogTools.getLogStr;
+var processLogContents = LogTools.processLogContents;
+var getLog = LogTools.getLog;
+
+// src/tools/out/lineCounter.ts
+var randomID = () => Math.random().toString(36).substring(2);
+var getLineCounter = () => {
+  let lineCount = 0;
+  const checkpoints = {};
+  const log2 = (...args) => {
+    const added = out.utils.getNumLines(args.map(getLogStr).join(" "));
+    lineCount += added;
+    console.log(...args);
+    return added;
+  };
+  const move = (lines) => {
+    if (lines > 0) {
+      log2("\n".repeat(lines - 1));
+    }
+    if (lines < 0) {
+      clearBack(-lines);
+    }
+  };
+  const wrap = (newLines = 1, func, ...args) => {
+    const result = func(...args);
+    lineCount += newLines;
+    return result;
+  };
+  const add = (newLines) => {
+    lineCount += newLines;
+  };
+  const get = () => {
+    return lineCount;
+  };
+  const getSince = (checkpointID) => {
+    const checkpointValue = checkpoints[checkpointID];
+    if (checkpointValue === void 0)
+      return 0;
+    const diff = lineCount - checkpointValue;
+    return diff > 0 ? diff : 0;
+  };
+  const checkpoint = (checkpointID = randomID()) => {
+    checkpoints[checkpointID] = lineCount;
+    return checkpointID;
+  };
+  const clearToCheckpoint = (checkpointID) => {
+    const checkpointValue = checkpoints[checkpointID];
+    if (checkpointValue === void 0)
+      return;
+    const diff = lineCount - checkpointValue;
+    if (diff > 0) {
+      clearBack(diff);
+    }
+  };
+  const clearBack = (linesToMoveBack, limitToRecordedLines = true) => {
+    if (limitToRecordedLines)
+      linesToMoveBack = Math.min(lineCount, linesToMoveBack);
+    out.moveUp(linesToMoveBack);
+    lineCount -= linesToMoveBack;
+  };
+  const clear = () => {
+    out.moveUp(lineCount);
+    lineCount = 0;
+  };
+  const lc = {
+    log: log2,
+    move,
+    wrap,
+    add,
+    get,
+    getSince,
+    checkpoint,
+    clearToCheckpoint,
+    clear,
+    clearBack
+  };
+  return lc;
 };
-var processLogContents = (prefix, wrapper = fn.noact, ...args) => args.map(getLogStr).join(" ").split("\n").map((line, index) => chalk.bold(index ? " ".repeat(prefix.length) : prefix) + " " + wrapper(line)).join("\n");
-var getLog = (prefix, wrapper = fn.noact) => (...args) => {
-  console.log(processLogContents(prefix, wrapper, ...args));
+
+// src/tools/out/breadcrumb.ts
+import chalk3 from "chalk";
+import { symbols } from "swiss-ak";
+var seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
+var getBreadcrumb = (...baseNames) => {
+  let current = [];
+  let colours = ["t1", "t2", "t3", "t4", "t5", "t6"];
+  const setColours = (newColours) => {
+    colours = newColours;
+  };
+  const add = (...names) => current.push(...names);
+  const getColouredName = (name, index, arr) => out.utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
+  const getColouredNames = (...tempNames) => getNames(...tempNames).map(getColouredName);
+  const getNames = (...tempNames) => [...baseNames, ...current, ...tempNames];
+  const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
+  const otherChars = "?  > ";
+  const spaceForInput = 25;
+  const get = (...tempNames) => chalk3.bold(
+    out.truncate(
+      getColouredNames(...tempNames).join(seperatorChar).trim(),
+      out.utils.getTerminalWidth() - (otherChars.length - spaceForInput)
+    )
+  );
+  const result = (...tempNames) => sub(...tempNames);
+  result.setColours = setColours;
+  result.add = add;
+  result.getNames = getNames;
+  result.sub = sub;
+  result.get = get;
+  result.toString = get;
+  return result;
 };
 
 // src/tools/out.ts
-import chalk2 from "chalk";
-var NEW_LINE = "\n";
-var pad = (line, start, end, replaceChar = " ") => `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
-var correctWidth = (width) => width < 0 || width === Infinity ? getTerminalWidth() : Math.min(width, getTerminalWidth());
-var center = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => getLogLines(item).map(
-  (line) => pad(
-    line,
-    Math.floor((correctWidth(width) - stringWidth(line)) / 2),
-    forceWidth ? Math.ceil((correctWidth(width) - stringWidth(line)) / 2) : 0,
-    replaceChar
-  )
-).join(NEW_LINE);
-var left = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => getLogLines(item).map((line) => pad(line, 0, forceWidth ? correctWidth(width) - stringWidth(line) : 0, replaceChar)).join(NEW_LINE);
-var right = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => getLogLines(item).map((line) => pad(line, correctWidth(width) - stringWidth(line), 0, replaceChar)).join(NEW_LINE);
-var justify = (item, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => getLogLines(item).map((line) => {
-  const words = line.split(" ");
-  if (words.length === 1)
-    return left(words[0], width, replaceChar, forceWidth);
-  const currW = words.map((w) => w.length).reduce(fn2.reduces.combine);
-  const perSpace = Math.floor((width - currW) / (words.length - 1));
-  const remain = (width - currW) % (words.length - 1);
-  const spaces = ArrayTools.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
-  let result = "";
-  for (let index in words) {
-    result += words[index] + (spaces[index] || "");
-  }
-  return result;
-}).join(NEW_LINE);
-var getLongestLen = (lines) => Math.max(...lines.map((line) => stringWidth(line)));
-var leftLines = (lines, width = getLongestLen(lines)) => lines.map((line) => left(line, width));
-var centerLines = (lines, width = getLongestLen(lines)) => lines.map((line) => center(line, width));
-var rightLines = (lines, width = getLongestLen(lines)) => lines.map((line) => right(line, width));
-var justifyLines = (lines, width = getLongestLen(lines)) => lines.map((line) => justify(line, width));
-var alignFunc = {
-  left,
-  center,
-  right,
-  justify
-};
-var align = (item, direction, width = getTerminalWidth(), replaceChar = " ", forceWidth = true) => {
-  const func = alignFunc[direction] || alignFunc.left;
-  return func(item, width, replaceChar, forceWidth);
-};
-var split = (leftItem, rightItem, width = getTerminalWidth(), replaceChar = " ") => `${leftItem + ""}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + "") + stringWidth(rightItem + ""))))}${rightItem + ""}`;
-var wrap = (item, width = getTerminalWidth(), alignment, forceWidth = false) => getLogLines(item).map((line) => {
-  if (stringWidth(line) > width) {
-    let words = line.split(/(?<=#?[ -]+)/g);
-    const rows = [];
-    words = words.map((orig) => {
-      if (stringWidth(orig.replace(/\s$/, "")) > width) {
-        let remaining2 = orig;
-        let result = [];
-        while (stringWidth(remaining2) > width - 1) {
-          result.push(remaining2.slice(0, width - 1) + "-");
-          remaining2 = remaining2.slice(width - 1);
+import chalk4 from "chalk";
+var out;
+((out2) => {
+  const NEW_LINE = "\n";
+  out2.pad = (line, start, end, replaceChar = " ") => `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
+  const correctWidth = (width) => width < 0 || width === Infinity ? utils.getTerminalWidth() : Math.min(width, utils.getTerminalWidth());
+  out2.center = (item, width = out2.utils.getTerminalWidth(), replaceChar = " ", forceWidth = true) => utils.getLogLines(item).map(
+    (line) => out2.pad(
+      line,
+      Math.floor((correctWidth(width) - stringWidth(line)) / 2),
+      forceWidth ? Math.ceil((correctWidth(width) - stringWidth(line)) / 2) : 0,
+      replaceChar
+    )
+  ).join(NEW_LINE);
+  out2.left = (item, width = out2.utils.getTerminalWidth(), replaceChar = " ", forceWidth = true) => utils.getLogLines(item).map((line) => out2.pad(line, 0, forceWidth ? correctWidth(width) - stringWidth(line) : 0, replaceChar)).join(NEW_LINE);
+  out2.right = (item, width = out2.utils.getTerminalWidth(), replaceChar = " ", forceWidth = true) => utils.getLogLines(item).map((line) => out2.pad(line, correctWidth(width) - stringWidth(line), 0, replaceChar)).join(NEW_LINE);
+  out2.justify = (item, width = out2.utils.getTerminalWidth(), replaceChar = " ", forceWidth = true) => utils.getLogLines(item).map((line) => {
+    const words = line.split(" ");
+    if (words.length === 1)
+      return out2.left(words[0], width, replaceChar, forceWidth);
+    const currW = words.map((w) => w.length).reduce(fn2.reduces.combine);
+    const perSpace = Math.floor((width - currW) / (words.length - 1));
+    const remain = (width - currW) % (words.length - 1);
+    const spaces = ArrayTools.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
+    let result = "";
+    for (let index in words) {
+      result += words[index] + (spaces[index] || "");
+    }
+    return result;
+  }).join(NEW_LINE);
+  const getLongestLen = (lines) => Math.max(...lines.map((line) => stringWidth(line)));
+  out2.leftLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out2.left(line, width));
+  out2.centerLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out2.center(line, width));
+  out2.rightLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out2.right(line, width));
+  out2.justifyLines = (lines, width = getLongestLen(lines)) => lines.map((line) => out2.justify(line, width));
+  const alignFunc = {
+    left: out2.left,
+    center: out2.center,
+    right: out2.right,
+    justify: out2.justify
+  };
+  out2.align = (item, direction, width = out2.utils.getTerminalWidth(), replaceChar = " ", forceWidth = true) => {
+    const func = alignFunc[direction] || alignFunc.left;
+    return func(item, width, replaceChar, forceWidth);
+  };
+  out2.split = (leftItem, rightItem, width = out2.utils.getTerminalWidth(), replaceChar = " ") => `${leftItem + ""}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + "") + stringWidth(rightItem + ""))))}${rightItem + ""}`;
+  out2.wrap = (item, width = out2.utils.getTerminalWidth(), alignment, forceWidth = false) => utils.getLogLines(item).map((line) => {
+    if (stringWidth(line) > width) {
+      let words = line.split(/(?<=#?[ -]+)/g);
+      const rows = [];
+      words = words.map((orig) => {
+        if (stringWidth(orig.replace(/\s$/, "")) > width) {
+          let remaining2 = orig;
+          let result = [];
+          while (stringWidth(remaining2) > width - 1) {
+            result.push(remaining2.slice(0, width - 1) + "-");
+            remaining2 = remaining2.slice(width - 1);
+          }
+          result.push(remaining2);
+          return result;
         }
-        result.push(remaining2);
-        return result;
+        return orig;
+      }).flat();
+      let rowStartIndex = 0;
+      for (let wIndex in words) {
+        let word = words[wIndex].replace(/\s$/, "");
+        const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
+        const candText = candidateRow.join("");
+        if (stringWidth(candText) + stringWidth(word) > width) {
+          rows.push(candidateRow);
+          rowStartIndex = Number(wIndex);
+        }
       }
-      return orig;
-    }).flat();
-    let rowStartIndex = 0;
-    for (let wIndex in words) {
-      let word = words[wIndex].replace(/\s$/, "");
-      const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
-      const candText = candidateRow.join("");
-      if (stringWidth(candText) + stringWidth(word) > width) {
-        rows.push(candidateRow);
-        rowStartIndex = Number(wIndex);
-      }
+      const remaining = words.slice(rowStartIndex);
+      rows.push(remaining);
+      return rows.map((row) => row.join("")).map((row) => row.replace(/\s$/, "")).map((row) => alignment ? out2.align(row, alignment, width, void 0, forceWidth) : row);
     }
-    const remaining = words.slice(rowStartIndex);
-    rows.push(remaining);
-    return rows.map((row) => row.join("")).map((row) => row.replace(/\s$/, "")).map((row) => alignment ? align(row, alignment, width, void 0, forceWidth) : row);
-  }
-  return line;
-}).flat().join(NEW_LINE);
-var moveUp = (lines = 1) => {
-  var _a;
-  if ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) {
-    process.stdout.cursorTo(0);
-    process.stdout.clearLine(0);
-    for (let i = 0; i < lines; i++) {
-      process.stdout.moveCursor(0, -1);
+    return line;
+  }).flat().join(NEW_LINE);
+  out2.moveUp = (lines = 1) => {
+    var _a;
+    if ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) {
+      process.stdout.cursorTo(0);
       process.stdout.clearLine(0);
-    }
-  }
-};
-var loadingDefault = (s) => console.log(chalk2.dim(`${s}`));
-var loadingWords = [
-  "\u2113-o-\u{1D51E}-\u{1D4ED}-\u026A-\u057C-\u{1D5F4}",
-  "\u{1D695}-\u03C3-a-\u{1D521}-\u{1D4F2}-\u0274-\u0262",
-  "\u{1D5DF}-\u{1D698}-\u03B1-d-\u{1D526}-\u{1D4F7}-\u0262",
-  "\u029F-\u{1D5FC}-\u{1D68A}-\u2202-i-\u{1D52B}-\u{1D4F0}",
-  "\u029F-\u0585-\u{1D5EE}-\u{1D68D}-\u03B9-n-\u{1D524}",
-  "\u{1D4F5}-\u1D0F-\u01DF-\u{1D5F1}-\u{1D692}-\u03B7-g",
-  "\u{1D529}-\u{1D4F8}-\u1D00-\u0256-\u{1D5F6}-\u{1D697}-g",
-  "l-\u{1D52C}-\u{1D4EA}-\u1D05-\u0268-\u{1D5FB}-\u{1D690}"
-].map((word) => word.split("-"));
-var loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
-  (word, index) => chalk2.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
-);
-var loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
-  let stopped = false;
-  let count = 0;
-  const runLoop = async () => {
-    if (stopped)
-      return;
-    if (count)
-      moveUp(lines);
-    action(symbols6[count++ % symbols6.length]);
-    await wait(150);
-    return runLoop();
-  };
-  runLoop();
-  return {
-    stop: () => {
-      moveUp(lines);
-      stopped = true;
+      for (let i = 0; i < lines; i++) {
+        process.stdout.moveCursor(0, -1);
+        process.stdout.clearLine(0);
+      }
     }
   };
-};
-var limitToLength = (text2, maxLength) => joinLines(
-  getLines(text2).map((line) => {
-    let specials = "";
-    let result = line;
-    while (stringWidth(result) > maxLength) {
-      const match = result.match(new RegExp(`(\\u001b[[0-9]+m|.)$`));
-      const { 0: removed, index } = match || { 0: result.slice(-1), index: result.length - 1 };
-      if (removed.match(new RegExp(`\\u001b[[0-9]+m`))) {
-        specials = removed + specials;
+  const loadingDefault = (s) => console.log(chalk4.dim(`${s}`));
+  const loadingWords = [
+    "\u2113-o-\u{1D51E}-\u{1D4ED}-\u026A-\u057C-\u{1D5F4}",
+    "\u{1D695}-\u03C3-a-\u{1D521}-\u{1D4F2}-\u0274-\u0262",
+    "\u{1D5DF}-\u{1D698}-\u03B1-d-\u{1D526}-\u{1D4F7}-\u0262",
+    "\u029F-\u{1D5FC}-\u{1D68A}-\u2202-i-\u{1D52B}-\u{1D4F0}",
+    "\u029F-\u0585-\u{1D5EE}-\u{1D68D}-\u03B9-n-\u{1D524}",
+    "\u{1D4F5}-\u1D0F-\u01DF-\u{1D5F1}-\u{1D692}-\u03B7-g",
+    "\u{1D529}-\u{1D4F8}-\u1D00-\u0256-\u{1D5F6}-\u{1D697}-g",
+    "l-\u{1D52C}-\u{1D4EA}-\u1D05-\u0268-\u{1D5FB}-\u{1D690}"
+  ].map((word) => word.split("-"));
+  const loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
+    (word, index) => chalk4.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
+  );
+  out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
+    let stopped = false;
+    let count = 0;
+    const runLoop = async () => {
+      if (stopped)
+        return;
+      if (count)
+        out2.moveUp(lines);
+      action(symbols6[count++ % symbols6.length]);
+      await wait(150);
+      return runLoop();
+    };
+    runLoop();
+    return {
+      stop: () => {
+        out2.moveUp(lines);
+        stopped = true;
       }
-      result = result.slice(0, index);
-    }
-    return result + specials;
-  })
-);
-var limitToLengthStart = (text2, maxLength) => joinLines(
-  getLines(text2).map((line) => {
-    let specials = "";
-    let result = line;
-    while (stringWidth(result) > maxLength) {
-      const match = result.match(new RegExp(`^(\\u001b[[0-9]+m|.)`));
-      const { 0: removed, index } = match || { 0: result.slice(0, 1), index: 1 };
-      if (removed.match(new RegExp(`\\u001b[[0-9]+m`))) {
-        specials = specials + removed;
+    };
+  };
+  out2.limitToLength = (text, maxLength) => utils.joinLines(
+    utils.getLines(text).map((line) => {
+      let specials = "";
+      let result = line;
+      while (stringWidth(result) > maxLength) {
+        const match = result.match(new RegExp(`(\\u001b[[0-9]+m|.)$`));
+        const { 0: removed, index } = match || { 0: result.slice(-1), index: result.length - 1 };
+        if (removed.match(new RegExp(`\\u001b[[0-9]+m`))) {
+          specials = removed + specials;
+        }
+        result = result.slice(0, index);
       }
-      result = result.slice(index + removed.length);
-    }
-    return specials + result;
-  })
-);
-var truncate = (text2, maxLength = getTerminalWidth(), suffix = chalk2.dim("\u2026")) => joinLines(getLines(text2).map((line) => stringWidth(line) > maxLength ? limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line));
-var truncateStart = (text2, maxLength = getTerminalWidth(), suffix = chalk2.dim("\u2026")) => joinLines(
-  getLines(text2).map((line) => stringWidth(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - stringWidth(suffix)) : line)
-);
-var concatLineGroups = (...groups) => {
-  const maxLen = Math.max(...groups.map((group) => group.length));
-  const aligned = groups.map((group) => leftLines([...group, ...Array(maxLen).fill("")].slice(0, maxLen)));
-  return zipMax(...aligned).map((line) => line.join(""));
-};
-var getResponsiveValue = (options) => {
-  const mapped = options.map(({ minColumns, value }) => ({
-    min: typeof minColumns === "number" ? minColumns : 0,
-    value
-  }));
-  const sorted = sortByMapped(mapped, (option) => option.min, fn2.desc);
-  const termWidth = utils.getTerminalWidth();
-  return (sorted.find((option) => termWidth >= option.min) ?? sorted[0]).value;
-};
-var textToString = (text2) => text2 instanceof Array ? joinLines(text2) : text2;
-var getTerminalWidth = () => {
-  var _a;
-  return ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) ? process.stdout.columns : 100;
-};
-var getLines = (text2) => textToString(text2).split(NEW_LINE);
-var getNumLines = (text2) => getLines(text2).length;
-var getLinesWidth = (text2) => Math.max(...getLines(text2).map((line) => stringWidth(line)));
-var getLogLines = (item) => getLines(getLogStr(item));
-var getNumLogLines = (item) => getNumLines(getLogStr(item));
-var getLogLinesWidth = (item) => getLinesWidth(getLogStr(item));
-var joinLines = (lines) => lines.map(fn2.maps.toString).join(NEW_LINE);
-var hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
-var utils = {
-  getLines,
-  getNumLines,
-  getLinesWidth,
-  getLogLines,
-  getNumLogLines,
-  getLogLinesWidth,
-  joinLines,
-  getTerminalWidth,
-  hasColor
-};
-
-// src/tools/clr.ts
-import chalk3 from "chalk";
-var gray0 = chalk3.black;
-var gray1 = chalk3.gray.dim;
-var gray2 = chalk3.white.dim;
-var gray3 = chalk3.whiteBright.dim;
-var gray4 = chalk3.white;
-var gray5 = chalk3.whiteBright;
-var grays = [
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5
-];
-var gray = (num) => grays[Math.max(0, Math.min(num, grays.length - 1))];
-var clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
-var not = (style) => {
-  const styled = style("**xxx**");
-  const [after, before] = styled.split("**xxx**");
-  return (item) => `${before}${item}${after}`;
-};
-var notUnderlined = not(chalk3.underline);
-var chlk = {
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5,
-  grays,
-  gray,
-  clear,
-  not,
-  notUnderlined
-};
-var clr = {
-  hl1: chalk3.yellowBright.bold,
-  hl2: chalk3.yellow,
-  approve: chalk3.green.bold,
-  create: chalk3.greenBright.bold,
-  update: chalk3.yellow.bold,
-  delete: chalk3.redBright.bold,
-  deleteAll: chalk3.redBright.bold,
-  blue: chalk3.blueBright,
-  cyan: chalk3.cyanBright,
-  green: chalk3.greenBright,
-  magenta: chalk3.magentaBright,
-  red: chalk3.redBright,
-  yellow: chalk3.yellowBright,
-  t1: chalk3.yellowBright,
-  t2: chalk3.magentaBright,
-  t3: chalk3.blueBright,
-  t4: chalk3.redBright,
-  t5: chalk3.greenBright,
-  t6: chalk3.cyanBright,
-  gray0,
-  gray1,
-  gray2,
-  gray3,
-  gray4,
-  gray5
-};
+      return result + specials;
+    })
+  );
+  out2.limitToLengthStart = (text, maxLength) => utils.joinLines(
+    utils.getLines(text).map((line) => {
+      let specials = "";
+      let result = line;
+      while (stringWidth(result) > maxLength) {
+        const match = result.match(new RegExp(`^(\\u001b[[0-9]+m|.)`));
+        const { 0: removed, index } = match || { 0: result.slice(0, 1), index: 1 };
+        if (removed.match(new RegExp(`\\u001b[[0-9]+m`))) {
+          specials = specials + removed;
+        }
+        result = result.slice(index + removed.length);
+      }
+      return specials + result;
+    })
+  );
+  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk4.dim("\u2026")) => utils.joinLines(
+    utils.getLines(text).map((line) => stringWidth(line) > maxLength ? out2.limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line)
+  );
+  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk4.dim("\u2026")) => utils.joinLines(
+    utils.getLines(text).map((line) => stringWidth(line) > maxLength ? suffix + out2.limitToLengthStart(line, maxLength - stringWidth(suffix)) : line)
+  );
+  out2.concatLineGroups = (...groups) => {
+    const maxLen = Math.max(...groups.map((group) => group.length));
+    const aligned = groups.map((group) => out2.leftLines([...group, ...Array(maxLen).fill("")].slice(0, maxLen)));
+    return zipMax(...aligned).map((line) => line.join(""));
+  };
+  out2.getResponsiveValue = (options) => {
+    const mapped = options.map(({ minColumns, value }) => ({
+      min: typeof minColumns === "number" ? minColumns : 0,
+      value
+    }));
+    const sorted = sortByMapped(mapped, (option) => option.min, fn2.desc);
+    const termWidth = utils.getTerminalWidth();
+    return (sorted.find((option) => termWidth >= option.min) ?? sorted[0]).value;
+  };
+  out2.getBreadcrumb = getBreadcrumb;
+  out2.getLineCounter = getLineCounter;
+  let utils;
+  ((utils2) => {
+    utils2.getTerminalWidth = () => {
+      var _a;
+      return ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) ? process.stdout.columns : 100;
+    };
+    const textToString = (text) => text instanceof Array ? utils2.joinLines(text) : text;
+    utils2.getLines = (text) => textToString(text).split(NEW_LINE);
+    utils2.getNumLines = (text) => utils2.getLines(text).length;
+    utils2.getLinesWidth = (text) => Math.max(...utils2.getLines(text).map((line) => stringWidth(line)));
+    utils2.getLogLines = (item) => utils2.getLines(getLogStr(item));
+    utils2.getNumLogLines = (item) => utils2.getNumLines(getLogStr(item));
+    utils2.getLogLinesWidth = (item) => utils2.getLinesWidth(getLogStr(item));
+    utils2.joinLines = (lines) => lines.map(fn2.maps.toString).join(NEW_LINE);
+    utils2.hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
+  })(utils = out2.utils || (out2.utils = {}));
+})(out || (out = {}));
+var getBreadcrumb2 = getBreadcrumb;
+var getLineCounter2 = getLineCounter;
 
 // src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
@@ -418,18 +458,10 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
 };
 
 // src/tools/ask/trim.ts
-import { getDeferred, hours, ObjectTools, seconds, symbols } from "swiss-ak";
+import { getDeferred, hours, ObjectTools, seconds, symbols as symbols2 } from "swiss-ak";
 import stringWidth2 from "string-width";
 
 // src/tools/table.ts
-var table_exports = {};
-__export(table_exports, {
-  getLines: () => getLines2,
-  markdown: () => markdown,
-  print: () => print,
-  printObjects: () => printObjects,
-  utils: () => utils2
-});
 import { fn as fn4, ArrayTools as ArrayTools4, StringTools } from "swiss-ak";
 
 // src/utils/processTableInput.ts
@@ -456,11 +488,11 @@ var fixMixingHeader = (cells) => {
 };
 var transposeTable = (cells, opts) => {
   if (opts.transpose) {
-    const body = utils2.transpose(utils2.concatRows(cells));
+    const body = table.utils.transpose(table.utils.concatRows(cells));
     return { header: [], body };
   }
   if (opts.transposeBody) {
-    const body = utils2.transpose(cells.body);
+    const body = table.utils.transpose(cells.body);
     return { header: cells.header, body };
   }
   return cells;
@@ -481,10 +513,10 @@ var formatCells = (rows, type, format) => {
   }
   return rows;
 };
-var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => utils.getLines(cell)));
+var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => out.utils.getLines(cell)));
 var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight, _mB, marginLeft], maxTotalWidth) => {
   const transposed = zip(...[...cells.header, ...cells.body]);
-  const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => utils.getLinesWidth(cell))));
+  const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => out.utils.getLinesWidth(cell))));
   const currColWidths = preferredWidths.length ? ArrayTools2.repeat(numCols, ...preferredWidths) : actualColWidths;
   const currTotalWidth = currColWidths.length ? currColWidths.reduce(fn3.reduces.combine) + (numCols + 1) * 3 : 0;
   const diff = currTotalWidth - (maxTotalWidth - (marginRight + marginLeft));
@@ -494,14 +526,14 @@ var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight
   }
   return colWidths;
 };
-var wrapCells = (rows, type, colWidths, truncate2) => rows.map((row) => {
-  const wrapped = row.map((cell) => utils.joinLines(cell)).map((text2, colIndex) => {
-    if (truncate2 !== false) {
-      return truncate(text2, colWidths[colIndex], truncate2);
+var wrapCells = (rows, type, colWidths, truncate) => rows.map((row) => {
+  const wrapped = row.map((cell) => out.utils.joinLines(cell)).map((text, colIndex) => {
+    if (truncate !== false) {
+      return out.truncate(text, colWidths[colIndex], truncate);
     } else {
-      return wrap(text2, colWidths[colIndex]);
+      return out.wrap(text, colWidths[colIndex]);
     }
-  }).map((text2) => utils.getLines(text2));
+  }).map((text) => out.utils.getLines(text));
   const maxHeight = Math.max(...wrapped.map((cell) => cell.length));
   return wrapped.map((cell) => [...cell, ...empty(maxHeight)].slice(0, maxHeight));
 });
@@ -644,276 +676,201 @@ var getTableCharacters = (opts) => {
 };
 
 // src/tools/table.ts
-import chalk4 from "chalk";
-var getFullOptions = (opts) => ({
-  overrideChar: "",
-  overrideHorChar: opts.overrideChar || "",
-  overrideVerChar: opts.overrideChar || "",
-  overrideCornChar: opts.overrideChar || "",
-  overrideOuterChar: opts.overrideChar || "",
-  overrideCharSet: void 0,
-  overridePrioritiseVer: false,
-  align: "left",
-  alignCols: ["left"],
-  colWidths: [],
-  cellPadding: 1,
-  truncate: false,
-  maxWidth: utils.getTerminalWidth(),
-  ...opts,
-  wrapperFn: typeof opts.wrapperFn !== "function" ? fn4.noact : opts.wrapperFn,
-  wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn4.noact : opts.wrapLinesFn,
-  wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk4.bold : opts.wrapHeaderLinesFn,
-  wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn4.noact : opts.wrapBodyLinesFn,
-  drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
-  drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
-  drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
-  transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
-  transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
-  format: (opts.format || []).map(toFullFormatConfig),
-  margin: ((input = 0) => {
-    const arr = [input].flat();
-    const top = arr[0] ?? 0;
-    const right2 = arr[1] ?? top;
-    const bottom = arr[2] ?? top;
-    const left2 = arr[3] ?? right2 ?? top;
-    return [top, right2, bottom, left2];
-  })(opts.margin)
-});
-var empty2 = (numCols, char = "") => ArrayTools4.create(numCols, char);
-var print = (body, header, options = {}) => {
-  const lines = getLines2(body, header, options);
-  if (lines.length) {
-    console.log(lines.join("\n"));
-  }
-  return lines.length;
-};
-var getAllKeys = (objects) => {
-  const allKeys = {};
-  objects.forEach((obj) => {
-    Object.keys(obj).forEach((key) => {
-      allKeys[key] = true;
-    });
+import chalk5 from "chalk";
+var table;
+((table2) => {
+  const getFullOptions2 = (opts) => ({
+    overrideChar: "",
+    overrideHorChar: opts.overrideChar || "",
+    overrideVerChar: opts.overrideChar || "",
+    overrideCornChar: opts.overrideChar || "",
+    overrideOuterChar: opts.overrideChar || "",
+    overrideCharSet: void 0,
+    overridePrioritiseVer: false,
+    align: "left",
+    alignCols: ["left"],
+    colWidths: [],
+    cellPadding: 1,
+    truncate: false,
+    maxWidth: out.utils.getTerminalWidth(),
+    ...opts,
+    wrapperFn: typeof opts.wrapperFn !== "function" ? fn4.noact : opts.wrapperFn,
+    wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn4.noact : opts.wrapLinesFn,
+    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk5.bold : opts.wrapHeaderLinesFn,
+    wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn4.noact : opts.wrapBodyLinesFn,
+    drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
+    drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
+    drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
+    transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
+    transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
+    format: (opts.format || []).map(toFullFormatConfig),
+    margin: ((input = 0) => {
+      const arr = [input].flat();
+      const top = arr[0] ?? 0;
+      const right = arr[1] ?? top;
+      const bottom = arr[2] ?? top;
+      const left = arr[3] ?? right ?? top;
+      return [top, right, bottom, left];
+    })(opts.margin)
   });
-  return Object.keys(allKeys);
-};
-var printObjects = (objects, headers = {}, options = {}) => {
-  const { body, header } = objectsToTable(objects, headers);
-  return print(body, header, options);
-};
-var markdown = (body, header, options = {}) => {
-  const defaultMarkdownOptions = {
-    overrideCharSet: {
-      hTop: [" ", " ", " ", " "],
-      hNor: [" ", "|", "|", "|"],
-      hSep: [" ", " ", " ", " "],
-      hBot: [" ", " ", " ", " "],
-      mSep: ["-", "|", "|", "|"],
-      bTop: [" ", " ", " ", " "],
-      bNor: [" ", "|", "|", "|"],
-      bSep: [" ", " ", " ", " "],
-      bBot: [" ", " ", " ", " "]
-    },
-    drawRowLines: false,
-    margin: 0,
-    wrapHeaderLinesFn: fn4.noact
+  const empty2 = (numCols, char = "") => ArrayTools4.create(numCols, char);
+  table2.print = (body, header, options = {}) => {
+    const lines = table2.getLines(body, header, options);
+    if (lines.length) {
+      console.log(lines.join("\n"));
+    }
+    return lines.length;
   };
-  const lines = getLines2(body, header, {
-    ...defaultMarkdownOptions,
-    ...options
-  });
-  if (options.alignCols) {
-    const sepIndex = lines[1].startsWith("|--") ? 1 : lines.findIndex((line) => line.startsWith("|--"));
-    const sepLine = lines[sepIndex];
-    const sepSections = sepLine.split("|").filter(fn4.isTruthy);
-    const numCols = sepSections.length;
-    const alignColumns = ArrayTools4.repeat(numCols, ...options.alignCols);
-    const alignedSepSections = sepSections.map((section2, index) => {
-      const algn = alignColumns[index];
-      const width = section2.length;
-      let firstChar = "-";
-      let lastChar = "-";
-      if (algn === "left" || algn === "center") {
-        firstChar = ":";
-      }
-      if (algn === "right" || algn === "center") {
-        lastChar = ":";
-      }
-      return `${firstChar}${"-".repeat(Math.max(0, width - 2))}${lastChar}`.slice(0, width);
+  const getAllKeys = (objects) => {
+    const allKeys = {};
+    objects.forEach((obj) => {
+      Object.keys(obj).forEach((key) => {
+        allKeys[key] = true;
+      });
     });
-    lines[sepIndex] = ["", ...alignedSepSections, ""].join("|");
-  }
-  return lines;
-};
-var getLines2 = (body, header, options = {}) => {
-  const opts = getFullOptions(options);
-  const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align: align2, drawRowLines, cellPadding } = opts;
-  const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
-  const result = [];
-  const {
-    cells: { header: pHeader, body: pBody },
-    numCols,
-    colWidths
-  } = processInput({ header, body }, opts);
-  const alignColumns = ArrayTools4.repeat(numCols, ...alignCols);
-  const tableChars = getTableCharacters(opts);
-  const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
-    const [norm, strt, sepr, endc] = chars;
-    const pad2 = StringTools.repeat(cellPadding, norm);
-    let aligned = row.map((cell, col) => align(cell || "", alignColumns[col], colWidths[col], norm, true));
-    if (textWrapperFn)
-      aligned = aligned.map((x) => textWrapperFn(x));
-    const inner = aligned.join(wrapLinesFn(`${pad2}${sepr}${pad2}`));
-    const str = wrapLinesFn(`${StringTools.repeat(marginLeft, " ")}${strt}${pad2}`) + inner + wrapLinesFn(`${pad2}${endc}${StringTools.repeat(marginRight, " ")}`);
-    result.push(align(wrapperFn(str), align2, -1, " ", false));
+    return Object.keys(allKeys);
   };
-  if (marginTop)
-    result.push(StringTools.repeat(marginTop - 1, "\n"));
-  if (pHeader.length) {
-    if (drawOuter && drawRowLines)
-      printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
-    for (let index in pHeader) {
-      const row = pHeader[index];
+  table2.printObjects = (objects, headers = {}, options = {}) => {
+    const { body, header } = utils.objectsToTable(objects, headers);
+    return table2.print(body, header, options);
+  };
+  table2.markdown = (body, header, options = {}) => {
+    const defaultMarkdownOptions = {
+      overrideCharSet: {
+        hTop: [" ", " ", " ", " "],
+        hNor: [" ", "|", "|", "|"],
+        hSep: [" ", " ", " ", " "],
+        hBot: [" ", " ", " ", " "],
+        mSep: ["-", "|", "|", "|"],
+        bTop: [" ", " ", " ", " "],
+        bNor: [" ", "|", "|", "|"],
+        bSep: [" ", " ", " ", " "],
+        bBot: [" ", " ", " ", " "]
+      },
+      drawRowLines: false,
+      margin: 0,
+      wrapHeaderLinesFn: fn4.noact
+    };
+    const lines = table2.getLines(body, header, {
+      ...defaultMarkdownOptions,
+      ...options
+    });
+    if (options.alignCols) {
+      const sepIndex = lines[1].startsWith("|--") ? 1 : lines.findIndex((line) => line.startsWith("|--"));
+      const sepLine = lines[sepIndex];
+      const sepSections = sepLine.split("|").filter(fn4.isTruthy);
+      const numCols = sepSections.length;
+      const alignColumns = ArrayTools4.repeat(numCols, ...options.alignCols);
+      const alignedSepSections = sepSections.map((section2, index) => {
+        const algn = alignColumns[index];
+        const width = section2.length;
+        let firstChar = "-";
+        let lastChar = "-";
+        if (algn === "left" || algn === "center") {
+          firstChar = ":";
+        }
+        if (algn === "right" || algn === "center") {
+          lastChar = ":";
+        }
+        return `${firstChar}${"-".repeat(Math.max(0, width - 2))}${lastChar}`.slice(0, width);
+      });
+      lines[sepIndex] = ["", ...alignedSepSections, ""].join("|");
+    }
+    return lines;
+  };
+  table2.getLines = (body, header, options = {}) => {
+    const opts = getFullOptions2(options);
+    const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
+    const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
+    const result = [];
+    const {
+      cells: { header: pHeader, body: pBody },
+      numCols,
+      colWidths
+    } = processInput({ header, body }, opts);
+    const alignColumns = ArrayTools4.repeat(numCols, ...alignCols);
+    const tableChars = getTableCharacters(opts);
+    const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
+      const [norm, strt, sepr, endc] = chars;
+      const pad = StringTools.repeat(cellPadding, norm);
+      let aligned = row.map((cell, col) => out.align(cell || "", alignColumns[col], colWidths[col], norm, true));
+      if (textWrapperFn)
+        aligned = aligned.map((x) => textWrapperFn(x));
+      const inner = aligned.join(wrapLinesFn(`${pad}${sepr}${pad}`));
+      const str = wrapLinesFn(`${StringTools.repeat(marginLeft, " ")}${strt}${pad}`) + inner + wrapLinesFn(`${pad}${endc}${StringTools.repeat(marginRight, " ")}`);
+      result.push(out.align(wrapperFn(str), align, -1, " ", false));
+    };
+    if (marginTop)
+      result.push(StringTools.repeat(marginTop - 1, "\n"));
+    if (pHeader.length) {
+      if (drawOuter && drawRowLines)
+        printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
+      for (let index in pHeader) {
+        const row = pHeader[index];
+        if (Number(index) !== 0 && drawRowLines)
+          printLine(empty2(numCols, ""), tableChars.hSep, wrapLinesFn);
+        for (let line of row) {
+          printLine(line, tableChars.hNor, opts.wrapHeaderLinesFn);
+        }
+      }
+      printLine(empty2(numCols, ""), tableChars.mSep, wrapLinesFn);
+    } else {
+      if (drawOuter)
+        printLine(empty2(numCols, ""), tableChars.bTop, wrapLinesFn);
+    }
+    for (let index in pBody) {
+      const row = pBody[index];
       if (Number(index) !== 0 && drawRowLines)
-        printLine(empty2(numCols, ""), tableChars.hSep, wrapLinesFn);
+        printLine(empty2(numCols, ""), tableChars.bSep, wrapLinesFn);
       for (let line of row) {
-        printLine(line, tableChars.hNor, opts.wrapHeaderLinesFn);
+        printLine(line, tableChars.bNor, opts.wrapBodyLinesFn);
       }
     }
-    printLine(empty2(numCols, ""), tableChars.mSep, wrapLinesFn);
-  } else {
-    if (drawOuter)
-      printLine(empty2(numCols, ""), tableChars.bTop, wrapLinesFn);
-  }
-  for (let index in pBody) {
-    const row = pBody[index];
-    if (Number(index) !== 0 && drawRowLines)
-      printLine(empty2(numCols, ""), tableChars.bSep, wrapLinesFn);
-    for (let line of row) {
-      printLine(line, tableChars.bNor, opts.wrapBodyLinesFn);
-    }
-  }
-  if (drawOuter && drawRowLines)
-    printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
-  if (marginBottom)
-    result.push(StringTools.repeat(marginBottom - 1, "\n"));
-  return result;
-};
-var toFullFormatConfig = (config) => ({
-  isHeader: false,
-  isBody: true,
-  ...config
-});
-var objectsToTable = (objects, headers = {}) => {
-  const allKeys = getAllKeys(objects);
-  const header = [allKeys.map((key) => headers[key] || key)];
-  const body = objects.map((obj) => allKeys.map((key) => obj[key]));
-  return {
-    header,
-    body
-  };
-};
-var transpose = (rows) => {
-  return ArrayTools4.zip(...rows);
-};
-var concatRows = (cells) => {
-  return [...cells.header || [], ...cells.body];
-};
-var getFormat = (format, row, col, isHeader, isBody) => {
-  const result = {
-    formatFn: typeof format === "function" ? format : clr[format],
-    row,
-    col
-  };
-  if (isHeader !== void 0)
-    result.isHeader = isHeader;
-  if (isBody !== void 0)
-    result.isBody = isBody;
-  return result;
-};
-var utils2 = {
-  objectsToTable,
-  transpose,
-  concatRows,
-  getFormat
-};
-
-// src/tools/out/lineCounter.ts
-var randomID = () => Math.random().toString(36).substring(2);
-var getLineCounter = () => {
-  let lineCount = 0;
-  const checkpoints = {};
-  const log2 = (...args) => {
-    const added = utils.getNumLines(args.map(getLogStr).join(" "));
-    lineCount += added;
-    console.log(...args);
-    return added;
-  };
-  const move = (lines) => {
-    if (lines > 0) {
-      log2("\n".repeat(lines - 1));
-    }
-    if (lines < 0) {
-      clearBack(-lines);
-    }
-  };
-  const wrap2 = (newLines = 1, func, ...args) => {
-    const result = func(...args);
-    lineCount += newLines;
+    if (drawOuter && drawRowLines)
+      printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
+    if (marginBottom)
+      result.push(StringTools.repeat(marginBottom - 1, "\n"));
     return result;
   };
-  const add = (newLines) => {
-    lineCount += newLines;
-  };
-  const get = () => {
-    return lineCount;
-  };
-  const getSince = (checkpointID) => {
-    const checkpointValue = checkpoints[checkpointID];
-    if (checkpointValue === void 0)
-      return 0;
-    const diff = lineCount - checkpointValue;
-    return diff > 0 ? diff : 0;
-  };
-  const checkpoint = (checkpointID = randomID()) => {
-    checkpoints[checkpointID] = lineCount;
-    return checkpointID;
-  };
-  const clearToCheckpoint = (checkpointID) => {
-    const checkpointValue = checkpoints[checkpointID];
-    if (checkpointValue === void 0)
-      return;
-    const diff = lineCount - checkpointValue;
-    if (diff > 0) {
-      clearBack(diff);
-    }
-  };
-  const clearBack = (linesToMoveBack, limitToRecordedLines = true) => {
-    if (limitToRecordedLines)
-      linesToMoveBack = Math.min(lineCount, linesToMoveBack);
-    moveUp(linesToMoveBack);
-    lineCount -= linesToMoveBack;
-  };
-  const clear2 = () => {
-    moveUp(lineCount);
-    lineCount = 0;
-  };
-  const lc = {
-    log: log2,
-    move,
-    wrap: wrap2,
-    add,
-    get,
-    getSince,
-    checkpoint,
-    clearToCheckpoint,
-    clear: clear2,
-    clearBack
-  };
-  return lc;
-};
+  const toFullFormatConfig = (config) => ({
+    isHeader: false,
+    isBody: true,
+    ...config
+  });
+  let utils;
+  ((utils2) => {
+    utils2.objectsToTable = (objects, headers = {}) => {
+      const allKeys = getAllKeys(objects);
+      const header = [allKeys.map((key) => headers[key] || key)];
+      const body = objects.map((obj) => allKeys.map((key) => obj[key]));
+      return {
+        header,
+        body
+      };
+    };
+    utils2.transpose = (rows) => {
+      return ArrayTools4.zip(...rows);
+    };
+    utils2.concatRows = (cells) => {
+      return [...cells.header || [], ...cells.body];
+    };
+    utils2.getFormat = (format, row, col, isHeader, isBody) => {
+      const result = {
+        formatFn: typeof format === "function" ? format : clr[format],
+        row,
+        col
+      };
+      if (isHeader !== void 0)
+        result.isHeader = isHeader;
+      if (isBody !== void 0)
+        result.isBody = isBody;
+      return result;
+    };
+  })(utils = table2.utils || (table2.utils = {}));
+})(table || (table = {}));
 
 // src/tools/ask/trim.ts
-import chalk5 from "chalk";
+import chalk6 from "chalk";
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
   const frLength = stringWidth2(frameRate + "");
   const toSecs = seconds(Math.floor(frame / frameRate));
@@ -928,23 +885,23 @@ var getNextHandle = (tool) => {
   const all = ["start", "end"];
   return all[(all.indexOf(tool) + 1) % all.length];
 };
-var getFullOptions2 = (opts) => ({
+var getFullOptions = (opts) => ({
   speed: 1,
   fastSpeed: 5,
   showInstructions: true,
   charTrack: " ",
   charHandle: "\u2503",
   charBar: "\u2588",
-  clrTrack: chalk5.bgGray,
-  clrHandle: chalk5.whiteBright,
-  clrBar: chalk5.white,
+  clrTrack: chalk6.bgGray,
+  clrHandle: chalk6.whiteBright,
+  clrBar: chalk6.white,
   ...opts,
   charActiveHandle: opts.charActiveHandle ?? opts.charHandle ?? "\u2503",
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? "\u2588",
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? "\u2588",
-  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk5.yellowBright.bold,
-  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk5.whiteBright,
-  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk5.yellowBright.bold
+  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk6.yellowBright.bold,
+  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk6.whiteBright,
+  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk6.yellowBright.bold
 });
 var getChars = (opts) => ({
   track: opts.charTrack,
@@ -963,7 +920,7 @@ var getColors = (opts) => ({
   activeHandleBase: opts.clrActiveHandleBase
 });
 var trim = async (totalFrames, frameRate, options = {}) => {
-  const opts = getFullOptions2(options);
+  const opts = getFullOptions(options);
   const lc = getLineCounter();
   const deferred = getDeferred();
   const totalLength = seconds(Math.floor(totalFrames / frameRate));
@@ -977,7 +934,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
   const display = () => {
     displayCount++;
     lc.clear();
-    const width = utils.getTerminalWidth();
+    const width = out.utils.getTerminalWidth();
     const totalSpace = width - 2;
     const handlePositions = ObjectTools.mapValues(
       handles,
@@ -1007,7 +964,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       };
       const handleLabels = ObjectTools.mapValues(
         handleLabelsRaw,
-        (key, value) => value.map((l) => align(l, handleAligns[key], handleLabelWidths[key], " ", true))
+        (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
       );
       const strtBef = handleAligns.start === "right";
       const endBef = handleAligns.end === "right";
@@ -1058,13 +1015,13 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       if (opts.showInstructions && displayCount < 5) {
         const body = [
           [
-            chalk5.gray.dim(`[${symbols.TRI_LFT}/${symbols.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            chalk5.gray.dim(`[${symbols.TRI_UPP}/${symbols.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
-            chalk5.gray.dim(`[TAB] switch handle`),
-            chalk5.gray.dim(`[ENTER] submit`)
+            chalk6.gray.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
+            chalk6.gray.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
+            chalk6.gray.dim(`[TAB] switch handle`),
+            chalk6.gray.dim(`[ENTER] submit`)
           ]
         ];
-        lc.add(print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
+        lc.add(table.print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
       } else {
         lc.log();
       }
@@ -1121,7 +1078,6 @@ var trim = async (totalFrames, frameRate, options = {}) => {
   display();
   return deferred.promise;
 };
-var trim_default = trim;
 
 // src/tools/ask/fileExplorer.ts
 import * as fsP2 from "fs/promises";
@@ -1136,35 +1092,32 @@ import {
   seconds as seconds2,
   sortNumberedText,
   StringTools as StringTools2,
-  symbols as symbols2,
+  symbols as symbols3,
   TimeTools,
   tryOr as tryOr2,
   wait as wait2
 } from "swiss-ak";
-import chalk7 from "chalk";
+import chalk8 from "chalk";
 
 // src/tools/PathTools.ts
-var PathTools_exports = {};
-__export(PathTools_exports, {
-  explodePath: () => explodePath,
-  removeDoubleSlashes: () => removeDoubleSlashes,
-  removeTrailSlash: () => removeTrailSlash,
-  trailSlash: () => trailSlash
-});
-var explodePath = (path) => {
-  const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
-  const filename = (path.match(/[^\\\/]*$/) || [])[0];
-  const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
-  const name = filename.replace(ext, "").replace(/[\.]$/, "");
-  const folders = dir.split(/[\\\/]/).filter((x) => x);
-  return { path, dir, folders, name, ext, filename };
-};
-var removeTrailSlash = (path) => path.replace(/\/$/, "");
-var trailSlash = (path) => removeTrailSlash(path) + "/";
-var removeDoubleSlashes = (path) => path.replace(/\/\//g, "/");
+var PathTools;
+((PathTools2) => {
+  PathTools2.explodePath = (path) => {
+    const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
+    const filename = (path.match(/[^\\\/]*$/) || [])[0];
+    const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
+    const name = filename.replace(ext, "").replace(/[\.]$/, "");
+    const folders = dir.split(/[\\\/]/).filter((x) => x);
+    return { path, dir, folders, name, ext, filename };
+  };
+  PathTools2.removeTrailSlash = (path) => path.replace(/\/$/, "");
+  PathTools2.trailSlash = (path) => PathTools2.removeTrailSlash(path) + "/";
+  PathTools2.removeDoubleSlashes = (path) => path.replace(/\/\//g, "/");
+})(PathTools || (PathTools = {}));
+var explodePath = PathTools.explodePath;
 
 // src/utils/actionBar.ts
-import chalk6 from "chalk";
+import chalk7 from "chalk";
 import { fn as fn5 } from "swiss-ak";
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   const keyList = ids.filter(fn5.isTruthy).filter((key) => config[key]);
@@ -1174,13 +1127,13 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   });
   const format = [];
   if (pressedId) {
-    format.push({ formatFn: chalk6.bgWhite.black, col: keyList.indexOf(pressedId) });
+    format.push({ formatFn: chalk7.bgWhite.black, col: keyList.indexOf(pressedId) });
   }
   if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: chalk6.dim.strikethrough, col: keyList.indexOf(key) }));
+    disabledIds.forEach((key) => format.push({ formatFn: chalk7.dim.strikethrough, col: keyList.indexOf(key) }));
   }
-  return utils.joinLines(
-    getLines2([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
+  return out.utils.joinLines(
+    table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
   );
 };
 
@@ -1203,7 +1156,7 @@ var execute = (command) => {
     });
   });
 };
-var intoLines = (out) => out.toString().split("\n").filter(fn6.isTruthy);
+var intoLines = (out2) => out2.toString().split("\n").filter(fn6.isTruthy);
 var getProbe = async (file) => {
   const stdout = await tryOr("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
@@ -1222,13 +1175,13 @@ var mkdir2 = (dir) => {
   return fsP.mkdir(dir, { recursive: true });
 };
 var findDirs = async (dir = ".") => {
-  const newDir = trailSlash(dir);
+  const newDir = PathTools.trailSlash(dir);
   const stdout = await tryOr("", async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;
 };
 var findFiles = async (dir = ".") => {
-  const newDir = trailSlash(dir);
+  const newDir = PathTools.trailSlash(dir);
   const stdout = await tryOr("", async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;
@@ -1295,7 +1248,7 @@ var getPathType = async (path) => {
 };
 var join = (...items) => {
   const result = items.join("/");
-  return removeDoubleSlashes(result || "/");
+  return PathTools.removeDoubleSlashes(result || "/");
 };
 var keyActionDict = {
   move: {
@@ -1344,10 +1297,10 @@ var getFileIcon = (ext) => {
   const category = getFileCategory(ext);
   const dispExt = ext.length % 2 === 0 ? ext : "." + ext;
   if (category === "image") {
-    return left(
+    return out.left(
       `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551  ${chalk7.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk7.whiteBright("\u2600")}  \u2551
-\u2551 ${chalk7.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk7.whiteBright("\u2600")}\u2551
+\u2551  ${chalk8.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk8.whiteBright("\u2600")}  \u2551
+\u2551 ${chalk8.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk8.whiteBright("\u2600")}\u2551
 \u255F\u2500\u2500\u2524\u25AB\u25AA\u2502\u25AB\u25AB\u25AB\u25AB\u251C\u2500\u2500\u2500\u2562
 \u2551\u25AA\u25AB\u2502\u25AB\u25AB\u2502\u25AA\u25AB\u25AB\u25AB\u2502\u25AB\u25AA\u25AB\u2551
 \u255A\u2550\u2550\u2567\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u255D`,
@@ -1355,17 +1308,17 @@ var getFileIcon = (ext) => {
     );
   }
   if (category === "video") {
-    return left(
+    return out.left(
       `\u250F\u2531\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2532\u2513
 \u2523\u252B\u256D\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256E\u2523\u252B
-\u2523\u252B\u2502${center(limitToLength(dispExt.toUpperCase(), 8), 8)}\u2502\u2523\u252B
+\u2523\u252B\u2502${out.center(out.limitToLength(dispExt.toUpperCase(), 8), 8)}\u2502\u2523\u252B
 \u2523\u252B\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256F\u2523\u252B
 \u2517\u2539\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253A\u251B`,
       14
     );
   }
   if (category === "audio") {
-    return left(
+    return out.left(
       `\u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
 \u2502   .\u2219\xAF\xAF\xAF\xAF\u2219.   \u2502
 \u2502  /        \\  \u2502
@@ -1376,10 +1329,10 @@ var getFileIcon = (ext) => {
       16
     );
   }
-  return left(
+  return out.left(
     `,\u254C\u254C\u254C\u254C\u254C.
 \u254E       \u27CD
-\u254E${center(limitToLengthStart(dispExt, 8), 8)}\u254E
+\u254E${out.center(out.limitToLengthStart(dispExt, 8), 8)}\u254E
 \u254E        \u254E
 \u254E        \u254E
 \u02F8\u254C\u254C\u254C\u254C\u254C\u254C\u254C\u254C\u02F8`,
@@ -1392,17 +1345,17 @@ var humanFileSize = (size) => {
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
-  const { filename, ext } = explodePath(path);
+  const { filename, ext } = PathTools.explodePath(path);
   const { stat: stat2, probe } = ((_a = getPathContents(path)) == null ? void 0 : _a.info) || {};
   const result = [];
-  result.push(center(getFileIcon(ext), panelWidth));
+  result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
-  result.push(center(wrap(filename, panelWidth), panelWidth));
-  result.push(center(chalk7.dim(`${ext.toUpperCase()} ${category ? `${StringTools2.capitalise(category)} ` : ""}File`), panelWidth));
-  result.push(center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
+  result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
+  result.push(out.center(chalk8.dim(`${ext.toUpperCase()} ${category ? `${StringTools2.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
-    result.push(split(`${chalk7.bold.dim(title)}`, `${value}${extra ? chalk7.dim(` (${chalk7.dim(extra)})`) : ""}`, panelWidth));
+    result.push(out.split(`${chalk8.bold.dim(title)}`, `${value}${extra ? chalk8.dim(` (${chalk8.dim(extra)})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
     addItem(title, `${TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
@@ -1420,20 +1373,20 @@ var getFilePanel = (path, panelWidth, maxLines) => {
     if (["video"].includes(category))
       addItem(`FPS`, `${probe.framerate}`);
   }
-  const resultStr = left(wrap(result.join("\n"), panelWidth), panelWidth);
-  return chalk7.white(utils.joinLines(utils.getLines(resultStr).slice(0, maxLines)));
+  const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
+  return chalk8.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
-  const primaryWrapFn = chalk7.yellowBright;
-  const cursorWrapFn = chalk7.bgYellow.black;
-  const ancestralCursorWrapFn = chalk7.bgGray.black;
-  const selectedIconWrapFn = chalk7.greenBright;
-  const selectedWrapFn = chalk7.greenBright;
-  const cursorOnSelectedWrapFn = chalk7.bgGreenBright.black;
+  const primaryWrapFn = chalk8.yellowBright;
+  const cursorWrapFn = chalk8.bgYellow.black;
+  const ancestralCursorWrapFn = chalk8.bgGray.black;
+  const selectedIconWrapFn = chalk8.greenBright;
+  const selectedWrapFn = chalk8.greenBright;
+  const cursorOnSelectedWrapFn = chalk8.bgGreenBright.black;
   const minWidth = 25;
   const maxWidth = 25;
   const maxItems = 15;
-  const maxColumns = Math.floor(utils.getTerminalWidth() / (maxWidth + 1));
+  const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const lc = getLineCounter();
   const deferred = getDeferred2();
@@ -1444,7 +1397,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   let cursorType = "d";
   let pressed = void 0;
   let submitted = false;
-  let loading3 = false;
+  let loading = false;
   let locked = false;
   const recalc = () => {
     var _a;
@@ -1452,7 +1405,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       return;
     paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
     currentPath = paths[paths.length - 1];
-    const isDir = ((_a = getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(explodePath(currentPath).filename)) || false;
+    const isDir = ((_a = getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(PathTools.explodePath(currentPath).filename)) || false;
     cursorType = isDir ? "d" : "f";
   };
   const loadEssentials = async (executeFn = loadPathContents) => {
@@ -1467,7 +1420,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         );
       })(),
       (async () => {
-        const parent = explodePath(currentPath).dir;
+        const parent = PathTools.explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
         return PromiseTools.each(
@@ -1478,18 +1431,18 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     ]);
   };
   const loadNewDepth = async () => {
-    loading3 = true;
+    loading = true;
     display();
     await loadEssentials(loadPathContents);
-    loading3 = false;
+    loading = false;
     display();
   };
   const loadNewItem = async () => {
     if (!getPathContents(currentPath)) {
-      loading3 = true;
+      loading = true;
       display();
       await loadPathContents(currentPath);
-      loading3 = false;
+      loading = false;
       display();
     } else {
       display();
@@ -1501,7 +1454,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (!key)
       return;
     await wait2(milliseconds(100));
-    if (!loading3) {
+    if (!loading) {
       pressed = void 0;
       display();
     }
@@ -1515,9 +1468,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const fullPath = join(columnPath, name);
       const isSelected = isMulti && multiSelected.has(fullPath);
       const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-      const template = (text2) => `${prefix}${text2} ${symbol} `;
+      const template = (text) => `${prefix}${text} ${symbol} `;
       const extraChars = stringWidth3(template(""));
-      const stretched = template(left(truncate(name, width - extraChars, "\u2026"), width - extraChars));
+      const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
       let wrapFn = fn7.noact;
       if (isHighlighted) {
         if (isActiveColumn) {
@@ -1534,7 +1487,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       single: {
         d: {
           dir: formatter("\u203A", chlk.gray5),
-          file: formatter(" ", chalk7.dim)
+          file: formatter(" ", chalk8.dim)
         },
         f: {
           dir: formatter("\u203A", chlk.gray3),
@@ -1547,16 +1500,16 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       },
       multi: {
         d: {
-          dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(symbols2.RADIO_FULL)} `, ` ${symbols2.RADIO_EMPTY} `),
-          file: formatter(" ", chalk7.dim, "   ", "   ")
+          dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `),
+          file: formatter(" ", chalk8.dim, "   ", "   ")
         },
         f: {
           dir: formatter("\u203A", chlk.gray3, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols2.RADIO_FULL)} `, ` ${symbols2.RADIO_EMPTY} `)
+          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
         },
         df: {
           dir: formatter("\u203A", chlk.gray5, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols2.RADIO_FULL)} `, ` ${symbols2.RADIO_EMPTY} `)
+          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
@@ -1582,42 +1535,42 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
         const fullWidth = stringWidth3(formatDir(width, "", false, "")(""));
         if (isScrollUp)
-          slicedLines[0] = chalk7.dim(center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
+          slicedLines[0] = chalk8.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
         if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = chalk7.dim(center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
-        return utils.joinLines(slicedLines);
+          slicedLines[slicedLines.length - 1] = chalk8.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
+        return out.utils.joinLines(slicedLines);
       }
-      return utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
+      return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
     });
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools5.repeat(maxColumns, utils.joinLines(emptyColumn))].slice(0, maxColumns);
-    const termWidth = utils.getTerminalWidth();
-    const tableLines = getLines2([columns], void 0, {
+    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools5.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const termWidth = out.utils.getTerminalWidth();
+    const tableLines = table.getLines([columns], void 0, {
       wrapLinesFn: chlk.gray1,
       drawOuter: true,
       cellPadding: 0,
       truncate: "",
       maxWidth: Infinity
     });
-    const tableOut = center(limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
+    const tableOut = out.center(out.limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
     const tableWidth = stringWidth3(tableLines[Math.floor(tableLines.length / 2)]);
     const infoLine = (() => {
-      if (loading3) {
-        return chalk7.dim(center("=".repeat(20) + " Loading... " + "=".repeat(20)));
+      if (loading) {
+        return chalk8.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
       }
-      const count = isMulti ? chalk7.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
-      const curr = limitToLengthStart(
-        `${currentPath} ${chalk7.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
+      const count = isMulti ? chalk8.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
+      const curr = out.limitToLengthStart(
+        `${currentPath} ${chalk8.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
         tableWidth - (stringWidth3(count) + 3)
       );
-      const split2 = split(curr, count, tableWidth - 2);
-      return center(split2, termWidth);
+      const split = out.split(curr, count, tableWidth - 2);
+      return out.center(split, termWidth);
     })();
     const actionBar = getFEActionBar(isMulti, pressed);
     lc.clear();
-    lc.wrap(1, () => imitate(false, question, " "));
+    lc.wrap(1, () => ask.imitate(false, question, " "));
     lc.log();
     lc.log(infoLine);
     lc.log(tableOut);
@@ -1656,9 +1609,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       loadNewDepth();
     },
     refresh: async () => {
-      if (loading3)
+      if (loading)
         return;
-      loading3 = true;
+      loading = true;
       locked = true;
       setPressed("r");
       const allKeys = Array.from(fsCache.keys());
@@ -1668,7 +1621,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         return forceLoadPathContents(path);
       });
       display();
-      loading3 = false;
+      loading = false;
       locked = false;
       if (pressed === "r")
         setPressed(void 0);
@@ -1690,7 +1643,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     },
     takeInput: async (preQuestion, inputFn, postQuestion) => {
       display();
-      loading3 = true;
+      loading = true;
       locked = true;
       kl.stop();
       lc.clearBack(1);
@@ -1700,7 +1653,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       if (!skipDisplay)
         display();
       kl.start();
-      loading3 = false;
+      loading = false;
       locked = false;
       return value;
     },
@@ -1710,12 +1663,12 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         () => {
           const info2 = chlk.gray3("Enter nothing to cancel");
           const info1Prefix = chlk.gray3("  Adding folder to ");
-          const maxValWidth = utils.getTerminalWidth() - (stringWidth3(info1Prefix) + stringWidth3(info2));
-          const info1Value = chlk.gray4(truncateStart(trailSlash(basePath), maxValWidth));
+          const maxValWidth = out.utils.getTerminalWidth() - (stringWidth3(info1Prefix) + stringWidth3(info2));
+          const info1Value = chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
-          lc.log(split(info1, info2, utils.getTerminalWidth() - 2));
+          lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
-        () => lc.wrap(1, () => text(`What do you want to ${primaryWrapFn("name")} the new folder?`, "")),
+        () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn("name")} the new folder?`, "")),
         async (newFolderName) => {
           const newFolderPath = join(basePath, newFolderName);
           if (newFolderName !== "") {
@@ -1737,21 +1690,21 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     submitSave: async () => {
       const initCursor = cursorType === "f" ? cursor[cursor.length - 1] : "";
       const initSugg = suggestedFileName;
-      const initStart = startPath && await getPathType(startPath) === "f" ? explodePath(startPath).filename : "";
+      const initStart = startPath && await getPathType(startPath) === "f" ? PathTools.explodePath(startPath).filename : "";
       const initial = initCursor || initSugg || initStart || "";
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(chlk.gray3("  Saving file to ") + chlk.gray4(truncateStart(trailSlash(basePath), utils.getTerminalWidth() - 20)));
+          lc.log(chlk.gray3("  Saving file to ") + chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
         },
-        () => lc.wrap(1, () => text(`What do you want to ${primaryWrapFn("name")} the file?`, initial)),
+        () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn("name")} the file?`, initial)),
         () => true
       );
       submitted = true;
       kl.stop();
       lc.clear();
       const result = join(basePath, newFileName);
-      imitate(true, question, result);
+      ask.imitate(true, question, result);
       return deferred.resolve([result]);
     },
     submitSelect: () => {
@@ -1763,11 +1716,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       lc.clear();
       if (isMulti) {
         const result = Array.from(multiSelected);
-        imitate(true, question, result);
+        ask.imitate(true, question, result);
         return deferred.resolve(result);
       } else {
         const result = currentPath;
-        imitate(true, question, result);
+        ask.imitate(true, question, result);
         return deferred.resolve([currentPath]);
       }
     }
@@ -1811,54 +1764,8 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
   return arr[0];
 };
 
-// src/tools/ask/section.ts
-import { ArrayTools as ArrayTools6 } from "swiss-ak";
-var separator = (version = "down", spacing = 8, offset = 0, width = utils.getTerminalWidth() - 2) => {
-  const lineChar = "\u2504";
-  const chars = {
-    down: "\u25BF",
-    none: "\u25E6",
-    up: "\u25B5"
-  };
-  const line = ArrayTools6.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(chlk.gray1(center(line, void 0, lineChar)));
-  return 1;
-};
-var section = async (question, sectionFn, ...questionFns) => {
-  const lc = getLineCounter();
-  const sep = () => lc.add(separator("none", void 0, 1));
-  if (sectionFn) {
-    lc.add(separator("down"));
-    await sectionFn(lc, sep);
-    lc.add(separator("up"));
-  }
-  const results = [];
-  if (questionFns.length) {
-    for (let questionFn of questionFns) {
-      const checkpoint = lc.checkpoint();
-      results.push(await lc.wrap(1, () => questionFn(question, results, lc, sep)));
-      lc.clearToCheckpoint(checkpoint);
-    }
-  }
-  lc.clear();
-  if (question) {
-    let resultOut = "done";
-    if (results.length === 1) {
-      resultOut = results[0];
-    }
-    if (results.length > 1) {
-      if (typeof results[0] === "boolean") {
-        resultOut = results[0];
-      }
-      resultOut = results;
-    }
-    imitate(true, question, resultOut);
-  }
-  return results;
-};
-
 // src/tools/ask/datetime.ts
-import chalk10 from "chalk";
+import chalk11 from "chalk";
 import { getDeferred as getDeferred3, getTimer } from "swiss-ak";
 
 // src/utils/dynDates.ts
@@ -1946,28 +1853,28 @@ var getNumberInputter = (timeout = seconds3(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-import chalk9 from "chalk";
+import chalk10 from "chalk";
 import stringWidth4 from "string-width";
 import { range } from "swiss-ak";
 
 // src/tools/ask/datetime/styles.ts
-import chalk8 from "chalk";
+import chalk9 from "chalk";
 var sectionStyles = {
   sectActive: {
     dark: chlk.gray1,
     mid: chlk.gray3,
-    normal: chalk8.white,
-    tertiary: chalk8.yellowBright,
-    secondary: chalk8.bgWhite.black,
-    primary: chalk8.bgYellow.black
+    normal: chalk9.white,
+    tertiary: chalk9.yellowBright,
+    secondary: chalk9.bgWhite.black,
+    primary: chalk9.bgYellow.black
   },
   sectInactive: {
     dark: chlk.gray1,
     mid: chlk.gray2,
     normal: chlk.gray3,
-    tertiary: chalk8.yellow,
-    secondary: chalk8.bgGray.black,
-    primary: chalk8.bgWhite.black
+    tertiary: chalk9.yellow,
+    secondary: chalk9.bgGray.black,
+    primary: chalk9.bgWhite.black
   }
 };
 var getStyles = (active) => active ? sectionStyles.sectActive : sectionStyles.sectInactive;
@@ -1993,28 +1900,28 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const monthCells = getMonthCells(year, month);
   const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
-  const formatNonMonth = nonMonthCoors.map(([x, y]) => utils2.getFormat(styles.mid, y, x));
-  const formatDim = [...formatNonMonth, utils2.getFormat(styles.normal, void 0, void 0, true)];
+  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(styles.mid, y, x));
+  const formatDim = [...formatNonMonth, table.utils.getFormat(styles.normal, void 0, void 0, true)];
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => utils2.getFormat((s) => chalk9.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk10.reset(styles.primary(s)), y, x)));
   }
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(utils2.getFormat((s) => chalk9.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat((s) => chalk10.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
     }
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
     const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
-    const formatInter = interCoors.map(([x, y]) => utils2.getFormat(styles.tertiary, y, x));
+    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(styles.tertiary, y, x));
     formatCursor.push(...formatInter);
   }
   const body = monthCells.map((row) => row.map((val) => ` ${(Math.abs(val) + "").padStart(2)} `)).map((row) => row.slice(...slice));
   const headers = [daysOfWeek.slice(...slice)];
-  const lines = getLines2(body, headers, {
+  const lines = table.getLines(body, headers, {
     drawOuter: false,
     drawColLines: false,
     drawRowLines: false,
@@ -2027,13 +1934,13 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const monthWidth = stringWidth4(lines[0]);
   const dispYear = stringWidth4(lines[0]) > 20 ? ` ${year}` : "";
   const dispMonth = monthNames[month - 1].slice(0, stringWidth4(lines[0]) - 2);
-  const getTitle = (text2, prefix, suffix) => {
+  const getTitle = (text, prefix, suffix) => {
     const resPrefix = active ? styles.dark(prefix) : "";
     const resSuffix = active ? styles.dark(suffix) : "";
-    const resText = center(styles.normal(text2), monthWidth - (stringWidth4(resPrefix) + stringWidth4(resSuffix)));
+    const resText = out.center(styles.normal(text), monthWidth - (stringWidth4(resPrefix) + stringWidth4(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
-  const titleYear = active ? getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ") : center(styles.dark(dispYear), monthWidth);
+  const titleYear = active ? getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ") : out.center(styles.dark(dispYear), monthWidth);
   const titleMonth = getTitle(dispMonth, "  \u25C0 A", "D \u25B6  ");
   return {
     table: [titleYear, titleMonth, ...lines],
@@ -2066,11 +1973,11 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
     recalc(skipDisplay);
   };
   const display = () => {
-    const sliceAmount = getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
+    const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
     tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], ...cursors[selected]);
     tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], ...prevMonth);
     tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], ...nextMonth);
-    displayCb(concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
+    displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
   };
   const userActions = {
     setDate: (date2) => setCursor([cursors[selected][0], cursors[selected][1], date2]),
@@ -2141,8 +2048,8 @@ var getSingleTimeDial = (value, sectionActive, dialActive, max, label) => {
   const wrapFns = [wrappers.mid, wrappers.normal, dialActive ? wrappers.primary : wrappers.secondary];
   const showExtra = wrapFns.length - 1;
   const dialNums = range2(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
-  const dial = rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
-  const lines = centerLines([wrappers.normal(label), wrappers.dark("\u25E2\u25E3"), ...dial, wrappers.dark("\u25E5\u25E4")], 4);
+  const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
+  const lines = out.centerLines([wrappers.normal(label), wrappers.dark("\u25E2\u25E3"), ...dial, wrappers.dark("\u25E5\u25E4")], 4);
   return lines;
 };
 var timeHandler = (isActive, initial, displayCb) => {
@@ -2154,8 +2061,8 @@ var timeHandler = (isActive, initial, displayCb) => {
   let active = isActive;
   const display = () => {
     const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i]));
-    const lines = concatLineGroups(...dials);
-    const padded = centerLines(lines);
+    const lines = out.concatLineGroups(...dials);
+    const padded = out.centerLines(lines);
     displayCb(padded);
   };
   const userActions = {
@@ -2200,7 +2107,7 @@ var timeHandler = (isActive, initial, displayCb) => {
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = getTimer("DEBUG", false, chalk10.red, chalk10);
+var DEBUG_TIMER = getTimer("DEBUG", false, chalk11.red, chalk11);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2273,14 +2180,14 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
     if (date2.length)
       sections.push(date2);
     if (date2.length && time2.length)
-      sections.push(centerLines([""], 8));
+      sections.push(out.centerLines([""], 8));
     if (time2.length)
-      sections.push(date2.length ? centerLines(["", "", ...time2]) : time2);
+      sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
-    const outMain = center(utils.joinLines(sections.length ? concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
+    const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
     const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler);
     lc.clear();
-    lc.wrap(1, () => imitate(false, questionText, outState));
+    lc.wrap(1, () => ask.imitate(false, questionText, outState));
     lc.log();
     lc.log(outMain);
     lc.log();
@@ -2308,7 +2215,7 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     kl.stop();
     lc.clear();
-    imitate(false, questionText, outState);
+    ask.imitate(false, questionText, outState);
     deferred.resolve([dates, time2]);
   };
   const numberInputter = getNumberInputter();
@@ -2373,22 +2280,63 @@ var dateRange = async (questionText, initialStart, initialEnd) => {
   return [dynDateToDate(ddate1), dynDateToDate(ddate2)];
 };
 
+// src/tools/ask/section.ts
+import { ArrayTools as ArrayTools6 } from "swiss-ak";
+var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2) => {
+  const lineChar = "\u2504";
+  const chars = {
+    down: "\u25BF",
+    none: "\u25E6",
+    up: "\u25B5"
+  };
+  const line = ArrayTools6.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  console.log(chlk.gray1(out.center(line, void 0, lineChar)));
+  return 1;
+};
+var section = async (question, sectionFn, ...questionFns) => {
+  const lc = getLineCounter();
+  const sep = () => lc.add(separator("none", void 0, 1));
+  if (sectionFn) {
+    lc.add(separator("down"));
+    await sectionFn(lc, sep);
+    lc.add(separator("up"));
+  }
+  const results = [];
+  if (questionFns.length) {
+    for (let questionFn of questionFns) {
+      const checkpoint = lc.checkpoint();
+      results.push(await lc.wrap(1, () => questionFn(question, results, lc, sep)));
+      lc.clearToCheckpoint(checkpoint);
+    }
+  }
+  lc.clear();
+  if (question) {
+    let resultOut = "done";
+    if (results.length === 1) {
+      resultOut = results[0];
+    }
+    if (results.length > 1) {
+      if (typeof results[0] === "boolean") {
+        resultOut = results[0];
+      }
+      resultOut = results;
+    }
+    ask.imitate(true, question, resultOut);
+  }
+  return results;
+};
+
 // src/tools/ask/table.ts
-var table_exports2 = {};
-__export(table_exports2, {
-  multiselect: () => multiselect,
-  select: () => select
-});
-import { fn as fn9, getDeferred as getDeferred4, symbols as symbols3 } from "swiss-ak";
-import chalk11 from "chalk";
-var highlightFn = chalk11.cyan.underline;
+import { fn as fn9, getDeferred as getDeferred4, symbols as symbols4 } from "swiss-ak";
+import chalk12 from "chalk";
+var highlightFn = chalk12.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
   const deferred = getDeferred4();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
-  lc.add(imitate(false, questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`));
+  lc.add(ask.imitate(false, questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`));
   lc.checkpoint("AFTER_Q");
   let lastDrawnRows = [];
   const drawTable = () => {
@@ -2407,25 +2355,25 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       header = headers;
     } else {
       const isHeaderObj = headers && !(headers instanceof Array);
-      const objTable = utils2.objectsToTable(items, isHeaderObj ? headers : void 0);
+      const objTable = table.utils.objectsToTable(items, isHeaderObj ? headers : void 0);
       body = objTable.body;
       header = isHeaderObj ? objTable.header : headers;
     }
     const finalBody = body.map((row, index) => {
       let firstCell;
       if (isMulti) {
-        const selectedSym = symbols3.RADIO_FULL;
-        const unselectedSym = symbols3.RADIO_EMPTY;
-        firstCell = selectedIndexes.includes(index) ? chalk11.reset(chalk11.green(selectedSym)) : chalk11.reset(unselectedSym);
+        const selectedSym = symbols4.RADIO_FULL;
+        const unselectedSym = symbols4.RADIO_EMPTY;
+        firstCell = selectedIndexes.includes(index) ? chalk12.reset(chalk12.green(selectedSym)) : chalk12.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? chalk11.reset(chalk11.cyan(symbols3.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? chalk12.reset(chalk12.cyan(symbols4.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
     const finalHeaders = header.length ? header.map((row) => ["", ...row]) : [];
     lastDrawnRows = finalBody;
     lc.clearToCheckpoint("AFTER_Q");
-    lc.add(print(finalBody, finalHeaders, tableOpts));
+    lc.add(table.print(finalBody, finalHeaders, tableOpts));
     lc.checkpoint("AFTER_TABLE");
   };
   drawTable();
@@ -2447,7 +2395,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     kl.stop();
     const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn9.isTruthy);
     lc.clear();
-    imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
+    ask.imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
     deferred.resolve(results);
   };
   const listenCallback = (key) => {
@@ -2473,367 +2421,319 @@ var multiselect = (question, items, initial, rows, headers, tableOptions) => ask
 
 // src/tools/ask.ts
 var PROMPT_VALUE_PROPERTY = "SWISS_NODE_PROMPT_VALUE";
-var promptsOptions = {
-  onCancel() {
-    process.exit(0);
-  }
-};
-var text = async (question, initial) => {
-  const message = typeof question === "string" ? question : question.get();
-  const response = await prompts(
-    {
-      type: "text",
-      name: PROMPT_VALUE_PROPERTY,
-      message,
-      initial
-    },
-    promptsOptions
-  );
-  return "" + response[PROMPT_VALUE_PROPERTY];
-};
-var autotext = async (question, choices, initial, choiceLimit = 10) => {
-  const message = typeof question === "string" ? question : question.get();
-  let response = {};
-  const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-  let initialId = 0;
-  if (initial) {
-    initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
-    if (initialId < 0)
-      initialId = typeof initial === "string" ? initial : 0;
-  }
-  const fuzzy = new Fuse(choiceObjs, {
-    includeScore: false,
-    keys: ["title", "value"]
-  });
-  response = await prompts(
-    {
-      type: "autocomplete",
-      name: PROMPT_VALUE_PROPERTY,
-      choices: choiceObjs,
-      message,
-      limit: choiceLimit,
-      initial: initialId,
-      suggest: async (text2, ch) => {
-        const filtered = fuzzy.search(text2);
-        const list = text2 ? filtered.map(({ item }) => item) : choiceObjs;
-        return list;
-      }
-    },
-    promptsOptions
-  );
-  return response[PROMPT_VALUE_PROPERTY];
-};
-var number = async (question, initial = 1) => {
-  const message = typeof question === "string" ? question : question.get();
-  const response = await prompts(
-    {
-      type: "number",
-      name: PROMPT_VALUE_PROPERTY,
-      message,
-      initial
-    },
-    promptsOptions
-  );
-  return Number(response[PROMPT_VALUE_PROPERTY]);
-};
-var boolean = async (question, initial = true, yesTxt = "yes", noTxt = "no") => {
-  const message = typeof question === "string" ? question : question.get();
-  const response = await prompts(
-    {
-      type: "toggle",
-      name: PROMPT_VALUE_PROPERTY,
-      message,
-      initial: !initial,
-      active: noTxt,
-      inactive: yesTxt
-    },
-    promptsOptions
-  );
-  return !Boolean(response[PROMPT_VALUE_PROPERTY]);
-};
-var booleanAlt = async (question, initial = true) => {
-  const message = typeof question === "string" ? question : question.get();
-  const response = await prompts(
-    {
-      type: "confirm",
-      name: PROMPT_VALUE_PROPERTY,
-      message,
-      initial
-    },
-    promptsOptions
-  );
-  return Boolean(response[PROMPT_VALUE_PROPERTY]);
-};
-var select2 = async (question, choices, initial) => {
-  const message = typeof question === "string" ? question : question.get();
-  const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-  let initialId = 0;
-  if (initial) {
-    initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
-    if (initialId < 0)
-      initialId = 0;
-  }
-  const response = await prompts(
-    {
-      type: "select",
-      name: PROMPT_VALUE_PROPERTY,
-      message,
-      choices: choiceObjs,
-      initial: initialId
-    },
-    promptsOptions
-  );
-  const value = response[PROMPT_VALUE_PROPERTY];
-  return typeof value === "number" ? choiceObjs[value] : value;
-};
-var multiselect2 = async (question, choices, initial, canSelectAll = false) => {
-  const message = typeof question === "string" ? question : question.get();
-  if (!choices || choices.length === 0) {
-    return [];
-  }
-  let choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-  if (initial) {
-    const initialSelected = [initial].flat();
-    choiceObjs = choiceObjs.map((choice) => ({
-      selected: Boolean(initialSelected.find((x) => x === choice || x === choice.value)),
-      ...choice
-    }));
-  }
-  if (canSelectAll) {
-    choiceObjs = [{ title: chlk.gray4("[Select all]"), value: "***SELECT_ALL***" }, ...choiceObjs];
-  }
-  const response = await prompts(
-    {
-      type: "multiselect",
-      name: PROMPT_VALUE_PROPERTY,
-      instructions: false,
-      message,
-      choices: choiceObjs
-    },
-    promptsOptions
-  );
-  const result = response[PROMPT_VALUE_PROPERTY] ? response[PROMPT_VALUE_PROPERTY] : [];
-  let selected = result.map((value) => typeof value === "number" ? choiceObjs[value] : value);
-  if (selected.includes("***SELECT_ALL***")) {
-    selected = choiceObjs.map((choice) => choice.value).filter((value) => !(value + "").startsWith("***") && !(value + "").endsWith("***"));
-  }
-  return selected;
-};
-var crud = async (question, itemName = "item", items, options = {}) => {
-  const fullOptions = {
-    canCreate: true,
-    canUpdate: true,
-    canDelete: true,
-    canDeleteAll: true,
-    ...options
-  };
-  const opts = [{ title: chalk12.dim(`${clr.approve(symbols4.TICK)} [ Finished ]`), value: "none" }];
-  if (fullOptions.canCreate) {
-    opts.push({ title: `${clr.create(symbols4.PLUS)} Add another ${itemName}`, value: "create" });
-  }
-  if (items.length > 0) {
-    if (fullOptions.canUpdate) {
-      opts.push({ title: `${clr.update(symbols4.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
-    }
-    if (fullOptions.canDelete) {
-      opts.push({ title: `${clr.delete(symbols4.CROSS)} Remove ${itemName}`, value: "delete" });
-    }
-    if (fullOptions.canDeleteAll) {
-      opts.push({ title: `${clr.deleteAll(symbols4.TIMES)} Remove all`, value: "delete-all" });
-    }
-  }
-  return await select2(question, opts, "none");
-};
-var validate = async (askFunc, validateFn) => {
-  const runLoop = async (initial, extraLines = 0) => {
-    const input = await askFunc(initial);
-    const validateResponse = await validateFn(input);
-    if (validateResponse === true) {
-      return input;
-    } else {
-      const message = validateResponse || "";
-      moveUp(1 + extraLines);
-      console.log(chalk12.red(message));
-      return runLoop(input, message.split("\n").length);
+var ask;
+((ask2) => {
+  const promptsOptions = {
+    onCancel() {
+      process.exit(0);
     }
   };
-  return runLoop();
-};
-var imitateHighlight = chalk12.cyanBright.bold.underline;
-var getImitateResultText = (result, isChild = false) => {
-  if (result instanceof Array) {
-    if (result.length > 3)
-      return `${result.length} selected`;
-    return result.map((item) => getImitateResultText(item, true)).join(", ");
-  }
-  if (typeof result === "object") {
-    const usableProps = ["name", "title", "display", "value"];
-    for (let prop in usableProps) {
-      if (result[prop])
-        return result[prop];
+  ask2.text = async (question, initial) => {
+    const message = typeof question === "string" ? question : question.get();
+    const response = await prompts(
+      {
+        type: "text",
+        name: PROMPT_VALUE_PROPERTY,
+        message,
+        initial
+      },
+      promptsOptions
+    );
+    return "" + response[PROMPT_VALUE_PROPERTY];
+  };
+  ask2.autotext = async (question, choices, initial, choiceLimit = 10) => {
+    const message = typeof question === "string" ? question : question.get();
+    let response = {};
+    const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
+    let initialId = 0;
+    if (initial) {
+      initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
+      if (initialId < 0)
+        initialId = typeof initial === "string" ? initial : 0;
     }
-  }
-  if (typeof result === "boolean") {
-    if (isChild)
-      return result + "";
-    return result ? `${imitateHighlight("yes")} / no` : `yes / ${imitateHighlight("no")}`;
-  }
-  if (typeof result === "number") {
-    return result + "";
-  }
-  if (typeof result === "string") {
-    return result;
-  }
-  return "done";
-};
-var imitate = (done, question, result) => {
-  const message = typeof question === "string" ? question : question.get();
-  const resultText = getImitateResultText(result);
-  const prefix = done ? chalk12.green("\u2714") : chalk12.cyan("?");
-  const questionText = chalk12.whiteBright.bold(message);
-  const joiner = resultText ? chalk12.gray(done ? "\u2026 " : "\u203A ") : "";
-  const mainLength = stringWidth5(`${prefix} ${questionText} ${joiner}`);
-  const maxLength = utils.getTerminalWidth() - mainLength - 1;
-  let resultWrapper = utils.hasColor(resultText) ? fn10.noact : done ? chalk12.white : chalk12.gray;
-  const resultOut = resultText ? truncate(`${resultWrapper(resultText)}`, maxLength) : "";
-  console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
-  return 1;
-};
-var prefill = async (value, question, askFn) => {
-  if (value !== void 0) {
-    imitate(true, question, value);
-    return value;
-  }
-  return askFn(question);
-};
-var loading2 = (question) => loading((s) => imitate(false, question, `[${s}]`));
-var pause = async (text2 = "Press enter to continue...") => {
-  return new Promise((resolve) => {
-    const message = typeof text2 === "string" ? text2 : text2.get();
-    console.log(chalk12.gray(message));
-    const finish = () => {
-      kl.stop();
-      resolve();
-    };
-    const kl = getKeyListener((key) => {
-      switch (key) {
-        case "return":
-          return finish();
-      }
+    const fuzzy = new Fuse(choiceObjs, {
+      includeScore: false,
+      keys: ["title", "value"]
     });
-  });
-};
-var countdown = async (totalSeconds, template = (s) => `Starting in ${s}s...`, complete) => {
-  console.log();
-  let lines = 1;
-  for (let s = totalSeconds; s > 0; s--) {
-    const textValue = template(s);
-    moveUp(lines);
-    lines = textValue.split("\n").length;
-    console.log(chalk12.blackBright(textValue));
-    await wait3(seconds4(1));
-  }
-  moveUp(lines);
-  if (complete) {
-    console.log(complete);
-  }
-};
-var wizard = (startObj = {}) => {
-  let obj = { ...startObj };
-  const history = [];
-  history.push(obj);
-  return {
-    add(partial) {
-      obj = {
-        ...obj,
-        ...partial
-      };
-      history.push(obj);
-    },
-    getPartial() {
-      return obj;
-    },
-    get() {
-      return obj;
-    }
+    response = await prompts(
+      {
+        type: "autocomplete",
+        name: PROMPT_VALUE_PROPERTY,
+        choices: choiceObjs,
+        message,
+        limit: choiceLimit,
+        initial: initialId,
+        suggest: async (text2, ch) => {
+          const filtered = fuzzy.search(text2);
+          const list = text2 ? filtered.map(({ item }) => item) : choiceObjs;
+          return list;
+        }
+      },
+      promptsOptions
+    );
+    return response[PROMPT_VALUE_PROPERTY];
   };
-};
-var itemsToPromptObjects = (items, titles = [], titleFn) => {
-  return items.map((item, index, arr) => ({ title: titleFn && titleFn(item, index, arr) || titles[index] || item + "", value: item }));
-};
-var utils3 = {
-  itemsToPromptObjects
-};
-
-// src/tools/out/breadcrumb.ts
-import chalk13 from "chalk";
-import { symbols as symbols5 } from "swiss-ak";
-var seperatorChar = ` ${chlk.gray2(symbols5.CHEV_RGT)} `;
-var getBreadcrumb = (...baseNames) => {
-  let current = [];
-  let colours = ["t1", "t2", "t3", "t4", "t5", "t6"];
-  const setColours = (newColours) => {
-    colours = newColours;
+  ask2.number = async (question, initial = 1) => {
+    const message = typeof question === "string" ? question : question.get();
+    const response = await prompts(
+      {
+        type: "number",
+        name: PROMPT_VALUE_PROPERTY,
+        message,
+        initial
+      },
+      promptsOptions
+    );
+    return Number(response[PROMPT_VALUE_PROPERTY]);
   };
-  const add = (...names) => current.push(...names);
-  const getColouredName = (name, index, arr) => utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
-  const getColouredNames = (...tempNames) => getNames(...tempNames).map(getColouredName);
-  const getNames = (...tempNames) => [...baseNames, ...current, ...tempNames];
-  const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
-  const otherChars = "?  > ";
-  const spaceForInput = 25;
-  const get = (...tempNames) => chalk13.bold(
-    truncate(
-      getColouredNames(...tempNames).join(seperatorChar).trim(),
-      utils.getTerminalWidth() - (otherChars.length - spaceForInput)
-    )
-  );
-  const result = (...tempNames) => sub(...tempNames);
-  result.setColours = setColours;
-  result.add = add;
-  result.getNames = getNames;
-  result.sub = sub;
-  result.get = get;
-  result.toString = get;
-  return result;
-};
-
-// src/tools/progressBarTools.ts
-var progressBarTools_exports = {};
-__export(progressBarTools_exports, {
-  getColouredProgressBarOpts: () => getColouredProgressBarOpts
-});
-import chalk14 from "chalk";
-import { ArrayTools as ArrayTools7 } from "swiss-ak";
-var getColouredProgressBarOpts = (opts, randomise = false) => {
-  let wrapperFns = [chalk14.yellowBright, chalk14.magenta, chalk14.blueBright, chalk14.cyanBright, chalk14.greenBright, chalk14.redBright];
-  if (randomise) {
-    wrapperFns = ArrayTools7.randomise(wrapperFns);
-  }
-  let index = 0;
-  return (prefix = "", override = {}, resetColours = false) => {
-    if (resetColours) {
-      index = 0;
+  ask2.boolean = async (question, initial = true, yesTxt = "yes", noTxt = "no") => {
+    const message = typeof question === "string" ? question : question.get();
+    const response = await prompts(
+      {
+        type: "toggle",
+        name: PROMPT_VALUE_PROPERTY,
+        message,
+        initial: !initial,
+        active: noTxt,
+        inactive: yesTxt
+      },
+      promptsOptions
+    );
+    return !Boolean(response[PROMPT_VALUE_PROPERTY]);
+  };
+  ask2.booleanAlt = async (question, initial = true) => {
+    const message = typeof question === "string" ? question : question.get();
+    const response = await prompts(
+      {
+        type: "confirm",
+        name: PROMPT_VALUE_PROPERTY,
+        message,
+        initial
+      },
+      promptsOptions
+    );
+    return Boolean(response[PROMPT_VALUE_PROPERTY]);
+  };
+  ask2.select = async (question, choices, initial) => {
+    const message = typeof question === "string" ? question : question.get();
+    const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
+    let initialId = 0;
+    if (initial) {
+      initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
+      if (initialId < 0)
+        initialId = 0;
     }
-    const result = {
-      ...opts,
-      prefix,
-      ...override
+    const response = await prompts(
+      {
+        type: "select",
+        name: PROMPT_VALUE_PROPERTY,
+        message,
+        choices: choiceObjs,
+        initial: initialId
+      },
+      promptsOptions
+    );
+    const value = response[PROMPT_VALUE_PROPERTY];
+    return typeof value === "number" ? choiceObjs[value] : value;
+  };
+  ask2.multiselect = async (question, choices, initial, canSelectAll = false) => {
+    const message = typeof question === "string" ? question : question.get();
+    if (!choices || choices.length === 0) {
+      return [];
+    }
+    let choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
+    if (initial) {
+      const initialSelected = [initial].flat();
+      choiceObjs = choiceObjs.map((choice) => ({
+        selected: Boolean(initialSelected.find((x) => x === choice || x === choice.value)),
+        ...choice
+      }));
+    }
+    if (canSelectAll) {
+      choiceObjs = [{ title: chlk.gray4("[Select all]"), value: "***SELECT_ALL***" }, ...choiceObjs];
+    }
+    const response = await prompts(
+      {
+        type: "multiselect",
+        name: PROMPT_VALUE_PROPERTY,
+        instructions: false,
+        message,
+        choices: choiceObjs
+      },
+      promptsOptions
+    );
+    const result = response[PROMPT_VALUE_PROPERTY] ? response[PROMPT_VALUE_PROPERTY] : [];
+    let selected = result.map((value) => typeof value === "number" ? choiceObjs[value] : value);
+    if (selected.includes("***SELECT_ALL***")) {
+      selected = choiceObjs.map((choice) => choice.value).filter((value) => !(value + "").startsWith("***") && !(value + "").endsWith("***"));
+    }
+    return selected;
+  };
+  ask2.crud = async (question, itemName = "item", items, options = {}) => {
+    const fullOptions = {
+      canCreate: true,
+      canUpdate: true,
+      canDelete: true,
+      canDeleteAll: true,
+      ...options
     };
-    if (!result.wrapperFn) {
-      result.wrapperFn = wrapperFns[index % wrapperFns.length];
-      index++;
+    const opts = [{ title: chalk13.dim(`${clr.approve(symbols5.TICK)} [ Finished ]`), value: "none" }];
+    if (fullOptions.canCreate) {
+      opts.push({ title: `${clr.create(symbols5.PLUS)} Add another ${itemName}`, value: "create" });
     }
-    if (result.prefix && result.prefixWidth) {
-      result.prefix = truncate(result.prefix, result.prefixWidth, "\u2026");
+    if (items.length > 0) {
+      if (fullOptions.canUpdate) {
+        opts.push({ title: `${clr.update(symbols5.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
+      }
+      if (fullOptions.canDelete) {
+        opts.push({ title: `${clr.remove(symbols5.CROSS)} Remove ${itemName}`, value: "delete" });
+      }
+      if (fullOptions.canDeleteAll) {
+        opts.push({ title: `${clr.removeAll(symbols5.TIMES)} Remove all`, value: "delete-all" });
+      }
     }
-    return result;
+    return await ask2.select(question, opts, "none");
   };
-};
+  ask2.validate = async (askFunc, validateFn) => {
+    const runLoop = async (initial, extraLines = 0) => {
+      const input = await askFunc(initial);
+      const validateResponse = await validateFn(input);
+      if (validateResponse === true) {
+        return input;
+      } else {
+        const message = validateResponse || "";
+        out.moveUp(1 + extraLines);
+        console.log(chalk13.red(message));
+        return runLoop(input, message.split("\n").length);
+      }
+    };
+    return runLoop();
+  };
+  const imitateHighlight = chalk13.cyanBright.bold.underline;
+  const getImitateResultText = (result, isChild = false) => {
+    if (result instanceof Array) {
+      if (result.length > 3)
+        return `${result.length} selected`;
+      return result.map((item) => getImitateResultText(item, true)).join(", ");
+    }
+    if (typeof result === "object") {
+      const usableProps = ["name", "title", "display", "value"];
+      for (let prop in usableProps) {
+        if (result[prop])
+          return result[prop];
+      }
+    }
+    if (typeof result === "boolean") {
+      if (isChild)
+        return result + "";
+      return result ? `${imitateHighlight("yes")} / no` : `yes / ${imitateHighlight("no")}`;
+    }
+    if (typeof result === "number") {
+      return result + "";
+    }
+    if (typeof result === "string") {
+      return result;
+    }
+    return "done";
+  };
+  ask2.imitate = (done, question, result) => {
+    const message = typeof question === "string" ? question : question.get();
+    const resultText = getImitateResultText(result);
+    const prefix = done ? chalk13.green("\u2714") : chalk13.cyan("?");
+    const questionText = chalk13.whiteBright.bold(message);
+    const joiner = resultText ? chalk13.gray(done ? "\u2026 " : "\u203A ") : "";
+    const mainLength = stringWidth5(`${prefix} ${questionText} ${joiner}`);
+    const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
+    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? chalk13.white : chalk13.gray;
+    const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : "";
+    console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
+    return 1;
+  };
+  ask2.prefill = async (value, question, askFn) => {
+    if (value !== void 0) {
+      ask2.imitate(true, question, value);
+      return value;
+    }
+    return askFn(question);
+  };
+  ask2.loading = (question) => out.loading((s) => ask2.imitate(false, question, `[${s}]`));
+  ask2.pause = async (text2 = "Press enter to continue...") => {
+    return new Promise((resolve) => {
+      const message = typeof text2 === "string" ? text2 : text2.get();
+      console.log(chalk13.gray(message));
+      const finish = () => {
+        kl.stop();
+        resolve();
+      };
+      const kl = getKeyListener((key) => {
+        switch (key) {
+          case "return":
+            return finish();
+        }
+      });
+    });
+  };
+  ask2.countdown = async (totalSeconds, template = (s) => `Starting in ${s}s...`, complete) => {
+    console.log();
+    let lines = 1;
+    for (let s = totalSeconds; s > 0; s--) {
+      const textValue = template(s);
+      out.moveUp(lines);
+      lines = textValue.split("\n").length;
+      console.log(chalk13.blackBright(textValue));
+      await wait3(seconds4(1));
+    }
+    out.moveUp(lines);
+    if (complete) {
+      console.log(complete);
+    }
+  };
+  ask2.wizard = (startObj = {}) => {
+    let obj = { ...startObj };
+    const history = [];
+    history.push(obj);
+    return {
+      add(partial) {
+        obj = {
+          ...obj,
+          ...partial
+        };
+        history.push(obj);
+      },
+      getPartial() {
+        return obj;
+      },
+      get() {
+        return obj;
+      }
+    };
+  };
+  ask2.date = date;
+  ask2.time = time;
+  ask2.datetime = datetime;
+  ask2.dateRange = dateRange;
+  ask2.fileExplorer = fileExplorer;
+  ask2.multiFileExplorer = multiFileExplorer;
+  ask2.saveFileExplorer = saveFileExplorer;
+  let table2;
+  ((table3) => {
+    table3.select = select;
+    table3.multiselect = multiselect;
+  })(table2 = ask2.table || (ask2.table = {}));
+  ask2.trim = trim;
+  ask2.separator = separator;
+  ask2.section = section;
+  let utils;
+  ((utils2) => {
+    utils2.itemsToPromptObjects = (items, titles = [], titleFn) => {
+      return items.map((item, index, arr) => ({ title: titleFn && titleFn(item, index, arr) || titles[index] || item + "", value: item }));
+    };
+  })(utils = ask2.utils || (ask2.utils = {}));
+})(ask || (ask = {}));
 
 // src/tools/log.ts
 import util from "util";
-import chalk15 from "chalk";
+import chalk14 from "chalk";
 import { ObjectTools as ObjectTools2 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -2843,41 +2743,41 @@ var defaultOptions = {
 var defaultConfigs = {
   blank: {
     name: "",
-    nameColour: chalk15,
+    nameColour: chalk14,
     showDate: false,
     showTime: false
   },
   log: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk14.bgWhite.black
   },
   out: {
     name: "OUT",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk14.bgWhite.black
   },
   normal: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk14.bgWhite.black
   },
   verbose: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk14.bgWhite.black
   },
   debug: {
     name: "DBUG",
-    nameColour: chalk15.bgMagenta.whiteBright
+    nameColour: chalk14.bgMagenta.whiteBright
   },
   info: {
     name: "INFO",
-    nameColour: chalk15.bgBlue.whiteBright
+    nameColour: chalk14.bgBlue.whiteBright
   },
   warn: {
     name: "WARN",
-    nameColour: chalk15.bgYellowBright.black
+    nameColour: chalk14.bgYellowBright.black
   },
   error: {
     name: "ERRR",
-    nameColour: chalk15.bgRed.whiteBright
+    nameColour: chalk14.bgRed.whiteBright
   }
 };
 var getStr = (enableColours) => (item) => {
@@ -2902,11 +2802,11 @@ var formatLog = (args, config, completeOptions, longestName = 1) => {
   const now = new Date();
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
   const { name, nameColour, contentColour, showDate, showTime } = config;
-  const dateWrapper = enableColours ? chalk15.dim : (str) => str;
+  const dateWrapper = enableColours ? chalk14.dim : (str) => str;
   const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
   const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
-  const nameStr = ` ${center(`${name}`, longestName)} `;
+  const nameStr = ` ${out.center(`${name}`, longestName)} `;
   const prefixRaw = `${dateStr}${nameStr} `;
   const prefix = `${dateWrapper(dateStr)}${nameWrapper(nameStr)} `;
   return args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixRaw.length) : prefix) + contentWrapper(line)).join("\n");
@@ -2925,25 +2825,62 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 };
 var log = createLogger({});
 
+// src/tools/progressBarTools.ts
+import chalk15 from "chalk";
+import { ArrayTools as ArrayTools7 } from "swiss-ak";
+var progressBarTools;
+((progressBarTools2) => {
+  progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
+    let wrapperFns = [chalk15.yellowBright, chalk15.magenta, chalk15.blueBright, chalk15.cyanBright, chalk15.greenBright, chalk15.redBright];
+    if (randomise) {
+      wrapperFns = ArrayTools7.randomise(wrapperFns);
+    }
+    let index = 0;
+    return (prefix = "", override = {}, resetColours = false) => {
+      if (resetColours) {
+        index = 0;
+      }
+      const result = {
+        ...opts,
+        prefix,
+        ...override
+      };
+      if (!result.wrapperFn) {
+        result.wrapperFn = wrapperFns[index % wrapperFns.length];
+        index++;
+      }
+      if (result.prefix && result.prefixWidth) {
+        result.prefix = out.truncate(result.prefix, result.prefixWidth, "\u2026");
+      }
+      return result;
+    };
+  };
+})(progressBarTools || (progressBarTools = {}));
+
 // src/tools/waiters.ts
-var nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
+var waiters;
+((waiters2) => {
+  waiters2.nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
+})(waiters || (waiters = {}));
+var nextTick = waiters.nextTick;
 export {
-  LogTools_exports as LogTools,
-  PathTools_exports as PathTools,
-  ask_exports as ask,
+  LogTools,
+  PathTools,
+  ask,
   chlk,
   clr,
   createLogger,
   explodePath,
-  getBreadcrumb,
+  getBreadcrumb2 as getBreadcrumb,
   getKeyListener,
-  getLineCounter,
+  getLineCounter2 as getLineCounter,
   getLog,
   getLogStr,
   log,
   nextTick,
-  out_exports as out,
+  out,
   processLogContents,
-  progressBarTools_exports as progressBarTools,
-  table_exports as table
+  progressBarTools,
+  table,
+  waiters
 };

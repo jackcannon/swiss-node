@@ -1,12 +1,12 @@
 import chalk from 'chalk';
 import { symbols } from 'swiss-ak';
 import { chlk, clr, Colour } from '../clr';
-import * as out from '../out';
+import { out } from '../out';
 
 const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
 
 //<!-- DOCS: 250 -->
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: out.getBreadcrumb ### -->
  * getBreadcrumb
  *
  * - `out.getBreadcrumb`
@@ -74,7 +74,7 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   return result;
 };
 
-/**<!-- DOCS: #### -->
+/**<!-- DOCS: out.Breadcrumb #### -->
  * Breadcrumb
  *
  * - `out.Breadcrumb`

@@ -21,14 +21,14 @@ import {
 } from 'swiss-ak';
 import chalk from 'chalk';
 
-import * as ask from '../ask';
-import * as out from '../out';
+import { ask } from '../ask';
+import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { chlk } from '../clr';
-import { explodePath, removeDoubleSlashes, trailSlash } from '../PathTools';
+import { PathTools } from '../PathTools';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
-import * as table from '../table';
+import { table } from '../table';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { findDirs, findFiles, getProbe, isDirExist, isFileExist, MiniProbeResult, mkdir, open } from '../../utils/fsUtils';
 import { nextTick } from '../waiters';
@@ -95,7 +95,7 @@ const getPathType = async (path: string): Promise<'d' | 'f'> => {
 
 const join = (...items: string[]) => {
   const result = items.join('/');
-  return removeDoubleSlashes(result || '/');
+  return PathTools.removeDoubleSlashes(result || '/');
 };
 
 const keyActionDict: ActionBarConfig = {
@@ -206,7 +206,7 @@ const humanFileSize = (size: number) => {
 };
 
 const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
-  const { filename, ext } = explodePath(path);
+  const { filename, ext } = PathTools.explodePath(path);
 
   const { stat, probe } = getPathContents(path)?.info || {};
 
@@ -294,7 +294,7 @@ const fileExplorerHandler = async (
 
     currentPath = paths[paths.length - 1];
 
-    const isDir = getPathContents(paths[paths.length - 2])?.dirs.includes(explodePath(currentPath).filename) || false;
+    const isDir = getPathContents(paths[paths.length - 2])?.dirs.includes(PathTools.explodePath(currentPath).filename) || false;
     cursorType = isDir ? 'd' : 'f';
   };
 
@@ -312,7 +312,7 @@ const fileExplorerHandler = async (
       })(),
       (async () => {
         // parent dir
-        const parent = explodePath(currentPath).dir;
+        const parent = PathTools.explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
         return PromiseTools.each(
@@ -609,7 +609,7 @@ const fileExplorerHandler = async (
 
           const info1Prefix = chlk.gray3('  Adding folder to ');
           const maxValWidth = out.utils.getTerminalWidth() - (stringWidth(info1Prefix) + stringWidth(info2));
-          const info1Value = chlk.gray4(out.truncateStart(trailSlash(basePath), maxValWidth));
+          const info1Value = chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
 
           lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
@@ -636,14 +636,14 @@ const fileExplorerHandler = async (
     submitSave: async () => {
       const initCursor = cursorType === 'f' ? cursor[cursor.length - 1] : '';
       const initSugg = suggestedFileName;
-      const initStart = startPath && (await getPathType(startPath)) === 'f' ? explodePath(startPath).filename : '';
+      const initStart = startPath && (await getPathType(startPath)) === 'f' ? PathTools.explodePath(startPath).filename : '';
       const initial = initCursor || initSugg || initStart || '';
 
       const basePath = cursorType === 'f' ? paths[paths.length - 2] : currentPath;
 
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(chlk.gray3('  Saving file to ') + chlk.gray4(out.truncateStart(trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          lc.log(chlk.gray3('  Saving file to ') + chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
         },
         () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn('name')} the file?`, initial)),
         () => true
@@ -707,7 +707,7 @@ const fileExplorerHandler = async (
   return deferred.promise;
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.fileExplorer ### -->
  * fileExplorer
  *
  * - `ask.fileExplorer`
@@ -731,7 +731,7 @@ export const fileExplorer = async (
   return arr[0];
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.multiFileExplorer ### -->
  * multiFileExplorer
  *
  * - `ask.multiFileExplorer`
@@ -753,7 +753,7 @@ export const multiFileExplorer = (
   startPath: string = process.cwd()
 ): Promise<string[]> => fileExplorerHandler(true, false, questionText, selectType, startPath);
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.saveFileExplorer ### -->
  * saveFileExplorer
  *
  * - `ask.saveFileExplorer`

@@ -4,8 +4,8 @@ import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '../../utils/dynDates';
 import { getKeyListener } from '../keyListener';
 import { getNumberInputter } from '../../utils/numberInputter';
-import { imitate } from '../ask';
-import * as out from '../out';
+import { ask } from '../ask';
+import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { getLineCounter } from '../out/lineCounter';
 import { dateHandler } from './datetime/date';
@@ -120,7 +120,7 @@ const overallHandler = (
     const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler);
 
     lc.clear();
-    lc.wrap(1, () => imitate(false, questionText, outState));
+    lc.wrap(1, () => ask.imitate(false, questionText, outState));
     lc.log();
     lc.log(outMain);
     lc.log();
@@ -154,7 +154,7 @@ const overallHandler = (
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     kl.stop();
     lc.clear();
-    imitate(false, questionText, outState);
+    ask.imitate(false, questionText, outState);
     deferred.resolve([dates, time]);
   };
 
@@ -196,7 +196,7 @@ const overallHandler = (
   return deferred.promise;
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.date ### -->
  * date
  *
  * - `ask.date`
@@ -215,7 +215,7 @@ export const date = async (questionText?: string | Breadcrumb, initial?: Date): 
   return dynDateToDate(ddate);
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.time ### -->
  * time
  *
  * - `ask.time`
@@ -238,7 +238,7 @@ export const time = async (questionText?: string | Breadcrumb, initial?: Date): 
   return dynDateToDate(dateToDynDate(initDateObj), dtime);
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.datetime ### -->
  * datetime
  *
  * - `ask.datetime`
@@ -258,7 +258,7 @@ export const datetime = async (questionText?: string | Breadcrumb, initial?: Dat
   return dynDateToDate(ddate, dtime);
 };
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: ask.dateRange ### -->
  * dateRange
  *
  * - `ask.dateRange`

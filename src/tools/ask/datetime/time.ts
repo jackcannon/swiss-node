@@ -1,6 +1,6 @@
 import { range } from 'swiss-ak';
 import { DynTime } from '../../../utils/dynDates';
-import * as out from '../../out';
+import { out } from '../../out';
 import { getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 

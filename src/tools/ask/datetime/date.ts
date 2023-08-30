@@ -12,8 +12,8 @@ import {
   isSameMonth,
   sortDynDates
 } from '../../../utils/dynDates';
-import * as out from '../../out';
-import * as table from '../../table';
+import { out } from '../../out';
+import { table } from '../../table';
 import { getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 

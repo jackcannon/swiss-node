@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import * as fsP from 'fs/promises';
 import { fn, tryOr } from 'swiss-ak';
-import { trailSlash } from '../tools/PathTools';
+import { PathTools } from '../tools/PathTools';
 
 const execute = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -52,14 +52,14 @@ export const mkdir = (dir: string): Promise<string> => {
 };
 
 export const findDirs = async (dir: string = '.'): Promise<string[]> => {
-  const newDir = trailSlash(dir);
+  const newDir = PathTools.trailSlash(dir);
   const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;
 };
 
 export const findFiles = async (dir: string = '.'): Promise<string[]> => {
-  const newDir = trailSlash(dir);
+  const newDir = PathTools.trailSlash(dir);
   const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;

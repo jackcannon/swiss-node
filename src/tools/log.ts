@@ -2,11 +2,11 @@ import util from 'util';
 import chalk from 'chalk';
 import { ObjectTools, OfType } from 'swiss-ak';
 
-import * as out from './out';
+import { out } from './out';
 
 //<!-- DOCS: 400 -->
-/**<!-- DOCS: ## -->
- * log
+/**<!-- DOCS: log ##! -->
+ * Logger
  */
 
 const defaultOptions: LogOptions = {
@@ -107,7 +107,7 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
     .join('\n');
 };
 
-/**<!-- DOCS: ### 401 -->
+/**<!-- DOCS: log.createLogger ### 401 -->
  * createLogger
  *
  * - `createLogger`
@@ -143,7 +143,7 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
   }) as Logger<T>;
 };
 
-/**<!-- DOCS: ### 400 -->
+/**<!-- DOCS: log.log ### 400 -->
  * log
  *
  * - `log`
@@ -164,7 +164,7 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
  */
 export const log = createLogger({}) as DefaultLogger;
 
-/**<!-- DOCS: ### 450 -->
+/**<!-- DOCS: log.LogOptions ### 450 -->
  * LogOptions
  *
  * - `LogOptions`
@@ -181,7 +181,7 @@ interface LogConfigs {
   [key: string]: LogConfig;
 }
 
-/**<!-- DOCS: ### 460 -->
+/**<!-- DOCS: log.LogConfig ### 460 -->
  * LogConfig
  *
  * - `LogConfig`

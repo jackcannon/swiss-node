@@ -1,13 +1,8 @@
-export interface KeyListener {
-  start(): void;
-  stop(): void;
-}
-
-/**<!-- DOCS: ## -->
+/**<!-- DOCS: keyListener ##! -->
  * keyListener
  */
 
-/**<!-- DOCS: ### -->
+/**<!-- DOCS: keyListener.getKeyListener ### -->
  * getKeyListener
  *
  * - `getKeyListener`
@@ -101,3 +96,30 @@ export const getKeyListener = (
     stop
   };
 };
+
+/**<!-- DOCS: keyListener.KeyListener ### -->
+ * KeyListener
+ *
+ * - `KeyListener`
+ *
+ * Returned by `getKeyListener`
+ */
+export interface KeyListener {
+  /**<!-- DOCS: keyListener.KeyListener.start #### -->
+   * start
+   *
+   * - `kl.start`
+   *
+   * Start listening for key presses
+   */
+  start(): void;
+
+  /**<!-- DOCS: keyListener.KeyListener.stop #### -->
+   * stop
+   *
+   * - `kl.stop`
+   *
+   * Stop listening for key presses
+   */
+  stop(): void;
+}
