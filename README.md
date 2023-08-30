@@ -2121,6 +2121,12 @@ A collection of shortcuts and aliases for chalk functions
     - [t4](#t4)
     - [t5](#t5)
     - [t6](#t6)
+    - [gray0](#gray0)
+    - [gray1](#gray1)
+    - [gray2](#gray2)
+    - [gray3](#gray3)
+    - [gray4](#gray4)
+    - [gray5](#gray5)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -2311,6 +2317,72 @@ clr.t6;
 ```
 
 Theme 6
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray0
+
+```typescript
+chlk.gray0;
+clr.gray0;
+```
+
+Gray 0 (0-5). Equivalent to chalk.black
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray1
+
+```typescript
+chlk.gray1;
+clr.gray1;
+```
+
+Gray 1 (0-5). Equivalent to chalk.gray.dim
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray2
+
+```typescript
+chlk.gray2;
+clr.gray2;
+```
+
+Gray 2 (0-5). Equivalent to chalk.white.dim
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray3
+
+```typescript
+chlk.gray3;
+clr.gray3;
+```
+
+Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray4
+
+```typescript
+chlk.gray4;
+clr.gray4;
+```
+
+Gray 4 (0-5). Equivalent to chalk.white
+
+<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
+
+### gray5
+
+```typescript
+chlk.gray5;
+clr.gray5;
+```
+
+Gray 5 (0-5). Equivalent to chalk.whiteBright
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 

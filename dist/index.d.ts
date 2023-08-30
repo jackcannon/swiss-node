@@ -400,57 +400,57 @@ declare namespace clr {
      * Theme 6
      */
     const t6: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray0 -->
+    /**<!-- DOCS: clr.gray0 ### -->
      * gray0
-     * 
+     *
      * - `chlk.gray0`
      * - `clr.gray0`
-     * 
+     *
      * Gray 0 (0-5). Equivalent to chalk.black
      */
     const gray0: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray1 -->
+    /**<!-- DOCS: clr.gray1 ### -->
      * gray1
-     * 
+     *
      * - `chlk.gray1`
      * - `clr.gray1`
-     * 
+     *
      * Gray 1 (0-5). Equivalent to chalk.gray.dim
      */
     const gray1: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray2 -->
+    /**<!-- DOCS: clr.gray2 ### -->
      * gray2
-     * 
+     *
      * - `chlk.gray2`
      * - `clr.gray2`
-     * 
+     *
      * Gray 2 (0-5). Equivalent to chalk.white.dim
      */
     const gray2: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray3 -->
+    /**<!-- DOCS: clr.gray3 ### -->
      * gray3
-     * 
+     *
      * - `chlk.gray3`
      * - `clr.gray3`
-     * 
+     *
      * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
      */
     const gray3: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray4 -->
+    /**<!-- DOCS: clr.gray4 ### -->
      * gray4
-     * 
+     *
      * - `chlk.gray4`
      * - `clr.gray4`
-     * 
+     *
      * Gray 4 (0-5). Equivalent to chalk.white
      */
     const gray4: ChalkFn;
-    /**<!-- DOCS-ALIAS: clr.gray5 -->
+    /**<!-- DOCS: clr.gray5 ### -->
      * gray5
-     * 
+     *
      * - `chlk.gray5`
      * - `clr.gray5`
-     * 
+     *
      * Gray 5 (0-5). Equivalent to chalk.whiteBright
      */
     const gray5: ChalkFn;
@@ -2109,13 +2109,13 @@ declare namespace ask {
     export {};
 }
 
-/**<!-- DOCS: clr.chlk ##! -->
+/**<!-- DOCS: chlk.chlk ##! -->
  * chlk
  *
  * A collection of colours and styles for use in the console.
  */
 declare namespace chlk {
-    /**<!-- DOCS: clr.gray0 ### -->
+    /**<!-- DOCS: chlk.gray0 ### -->
      * gray0
      *
      * - `chlk.gray0`
@@ -2124,7 +2124,7 @@ declare namespace chlk {
      * Gray 0 (0-5). Equivalent to chalk.black
      */
     const gray0: ChalkFn;
-    /**<!-- DOCS: clr.gray1 ### -->
+    /**<!-- DOCS: chlk.gray1 ### -->
      * gray1
      *
      * - `chlk.gray1`
@@ -2133,7 +2133,7 @@ declare namespace chlk {
      * Gray 1 (0-5). Equivalent to chalk.gray.dim
      */
     const gray1: ChalkFn;
-    /**<!-- DOCS: clr.gray2 ### -->
+    /**<!-- DOCS: chlk.gray2 ### -->
      * gray2
      *
      * - `chlk.gray2`
@@ -2142,7 +2142,7 @@ declare namespace chlk {
      * Gray 2 (0-5). Equivalent to chalk.white.dim
      */
     const gray2: ChalkFn;
-    /**<!-- DOCS: clr.gray3 ### -->
+    /**<!-- DOCS: chlk.gray3 ### -->
      * gray3
      *
      * - `chlk.gray3`
@@ -2151,7 +2151,7 @@ declare namespace chlk {
      * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
      */
     const gray3: ChalkFn;
-    /**<!-- DOCS: clr.gray4 ### -->
+    /**<!-- DOCS: chlk.gray4 ### -->
      * gray4
      *
      * - `chlk.gray4`
@@ -2160,7 +2160,7 @@ declare namespace chlk {
      * Gray 4 (0-5). Equivalent to chalk.white
      */
     const gray4: ChalkFn;
-    /**<!-- DOCS: clr.gray5 ### -->
+    /**<!-- DOCS: chlk.gray5 ### -->
      * gray5
      *
      * - `chlk.gray5`
@@ -2169,7 +2169,7 @@ declare namespace chlk {
      * Gray 5 (0-5). Equivalent to chalk.whiteBright
      */
     const gray5: ChalkFn;
-    /**<!-- DOCS: clr.grays ### -->
+    /**<!-- DOCS: chlk.grays ### -->
      * grays
      *
      * - `chlk.grays`
@@ -2181,7 +2181,7 @@ declare namespace chlk {
      * ```
      */
     const grays: ChalkFn[];
-    /**<!-- DOCS: clr.gray ### -->
+    /**<!-- DOCS: chlk.gray ### -->
      * gray
      *
      * - `chlk.gray`
@@ -2193,7 +2193,7 @@ declare namespace chlk {
      * ```
      */
     const gray: (num: number) => ChalkFn;
-    /**<!-- DOCS: clr.clear ### -->
+    /**<!-- DOCS: chlk.clear ### -->
      * clear
      *
      * - `chlk.clear`
@@ -2201,7 +2201,7 @@ declare namespace chlk {
      * Removes ANSI colours. Not same as chalk.reset
      */
     const clear: (str: string) => string;
-    /**<!-- DOCS: clr.not ### -->
+    /**<!-- DOCS: chlk.not ### -->
      * not
      *
      * - `chlk.not`
@@ -2209,7 +2209,7 @@ declare namespace chlk {
      * Stops and restarts a style around a given string
      */
     const not: (style: Function) => (item: string) => string;
-    /**<!-- DOCS: clr.notUnderlined ### -->
+    /**<!-- DOCS: chlk.notUnderlined ### -->
      * notUnderlined
      *
      * - `chlk.notUnderlined`

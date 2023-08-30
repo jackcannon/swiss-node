@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { ChalkFn } from '../utils/ChalkFn';
 
 //<!-- DOCS: 500 -->
-/**<!-- DOCS: clr.chlk ##! -->
+/**<!-- DOCS: chlk.chlk ##! -->
  * chlk
  *
  * A collection of colours and styles for use in the console.
@@ -10,7 +10,7 @@ import { ChalkFn } from '../utils/ChalkFn';
 export namespace chlk {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: clr.gray0 ### -->
+  /**<!-- DOCS: chlk.gray0 ### -->
    * gray0
    *
    * - `chlk.gray0`
@@ -20,7 +20,7 @@ export namespace chlk {
    */
   export const gray0 = chalk.black as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.gray1 ### -->
+  /**<!-- DOCS: chlk.gray1 ### -->
    * gray1
    *
    * - `chlk.gray1`
@@ -30,7 +30,7 @@ export namespace chlk {
    */
   export const gray1 = chalk.gray.dim as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.gray2 ### -->
+  /**<!-- DOCS: chlk.gray2 ### -->
    * gray2
    *
    * - `chlk.gray2`
@@ -40,7 +40,7 @@ export namespace chlk {
    */
   export const gray2 = chalk.white.dim as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.gray3 ### -->
+  /**<!-- DOCS: chlk.gray3 ### -->
    * gray3
    *
    * - `chlk.gray3`
@@ -50,7 +50,7 @@ export namespace chlk {
    */
   export const gray3 = chalk.whiteBright.dim as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.gray4 ### -->
+  /**<!-- DOCS: chlk.gray4 ### -->
    * gray4
    *
    * - `chlk.gray4`
@@ -60,7 +60,7 @@ export namespace chlk {
    */
   export const gray4 = chalk.white as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.gray5 ### -->
+  /**<!-- DOCS: chlk.gray5 ### -->
    * gray5
    *
    * - `chlk.gray5`
@@ -70,7 +70,7 @@ export namespace chlk {
    */
   export const gray5 = chalk.whiteBright as unknown as ChalkFn;
 
-  /**<!-- DOCS: clr.grays ### -->
+  /**<!-- DOCS: chlk.grays ### -->
    * grays
    *
    * - `chlk.grays`
@@ -91,7 +91,7 @@ export namespace chlk {
     gray5
   ];
 
-  /**<!-- DOCS: clr.gray ### -->
+  /**<!-- DOCS: chlk.gray ### -->
    * gray
    *
    * - `chlk.gray`
@@ -104,7 +104,7 @@ export namespace chlk {
    */
   export const gray = (num: number) => grays[Math.max(0, Math.min(num, grays.length - 1))];
 
-  /**<!-- DOCS: clr.clear ### -->
+  /**<!-- DOCS: chlk.clear ### -->
    * clear
    *
    * - `chlk.clear`
@@ -113,7 +113,7 @@ export namespace chlk {
    */
   export const clear = (str: string) => str.replace(new RegExp(`\\u001b\[[0-9]+m`, 'g'), '');
 
-  /**<!-- DOCS: clr.not ### -->
+  /**<!-- DOCS: chlk.not ### -->
    * not
    *
    * - `chlk.not`
@@ -126,7 +126,7 @@ export namespace chlk {
     return (item: string) => `${before}${item}${after}`;
   };
 
-  /**<!-- DOCS: clr.notUnderlined ### -->
+  /**<!-- DOCS: chlk.notUnderlined ### -->
    * notUnderlined
    *
    * - `chlk.notUnderlined`

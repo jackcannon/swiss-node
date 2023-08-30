@@ -182,22 +182,64 @@ export namespace clr {
    */
   export const t6 = chalk.cyanBright as unknown as ChalkFn;
 
-  /** <!-- DOCS-ALIAS: clr.gray0  --> */
+  /**<!-- DOCS: clr.gray0 ### -->
+   * gray0
+   *
+   * - `chlk.gray0`
+   * - `clr.gray0`
+   *
+   * Gray 0 (0-5). Equivalent to chalk.black
+   */
   export const gray0 = chlk.gray0;
 
-  /** <!-- DOCS-ALIAS: clr.gray1  --> */
+  /**<!-- DOCS: clr.gray1 ### -->
+   * gray1
+   *
+   * - `chlk.gray1`
+   * - `clr.gray1`
+   *
+   * Gray 1 (0-5). Equivalent to chalk.gray.dim
+   */
   export const gray1 = chlk.gray1;
 
-  /** <!-- DOCS-ALIAS: clr.gray2  --> */
+  /**<!-- DOCS: clr.gray2 ### -->
+   * gray2
+   *
+   * - `chlk.gray2`
+   * - `clr.gray2`
+   *
+   * Gray 2 (0-5). Equivalent to chalk.white.dim
+   */
   export const gray2 = chlk.gray2;
 
-  /** <!-- DOCS-ALIAS: clr.gray3  --> */
+  /**<!-- DOCS: clr.gray3 ### -->
+   * gray3
+   *
+   * - `chlk.gray3`
+   * - `clr.gray3`
+   *
+   * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+   */
   export const gray3 = chlk.gray3;
 
-  /** <!-- DOCS-ALIAS: clr.gray4  --> */
+  /**<!-- DOCS: clr.gray4 ### -->
+   * gray4
+   *
+   * - `chlk.gray4`
+   * - `clr.gray4`
+   *
+   * Gray 4 (0-5). Equivalent to chalk.white
+   */
   export const gray4 = chlk.gray4;
 
-  /** <!-- DOCS-ALIAS: clr.gray5  --> */
+  /**<!-- DOCS: clr.gray5 ### -->
+   * gray5
+   *
+   * - `chlk.gray5`
+   * - `clr.gray5`
+   *
+   * Gray 5 (0-5). Equivalent to chalk.whiteBright
+   */
   export const gray5 = chlk.gray5;
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 
