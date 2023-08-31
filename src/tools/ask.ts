@@ -33,14 +33,6 @@ export namespace ask {
     }
   };
 
-  interface PromptChoiceObject<T = string> {
-    title?: string;
-    value?: T;
-    selected?: boolean;
-  }
-
-  type PromptChoice<T = string> = string | PromptChoiceObject<T>;
-
   /**<!-- DOCS: ask.text ### @ -->
    * text
    *
@@ -684,14 +676,14 @@ export namespace ask {
   /**<!-- DOCS-ALIAS: ask.section -->*/
   export const section = sectionAsk.section;
 
-  /**<!-- DOCS: ask.utils 199 ### -->
+  /**<!-- DOCS: ask.utils 180 ### -->
    * utils
    */
   export namespace utils {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
     type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
-    /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 @ -->
+    /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 180 @ -->
      * itemsToPromptObjects
      *
      * - `ask.utils.itemsToPromptObjects`
@@ -729,4 +721,15 @@ export namespace ask {
       return items.map((item, index, arr) => ({ title: (titleFn && titleFn(item, index, arr)) || titles[index] || item + '', value: item as T }));
     };
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
+
+  /**<!-- DOCS: ask.PromptChoice ### 190 -->
+   * PromptChoice<T>
+   *
+   * - `ask.PromptChoice<T>`
+   *
+   * A choice for a prompt
+   *
+   * Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
+   */
+  export type PromptChoice<T = string> = string | { title?: string; value?: T; selected?: boolean };
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

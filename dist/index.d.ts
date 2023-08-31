@@ -1775,12 +1775,6 @@ declare namespace table {
  * A collection of functions to ask the user for input.
  */
 declare namespace ask {
-    interface PromptChoiceObject<T = string> {
-        title?: string;
-        value?: T;
-        selected?: boolean;
-    }
-    type PromptChoice<T = string> = string | PromptChoiceObject<T>;
     /**<!-- DOCS: ask.text ### @ -->
      * text
      *
@@ -1795,7 +1789,7 @@ declare namespace ask {
      * @param {string} [initial]
      * @returns {Promise<string>}
      */
-    export const text: (question: string | Breadcrumb$1, initial?: string) => Promise<string>;
+    const text: (question: string | Breadcrumb$1, initial?: string) => Promise<string>;
     /**<!-- DOCS: ask.autotext ### @ -->
      * autotext
      *
@@ -1812,7 +1806,7 @@ declare namespace ask {
      * @param {number} [choiceLimit=10]
      * @returns {Promise<T>}
      */
-    export const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
+    const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
     /**<!-- DOCS: ask.number ### @ -->
      * number
      *
@@ -1827,7 +1821,7 @@ declare namespace ask {
      * @param {number} [initial=1]
      * @returns {Promise<number>}
      */
-    export const number: (question: string | Breadcrumb$1, initial?: number) => Promise<number>;
+    const number: (question: string | Breadcrumb$1, initial?: number) => Promise<number>;
     /**<!-- DOCS: ask.boolean ### @ -->
      * boolean
      *
@@ -1844,7 +1838,7 @@ declare namespace ask {
      * @param {string} [noTxt='no']
      * @returns {Promise<boolean>}
      */
-    export const boolean: (question: string | Breadcrumb$1, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
+    const boolean: (question: string | Breadcrumb$1, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
     /**<!-- DOCS: ask.booleanAlt ### @ -->
      * booleanAlt
      *
@@ -1861,7 +1855,7 @@ declare namespace ask {
      * @param {boolean} [initial=true]
      * @returns {Promise<boolean>}
      */
-    export const booleanAlt: (question: string | Breadcrumb$1, initial?: boolean) => Promise<boolean>;
+    const booleanAlt: (question: string | Breadcrumb$1, initial?: boolean) => Promise<boolean>;
     /**<!-- DOCS: ask.select ### @ -->
      * select
      *
@@ -1877,7 +1871,7 @@ declare namespace ask {
      * @param {T} [initial]
      * @returns {Promise<T>}
      */
-    export const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
+    const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
     /**<!-- DOCS: ask.multiselect ### @ -->
      * multiselect
      *
@@ -1894,14 +1888,14 @@ declare namespace ask {
      * @param {boolean} [canSelectAll=false]
      * @returns {Promise<T[]>}
      */
-    export const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: PromptChoice<T> | PromptChoice<T>[], canSelectAll?: boolean) => Promise<T[]>;
-    export interface CRUDOptions {
+    const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: PromptChoice<T> | PromptChoice<T>[], canSelectAll?: boolean) => Promise<T[]>;
+    interface CRUDOptions {
         canCreate: boolean;
         canUpdate: boolean;
         canDelete: boolean;
         canDeleteAll: boolean;
     }
-    export type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
+    type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
     /**<!-- DOCS: ask.crud ### @ -->
      * crud
      *
@@ -1920,7 +1914,7 @@ declare namespace ask {
      * @param {Partial<CRUDOptions>} [options={}]
      * @returns {Promise<CRUD>}
      */
-    export const crud: (question: string | Breadcrumb$1, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
+    const crud: (question: string | Breadcrumb$1, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
     /**<!-- DOCS: ask.validate ### @ -->
      * validate
      *
@@ -1938,7 +1932,7 @@ declare namespace ask {
      * @param {(input: Awaited<I>) => boolean | string} validateFn
      * @returns {Promise<I>}
      */
-    export const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
+    const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
     /**<!-- DOCS: ask.imitate ### @ -->
      * imitate
      *
@@ -1956,7 +1950,7 @@ declare namespace ask {
      * @param {any} [result]
      * @returns {number}
      */
-    export const imitate: (done: boolean, question: string | Breadcrumb$1, result?: any) => number;
+    const imitate: (done: boolean, question: string | Breadcrumb$1, result?: any) => number;
     /**<!-- DOCS: ask.prefill ### @ -->
      * prefill
      *
@@ -1980,7 +1974,7 @@ declare namespace ask {
      * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
      * @returns {Promise<T>}
      */
-    export const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb$1, askFn: (question: string | Breadcrumb$1) => T | Promise<T>) => Promise<T>;
+    const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb$1, askFn: (question: string | Breadcrumb$1) => T | Promise<T>) => Promise<T>;
     /**<!-- DOCS: ask.loading ### @ -->
      * loading
      *
@@ -1996,7 +1990,7 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @returns {any}
      */
-    export const loading: (question: string | Breadcrumb$1) => {
+    const loading: (question: string | Breadcrumb$1) => {
         stop: () => void;
     };
     /**<!-- DOCS: ask.pause ### @ -->
@@ -2012,7 +2006,7 @@ declare namespace ask {
      * @param {string | Breadcrumb} [text='Press enter to continue...']
      * @returns {Promise<void>}
      */
-    export const pause: (text?: string | Breadcrumb$1) => Promise<void>;
+    const pause: (text?: string | Breadcrumb$1) => Promise<void>;
     /**<!-- DOCS: ask.countdown ### @ -->
      * countdown
      *
@@ -2028,7 +2022,7 @@ declare namespace ask {
      * @param {string} [complete]
      * @returns {Promise<void>}
      */
-    export const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
+    const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
     /**<!-- DOCS: ask.wizard ### @ -->
      * wizard
      *
@@ -2060,7 +2054,7 @@ declare namespace ask {
      * @param {Partial<T>} [startObj={}]
      * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
      */
-    export const wizard: <T extends unknown>(startObj?: Partial<T>) => {
+    const wizard: <T extends unknown>(startObj?: Partial<T>) => {
         add(partial: Partial<T>): void;
         getPartial(): Partial<T>;
         get(): T;
@@ -2080,7 +2074,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    export const date: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const date: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.time -->
      * time
      * 
@@ -2099,7 +2093,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    export const time: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const time: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.datetime -->
      * datetime
      * 
@@ -2115,7 +2109,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    export const datetime: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const datetime: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.dateRange -->
      * dateRange
      * 
@@ -2135,7 +2129,7 @@ declare namespace ask {
      * @param {Date} [initialEnd]
      * @returns {Promise<[Date, Date]>}
      */
-    export const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
+    const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
     /**<!-- DOCS-ALIAS: ask.fileExplorer -->
      * fileExplorer
      * 
@@ -2155,7 +2149,7 @@ declare namespace ask {
      * @param {string} [startPath=process.cwd()]
      * @returns {Promise<string>}
      */
-    export const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string>;
+    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
      * multiFileExplorer
      * 
@@ -2176,7 +2170,7 @@ declare namespace ask {
      * @param {string} [startPath=process.cwd()]
      * @returns {Promise<string[]>}
      */
-    export const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string[]>;
+    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
      * saveFileExplorer
      * 
@@ -2194,13 +2188,13 @@ declare namespace ask {
      * @param {string} [suggestedFileName='']
      * @returns {Promise<string>}
      */
-    export const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string) => Promise<string>;
+    const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
      * table
      * 
      * A collection of functions for asking questions with tables.
      */
-    export namespace table {
+    namespace table {
         /**<!-- DOCS-ALIAS: ask.table.select -->
          * select
          * 
@@ -2290,7 +2284,7 @@ declare namespace ask {
      * @param {Partial<AskTrimOptions>} [options={}]
      * @returns {Promise<Handles<number>>}
      */
-    export const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
+    const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
     /**<!-- DOCS-ALIAS: ask.separator -->
      * separator
      * 
@@ -2314,7 +2308,7 @@ declare namespace ask {
      * @param {number} [width=out.utils.getTerminalWidth() - 2]
      * @returns {number}
      */
-    export const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number) => number;
+    const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number) => number;
     /**<!-- DOCS-ALIAS: ask.section -->
      * section
      * 
@@ -2354,13 +2348,13 @@ declare namespace ask {
      * @param {...QuesT} [questionFns]
      * @returns {Promise<UnwrapPromFuncs<QuesT>>}
      */
-    export const section: <QuesT extends ((qst?: string | Breadcrumb$1, results?: any[], lc?: LineCounter$1, separator?: () => void) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionFn?: (lc: LineCounter$1, separator: () => void) => void | Promise<any>, ...questionFns: QuesT) => Promise<QuesT extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...any] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []>;
-    /**<!-- DOCS: ask.utils 199 ### -->
+    const section: <QuesT extends ((qst?: string | Breadcrumb$1, results?: any[], lc?: LineCounter$1, separator?: () => void) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionFn?: (lc: LineCounter$1, separator: () => void) => void | Promise<any>, ...questionFns: QuesT) => Promise<QuesT extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...any] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []>;
+    /**<!-- DOCS: ask.utils 180 ### -->
      * utils
      */
-    export namespace utils {
+    namespace utils {
         type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
-        /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 @ -->
+        /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 180 @ -->
          * itemsToPromptObjects
          *
          * - `ask.utils.itemsToPromptObjects`
@@ -2400,7 +2394,20 @@ declare namespace ask {
         }[];
         export {};
     }
-    export {};
+    /**<!-- DOCS: ask.PromptChoice ### 190 -->
+     * PromptChoice<T>
+     *
+     * - `ask.PromptChoice<T>`
+     *
+     * A choice for a prompt
+     *
+     * Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
+     */
+    type PromptChoice<T = string> = string | {
+        title?: string;
+        value?: T;
+        selected?: boolean;
+    };
 }
 
 /**<!-- DOCS: chlk.chlk ##! -->

@@ -59,6 +59,7 @@ A collection of functions to ask the user for input.
     - [section](#section)
     - [**utils**](#ask_utils)
       - [itemsToPromptObjects](#itemstopromptobjects)
+    - [PromptChoice<T>](#promptchoicet)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -879,6 +880,18 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 | Return Type                      |
 |----------------------------------|
 | `{ title: string; value: T; }[]` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+### PromptChoice<T>
+
+```typescript
+ask.PromptChoice<T>;
+```
+
+A choice for a prompt
+
+Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
