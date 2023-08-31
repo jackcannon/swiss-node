@@ -2202,7 +2202,7 @@ declare namespace ask {
      */
     export namespace table {
         /**<!-- DOCS-ALIAS: ask.table.select -->
-         * select
+         * select (ask.table)
          * 
          * - `ask.table.select`
          * 
@@ -2239,7 +2239,7 @@ declare namespace ask {
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number | T, rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
-         * multiselect
+         * multiselect (ask.table)
          * 
          * - `ask.table.multiselect`
          * 

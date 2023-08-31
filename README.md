@@ -43,7 +43,7 @@ A collection of functions to ask the user for input.
     - [loading](#loading)
     - [pause](#pause)
     - [countdown](#countdown)
-    - [wizard](#wizard)
+    - [wizard](#wizard123)
     - [date](#date)
     - [time](#time)
     - [datetime](#datetime)
@@ -52,8 +52,8 @@ A collection of functions to ask the user for input.
     - [multiFileExplorer](#multifileexplorer)
     - [saveFileExplorer](#savefileexplorer)
     - [**table (ask)**](#table-ask)
-      - [select](#select)
-      - [multiselect](#multiselect)
+      - [select (ask.table)](#select-asktable)
+      - [multiselect (ask.table)](#multiselect-asktable)
     - [trim](#trim)
     - [separator](#separator)
     - [section](#section)
@@ -413,7 +413,7 @@ await ask.countdown(5);
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### wizard
+### wizard {#wizard123}
 
 ```typescript
 ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
@@ -644,7 +644,7 @@ A collection of functions for asking questions with tables.
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### select
+#### select (ask.table)
 
 ```typescript
 ask.table.select(question: string | Breadcrumb, items: T[], initial: T | number, rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T>
@@ -689,7 +689,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### multiselect
+#### multiselect (ask.table)
 
 ```typescript
 ask.table.multiselect(question: string | Breadcrumb, items: T[], initial: T[] | number[], rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T[]>

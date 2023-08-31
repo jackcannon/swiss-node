@@ -129,7 +129,7 @@ const askTableHandler = <T extends unknown>(
  */
 
 /**<!-- DOCS: ask.table.select #### @ -->
- * select
+ * select (ask.table)
  *
  * - `ask.table.select`
  *
@@ -177,7 +177,7 @@ export const select = async <T extends unknown>(
 };
 
 /**<!-- DOCS: ask.table.multiselect #### @ -->
- * multiselect
+ * multiselect (ask.table)
  *
  * - `ask.table.multiselect`
  *
