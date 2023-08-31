@@ -413,7 +413,7 @@ await ask.countdown(5);
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### wizard {#wizard123}
+### <span id="wizard123">wizard</span>
 
 ```typescript
 ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
