@@ -2,7 +2,7 @@
  * keyListener
  */
 
-/**<!-- DOCS: keyListener.getKeyListener ### -->
+/**<!-- DOCS: keyListener.getKeyListener ### @ -->
  * getKeyListener
  *
  * - `getKeyListener`
@@ -111,6 +111,7 @@ export interface KeyListener {
    * - `kl.start`
    *
    * Start listening for key presses
+   * @returns {void}
    */
   start(): void;
 
@@ -120,6 +121,7 @@ export interface KeyListener {
    * - `kl.stop`
    *
    * Stop listening for key presses
+   * @returns {void}
    */
   stop(): void;
 }

@@ -12,7 +12,7 @@ import { out } from './out';
 export namespace progressBarTools {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### -->
+  /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### @ -->
    * getColouredProgressBarOpts
    *
    * - `progressBarTools.getColouredProgressBarOpts`

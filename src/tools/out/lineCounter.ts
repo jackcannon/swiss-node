@@ -2,15 +2,6 @@ import { getLogStr } from '../LogTools';
 import { out } from '../out';
 //<!-- DOCS: 260 -->
 
-// SWISS-DOCS-JSDOC-REMOVE-START
-
-/*
- * !!!!!!!!!!!!!!!!!!!!!    WARNING    !!!!!!!!!!!!!!!!!!!!!
- *
- * This file is not handled by swiss-docs --jsdoc.
- * All JSDoc comment need to be updated manually
- */
-
 const randomID = () => Math.random().toString(36).substring(2);
 
 /**<!-- DOCS: out.getLineCounter ### 260 -->
@@ -291,4 +282,3 @@ export interface LineCounter {
    */
   clearToCheckpoint(checkpointID: string): void;
 }
-// SWISS-DOCS-JSDOC-REMOVE-END

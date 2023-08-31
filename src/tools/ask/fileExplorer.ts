@@ -707,7 +707,7 @@ const fileExplorerHandler = async (
   return deferred.promise;
 };
 
-/**<!-- DOCS: ask.fileExplorer ### -->
+/**<!-- DOCS: ask.fileExplorer ### @ -->
  * fileExplorer
  *
  * - `ask.fileExplorer`
@@ -731,7 +731,7 @@ export const fileExplorer = async (
   return arr[0];
 };
 
-/**<!-- DOCS: ask.multiFileExplorer ### -->
+/**<!-- DOCS: ask.multiFileExplorer ### @ -->
  * multiFileExplorer
  *
  * - `ask.multiFileExplorer`
@@ -753,7 +753,7 @@ export const multiFileExplorer = (
   startPath: string = process.cwd()
 ): Promise<string[]> => fileExplorerHandler(true, false, questionText, selectType, startPath);
 
-/**<!-- DOCS: ask.saveFileExplorer ### -->
+/**<!-- DOCS: ask.saveFileExplorer ### @ -->
  * saveFileExplorer
  *
  * - `ask.saveFileExplorer`

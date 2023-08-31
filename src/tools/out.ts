@@ -17,7 +17,7 @@ export namespace out {
 
   const NEW_LINE = '\n';
 
-  /**<!-- DOCS: out.pad ### -->
+  /**<!-- DOCS: out.pad ### @ -->
    * pad
    *
    * - `out.pad`
@@ -38,7 +38,7 @@ export namespace out {
   const correctWidth = (width: number): number =>
     width < 0 || width === Infinity ? utils.getTerminalWidth() : Math.min(width, utils.getTerminalWidth());
 
-  /**<!-- DOCS: out.center ### -->
+  /**<!-- DOCS: out.center ### @ -->
    * center
    *
    * - `out.center`
@@ -74,7 +74,7 @@ export namespace out {
       )
       .join(NEW_LINE);
 
-  /**<!-- DOCS: out.left ### -->
+  /**<!-- DOCS: out.left ### @ -->
    * left
    *
    * - `out.left`
@@ -103,7 +103,7 @@ export namespace out {
       .map((line) => pad(line, 0, forceWidth ? correctWidth(width) - stringWidth(line) : 0, replaceChar))
       .join(NEW_LINE);
 
-  /**<!-- DOCS: out.right ### -->
+  /**<!-- DOCS: out.right ### @ -->
    * right
    *
    * - `out.right`
@@ -132,7 +132,7 @@ export namespace out {
       .map((line) => pad(line, correctWidth(width) - stringWidth(line), 0, replaceChar))
       .join(NEW_LINE);
 
-  /**<!-- DOCS: out.justify ### -->
+  /**<!-- DOCS: out.justify ### @ -->
    * justify
    *
    * - `out.justify`
@@ -177,7 +177,7 @@ export namespace out {
 
   const getLongestLen = (lines: string[]): number => Math.max(...lines.map((line) => stringWidth(line)));
 
-  /**<!-- DOCS: out.leftLines ### -->
+  /**<!-- DOCS: out.leftLines ### @ -->
    * leftLines
    *
    * - `out.leftLines`
@@ -195,7 +195,7 @@ export namespace out {
    */
   export const leftLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => left(line, width));
 
-  /**<!-- DOCS: out.centerLines ### -->
+  /**<!-- DOCS: out.centerLines ### @ -->
    * centerLines
    *
    * - `out.centerLines`
@@ -213,7 +213,7 @@ export namespace out {
    */
   export const centerLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => center(line, width));
 
-  /**<!-- DOCS: out.rightLines ### -->
+  /**<!-- DOCS: out.rightLines ### @ -->
    * rightLines
    *
    * - `out.rightLines`
@@ -231,7 +231,7 @@ export namespace out {
    */
   export const rightLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => right(line, width));
 
-  /**<!-- DOCS: out.justifyLines ### -->
+  /**<!-- DOCS: out.justifyLines ### @ -->
    * justifyLines
    *
    * - `out.justifyLines`
@@ -256,7 +256,7 @@ export namespace out {
     justify
   };
 
-  /**<!-- DOCS: out.align ### -->
+  /**<!-- DOCS: out.align ### @ -->
    * align
    *
    * - `out.align`
@@ -285,7 +285,7 @@ export namespace out {
     return func(item, width, replaceChar, forceWidth);
   };
 
-  /**<!-- DOCS: out.split ### -->
+  /**<!-- DOCS: out.split ### @ -->
    * split
    *
    * - `out.split`
@@ -299,7 +299,7 @@ export namespace out {
   export const split = (leftItem: any, rightItem: any, width: number = out.utils.getTerminalWidth(), replaceChar: string = ' ') =>
     `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + '') + stringWidth(rightItem + ''))))}${rightItem + ''}`;
 
-  /**<!-- DOCS: out.wrap ### -->
+  /**<!-- DOCS: out.wrap ### @ -->
    * wrap
    *
    * - `out.wrap`
@@ -364,7 +364,7 @@ export namespace out {
       .flat()
       .join(NEW_LINE);
 
-  /**<!-- DOCS: out.moveUp ### -->
+  /**<!-- DOCS: out.moveUp ### @ -->
    * moveUp
    *
    * - `out.moveUp`
@@ -406,7 +406,7 @@ export namespace out {
       ['   ', '.  ', '.. ', '...'][Math.floor(index / 3) % 4]
   );
 
-  /**<!-- DOCS: out.loading ### -->
+  /**<!-- DOCS: out.loading ### @ -->
    * loading
    *
    * - `out.loading`
@@ -441,7 +441,7 @@ export namespace out {
     };
   };
 
-  /**<!-- DOCS: out.limitToLength ### -->
+  /**<!-- DOCS: out.limitToLength ### @ -->
    * limitToLength
    *
    * - `out.limitToLength`
@@ -470,7 +470,7 @@ export namespace out {
       })
     );
 
-  /**<!-- DOCS: out.limitToLengthStart ### -->
+  /**<!-- DOCS: out.limitToLengthStart ### @ -->
    * limitToLengthStart
    *
    * - `out.limitToLengthStart`
@@ -499,7 +499,7 @@ export namespace out {
       })
     );
 
-  /**<!-- DOCS: out.truncate ### -->
+  /**<!-- DOCS: out.truncate ### @ -->
    * truncate
    *
    * - `out.truncate`
@@ -515,7 +515,7 @@ export namespace out {
       utils.getLines(text).map((line) => (stringWidth(line) > maxLength ? limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line))
     );
 
-  /**<!-- DOCS: out.truncateStart ### -->
+  /**<!-- DOCS: out.truncateStart ### @ -->
    * truncateStart
    *
    * - `out.truncateStart`
@@ -531,7 +531,7 @@ export namespace out {
       utils.getLines(text).map((line) => (stringWidth(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - stringWidth(suffix)) : line))
     );
 
-  /**<!-- DOCS: out.concatLineGroups ### -->
+  /**<!-- DOCS: out.concatLineGroups ### @ -->
    * concatLineGroups
    *
    * - `out.concatLineGroups`
@@ -549,7 +549,7 @@ export namespace out {
     return zipMax(...aligned).map((line) => line.join(''));
   };
 
-  /**<!-- DOCS: out.getResponsiveValue ### -->
+  /**<!-- DOCS: out.getResponsiveValue ### @ -->
    * getResponsiveValue
    *
    * - `out.getResponsiveValue`
@@ -604,7 +604,7 @@ export namespace out {
   export namespace utils {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-    /**<!-- DOCS: out.utils.getTerminalWidth #### 291 -->
+    /**<!-- DOCS: out.utils.getTerminalWidth #### 291 @ -->
      * getTerminalWidth
      *
      * - `out.utils.getTerminalWidth`
@@ -618,7 +618,7 @@ export namespace out {
     export const getTerminalWidth = () => (process?.stdout?.columns ? process.stdout.columns : 100);
 
     const textToString = (text: Text): string => (text instanceof Array ? utils.joinLines(text) : text);
-    /**<!-- DOCS: out.utils.getLines #### 291 -->
+    /**<!-- DOCS: out.utils.getLines #### 291 @ -->
      * getLines
      *
      * - `out.utils.getLines`
@@ -633,7 +633,8 @@ export namespace out {
      * ```
      */
     export const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
-    /**<!-- DOCS: out.utils.getNumLines #### 291 -->
+
+    /**<!-- DOCS: out.utils.getNumLines #### 291 @ -->
      * getNumLines
      *
      * - `out.utils.getNumLines`
@@ -648,7 +649,8 @@ export namespace out {
      * ```
      */
     export const getNumLines = (text: Text): number => getLines(text).length;
-    /**<!-- DOCS: out.utils.getLinesWidth #### 291 -->
+
+    /**<!-- DOCS: out.utils.getLinesWidth #### 291 @ -->
      * getLinesWidth
      *
      * - `out.utils.getLinesWidth`
@@ -664,7 +666,7 @@ export namespace out {
      */
     export const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
 
-    /**<!-- DOCS: out.utils.getLogLines #### 291 -->
+    /**<!-- DOCS: out.utils.getLogLines #### 291 @ -->
      * getLogLines
      *
      * - `out.utils.getLogLines`
@@ -679,7 +681,8 @@ export namespace out {
      * ```
      */
     export const getLogLines = (item: any): string[] => getLines(getLogStr(item));
-    /**<!-- DOCS: out.utils.getNumLogLines #### 291 -->
+
+    /**<!-- DOCS: out.utils.getNumLogLines #### 291 @ -->
      * getNumLogLines
      *
      * - `out.utils.getNumLogLines`
@@ -694,7 +697,8 @@ export namespace out {
      * ```
      */
     export const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
-    /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 -->
+
+    /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 @ -->
      * getLogLinesWidth
      *
      * - `out.utils.getLogLinesWidth`
@@ -710,7 +714,7 @@ export namespace out {
      */
     export const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
 
-    /**<!-- DOCS: out.utils.joinLines #### 291 -->
+    /**<!-- DOCS: out.utils.joinLines #### 291 @ -->
      * joinLines
      *
      * - `out.utils.joinLines`
@@ -725,7 +729,7 @@ export namespace out {
      */
     export const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(NEW_LINE);
 
-    /**<!-- DOCS: out.utils.hasColor #### 291 -->
+    /**<!-- DOCS: out.utils.hasColor #### 291 @ -->
      * hasColor
      *
      * - `out.utils.hasColor`

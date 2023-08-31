@@ -7,7 +7,7 @@ import { out } from '../out';
 const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
 
 //<!-- DOCS: 250 -->
-/**<!-- DOCS: out.getBreadcrumb ### -->
+/**<!-- DOCS: out.getBreadcrumb ### @ -->
  * getBreadcrumb
  *
  * - `out.getBreadcrumb`

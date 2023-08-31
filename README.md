@@ -2040,73 +2040,121 @@ A collection of colours and styles for use in the console.
 ### gray0
 
 ```typescript
-chlk.gray0;
-clr.gray0;
+chlk.gray0(...args: string[]): string
+clr.gray0(...args: string[]): string
 ```
 
 Gray 0 (0-5). Equivalent to chalk.black
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### gray1
 
 ```typescript
-chlk.gray1;
-clr.gray1;
+chlk.gray1(...args: string[]): string
+clr.gray1(...args: string[]): string
 ```
 
 Gray 1 (0-5). Equivalent to chalk.gray.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### gray2
 
 ```typescript
-chlk.gray2;
-clr.gray2;
+chlk.gray2(...args: string[]): string
+clr.gray2(...args: string[]): string
 ```
 
 Gray 2 (0-5). Equivalent to chalk.white.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### gray3
 
 ```typescript
-chlk.gray3;
-clr.gray3;
+chlk.gray3(...args: string[]): string
+clr.gray3(...args: string[]): string
 ```
 
 Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### gray4
 
 ```typescript
-chlk.gray4;
-clr.gray4;
+chlk.gray4(...args: string[]): string
+clr.gray4(...args: string[]): string
 ```
 
 Gray 4 (0-5). Equivalent to chalk.white
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### gray5
 
 ```typescript
-chlk.gray5;
-clr.gray5;
+chlk.gray5(...args: string[]): string
+clr.gray5(...args: string[]): string
 ```
 
 Gray 5 (0-5). Equivalent to chalk.whiteBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### grays
 
 ```typescript
-chlk.grays;
+chlk.grays(...args: string[]): string
 ```
 
 Grays between 0 and 5.
@@ -2114,6 +2162,14 @@ Grays between 0 and 5.
 ```typescript
 grays[2]; // gray2
 ```
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
@@ -2196,256 +2252,456 @@ A collection of shortcuts and aliases for chalk functions
 ### hl1
 
 ```typescript
-clr.hl1;
+clr.hl1(...args: string[]): string
 ```
 
 Highlight 1
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### hl2
 
 ```typescript
-clr.hl2;
+clr.hl2(...args: string[]): string
 ```
 
 Highlight 2
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### approve
 
 ```typescript
-clr.approve;
+clr.approve(...args: string[]): string
 ```
 
 Approval colour (green)
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### create
 
 ```typescript
-clr.create;
+clr.create(...args: string[]): string
 ```
 
 Create colour (greenBright)
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### update
 
 ```typescript
-clr.update;
+clr.update(...args: string[]): string
 ```
 
 Update colour (yellow)
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### remove
 
 ```typescript
-clr.remove;
+clr.remove(...args: string[]): string
 ```
 
 Remove/delete colour (red)
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### removeAll
 
 ```typescript
-clr.removeAll;
+clr.removeAll(...args: string[]): string
 ```
 
 Remove/delete all colour (red)
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### blue
 
 ```typescript
-clr.blue;
+clr.blue(...args: string[]): string
 ```
 
 Alias for chalk.blueBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### cyan
 
 ```typescript
-clr.cyan;
+clr.cyan(...args: string[]): string
 ```
 
 Alias for chalk.cyanBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### green
 
 ```typescript
-clr.green;
+clr.green(...args: string[]): string
 ```
 
 Alias for chalk.greenBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### magenta
 
 ```typescript
-clr.magenta;
+clr.magenta(...args: string[]): string
 ```
 
 Alias for chalk.magentaBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### red
 
 ```typescript
-clr.red;
+clr.red(...args: string[]): string
 ```
 
 Alias for chalk.redBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### yellow
 
 ```typescript
-clr.yellow;
+clr.yellow(...args: string[]): string
 ```
 
 Alias for chalk.yellowBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t1
 
 ```typescript
-clr.t1;
+clr.t1(...args: string[]): string
 ```
 
 Theme 1
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t2
 
 ```typescript
-clr.t2;
+clr.t2(...args: string[]): string
 ```
 
 Theme 2
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t3
 
 ```typescript
-clr.t3;
+clr.t3(...args: string[]): string
 ```
 
 Theme 3
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t4
 
 ```typescript
-clr.t4;
+clr.t4(...args: string[]): string
 ```
 
 Theme 4
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t5
 
 ```typescript
-clr.t5;
+clr.t5(...args: string[]): string
 ```
 
 Theme 5
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### t6
 
 ```typescript
-clr.t6;
+clr.t6(...args: string[]): string
 ```
 
 Theme 6
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray0
 
 ```typescript
-chlk.gray0;
-clr.gray0;
+chlk.gray0(...args: string[]): string
+clr.gray0(...args: string[]): string
 ```
 
 Gray 0 (0-5). Equivalent to chalk.black
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray1
 
 ```typescript
-chlk.gray1;
-clr.gray1;
+chlk.gray1(...args: string[]): string
+clr.gray1(...args: string[]): string
 ```
 
 Gray 1 (0-5). Equivalent to chalk.gray.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray2
 
 ```typescript
-chlk.gray2;
-clr.gray2;
+chlk.gray2(...args: string[]): string
+clr.gray2(...args: string[]): string
 ```
 
 Gray 2 (0-5). Equivalent to chalk.white.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray3
 
 ```typescript
-chlk.gray3;
-clr.gray3;
+chlk.gray3(...args: string[]): string
+clr.gray3(...args: string[]): string
 ```
 
 Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray4
 
 ```typescript
-chlk.gray4;
-clr.gray4;
+chlk.gray4(...args: string[]): string
+clr.gray4(...args: string[]): string
 ```
 
 Gray 4 (0-5). Equivalent to chalk.white
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
 ### gray5
 
 ```typescript
-chlk.gray5;
-clr.gray5;
+chlk.gray5(...args: string[]): string
+clr.gray5(...args: string[]): string
 ```
 
 Gray 5 (0-5). Equivalent to chalk.whiteBright
+
+|  #   | Parameter Name | Required | Type       | Description          |
+|:----:|:---------------|:---------|:-----------|:---------------------|
+| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
+
+| Return Type |        |
+|-------------|--------|
+| `string`    | string |
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
@@ -2754,20 +3010,28 @@ Returned by `getKeyListener`
 #### start
 
 ```typescript
-kl.start;
+kl.start(undefined): void
 ```
 
 Start listening for key presses
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#keylistener"> [↑ Back to <b>keyListener</b> ↑] </a></p>
 
 #### stop
 
 ```typescript
-kl.stop;
+kl.stop(undefined): void
 ```
 
 Stop listening for key presses
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#keylistener"> [↑ Back to <b>keyListener</b> ↑] </a></p>
 

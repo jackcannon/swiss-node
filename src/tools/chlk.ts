@@ -17,6 +17,8 @@ export namespace chlk {
    * - `clr.gray0`
    *
    * Gray 0 (0-5). Equivalent to chalk.black
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray0 = chalk.black as unknown as ChalkFn;
 
@@ -27,6 +29,8 @@ export namespace chlk {
    * - `clr.gray1`
    *
    * Gray 1 (0-5). Equivalent to chalk.gray.dim
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray1 = chalk.gray.dim as unknown as ChalkFn;
 
@@ -37,6 +41,8 @@ export namespace chlk {
    * - `clr.gray2`
    *
    * Gray 2 (0-5). Equivalent to chalk.white.dim
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray2 = chalk.white.dim as unknown as ChalkFn;
 
@@ -47,6 +53,8 @@ export namespace chlk {
    * - `clr.gray3`
    *
    * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray3 = chalk.whiteBright.dim as unknown as ChalkFn;
 
@@ -57,6 +65,8 @@ export namespace chlk {
    * - `clr.gray4`
    *
    * Gray 4 (0-5). Equivalent to chalk.white
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray4 = chalk.white as unknown as ChalkFn;
 
@@ -67,6 +77,8 @@ export namespace chlk {
    * - `clr.gray5`
    *
    * Gray 5 (0-5). Equivalent to chalk.whiteBright
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const gray5 = chalk.whiteBright as unknown as ChalkFn;
 
@@ -80,6 +92,8 @@ export namespace chlk {
    * ```typescript
    * grays[2]; // gray2
    * ```
+   * @param {...string} args Strings to be styled
+   * @returns {string} Styled string
    */
   export const grays: ChalkFn[] = [
     // grays
@@ -91,7 +105,7 @@ export namespace chlk {
     gray5
   ];
 
-  /**<!-- DOCS: chlk.gray ### -->
+  /**<!-- DOCS: chlk.gray ### @ -->
    * gray
    *
    * - `chlk.gray`
@@ -104,7 +118,7 @@ export namespace chlk {
    */
   export const gray = (num: number) => grays[Math.max(0, Math.min(num, grays.length - 1))];
 
-  /**<!-- DOCS: chlk.clear ### -->
+  /**<!-- DOCS: chlk.clear ### @ -->
    * clear
    *
    * - `chlk.clear`
@@ -113,7 +127,7 @@ export namespace chlk {
    */
   export const clear = (str: string) => str.replace(new RegExp(`\\u001b\[[0-9]+m`, 'g'), '');
 
-  /**<!-- DOCS: chlk.not ### -->
+  /**<!-- DOCS: chlk.not ### @ -->
    * not
    *
    * - `chlk.not`

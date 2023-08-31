@@ -54,7 +54,7 @@ export namespace table {
 
   const empty = (numCols: number, char: string = '') => ArrayTools.create(numCols, char);
 
-  /**<!-- DOCS: table.print ### -->
+  /**<!-- DOCS: table.print ### @ -->
    * print
    *
    * - `table.print`
@@ -93,7 +93,7 @@ export namespace table {
     return Object.keys(allKeys);
   };
 
-  /**<!-- DOCS: table.printObjects ### -->
+  /**<!-- DOCS: table.printObjects ### @ -->
    * printObjects
    *
    * - `table.printObjects`
@@ -133,7 +133,7 @@ export namespace table {
     return print(body, header, options);
   };
 
-  /**<!-- DOCS: table.markdown ### -->
+  /**<!-- DOCS: table.markdown ### @ -->
    * markdown
    *
    * - `table.markdown`
@@ -204,7 +204,7 @@ export namespace table {
     return lines;
   };
 
-  /**<!-- DOCS: table.getLines ### -->
+  /**<!-- DOCS: table.getLines ### @ -->
    * getLines
    *
    * - `table.getLines`
@@ -601,7 +601,7 @@ export namespace table {
   export namespace utils {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-    /**<!-- DOCS: table.utils.objectsToTable #### -->
+    /**<!-- DOCS: table.utils.objectsToTable #### @ -->
      * objectsToTable
      *
      * - `table.utils.objectsToTable`
@@ -632,7 +632,7 @@ export namespace table {
       };
     };
 
-    /**<!-- DOCS: table.utils.transpose #### -->
+    /**<!-- DOCS: table.utils.transpose #### @ -->
      * transpose
      *
      * - `table.utils.transpose`
@@ -656,7 +656,7 @@ export namespace table {
       return ArrayTools.zip(...rows);
     };
 
-    /**<!-- DOCS: table.utils.concatRows #### -->
+    /**<!-- DOCS: table.utils.concatRows #### @ -->
      * concatRows
      *
      * - `table.utils.concatRows`
@@ -683,7 +683,7 @@ export namespace table {
       return [...(cells.header || []), ...cells.body] as any[][];
     };
 
-    /**<!-- DOCS: table.utils.getFormat #### -->
+    /**<!-- DOCS: table.utils.getFormat #### @ -->
      * getFormat
      *
      * - `table.utils.getFormat`

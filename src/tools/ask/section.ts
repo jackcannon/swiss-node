@@ -6,7 +6,7 @@ import { Breadcrumb } from '../out/breadcrumb';
 import { ask } from '../ask';
 
 //<!-- DOCS: 150 -->
-/**<!-- DOCS: ask.separator ### -->
+/**<!-- DOCS: ask.separator ### @ -->
  * separator
  *
  * - `ask.separator`
@@ -46,7 +46,7 @@ type UnwrapPromFunc<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
 
 type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...infer Tail] ? [UnwrapPromFunc<Head>, ...UnwrapPromFuncs<Tail>] : [];
 
-/**<!-- DOCS: ask.section ### -->
+/**<!-- DOCS: ask.section ### @ -->
  * section
  *
  * - `ask.section`

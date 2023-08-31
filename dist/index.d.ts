@@ -259,6 +259,8 @@ declare namespace clr {
      * - `clr.hl1`
      *
      * Highlight 1
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const hl1: ChalkFn;
     /**<!-- DOCS: clr.hl2 ### -->
@@ -267,6 +269,8 @@ declare namespace clr {
      * - `clr.hl2`
      *
      * Highlight 2
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const hl2: ChalkFn;
     /**<!-- DOCS: clr.approve ### -->
@@ -275,6 +279,8 @@ declare namespace clr {
      * - `clr.approve`
      *
      * Approval colour (green)
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const approve: ChalkFn;
     /**<!-- DOCS: clr.create ### -->
@@ -283,6 +289,8 @@ declare namespace clr {
      * - `clr.create`
      *
      * Create colour (greenBright)
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const create: ChalkFn;
     /**<!-- DOCS: clr.update ### -->
@@ -291,6 +299,8 @@ declare namespace clr {
      * - `clr.update`
      *
      * Update colour (yellow)
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const update: ChalkFn;
     /**<!-- DOCS: clr.remove ### -->
@@ -299,6 +309,8 @@ declare namespace clr {
      * - `clr.remove`
      *
      * Remove/delete colour (red)
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const remove: ChalkFn;
     /**<!-- DOCS: clr.removeAll ### -->
@@ -307,6 +319,8 @@ declare namespace clr {
      * - `clr.removeAll`
      *
      * Remove/delete all colour (red)
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const removeAll: ChalkFn;
     /**<!-- DOCS: clr.blue ### -->
@@ -315,6 +329,8 @@ declare namespace clr {
      * - `clr.blue`
      *
      * Alias for chalk.blueBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const blue: ChalkFn;
     /**<!-- DOCS: clr.cyan ### -->
@@ -323,6 +339,8 @@ declare namespace clr {
      * - `clr.cyan`
      *
      * Alias for chalk.cyanBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const cyan: ChalkFn;
     /**<!-- DOCS: clr.green ### -->
@@ -331,6 +349,8 @@ declare namespace clr {
      * - `clr.green`
      *
      * Alias for chalk.greenBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const green: ChalkFn;
     /**<!-- DOCS: clr.magenta ### -->
@@ -339,6 +359,8 @@ declare namespace clr {
      * - `clr.magenta`
      *
      * Alias for chalk.magentaBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const magenta: ChalkFn;
     /**<!-- DOCS: clr.red ### -->
@@ -347,6 +369,8 @@ declare namespace clr {
      * - `clr.red`
      *
      * Alias for chalk.redBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const red: ChalkFn;
     /**<!-- DOCS: clr.yellow ### -->
@@ -355,6 +379,8 @@ declare namespace clr {
      * - `clr.yellow`
      *
      * Alias for chalk.yellowBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const yellow: ChalkFn;
     /**<!-- DOCS: clr.t1 ### -->
@@ -363,6 +389,8 @@ declare namespace clr {
      * - `clr.t1`
      *
      * Theme 1
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t1: ChalkFn;
     /**<!-- DOCS: clr.t2 ### -->
@@ -371,6 +399,8 @@ declare namespace clr {
      * - `clr.t2`
      *
      * Theme 2
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t2: ChalkFn;
     /**<!-- DOCS: clr.t3 ### -->
@@ -379,6 +409,8 @@ declare namespace clr {
      * - `clr.t3`
      *
      * Theme 3
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t3: ChalkFn;
     /**<!-- DOCS: clr.t4 ### -->
@@ -387,6 +419,8 @@ declare namespace clr {
      * - `clr.t4`
      *
      * Theme 4
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t4: ChalkFn;
     /**<!-- DOCS: clr.t5 ### -->
@@ -395,6 +429,8 @@ declare namespace clr {
      * - `clr.t5`
      *
      * Theme 5
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t5: ChalkFn;
     /**<!-- DOCS: clr.t6 ### -->
@@ -403,6 +439,8 @@ declare namespace clr {
      * - `clr.t6`
      *
      * Theme 6
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const t6: ChalkFn;
     /**<!-- DOCS: clr.gray0 ### -->
@@ -412,6 +450,8 @@ declare namespace clr {
      * - `clr.gray0`
      *
      * Gray 0 (0-5). Equivalent to chalk.black
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray0: ChalkFn;
     /**<!-- DOCS: clr.gray1 ### -->
@@ -421,6 +461,8 @@ declare namespace clr {
      * - `clr.gray1`
      *
      * Gray 1 (0-5). Equivalent to chalk.gray.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray1: ChalkFn;
     /**<!-- DOCS: clr.gray2 ### -->
@@ -430,6 +472,8 @@ declare namespace clr {
      * - `clr.gray2`
      *
      * Gray 2 (0-5). Equivalent to chalk.white.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray2: ChalkFn;
     /**<!-- DOCS: clr.gray3 ### -->
@@ -439,6 +483,8 @@ declare namespace clr {
      * - `clr.gray3`
      *
      * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray3: ChalkFn;
     /**<!-- DOCS: clr.gray4 ### -->
@@ -448,6 +494,8 @@ declare namespace clr {
      * - `clr.gray4`
      *
      * Gray 4 (0-5). Equivalent to chalk.white
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray4: ChalkFn;
     /**<!-- DOCS: clr.gray5 ### -->
@@ -457,6 +505,8 @@ declare namespace clr {
      * - `clr.gray5`
      *
      * Gray 5 (0-5). Equivalent to chalk.whiteBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray5: ChalkFn;
 }
@@ -486,7 +536,7 @@ declare type Breadcrumb$1 = {
  * A collection of functions to print to the console
  */
 declare namespace out {
-    /**<!-- DOCS: out.pad ### -->
+    /**<!-- DOCS: out.pad ### @ -->
      * pad
      *
      * - `out.pad`
@@ -501,7 +551,7 @@ declare namespace out {
     export const pad: (line: string, start: number, end: number, replaceChar?: string) => string;
     export type AlignType = 'left' | 'right' | 'center' | 'justify';
     type AlignFunction = (item: any, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
-    /**<!-- DOCS: out.center ### -->
+    /**<!-- DOCS: out.center ### @ -->
      * center
      *
      * - `out.center`
@@ -520,7 +570,7 @@ declare namespace out {
      * ```
      */
     export const center: AlignFunction;
-    /**<!-- DOCS: out.left ### -->
+    /**<!-- DOCS: out.left ### @ -->
      * left
      *
      * - `out.left`
@@ -539,7 +589,7 @@ declare namespace out {
      * ```
      */
     export const left: AlignFunction;
-    /**<!-- DOCS: out.right ### -->
+    /**<!-- DOCS: out.right ### @ -->
      * right
      *
      * - `out.right`
@@ -558,7 +608,7 @@ declare namespace out {
      * ```
      */
     export const right: AlignFunction;
-    /**<!-- DOCS: out.justify ### -->
+    /**<!-- DOCS: out.justify ### @ -->
      * justify
      *
      * - `out.justify`
@@ -577,7 +627,7 @@ declare namespace out {
      * ```
      */
     export const justify: AlignFunction;
-    /**<!-- DOCS: out.leftLines ### -->
+    /**<!-- DOCS: out.leftLines ### @ -->
      * leftLines
      *
      * - `out.leftLines`
@@ -594,7 +644,7 @@ declare namespace out {
      * ```
      */
     export const leftLines: (lines: string[], width?: number) => string[];
-    /**<!-- DOCS: out.centerLines ### -->
+    /**<!-- DOCS: out.centerLines ### @ -->
      * centerLines
      *
      * - `out.centerLines`
@@ -611,7 +661,7 @@ declare namespace out {
      * ```
      */
     export const centerLines: (lines: string[], width?: number) => string[];
-    /**<!-- DOCS: out.rightLines ### -->
+    /**<!-- DOCS: out.rightLines ### @ -->
      * rightLines
      *
      * - `out.rightLines`
@@ -628,7 +678,7 @@ declare namespace out {
      * ```
      */
     export const rightLines: (lines: string[], width?: number) => string[];
-    /**<!-- DOCS: out.justifyLines ### -->
+    /**<!-- DOCS: out.justifyLines ### @ -->
      * justifyLines
      *
      * - `out.justifyLines`
@@ -645,7 +695,7 @@ declare namespace out {
      * ```
      */
     export const justifyLines: (lines: string[], width?: number) => string[];
-    /**<!-- DOCS: out.align ### -->
+    /**<!-- DOCS: out.align ### @ -->
      * align
      *
      * - `out.align`
@@ -664,7 +714,7 @@ declare namespace out {
      * ```
      */
     export const align: (item: any, direction: AlignType, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
-    /**<!-- DOCS: out.split ### -->
+    /**<!-- DOCS: out.split ### @ -->
      * split
      *
      * - `out.split`
@@ -676,7 +726,7 @@ declare namespace out {
      * ```
      */
     export const split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
-    /**<!-- DOCS: out.wrap ### -->
+    /**<!-- DOCS: out.wrap ### @ -->
      * wrap
      *
      * - `out.wrap`
@@ -690,7 +740,7 @@ declare namespace out {
      * ```
      */
     export const wrap: (item: any, width?: number, alignment?: AlignType, forceWidth?: boolean) => string;
-    /**<!-- DOCS: out.moveUp ### -->
+    /**<!-- DOCS: out.moveUp ### @ -->
      * moveUp
      *
      * - `out.moveUp`
@@ -704,7 +754,7 @@ declare namespace out {
      * ```
      */
     export const moveUp: (lines?: number) => void;
-    /**<!-- DOCS: out.loading ### -->
+    /**<!-- DOCS: out.loading ### @ -->
      * loading
      *
      * - `out.loading`
@@ -720,7 +770,7 @@ declare namespace out {
     export const loading: (action?: (s: string) => any, lines?: number, symbols?: string[]) => {
         stop: () => void;
     };
-    /**<!-- DOCS: out.limitToLength ### -->
+    /**<!-- DOCS: out.limitToLength ### @ -->
      * limitToLength
      *
      * - `out.limitToLength`
@@ -732,7 +782,7 @@ declare namespace out {
      * ```
      */
     export const limitToLength: (text: string, maxLength: number) => string;
-    /**<!-- DOCS: out.limitToLengthStart ### -->
+    /**<!-- DOCS: out.limitToLengthStart ### @ -->
      * limitToLengthStart
      *
      * - `out.limitToLengthStart`
@@ -744,7 +794,7 @@ declare namespace out {
      * ```
      */
     export const limitToLengthStart: (text: string, maxLength: number) => string;
-    /**<!-- DOCS: out.truncate ### -->
+    /**<!-- DOCS: out.truncate ### @ -->
      * truncate
      *
      * - `out.truncate`
@@ -756,7 +806,7 @@ declare namespace out {
      * ```
      */
     export const truncate: (text: string, maxLength?: number, suffix?: string) => string;
-    /**<!-- DOCS: out.truncateStart ### -->
+    /**<!-- DOCS: out.truncateStart ### @ -->
      * truncateStart
      *
      * - `out.truncateStart`
@@ -768,7 +818,7 @@ declare namespace out {
      * ```
      */
     export const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
-    /**<!-- DOCS: out.concatLineGroups ### -->
+    /**<!-- DOCS: out.concatLineGroups ### @ -->
      * concatLineGroups
      *
      * - `out.concatLineGroups`
@@ -781,7 +831,7 @@ declare namespace out {
      * ```
      */
     export const concatLineGroups: (...groups: string[][]) => string[];
-    /**<!-- DOCS: out.getResponsiveValue ### -->
+    /**<!-- DOCS: out.getResponsiveValue ### @ -->
      * getResponsiveValue
      *
      * - `out.getResponsiveValue`
@@ -887,7 +937,7 @@ declare namespace out {
      * utils
      */
     export namespace utils {
-        /**<!-- DOCS: out.utils.getTerminalWidth #### 291 -->
+        /**<!-- DOCS: out.utils.getTerminalWidth #### 291 @ -->
          * getTerminalWidth
          *
          * - `out.utils.getTerminalWidth`
@@ -899,7 +949,7 @@ declare namespace out {
          * ```
          */
         const getTerminalWidth: () => number;
-        /**<!-- DOCS: out.utils.getLines #### 291 -->
+        /**<!-- DOCS: out.utils.getLines #### 291 @ -->
          * getLines
          *
          * - `out.utils.getLines`
@@ -914,7 +964,7 @@ declare namespace out {
          * ```
          */
         const getLines: (text: Text) => string[];
-        /**<!-- DOCS: out.utils.getNumLines #### 291 -->
+        /**<!-- DOCS: out.utils.getNumLines #### 291 @ -->
          * getNumLines
          *
          * - `out.utils.getNumLines`
@@ -929,7 +979,7 @@ declare namespace out {
          * ```
          */
         const getNumLines: (text: Text) => number;
-        /**<!-- DOCS: out.utils.getLinesWidth #### 291 -->
+        /**<!-- DOCS: out.utils.getLinesWidth #### 291 @ -->
          * getLinesWidth
          *
          * - `out.utils.getLinesWidth`
@@ -944,7 +994,7 @@ declare namespace out {
          * ```
          */
         const getLinesWidth: (text: Text) => number;
-        /**<!-- DOCS: out.utils.getLogLines #### 291 -->
+        /**<!-- DOCS: out.utils.getLogLines #### 291 @ -->
          * getLogLines
          *
          * - `out.utils.getLogLines`
@@ -959,7 +1009,7 @@ declare namespace out {
          * ```
          */
         const getLogLines: (item: any) => string[];
-        /**<!-- DOCS: out.utils.getNumLogLines #### 291 -->
+        /**<!-- DOCS: out.utils.getNumLogLines #### 291 @ -->
          * getNumLogLines
          *
          * - `out.utils.getNumLogLines`
@@ -974,7 +1024,7 @@ declare namespace out {
          * ```
          */
         const getNumLogLines: (item: Text) => number;
-        /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 -->
+        /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 @ -->
          * getLogLinesWidth
          *
          * - `out.utils.getLogLinesWidth`
@@ -989,7 +1039,7 @@ declare namespace out {
          * ```
          */
         const getLogLinesWidth: (item: Text) => number;
-        /**<!-- DOCS: out.utils.joinLines #### 291 -->
+        /**<!-- DOCS: out.utils.joinLines #### 291 @ -->
          * joinLines
          *
          * - `out.utils.joinLines`
@@ -1003,7 +1053,7 @@ declare namespace out {
          * ```
          */
         const joinLines: (lines: string[]) => string;
-        /**<!-- DOCS: out.utils.hasColor #### 291 -->
+        /**<!-- DOCS: out.utils.hasColor #### 291 @ -->
          * hasColor
          *
          * - `out.utils.hasColor`
@@ -1110,7 +1160,7 @@ interface CharLookup<T> {
  * A simple table generator
  */
 declare namespace table {
-    /**<!-- DOCS: table.print ### -->
+    /**<!-- DOCS: table.print ### @ -->
      * print
      *
      * - `table.print`
@@ -1132,7 +1182,7 @@ declare namespace table {
      * ```
      */
     const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
-    /**<!-- DOCS: table.printObjects ### -->
+    /**<!-- DOCS: table.printObjects ### @ -->
      * printObjects
      *
      * - `table.printObjects`
@@ -1168,7 +1218,7 @@ declare namespace table {
      * ```
      */
     const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
-    /**<!-- DOCS: table.markdown ### -->
+    /**<!-- DOCS: table.markdown ### @ -->
      * markdown
      *
      * - `table.markdown`
@@ -1191,7 +1241,7 @@ declare namespace table {
      * ```
      */
     const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
-    /**<!-- DOCS: table.getLines ### -->
+    /**<!-- DOCS: table.getLines ### @ -->
      * getLines
      *
      * - `table.getLines`
@@ -1482,7 +1532,7 @@ declare namespace table {
      * utils
      */
     namespace utils {
-        /**<!-- DOCS: table.utils.objectsToTable #### -->
+        /**<!-- DOCS: table.utils.objectsToTable #### @ -->
          * objectsToTable
          *
          * - `table.utils.objectsToTable`
@@ -1505,7 +1555,7 @@ declare namespace table {
             header: any[][];
             body: any[][];
         };
-        /**<!-- DOCS: table.utils.transpose #### -->
+        /**<!-- DOCS: table.utils.transpose #### @ -->
          * transpose
          *
          * - `table.utils.transpose`
@@ -1526,7 +1576,7 @@ declare namespace table {
          * ```
          */
         const transpose: (rows: any[][]) => any[][];
-        /**<!-- DOCS: table.utils.concatRows #### -->
+        /**<!-- DOCS: table.utils.concatRows #### @ -->
          * concatRows
          *
          * - `table.utils.concatRows`
@@ -1553,7 +1603,7 @@ declare namespace table {
             header: any[][];
             body: any[][];
         }) => any[][];
-        /**<!-- DOCS: table.utils.getFormat #### -->
+        /**<!-- DOCS: table.utils.getFormat #### @ -->
          * getFormat
          *
          * - `table.utils.getFormat`
@@ -1604,7 +1654,7 @@ declare namespace ask {
         selected?: boolean;
     }
     type PromptChoice<T = string> = string | PromptChoiceObject<T>;
-    /**<!-- DOCS: ask.text ### -->
+    /**<!-- DOCS: ask.text ### @ -->
      * text
      *
      * - `ask.text`
@@ -1616,7 +1666,7 @@ declare namespace ask {
      * ```
      */
     export const text: (question: string | Breadcrumb$1, initial?: string) => Promise<string>;
-    /**<!-- DOCS: ask.autotext ### -->
+    /**<!-- DOCS: ask.autotext ### @ -->
      * autotext
      *
      * - `ask.autotext`
@@ -1628,7 +1678,7 @@ declare namespace ask {
      * ```
      */
     export const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
-    /**<!-- DOCS: ask.number ### -->
+    /**<!-- DOCS: ask.number ### @ -->
      * number
      *
      * - `ask.number`
@@ -1640,7 +1690,7 @@ declare namespace ask {
      * ```
      */
     export const number: (question: string | Breadcrumb$1, initial?: number) => Promise<number>;
-    /**<!-- DOCS: ask.boolean ### -->
+    /**<!-- DOCS: ask.boolean ### @ -->
      * boolean
      *
      * - `ask.boolean`
@@ -1652,7 +1702,7 @@ declare namespace ask {
      * ```
      */
     export const boolean: (question: string | Breadcrumb$1, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
-    /**<!-- DOCS: ask.booleanAlt ### -->
+    /**<!-- DOCS: ask.booleanAlt ### @ -->
      * booleanAlt
      *
      * - `ask.booleanAlt`
@@ -1666,7 +1716,7 @@ declare namespace ask {
      * ```
      */
     export const booleanAlt: (question: string | Breadcrumb$1, initial?: boolean) => Promise<boolean>;
-    /**<!-- DOCS: ask.select ### -->
+    /**<!-- DOCS: ask.select ### @ -->
      * select
      *
      * - `ask.select`
@@ -1678,7 +1728,7 @@ declare namespace ask {
      * ```
      */
     export const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
-    /**<!-- DOCS: ask.multiselect ### -->
+    /**<!-- DOCS: ask.multiselect ### @ -->
      * multiselect
      *
      * - `ask.multiselect`
@@ -1697,7 +1747,7 @@ declare namespace ask {
         canDeleteAll: boolean;
     }
     export type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
-    /**<!-- DOCS: ask.crud ### -->
+    /**<!-- DOCS: ask.crud ### @ -->
      * crud
      *
      * - `ask.crud`
@@ -1711,7 +1761,7 @@ declare namespace ask {
      * ```
      */
     export const crud: (question: string | Breadcrumb$1, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
-    /**<!-- DOCS: ask.validate ### -->
+    /**<!-- DOCS: ask.validate ### @ -->
      * validate
      *
      * - `ask.validate`
@@ -1726,7 +1776,7 @@ declare namespace ask {
      * ```
      */
     export const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
-    /**<!-- DOCS: ask.imitate ### -->
+    /**<!-- DOCS: ask.imitate ### @ -->
      * imitate
      *
      * - `ask.imitate`
@@ -1740,7 +1790,7 @@ declare namespace ask {
      * ```
      */
     export const imitate: (done: boolean, question: string | Breadcrumb$1, result?: any) => number;
-    /**<!-- DOCS: ask.prefill ### -->
+    /**<!-- DOCS: ask.prefill ### @ -->
      * prefill
      *
      * - `ask.prefill`
@@ -1760,7 +1810,7 @@ declare namespace ask {
      * ```
      */
     export const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb$1, askFn: (question: string | Breadcrumb$1) => T | Promise<T>) => Promise<T>;
-    /**<!-- DOCS: ask.loading ### -->
+    /**<!-- DOCS: ask.loading ### @ -->
      * loading
      *
      * - `ask.loading`
@@ -1776,7 +1826,7 @@ declare namespace ask {
     export const loading: (question: string | Breadcrumb$1) => {
         stop: () => void;
     };
-    /**<!-- DOCS: ask.pause ### -->
+    /**<!-- DOCS: ask.pause ### @ -->
      * pause
      *
      * - `ask.pause`
@@ -1788,7 +1838,7 @@ declare namespace ask {
      * ```
      */
     export const pause: (text?: string | Breadcrumb$1) => Promise<void>;
-    /**<!-- DOCS: ask.countdown ### -->
+    /**<!-- DOCS: ask.countdown ### @ -->
      * countdown
      *
      * - `ask.countdown`
@@ -1800,7 +1850,7 @@ declare namespace ask {
      * ```
      */
     export const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
-    /**<!-- DOCS: ask.wizard ### -->
+    /**<!-- DOCS: ask.wizard ### @ -->
      * wizard
      *
      * - `ask.wizard`
@@ -2077,7 +2127,7 @@ declare namespace ask {
      */
     export namespace utils {
         type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
-        /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 -->
+        /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 @ -->
          * itemsToPromptObjects
          *
          * - `ask.utils.itemsToPromptObjects`
@@ -2129,6 +2179,8 @@ declare namespace chlk {
      * - `clr.gray0`
      *
      * Gray 0 (0-5). Equivalent to chalk.black
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray0: ChalkFn;
     /**<!-- DOCS: chlk.gray1 ### -->
@@ -2138,6 +2190,8 @@ declare namespace chlk {
      * - `clr.gray1`
      *
      * Gray 1 (0-5). Equivalent to chalk.gray.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray1: ChalkFn;
     /**<!-- DOCS: chlk.gray2 ### -->
@@ -2147,6 +2201,8 @@ declare namespace chlk {
      * - `clr.gray2`
      *
      * Gray 2 (0-5). Equivalent to chalk.white.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray2: ChalkFn;
     /**<!-- DOCS: chlk.gray3 ### -->
@@ -2156,6 +2212,8 @@ declare namespace chlk {
      * - `clr.gray3`
      *
      * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray3: ChalkFn;
     /**<!-- DOCS: chlk.gray4 ### -->
@@ -2165,6 +2223,8 @@ declare namespace chlk {
      * - `clr.gray4`
      *
      * Gray 4 (0-5). Equivalent to chalk.white
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray4: ChalkFn;
     /**<!-- DOCS: chlk.gray5 ### -->
@@ -2174,6 +2234,8 @@ declare namespace chlk {
      * - `clr.gray5`
      *
      * Gray 5 (0-5). Equivalent to chalk.whiteBright
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const gray5: ChalkFn;
     /**<!-- DOCS: chlk.grays ### -->
@@ -2186,9 +2248,11 @@ declare namespace chlk {
      * ```typescript
      * grays[2]; // gray2
      * ```
+     * @param {...string} args Strings to be styled
+     * @returns {string} Styled string
      */
     const grays: ChalkFn[];
-    /**<!-- DOCS: chlk.gray ### -->
+    /**<!-- DOCS: chlk.gray ### @ -->
      * gray
      *
      * - `chlk.gray`
@@ -2200,7 +2264,7 @@ declare namespace chlk {
      * ```
      */
     const gray: (num: number) => ChalkFn;
-    /**<!-- DOCS: chlk.clear ### -->
+    /**<!-- DOCS: chlk.clear ### @ -->
      * clear
      *
      * - `chlk.clear`
@@ -2208,7 +2272,7 @@ declare namespace chlk {
      * Removes ANSI colours. Not same as chalk.reset
      */
     const clear: (str: string) => string;
-    /**<!-- DOCS: chlk.not ### -->
+    /**<!-- DOCS: chlk.not ### @ -->
      * not
      *
      * - `chlk.not`
@@ -2240,7 +2304,7 @@ declare const defaultConfigs: {
 declare type LogFunction = (...args: any[]) => void;
 declare type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
 declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
-/**<!-- DOCS: log.createLogger ### 401 -->
+/**<!-- DOCS: log.createLogger ### 401 @ -->
  * createLogger
  *
  * - `createLogger`
@@ -2340,7 +2404,7 @@ interface LogConfig {
  * A collection of tools for logging
  */
 declare namespace LogTools {
-    /**<!-- DOCS: LogTools.getLogStr ### -->
+    /**<!-- DOCS: LogTools.getLogStr ### @ -->
      * getLogStr
      *
      * - `LogTools.getLogStr`
@@ -2382,7 +2446,7 @@ declare namespace LogTools {
      * ```
      */
     const getLogStr: (item: any) => string;
-    /**<!-- DOCS: LogTools.processLogContents ### -->
+    /**<!-- DOCS: LogTools.processLogContents ### @ -->
      * processLogContents
      *
      * - `LogTools.processLogContents`
@@ -2391,7 +2455,7 @@ declare namespace LogTools {
      * Process an item to be logged
      */
     const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
-    /**<!-- DOCS: LogTools.getLog ### -->
+    /**<!-- DOCS: LogTools.getLog ### @ -->
      * getLog
      *
      * - `LogTools.getLog`
@@ -2468,7 +2532,7 @@ declare const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) =
  * A collection of tools for working with paths
  */
 declare namespace PathTools {
-    /**<!-- DOCS: PathTools.explodePath ### -->
+    /**<!-- DOCS: PathTools.explodePath ### @ -->
      * explodePath
      *
      * - `PathTools.explodePath`
@@ -2545,7 +2609,7 @@ declare namespace PathTools {
          */
         filename: string;
     }
-    /**<!-- DOCS: PathTools.removeTrailSlash ### -->
+    /**<!-- DOCS: PathTools.removeTrailSlash ### @ -->
      * removeTrailSlash
      *
      * - `PathTools.removeTrailSlash`
@@ -2557,7 +2621,7 @@ declare namespace PathTools {
      * ```
      */
     const removeTrailSlash: (path: string) => string;
-    /**<!-- DOCS: PathTools.trailSlash ### -->
+    /**<!-- DOCS: PathTools.trailSlash ### @ -->
      * trailSlash
      *
      * - `PathTools.trailSlash`
@@ -2569,7 +2633,7 @@ declare namespace PathTools {
      * ```
      */
     const trailSlash: (path: string) => string;
-    /**<!-- DOCS: PathTools.removeDoubleSlashes ### -->
+    /**<!-- DOCS: PathTools.removeDoubleSlashes ### @ -->
      * removeDoubleSlashes
      *
      * - `PathTools.removeDoubleSlashes`
@@ -2627,7 +2691,7 @@ declare type ExplodedPath = PathTools.ExplodedPath;
  * A collection of tools for working with progress bars (from swiss-ak)
  */
 declare namespace progressBarTools {
-    /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### -->
+    /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### @ -->
      * getColouredProgressBarOpts
      *
      * - `progressBarTools.getColouredProgressBarOpts`
@@ -2651,7 +2715,7 @@ declare namespace progressBarTools {
  * waiters
  */
 declare namespace waiters {
-    /**<!-- DOCS: waiters.nextTick ### -->
+    /**<!-- DOCS: waiters.nextTick ### @ -->
      * nextTick
      *
      * - `nextTick`
@@ -2682,7 +2746,7 @@ declare const nextTick: () => Promise<unknown>;
 /**<!-- DOCS: keyListener ##! -->
  * keyListener
  */
-/**<!-- DOCS: keyListener.getKeyListener ### -->
+/**<!-- DOCS: keyListener.getKeyListener ### @ -->
  * getKeyListener
  *
  * - `getKeyListener`
@@ -2716,6 +2780,7 @@ interface KeyListener {
      * - `kl.start`
      *
      * Start listening for key presses
+     * @returns {void}
      */
     start(): void;
     /**<!-- DOCS: keyListener.KeyListener.stop #### -->
@@ -2724,6 +2789,7 @@ interface KeyListener {
      * - `kl.stop`
      *
      * Stop listening for key presses
+     * @returns {void}
      */
     stop(): void;
 }

@@ -7,7 +7,7 @@
 export namespace PathTools {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: PathTools.explodePath ### -->
+  /**<!-- DOCS: PathTools.explodePath ### @ -->
    * explodePath
    *
    * - `PathTools.explodePath`
@@ -101,7 +101,7 @@ export namespace PathTools {
     filename: string;
   }
 
-  /**<!-- DOCS: PathTools.removeTrailSlash ### -->
+  /**<!-- DOCS: PathTools.removeTrailSlash ### @ -->
    * removeTrailSlash
    *
    * - `PathTools.removeTrailSlash`
@@ -114,7 +114,7 @@ export namespace PathTools {
    */
   export const removeTrailSlash = (path: string) => path.replace(/\/$/, '');
 
-  /**<!-- DOCS: PathTools.trailSlash ### -->
+  /**<!-- DOCS: PathTools.trailSlash ### @ -->
    * trailSlash
    *
    * - `PathTools.trailSlash`
@@ -127,7 +127,7 @@ export namespace PathTools {
    */
   export const trailSlash = (path: string) => removeTrailSlash(path) + '/';
 
-  /**<!-- DOCS: PathTools.removeDoubleSlashes ### -->
+  /**<!-- DOCS: PathTools.removeDoubleSlashes ### @ -->
    * removeDoubleSlashes
    *
    * - `PathTools.removeDoubleSlashes`

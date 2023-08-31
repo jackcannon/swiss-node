@@ -91,7 +91,7 @@ const getColors = (opts: AskTrimOptions) => ({
   activeHandleBase: opts.clrActiveHandleBase
 });
 
-/**<!-- DOCS: ask.trim ### -->
+/**<!-- DOCS: ask.trim ### @ -->
  * trim
  *
  * - `ask.trim`

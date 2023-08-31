@@ -11,7 +11,7 @@ import { fn } from 'swiss-ak';
 export namespace LogTools {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: LogTools.getLogStr ### -->
+  /**<!-- DOCS: LogTools.getLogStr ### @ -->
    * getLogStr
    *
    * - `LogTools.getLogStr`
@@ -61,7 +61,7 @@ export namespace LogTools {
     }
   };
 
-  /**<!-- DOCS: LogTools.processLogContents ### -->
+  /**<!-- DOCS: LogTools.processLogContents ### @ -->
    * processLogContents
    *
    * - `LogTools.processLogContents`
@@ -77,7 +77,7 @@ export namespace LogTools {
       .map((line, index) => chalk.bold(index ? ' '.repeat(prefix.length) : prefix) + ' ' + wrapper(line))
       .join('\n');
 
-  /**<!-- DOCS: LogTools.getLog ### -->
+  /**<!-- DOCS: LogTools.getLog ### @ -->
    * getLog
    *
    * - `LogTools.getLog`

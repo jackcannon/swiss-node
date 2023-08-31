@@ -41,7 +41,7 @@ export namespace ask {
 
   type PromptChoice<T = string> = string | PromptChoiceObject<T>;
 
-  /**<!-- DOCS: ask.text ### -->
+  /**<!-- DOCS: ask.text ### @ -->
    * text
    *
    * - `ask.text`
@@ -67,7 +67,7 @@ export namespace ask {
     return '' + response[PROMPT_VALUE_PROPERTY];
   };
 
-  /**<!-- DOCS: ask.autotext ### -->
+  /**<!-- DOCS: ask.autotext ### @ -->
    * autotext
    *
    * - `ask.autotext`
@@ -118,7 +118,7 @@ export namespace ask {
     return response[PROMPT_VALUE_PROPERTY];
   };
 
-  /**<!-- DOCS: ask.number ### -->
+  /**<!-- DOCS: ask.number ### @ -->
    * number
    *
    * - `ask.number`
@@ -143,7 +143,7 @@ export namespace ask {
     return Number(response[PROMPT_VALUE_PROPERTY]);
   };
 
-  /**<!-- DOCS: ask.boolean ### -->
+  /**<!-- DOCS: ask.boolean ### @ -->
    * boolean
    *
    * - `ask.boolean`
@@ -175,7 +175,7 @@ export namespace ask {
     return !Boolean(response[PROMPT_VALUE_PROPERTY]);
   };
 
-  /**<!-- DOCS: ask.booleanAlt ### -->
+  /**<!-- DOCS: ask.booleanAlt ### @ -->
    * booleanAlt
    *
    * - `ask.booleanAlt`
@@ -202,7 +202,7 @@ export namespace ask {
     return Boolean(response[PROMPT_VALUE_PROPERTY]);
   };
 
-  /**<!-- DOCS: ask.select ### -->
+  /**<!-- DOCS: ask.select ### @ -->
    * select
    *
    * - `ask.select`
@@ -236,7 +236,7 @@ export namespace ask {
     return typeof value === 'number' ? choiceObjs[value] : value;
   };
 
-  /**<!-- DOCS: ask.multiselect ### -->
+  /**<!-- DOCS: ask.multiselect ### @ -->
    * multiselect
    *
    * - `ask.multiselect`
@@ -298,7 +298,7 @@ export namespace ask {
   }
   export type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
 
-  /**<!-- DOCS: ask.crud ### -->
+  /**<!-- DOCS: ask.crud ### @ -->
    * crud
    *
    * - `ask.crud`
@@ -344,7 +344,7 @@ export namespace ask {
     return await select(question, opts, 'none');
   };
 
-  /**<!-- DOCS: ask.validate ### -->
+  /**<!-- DOCS: ask.validate ### @ -->
    * validate
    *
    * - `ask.validate`
@@ -407,7 +407,7 @@ export namespace ask {
     return 'done';
   };
 
-  /**<!-- DOCS: ask.imitate ### -->
+  /**<!-- DOCS: ask.imitate ### @ -->
    * imitate
    *
    * - `ask.imitate`
@@ -438,7 +438,7 @@ export namespace ask {
     return 1;
   };
 
-  /**<!-- DOCS: ask.prefill ### -->
+  /**<!-- DOCS: ask.prefill ### @ -->
    * prefill
    *
    * - `ask.prefill`
@@ -469,7 +469,7 @@ export namespace ask {
     return askFn(question);
   };
 
-  /**<!-- DOCS: ask.loading ### -->
+  /**<!-- DOCS: ask.loading ### @ -->
    * loading
    *
    * - `ask.loading`
@@ -484,7 +484,7 @@ export namespace ask {
    */
   export const loading = (question: string | Breadcrumb) => out.loading((s) => imitate(false, question, `[${s}]`));
 
-  /**<!-- DOCS: ask.pause ### -->
+  /**<!-- DOCS: ask.pause ### @ -->
    * pause
    *
    * - `ask.pause`
@@ -514,7 +514,7 @@ export namespace ask {
     });
   };
 
-  /**<!-- DOCS: ask.countdown ### -->
+  /**<!-- DOCS: ask.countdown ### @ -->
    * countdown
    *
    * - `ask.countdown`
@@ -546,7 +546,7 @@ export namespace ask {
     }
   };
 
-  /**<!-- DOCS: ask.wizard ### -->
+  /**<!-- DOCS: ask.wizard ### @ -->
    * wizard
    *
    * - `ask.wizard`
@@ -637,7 +637,7 @@ export namespace ask {
     // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
     type TitleFn<T> = (item: T, index: number, arr: T[]) => string;
-    /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 -->
+    /**<!-- DOCS: ask.utils.itemsToPromptObjects #### 199 @ -->
      * itemsToPromptObjects
      *
      * - `ask.utils.itemsToPromptObjects`

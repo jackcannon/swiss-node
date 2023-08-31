@@ -107,7 +107,7 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
     .join('\n');
 };
 
-/**<!-- DOCS: log.createLogger ### 401 -->
+/**<!-- DOCS: log.createLogger ### 401 @ -->
  * createLogger
  *
  * - `createLogger`

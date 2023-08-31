@@ -4,7 +4,7 @@
 export namespace waiters {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: waiters.nextTick ### -->
+  /**<!-- DOCS: waiters.nextTick ### @ -->
    * nextTick
    *
    * - `nextTick`
