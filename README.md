@@ -1058,8 +1058,8 @@ Return type for getBreadcrumb
 ### getLineCounter
 
 ```typescript
-out.getLineCounter;
-getLineCounter;
+out.getLineCounter(undefined): LineCounter
+getLineCounter(undefined): LineCounter
 ```
 
 Get line counter for counter output lines
@@ -1067,11 +1067,15 @@ Get line counter for counter output lines
 ```typescript
 const lc = getLineCounter();
 lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.wrap(undefined, () => console.log('a single line')); // 1
 lc.add(1);
 lc.get(); // 3
 lc.clear();
 ```
+
+| Return Type   |
+|---------------|
+| `LineCounter` |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1087,7 +1091,7 @@ Return type for getLineCounter
 ```typescript
 const lc = getLineCounter();
 lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.wrap(1, () => console.log('a single line')); // 1
 lc.add(1);
 lc.get(); // 3
 lc.clear();
@@ -1101,16 +1105,28 @@ Same as console.log, but adds to the lc counter
 ```typescript
 const lc = getLineCounter();
 lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-lc.add(1);
-lc.get(); // 3
-lc.clear();
 ```
+
+|  #   | Parameter Name | Required | Type    | Description          |
+|:----:|:---------------|:---------|:--------|:---------------------|
+| *0…* | `args`         | **Yes**  | `any[]` | The arguments to log |
+
+| Return Type |                       |
+|-------------|-----------------------|
+| `number`    | number of lines added |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ##### lc.move
 Moves the cursor up by a given number of lines
+
+|  #  | Parameter Name | Required | Type     | Description                 |
+|:---:|:---------------|:---------|:---------|:----------------------------|
+| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1119,12 +1135,18 @@ Wraps a function, and adds a given number to the line counter
 
 ```typescript
 const lc = getLineCounter();
-lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-lc.add(1);
-lc.get(); // 3
-lc.clear();
+lc.wrap(1, () => console.log('a single line')); // 1
 ```
+
+|  #   | Parameter Name | Required | Type                            | Description                           |
+|:----:|:---------------|:---------|:--------------------------------|:--------------------------------------|
+| *0*  | `newLines`     | **Yes**  | `number`                        | The number of lines to add            |
+| *1*  | `func`         | **Yes**  | `(...args: A[]) => number \| T` | The function to wrap                  |
+| *2…* | `args`         | **Yes**  | `A[]`                           | The arguments to pass to the function |
+
+| Return Type |                        |
+|-------------|------------------------|
+| `T`         | result of the function |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1133,12 +1155,16 @@ Adds a given number to the line counter
 
 ```typescript
 const lc = getLineCounter();
-lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
 lc.add(1);
-lc.get(); // 3
-lc.clear();
 ```
+
+|  #  | Parameter Name | Required | Type     | Description                |
+|:---:|:---------------|:---------|:---------|:---------------------------|
+| *0* | `newLines`     | **Yes**  | `number` | The number of lines to add |
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1148,11 +1174,14 @@ returns the line counter
 ```typescript
 const lc = getLineCounter();
 lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.wrap(1, () => console.log('a single line')); // 1
 lc.add(1);
 lc.get(); // 3
-lc.clear();
 ```
+
+| Return Type |              |
+|-------------|--------------|
+| `number`    | line counter |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1163,12 +1192,20 @@ Returns the number of lines since a given checkpoint
 const lc = getLineCounter();
 lc.log('hello'); // 1
 lc.checkpoint('test-a');
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.wrap(1, () => console.log('a single line')); // 1
 lc.checkpoint('test-b');
 lc.add(1);
 lc.getSince('test-a'); // 2
 lc.getSince('test-b'); // 1
 ```
+
+|  #  | Parameter Name | Required | Type     | Description             |
+|:---:|:---------------|:---------|:---------|:------------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to check |
+
+| Return Type |                                      |
+|-------------|--------------------------------------|
+| `number`    | number of lines since the checkpoint |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1178,11 +1215,12 @@ clears the line counter, and moves the cursor up by the value of the line counte
 ```typescript
 const lc = getLineCounter();
 lc.log('hello'); // 1
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-lc.add(1);
-lc.get(); // 3
 lc.clear();
 ```
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1198,6 +1236,15 @@ lc.log('line 4'); // 1
 lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
 ```
 
+|  #  | Parameter Name         | Required | Type      | Description                                                                   |
+|:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
+| *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
+
+| Return Type |
+|-------------|
+| `void`      |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ##### lc.checkpoint
@@ -1207,12 +1254,20 @@ Records a 'checkpoint' that can be returned to later
 const lc = getLineCounter();
 lc.log('hello'); // 1
 lc.checkpoint('test-a');
-lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+lc.wrap(1, () => console.log('a single line')); // 1
 lc.checkpoint('test-b');
 lc.add(1);
 lc.getSince('test-a'); // 2
 lc.getSince('test-b'); // 1
 ```
+
+|  #  | Parameter Name | Required | Type     | Description              |
+|:---:|:---------------|:---------|:---------|:-------------------------|
+| *0* | `checkpointID` | *No*     | `string` | The checkpoint to record |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | checkpointID |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1228,6 +1283,14 @@ lc.log('line 3'); // 1
 lc.log('line 4'); // 1
 lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 ```
+
+|  #  | Parameter Name | Required | Type     | Description                |
+|:---:|:---------------|:---------|:---------|:---------------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to clear to |
+
+| Return Type |
+|-------------|
+| `void`      |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 

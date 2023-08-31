@@ -1,7 +1,7 @@
 import * as swiss_ak from 'swiss-ak';
 import { Partial as Partial$1, second, OfType, ProgressBarOptions } from 'swiss-ak';
 
-/**<!-- DOCS: out.LineCounter #### -->
+/**<!-- DOCS: out.LineCounter #### 261 -->
  * LineCounter
  *
  * - `out.LineCounter`
@@ -12,14 +12,14 @@ import { Partial as Partial$1, second, OfType, ProgressBarOptions } from 'swiss-
  * ```typescript
  * const lc = getLineCounter();
  * lc.log('hello'); // 1
- * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.wrap(1, () => console.log('a single line')); // 1
  * lc.add(1);
  * lc.get(); // 3
  * lc.clear();
  * ```
  */
 interface LineCounter$1 {
-    /**<!-- DOCS: out.LineCounter.log ##### -->
+    /**<!-- DOCS: out.LineCounter.log ##### 262 -->
      * lc.log
      *
      * Same as console.log, but adds to the lc counter
@@ -27,50 +27,48 @@ interface LineCounter$1 {
      * ```typescript
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
      * ```
+     * @param {...any} args The arguments to log
+     * @returns {number} The number of lines added
      */
     log(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.move ##### -->
+    /**<!-- DOCS: out.LineCounter.move ##### 262 -->
      * lc.move
      *
      * Moves the cursor up by a given number of lines
+     * @param {number} lines The number of lines to move
+     * @returns {void}
      */
     move(lines: number): void;
-    /**<!-- DOCS: out.LineCounter.wrap ##### -->
+    /**<!-- DOCS: out.LineCounter.wrap ##### 262 -->
      * lc.wrap
      *
      * Wraps a function, and adds a given number to the line counter
      *
      * ```typescript
      * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
+     * lc.wrap(1, () => console.log('a single line')); // 1
      * ```
+     * @param {number} newLines The number of lines to add
+     * @param {(...args: A[]) => number | T} func The function to wrap
+     * @param {...A} args The arguments to pass to the function
+     * @returns {T} The result of the function
      */
     wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-    /**<!-- DOCS: out.LineCounter.add ##### -->
+    /**<!-- DOCS: out.LineCounter.add ##### 262 -->
      * lc.add
      *
      * Adds a given number to the line counter
      *
      * ```typescript
      * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
      * lc.add(1);
-     * lc.get(); // 3
-     * lc.clear();
      * ```
+     * @param {number} newLines The number of lines to add
+     * @returns {void}
      */
     add(newLines: number): void;
-    /**<!-- DOCS: out.LineCounter.get ##### -->
+    /**<!-- DOCS: out.LineCounter.get ##### 262 -->
      * lc.get
      *
      * returns the line counter
@@ -78,14 +76,14 @@ interface LineCounter$1 {
      * ```typescript
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
      * lc.add(1);
      * lc.get(); // 3
-     * lc.clear();
      * ```
+     * @returns {number} The line counter
      */
     get(): number;
-    /**<!-- DOCS: out.LineCounter.getSince ##### -->
+    /**<!-- DOCS: out.LineCounter.getSince ##### 262 -->
      * lc.getSince
      *
      * Returns the number of lines since a given checkpoint
@@ -94,15 +92,17 @@ interface LineCounter$1 {
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
      * lc.checkpoint('test-a');
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
      * lc.checkpoint('test-b');
      * lc.add(1);
      * lc.getSince('test-a'); // 2
      * lc.getSince('test-b'); // 1
      * ```
+     * @param {string} checkpointID The checkpoint to check
+     * @returns {number} The number of lines since the checkpoint
      */
     getSince(checkpointID: string): number;
-    /**<!-- DOCS: out.LineCounter.clear ##### -->
+    /**<!-- DOCS: out.LineCounter.clear ##### 262 -->
      * lc.clear
      *
      * clears the line counter, and moves the cursor up by the value of the line counter
@@ -110,14 +110,12 @@ interface LineCounter$1 {
      * ```typescript
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
-     * lc.add(1);
-     * lc.get(); // 3
      * lc.clear();
      * ```
+     * @returns {void}
      */
     clear(): void;
-    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
+    /**<!-- DOCS: out.LineCounter.clearBack ##### 262 -->
      * lc.clearBack
      *
      * Clears a given number of lines, and updates the line counter
@@ -130,9 +128,12 @@ interface LineCounter$1 {
      * lc.log('line 4'); // 1
      * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
      * ```
+     * @param {number} linesToMoveBack The number of lines to clear
+     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+     * @returns {void}
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
+    /**<!-- DOCS: out.LineCounter.checkpoint ##### 262 -->
      * lc.checkpoint
      *
      * Records a 'checkpoint' that can be returned to later
@@ -141,15 +142,17 @@ interface LineCounter$1 {
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
      * lc.checkpoint('test-a');
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
      * lc.checkpoint('test-b');
      * lc.add(1);
      * lc.getSince('test-a'); // 2
      * lc.getSince('test-b'); // 1
      * ```
+     * @param {string} [checkpointID] The checkpoint to record
+     * @returns {string} The checkpointID
      */
     checkpoint(checkpointID?: string): string;
-    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
+    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### 262 -->
      * lc.clearToCheckpoint
      *
      * Clear lines up to a previously recorded checkpoint
@@ -163,6 +166,8 @@ interface LineCounter$1 {
      * lc.log('line 4'); // 1
      * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
      * ```
+     * @param {string} checkpointID The checkpoint to clear to
+     * @returns {void}
      */
     clearToCheckpoint(checkpointID: string): void;
 }
@@ -852,11 +857,12 @@ declare namespace out {
      * ```typescript
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.wrap(undefined, () => console.log('a single line')); // 1
      * lc.add(1);
      * lc.get(); // 3
      * lc.clear();
      * ```
+     * @returns {LineCounter}
      */
     export const getLineCounter: () => LineCounter$1;
     /**<!-- DOCS-ALIAS: out.LineCounter -->
@@ -870,7 +876,7 @@ declare namespace out {
      * ```typescript
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
-     * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
      * lc.add(1);
      * lc.get(); // 3
      * lc.clear();
@@ -1059,11 +1065,12 @@ declare type Breadcrumb = Breadcrumb$1;
  * ```typescript
  * const lc = getLineCounter();
  * lc.log('hello'); // 1
- * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.wrap(undefined, () => console.log('a single line')); // 1
  * lc.add(1);
  * lc.get(); // 3
  * lc.clear();
  * ```
+ * @returns {LineCounter}
  */
 declare const getLineCounter: () => LineCounter$1;
 /**<!-- DOCS-ALIAS: out.LineCounter -->
@@ -1077,7 +1084,7 @@ declare const getLineCounter: () => LineCounter$1;
  * ```typescript
  * const lc = getLineCounter();
  * lc.log('hello'); // 1
- * lc.wrap(undefined, () => table.print(['hello', 'world'])); // 1
+ * lc.wrap(1, () => console.log('a single line')); // 1
  * lc.add(1);
  * lc.get(); // 3
  * lc.clear();
