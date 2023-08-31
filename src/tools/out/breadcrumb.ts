@@ -31,6 +31,8 @@ const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
  * subsub(); // 'a › b › c › d'
  * subsub('e'); // 'a › b › c › d › e'
  * ```
+ * @param {...string} [baseNames]
+ * @returns {Breadcrumb}
  */
 export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   let current = [];

@@ -156,6 +156,13 @@ const askTableHandler = <T extends unknown>(
  * // └───┴───────┴─────┘
  * // Returns: { name: 'Jane', age: 26 }
  * ```
+ * @param {string | Breadcrumb} question
+ * @param {T[]} items
+ * @param {T | number} [initial]
+ * @param {any[][] | ItemToRowMapFunction<T>} [rows]
+ * @param {any[][] | RemapOf<T, string>} [headers]
+ * @param {tableOut.TableOptions} [tableOptions]
+ * @returns {Promise<T>}
  */
 export const select = async <T extends unknown>(
   question: string | Breadcrumb,
@@ -200,6 +207,13 @@ export const select = async <T extends unknown>(
  * //   { name: 'Derek', age: 27 }
  * // ]
  * ```
+ * @param {string | Breadcrumb} question
+ * @param {T[]} items
+ * @param {T[] | number[]} [initial]
+ * @param {any[][] | ItemToRowMapFunction<T>} [rows]
+ * @param {any[][] | RemapOf<T, string>} [headers]
+ * @param {tableOut.TableOptions} [tableOptions]
+ * @returns {Promise<T[]>}
  */
 export const multiselect = <T extends unknown>(
   question: string | Breadcrumb,

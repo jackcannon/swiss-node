@@ -51,6 +51,9 @@ export namespace ask {
    * ```typescript
    * const name = await ask.text('What is your name?'); // 'Jack'
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {string} [initial]
+   * @returns {Promise<string>}
    */
   export const text = async (question: string | Breadcrumb, initial?: string): Promise<string> => {
     const message = typeof question === 'string' ? question : question.get();
@@ -77,6 +80,11 @@ export namespace ask {
    * ```typescript
    * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {PromptChoice<T>[]} choices
+   * @param {T | string} [initial]
+   * @param {number} [choiceLimit=10]
+   * @returns {Promise<T>}
    */
   export const autotext = async <T = string>(
     question: string | Breadcrumb,
@@ -128,6 +136,9 @@ export namespace ask {
    * ```typescript
    * const age = await ask.number('How old are you?'); // 30
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {number} [initial=1]
+   * @returns {Promise<number>}
    */
   export const number = async (question: string | Breadcrumb, initial: number = 1): Promise<number> => {
     const message = typeof question === 'string' ? question : question.get();
@@ -153,6 +164,11 @@ export namespace ask {
    * ```typescript
    * const isCool = await ask.boolean('Is this cool?'); // true
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {boolean} [initial=true]
+   * @param {string} [yesTxt='yes']
+   * @param {string} [noTxt='no']
+   * @returns {Promise<boolean>}
    */
   export const boolean = async (
     question: string | Breadcrumb,
@@ -187,6 +203,9 @@ export namespace ask {
    * ```typescript
    * const isCool = await ask.boolean('Is this cool?'); // true
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {boolean} [initial=true]
+   * @returns {Promise<boolean>}
    */
   export const booleanAlt = async (question: string | Breadcrumb, initial: boolean = true): Promise<boolean> => {
     const message = typeof question === 'string' ? question : question.get();
@@ -212,6 +231,10 @@ export namespace ask {
    * ```typescript
    * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {PromptChoice<T>[]} choices
+   * @param {T} [initial]
+   * @returns {Promise<T>}
    */
   export const select = async <T = string>(question: string | Breadcrumb, choices: PromptChoice<T>[], initial?: T): Promise<T> => {
     const message = typeof question === 'string' ? question : question.get();
@@ -246,6 +269,11 @@ export namespace ask {
    * ```typescript
    * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {PromptChoice<T>[]} choices
+   * @param {PromptChoice<T> | PromptChoice<T>[]} [initial]
+   * @param {boolean} [canSelectAll=false]
+   * @returns {Promise<T[]>}
    */
   export const multiselect = async <T = string>(
     question: string | Breadcrumb,
@@ -310,6 +338,11 @@ export namespace ask {
    * ```typescript
    * const action = await ask.crud('What do you want to do next?'); // 'none'
    * ```
+   * @param {string | Breadcrumb} question
+   * @param {string} [itemName='item']
+   * @param {any[]} [items]
+   * @param {Partial<CRUDOptions>} [options={}]
+   * @returns {Promise<CRUD>}
    */
   export const crud = async (
     question: string | Breadcrumb,
@@ -357,6 +390,9 @@ export namespace ask {
    *   (name) => name.length > 0
    * ); // 'Jack'
    * ```
+   * @param {(initialValue?: T) => Promise<I> | I} askFunc
+   * @param {(input: Awaited<I>) => boolean | string} validateFn
+   * @returns {Promise<I>}
    */
   export const validate = async <T = string, I = string>(
     askFunc: (initialValue?: T) => Promise<I> | I,
@@ -419,6 +455,10 @@ export namespace ask {
    *
    * ask.imitate(true, 'What is your name?', 'Jack');
    * ```
+   * @param {boolean} done
+   * @param {string | Breadcrumb} question
+   * @param {any} [result]
+   * @returns {number}
    */
   export const imitate = (done: boolean, question: string | Breadcrumb, result?: any): number => {
     const message = typeof question === 'string' ? question : question.get();
@@ -456,6 +496,10 @@ export namespace ask {
    * data = {name: 'Jack'}
    * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
    * ```
+   * @param {T | undefined} value
+   * @param {string | Breadcrumb} question
+   * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
+   * @returns {Promise<T>}
    */
   export const prefill = async <T extends unknown = string>(
     value: T | undefined,
@@ -481,6 +525,8 @@ export namespace ask {
    * // ...
    * loader.stop();
    * ```
+   * @param {string | Breadcrumb} question
+   * @returns {any}
    */
   export const loading = (question: string | Breadcrumb) => out.loading((s) => imitate(false, question, `[${s}]`));
 
@@ -494,6 +540,8 @@ export namespace ask {
    * ```typescript
    * await ask.pause();
    * ```
+   * @param {string | Breadcrumb} [text='Press enter to continue...']
+   * @returns {Promise<void>}
    */
   export const pause = async (text: string | Breadcrumb = 'Press enter to continue...'): Promise<void> => {
     return new Promise((resolve) => {
@@ -524,6 +572,10 @@ export namespace ask {
    * ```typescript
    * await ask.countdown(5);
    * ```
+   * @param {number} totalSeconds
+   * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
+   * @param {string} [complete]
+   * @returns {Promise<void>}
    */
   export const countdown = async (
     totalSeconds: number,
@@ -574,6 +626,8 @@ export namespace ask {
    *
    * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
    * ```
+   * @param {Partial<T>} [startObj={}]
+   * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
    */
   export const wizard = <T extends unknown>(startObj: Partial<T> = {}) => {
     let obj: Partial<T> = { ...startObj };
@@ -666,6 +720,10 @@ export namespace ask {
      * //   { title: 'DOLOR', value: 'dolor' }
      * // ]
      * ```
+     * @param {T[]} items
+     * @param {string[]} [titles=[]]
+     * @param {TitleFn<T>} [titleFn]
+     * @returns {{ title: string; value: T; }[]}
      */
     export const itemsToPromptObjects = <T = string>(items: T[], titles: string[] = [], titleFn?: TitleFn<T>): { title: string; value: T }[] => {
       return items.map((item, index, arr) => ({ title: (titleFn && titleFn(item, index, arr)) || titles[index] || item + '', value: item as T }));

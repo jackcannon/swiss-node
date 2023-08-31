@@ -115,6 +115,8 @@ export namespace chlk {
    * ```typescript
    * gray(2); // gray2
    * ```
+   * @param {number} num
+   * @returns {any}
    */
   export const gray = (num: number) => grays[Math.max(0, Math.min(num, grays.length - 1))];
 
@@ -124,6 +126,8 @@ export namespace chlk {
    * - `chlk.clear`
    *
    * Removes ANSI colours. Not same as chalk.reset
+   * @param {string} str
+   * @returns {string}
    */
   export const clear = (str: string) => str.replace(new RegExp(`\\u001b\[[0-9]+m`, 'g'), '');
 
@@ -133,6 +137,8 @@ export namespace chlk {
    * - `chlk.not`
    *
    * Stops and restarts a style around a given string
+   * @param {Function} style
+   * @returns {(item: string) => string}
    */
   export const not = (style: Function) => {
     const styled = style('**xxx**');

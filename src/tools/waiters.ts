@@ -15,6 +15,7 @@ export namespace waiters {
    * ```typescript
    * wait nextTick();
    * ```
+   * @returns {Promise<unknown>}
    */
   export const nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(undefined)));
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

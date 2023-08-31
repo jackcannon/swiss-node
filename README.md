@@ -65,7 +65,7 @@ A collection of functions to ask the user for input.
 ### text
 
 ```typescript
-ask.text;
+ask.text(question: string | Breadcrumb, initial: string): Promise<string>
 ```
 
 Get a text input from the user.
@@ -74,12 +74,21 @@ Get a text input from the user.
 const name = await ask.text('What is your name?'); // 'Jack'
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
+| *1* | `initial`      | *No*     | `string`               |
+
+| Return Type       |
+|-------------------|
+| `Promise<string>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### autotext
 
 ```typescript
-ask.autotext;
+ask.autotext(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: T | string, choiceLimit: number): Promise<T>
 ```
 
 Get a text input from the user, with auto-completion.
@@ -88,12 +97,23 @@ Get a text input from the user, with auto-completion.
 const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default |
+|:---:|:---------------|:---------|:-----------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
+| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`    |         |
+| *2* | `initial`      | *No*     | `T \| string`          |         |
+| *3* | `choiceLimit`  | *No*     | `number`               | `10`    |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### number
 
 ```typescript
-ask.number;
+ask.number(question: string | Breadcrumb, initial: number): Promise<number>
 ```
 
 Get a number input from the user.
@@ -102,12 +122,21 @@ Get a number input from the user.
 const age = await ask.number('How old are you?'); // 30
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default |
+|:---:|:---------------|:---------|:-----------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
+| *1* | `initial`      | *No*     | `number`               | `1`     |
+
+| Return Type       |
+|-------------------|
+| `Promise<number>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### boolean
 
 ```typescript
-ask.boolean;
+ask.boolean(question: string | Breadcrumb, initial: boolean, yesTxt: string, noTxt: string): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -116,12 +145,23 @@ Get a boolean input from the user (yes or no)
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default |
+|:---:|:---------------|:---------|:-----------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
+| *1* | `initial`      | *No*     | `boolean`              | `true`  |
+| *2* | `yesTxt`       | *No*     | `string`               | `'yes'` |
+| *3* | `noTxt`        | *No*     | `string`               | `'no'`  |
+
+| Return Type        |
+|--------------------|
+| `Promise<boolean>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### booleanAlt
 
 ```typescript
-ask.booleanAlt;
+ask.booleanAlt(question: string | Breadcrumb, initial: boolean): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -132,12 +172,21 @@ Alternative interface to ask.boolean
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default |
+|:---:|:---------------|:---------|:-----------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
+| *1* | `initial`      | *No*     | `boolean`              | `true`  |
+
+| Return Type        |
+|--------------------|
+| `Promise<boolean>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### select
 
 ```typescript
-ask.select;
+ask.select(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: T): Promise<T>
 ```
 
 Get the user to select an option from a list.
@@ -146,12 +195,22 @@ Get the user to select an option from a list.
 const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
+| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`    |
+| *2* | `initial`      | *No*     | `T`                    |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### multiselect
 
 ```typescript
-ask.multiselect;
+ask.multiselect(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: PromptChoice<T> | PromptChoice<T>[], canSelectAll: boolean): Promise<T[]>
 ```
 
 Get the user to select multiple opts from a list.
@@ -160,12 +219,23 @@ Get the user to select multiple opts from a list.
 const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
 ```
 
+|  #  | Parameter Name | Required | Type                                   | Default |
+|:---:|:---------------|:---------|:---------------------------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                 |         |
+| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`                    |         |
+| *2* | `initial`      | *No*     | `PromptChoice<T> \| PromptChoice<T>[]` |         |
+| *3* | `canSelectAll` | *No*     | `boolean`                              | `false` |
+
+| Return Type    |
+|----------------|
+| `Promise<T[]>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### crud
 
 ```typescript
-ask.crud;
+ask.crud(question: string | Breadcrumb, itemName: string, items: any[], options: Partial<CRUDOptions>): Promise<CRUD>
 ```
 
 Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
@@ -176,12 +246,23 @@ Values returned are: 'none' | 'create' | 'update' | 'delete' | 'delete-all'
 const action = await ask.crud('What do you want to do next?'); // 'none'
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default  |
+|:---:|:---------------|:---------|:-----------------------|:---------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |          |
+| *1* | `itemName`     | *No*     | `string`               | `'item'` |
+| *2* | `items`        | *No*     | `any[]`                |          |
+| *3* | `options`      | *No*     | `Partial<CRUDOptions>` | `{}`     |
+
+| Return Type     |
+|-----------------|
+| `Promise<CRUD>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### validate
 
 ```typescript
-ask.validate;
+ask.validate(askFunc: (initialValue?: T) => Promise<I> | I, validateFn: (input: Awaited<I>) => boolean | string): Promise<I>
 ```
 
 Validate the result of an `ask` prompt
@@ -193,12 +274,21 @@ const name = await ask.validate(
 ); // 'Jack'
 ```
 
+|  #  | Parameter Name | Required | Type                                       |
+|:---:|:---------------|:---------|:-------------------------------------------|
+| *0* | `askFunc`      | **Yes**  | `(initialValue?: T) => Promise<I> \| I`    |
+| *1* | `validateFn`   | **Yes**  | `(input: Awaited<I>) => boolean \| string` |
+
+| Return Type  |
+|--------------|
+| `Promise<I>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### imitate
 
 ```typescript
-ask.imitate;
+ask.imitate(done: boolean, question: string | Breadcrumb, result: any): number
 ```
 
 Imitate the display of a prompt
@@ -209,12 +299,22 @@ imitate(true, 'What is your name?', 'Jack');
 ask.imitate(true, 'What is your name?', 'Jack');
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `done`         | **Yes**  | `boolean`              |
+| *1* | `question`     | **Yes**  | `string \| Breadcrumb` |
+| *2* | `result`       | *No*     | `any`                  |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### prefill
 
 ```typescript
-ask.prefill;
+ask.prefill(value: T | undefined, question: string | Breadcrumb, askFn: (question: string | Breadcrumb) => Promise<T> | T): Promise<T>
 ```
 
 Auto-fills an ask prompt with the provided value, if defined.
@@ -231,12 +331,22 @@ data = {name: 'Jack'}
 const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
 ```
 
+|  #  | Parameter Name | Required | Type                                                  |
+|:---:|:---------------|:---------|:------------------------------------------------------|
+| *0* | `value`        | **Yes**  | `T \| undefined`                                      |
+| *1* | `question`     | **Yes**  | `string \| Breadcrumb`                                |
+| *2* | `askFn`        | **Yes**  | `(question: string \| Breadcrumb) => Promise<T> \| T` |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### loading
 
 ```typescript
-ask.loading;
+ask.loading(question: string | Breadcrumb): any
 ```
 
 Display an animated loading indicator that imitates the display of a prompt
@@ -247,12 +357,20 @@ const loader = ask.loading('What is your name?');
 loader.stop();
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
+
+| Return Type |
+|-------------|
+| `any`       |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### pause
 
 ```typescript
-ask.pause;
+ask.pause(text: string | Breadcrumb): Promise<void>
 ```
 
 Pause the program until the user presses enter
@@ -261,12 +379,20 @@ Pause the program until the user presses enter
 await ask.pause();
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default                        |
+|:---:|:---------------|:---------|:-----------------------|:-------------------------------|
+| *0* | `text`         | *No*     | `string \| Breadcrumb` | `'Press enter to continue...'` |
+
+| Return Type     |
+|-----------------|
+| `Promise<void>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### countdown
 
 ```typescript
-ask.countdown;
+ask.countdown(totalSeconds: number, template: (s: second) => string, complete: string): Promise<void>
 ```
 
 Animated countdown for a given number of seconds
@@ -275,12 +401,22 @@ Animated countdown for a given number of seconds
 await ask.countdown(5);
 ```
 
+|  #  | Parameter Name | Required | Type                    | Default                         |
+|:---:|:---------------|:---------|:------------------------|:--------------------------------|
+| *0* | `totalSeconds` | **Yes**  | `number`                |                                 |
+| *1* | `template`     | *No*     | `(s: second) => string` | `(s) => `Starting in ${s}s...`` |
+| *2* | `complete`     | *No*     | `string`                |                                 |
+
+| Return Type     |
+|-----------------|
+| `Promise<void>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### wizard
 
 ```typescript
-ask.wizard;
+ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
 ```
 
 Create a wizard object that can be used to build up a complex object
@@ -307,12 +443,20 @@ wiz.add({ bar });
 const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
 ```
 
+|  #  | Parameter Name | Required | Type         | Default |
+|:---:|:---------------|:---------|:-------------|:--------|
+| *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    |
+
+| Return Type                                                               |
+|---------------------------------------------------------------------------|
+| `{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### date
 
 ```typescript
-ask.date;
+ask.date(questionText: string | Breadcrumb, initial: Date): Promise<Date>
 ```
 
 Get a date input from the user.
@@ -322,12 +466,21 @@ const date = await ask.date('Whats the date?');
 // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb` |
+| *1* | `initial`      | *No*     | `Date`                 |
+
+| Return Type     |
+|-----------------|
+| `Promise<Date>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### time
 
 ```typescript
-ask.time;
+ask.time(questionText: string | Breadcrumb, initial: Date): Promise<Date>
 ```
 
 Get a time input from the user.
@@ -340,12 +493,21 @@ const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
 // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb` |
+| *1* | `initial`      | *No*     | `Date`                 |
+
+| Return Type     |
+|-----------------|
+| `Promise<Date>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### datetime
 
 ```typescript
-ask.datetime;
+ask.datetime(questionText: string | Breadcrumb, initial: Date): Promise<Date>
 ```
 
 Get a date and time input from the user.
@@ -355,12 +517,21 @@ const when = await ask.datetime('Whats the date/time?');
 // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb` |
+| *1* | `initial`      | *No*     | `Date`                 |
+
+| Return Type     |
+|-----------------|
+| `Promise<Date>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### dateRange
 
 ```typescript
-ask.dateRange;
+ask.dateRange(questionText: string | Breadcrumb, initialStart: Date, initialEnd: Date): Promise<[Date, Date]>
 ```
 
 Get a date range input from the user.
@@ -373,12 +544,22 @@ const range = await ask.dateRange('When is the festival?');
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb` |
+| *1* | `initialStart` | *No*     | `Date`                 |
+| *2* | `initialEnd`   | *No*     | `Date`                 |
+
+| Return Type             |
+|-------------------------|
+| `Promise<[Date, Date]>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### fileExplorer
 
 ```typescript
-ask.fileExplorer;
+ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string): Promise<string>
 ```
 
 Get a file or folder path from the user.
@@ -391,12 +572,22 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 // '/Users/jackcannon/Documents/some_folder'
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default         |
+|:---:|:---------------|:---------|:-----------------------|:----------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb` |                 |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`           | `'f'`           |
+| *2* | `startPath`    | *No*     | `string`               | `process.cwd()` |
+
+| Return Type       |
+|-------------------|
+| `Promise<string>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### multiFileExplorer
 
 ```typescript
-ask.multiFileExplorer;
+ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string): Promise<string[]>
 ```
 
 Get multiple file or folder paths from the user.
@@ -410,12 +601,22 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type                   | Default         |
+|:---:|:---------------|:---------|:-----------------------|:----------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb` |                 |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`           | `'f'`           |
+| *2* | `startPath`    | *No*     | `string`               | `process.cwd()` |
+
+| Return Type         |
+|---------------------|
+| `Promise<string[]>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### saveFileExplorer
 
 ```typescript
-ask.saveFileExplorer;
+ask.saveFileExplorer(questionText: string | Breadcrumb, startPath: string, suggestedFileName: string): Promise<string>
 ```
 
 Get a file path from the user, with the intention of saving a file to that path.
@@ -425,6 +626,16 @@ const HOME_DIR = '/Users/user/Documents';
 const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
 // '/Users/user/Documents/data.json'
 ```
+
+|  #  | Parameter Name      | Required | Type                   | Default         |
+|:---:|:--------------------|:---------|:-----------------------|:----------------|
+| *0* | `questionText`      | **Yes**  | `string \| Breadcrumb` |                 |
+| *1* | `startPath`         | *No*     | `string`               | `process.cwd()` |
+| *2* | `suggestedFileName` | *No*     | `string`               | `''`            |
+
+| Return Type       |
+|-------------------|
+| `Promise<string>` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -436,7 +647,7 @@ A collection of functions for asking questions with tables.
 #### select
 
 ```typescript
-ask.table.select;
+ask.table.select(question: string | Breadcrumb, items: T[], initial: T | number, rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T>
 ```
 
 Get a single selection from a table.
@@ -463,12 +674,25 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 // Returns: { name: 'Jane', age: 26 }
 ```
 
+|  #  | Parameter Name | Required | Type                                 |
+|:---:|:---------------|:---------|:-------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`               |
+| *1* | `items`        | **Yes**  | `T[]`                                |
+| *2* | `initial`      | *No*     | `T \| number`                        |
+| *3* | `rows`         | *No*     | `any[][] \| ItemToRowMapFunction<T>` |
+| *4* | `headers`      | *No*     | `any[][] \| RemapOf<T, string>`      |
+| *5* | `tableOptions` | *No*     | `tableOut.TableOptions`              |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 #### multiselect
 
 ```typescript
-ask.table.multiselect;
+ask.table.multiselect(question: string | Breadcrumb, items: T[], initial: T[] | number[], rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T[]>
 ```
 
 Get multiple selections from a table.
@@ -498,22 +722,45 @@ const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, 
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type                                 |
+|:---:|:---------------|:---------|:-------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`               |
+| *1* | `items`        | **Yes**  | `T[]`                                |
+| *2* | `initial`      | *No*     | `T[] \| number[]`                    |
+| *3* | `rows`         | *No*     | `any[][] \| ItemToRowMapFunction<T>` |
+| *4* | `headers`      | *No*     | `any[][] \| RemapOf<T, string>`      |
+| *5* | `tableOptions` | *No*     | `tableOut.TableOptions`              |
+
+| Return Type    |
+|----------------|
+| `Promise<T[]>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### trim
 
 ```typescript
-ask.trim;
+ask.trim(totalFrames: number, frameRate: number, options: Partial<AskTrimOptions>): Promise<Handles<number>>
 ```
 
 Get a start and end frame from the user
+
+|  #  | Parameter Name | Required | Type                      | Default |
+|:---:|:---------------|:---------|:--------------------------|:--------|
+| *0* | `totalFrames`  | **Yes**  | `number`                  |         |
+| *1* | `frameRate`    | **Yes**  | `number`                  |         |
+| *2* | `options`      | *No*     | `Partial<AskTrimOptions>` | `{}`    |
+
+| Return Type                |
+|----------------------------|
+| `Promise<Handles<number>>` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### separator
 
 ```typescript
-ask.separator;
+ask.separator(version: 'down' | 'none' | 'up', spacing: number, offset: number, width: number): number
 ```
 
 Prints a separator line to the console.
@@ -529,12 +776,23 @@ ask.separator('up', 5, 2);
 // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
 ```
 
+|  #  | Parameter Name | Required | Type                       | Default                            |
+|:---:|:---------------|:---------|:---------------------------|:-----------------------------------|
+| *0* | `version`      | *No*     | `'down' \| 'none' \| 'up'` | `'down'`                           |
+| *1* | `spacing`      | *No*     | `number`                   | `8`                                |
+| *2* | `offset`       | *No*     | `number`                   | `0`                                |
+| *3* | `width`        | *No*     | `number`                   | `out.utils.getTerminalWidth() - 2` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### section
 
 ```typescript
-ask.section;
+ask.section(question: string | Breadcrumb, sectionFn: (lc: LineCounter, separator: () => void) => void | Promise<any>, ...questionFns: QuesT[]): Promise<UnwrapPromFuncs<QuesT>>
 ```
 
 Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
@@ -567,6 +825,16 @@ Question 1: answer1
 Question 2a: [ answer2, answer2b ]
 ```
 
+|  #   | Parameter Name | Required | Type                                                               |
+|:----:|:---------------|:---------|:-------------------------------------------------------------------|
+| *0*  | `question`     | **Yes**  | `string \| Breadcrumb`                                             |
+| *1*  | `sectionFn`    | *No*     | `(lc: LineCounter, separator: () => void) => void \| Promise<any>` |
+| *2…* | `questionFns`  | *No*     | `QuesT[]`                                                          |
+
+| Return Type                       |
+|-----------------------------------|
+| `Promise<UnwrapPromFuncs<QuesT>>` |
+
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
 ### utils
@@ -574,7 +842,7 @@ Question 2a: [ answer2, answer2b ]
 #### itemsToPromptObjects
 
 ```typescript
-ask.utils.itemsToPromptObjects;
+ask.utils.itemsToPromptObjects(items: T[], titles: string[], titleFn: TitleFn<T>): { title: string; value: T; }[]
 ```
 
 Take an array of items and convert them to an array of prompt objects
@@ -601,6 +869,16 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 //   { title: 'DOLOR', value: 'dolor' }
 // ]
 ```
+
+|  #  | Parameter Name | Required | Type         | Default |
+|:---:|:---------------|:---------|:-------------|:--------|
+| *0* | `items`        | **Yes**  | `T[]`        |         |
+| *1* | `titles`       | *No*     | `string[]`   | `[]`    |
+| *2* | `titleFn`      | *No*     | `TitleFn<T>` |         |
+
+| Return Type                      |
+|----------------------------------|
+| `{ title: string; value: T; }[]` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -659,7 +937,7 @@ A collection of functions to print to the console
 ### pad
 
 ```typescript
-out.pad;
+out.pad(line: string, start: number, end: number, replaceChar: string): string
 ```
 
 Pad before and after the given text with the given character.
@@ -669,12 +947,23 @@ pad('foo', 3, 1, '-'); // '---foo-'
 pad('bar', 10, 5, '_'); // '__________bar_____'
 ```
 
+|  #  | Parameter Name | Required | Type     | Default |
+|:---:|:---------------|:---------|:---------|:--------|
+| *0* | `line`         | **Yes**  | `string` |         |
+| *1* | `start`        | **Yes**  | `number` |         |
+| *2* | `end`          | **Yes**  | `number` |         |
+| *3* | `replaceChar`  | *No*     | `string` | `' '`   |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### center
 
 ```typescript
-out.center;
+out.center(item: any, width: number, replaceChar: string, forceWidth: boolean): string
 ```
 
 Align the given text to the center within the given width of characters/columns
@@ -690,12 +979,23 @@ out.center('lines\n1\n2', 5);
 // '  2  '
 ```
 
+|  #  | Parameter Name | Required | Type      | Default                        |
+|:---:|:---------------|:---------|:----------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### left
 
 ```typescript
-out.left;
+out.left(item: any, width: number, replaceChar: string, forceWidth: boolean): string
 ```
 
 Align the given text to the left within the given width of characters/columns
@@ -711,12 +1011,23 @@ out.left('lines\n1\n2', 5);
 // '2    '
 ```
 
+|  #  | Parameter Name | Required | Type      | Default                        |
+|:---:|:---------------|:---------|:----------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### right
 
 ```typescript
-out.right;
+out.right(item: any, width: number, replaceChar: string, forceWidth: boolean): string
 ```
 
 Align the given text to the right within the given width of characters/columns
@@ -732,12 +1043,23 @@ out.right('lines\n1\n2', 5);
 // '    2'
 ```
 
+|  #  | Parameter Name | Required | Type      | Default                        |
+|:---:|:---------------|:---------|:----------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### justify
 
 ```typescript
-out.justify;
+out.justify(item: any, width: number, replaceChar: string, forceWidth: boolean): string
 ```
 
 Evenly space the text horizontally across the given width.
@@ -753,12 +1075,23 @@ out.justify(out.wrap(lorem, 20), 20);
 // 'adipiscing      elit'
 ```
 
+|  #  | Parameter Name | Required | Type      | Default                        |
+|:---:|:---------------|:---------|:----------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### leftLines
 
 ```typescript
-out.leftLines;
+out.leftLines(lines: string[], width: number): string[]
 ```
 
 Align each line of the given text to the left within the given width of characters/columns
@@ -772,12 +1105,21 @@ out.leftLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type       | Default                |
+|:---:|:---------------|:---------|:-----------|:-----------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### centerLines
 
 ```typescript
-out.centerLines;
+out.centerLines(lines: string[], width: number): string[]
 ```
 
 Align each line of the given text to the center within the given width of characters/columns
@@ -791,12 +1133,21 @@ out.rightLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type       | Default                |
+|:---:|:---------------|:---------|:-----------|:-----------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### rightLines
 
 ```typescript
-out.rightLines;
+out.rightLines(lines: string[], width: number): string[]
 ```
 
 Align each line of the given text to the right within the given width of characters/columns
@@ -810,12 +1161,21 @@ out.centerLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type       | Default                |
+|:---:|:---------------|:---------|:-----------|:-----------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### justifyLines
 
 ```typescript
-out.justifyLines;
+out.justifyLines(lines: string[], width: number): string[]
 ```
 
 Justify align each line of the given text within the given width of characters/columns
@@ -829,12 +1189,21 @@ out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type       | Default                |
+|:---:|:---------------|:---------|:-----------|:-----------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### align
 
 ```typescript
-out.align;
+out.align(item: any, direction: AlignType, width: number, replaceChar: string, forceWidth: boolean): string
 ```
 
 Align the given text to the given alignment within the given width of characters/columns
@@ -850,12 +1219,24 @@ out.align('lines\n1\n2', 'right', 5);
 // '    2'
 ```
 
+|  #  | Parameter Name | Required | Type        | Default                        |
+|:---:|:---------------|:---------|:------------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`       |                                |
+| *1* | `direction`    | **Yes**  | `AlignType` |                                |
+| *2* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` |
+| *3* | `replaceChar`  | *No*     | `string`    | `' '`                          |
+| *4* | `forceWidth`   | *No*     | `boolean`   | `true`                         |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### split
 
 ```typescript
-out.split;
+out.split(leftItem: any, rightItem: any, width: number, replaceChar: string): string
 ```
 
 Split the given text into two parts, left and right, with the given width of characters/columns
@@ -864,12 +1245,23 @@ Split the given text into two parts, left and right, with the given width of cha
 out.split('Left', 'Right', 15); // Left      Right
 ```
 
+|  #  | Parameter Name | Required | Type     | Default                        |
+|:---:|:---------------|:---------|:---------|:-------------------------------|
+| *0* | `leftItem`     | **Yes**  | `any`    |                                |
+| *1* | `rightItem`    | **Yes**  | `any`    |                                |
+| *2* | `width`        | *No*     | `number` | `out.utils.getTerminalWidth()` |
+| *3* | `replaceChar`  | *No*     | `string` | `' '`                          |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### wrap
 
 ```typescript
-out.wrap;
+out.wrap(item: any, width: number, alignment: AlignType, forceWidth: boolean): string
 ```
 
 Wrap the given text to the given width of characters/columns
@@ -880,12 +1272,23 @@ wrap('This is a sentence', 15);
 // 'a sentence'
 ```
 
+|  #  | Parameter Name | Required | Type        | Default                        |
+|:---:|:---------------|:---------|:------------|:-------------------------------|
+| *0* | `item`         | **Yes**  | `any`       |                                |
+| *1* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` |
+| *2* | `alignment`    | *No*     | `AlignType` |                                |
+| *3* | `forceWidth`   | *No*     | `boolean`   | `false`                        |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### moveUp
 
 ```typescript
-out.moveUp;
+out.moveUp(lines: number): void
 ```
 
 Move the terminal cursor up X lines, clearing each row.
@@ -896,12 +1299,20 @@ Useful for replacing previous lines of output
 moveUp(1);
 ```
 
+|  #  | Parameter Name | Required | Type     | Default |
+|:---:|:---------------|:---------|:---------|:--------|
+| *0* | `lines`        | *No*     | `number` | `1`     |
+
+| Return Type |
+|-------------|
+| `void`      |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### loading
 
 ```typescript
-out.loading;
+out.loading(action: (s: string) => any, lines: number, symbols: string[]): { stop: () => void; }
 ```
 
 Display an animated loading indicator
@@ -912,12 +1323,22 @@ const loader = out.loading();
 loader.stop();
 ```
 
+|  #  | Parameter Name | Required | Type                 | Default          |
+|:---:|:---------------|:---------|:---------------------|:-----------------|
+| *0* | `action`       | *No*     | `(s: string) => any` | `loadingDefault` |
+| *1* | `lines`        | *No*     | `number`             | `1`              |
+| *2* | `symbols`      | *No*     | `string[]`           | `loadingChars`   |
+
+| Return Type             |
+|-------------------------|
+| `{ stop: () => void; }` |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### limitToLength
 
 ```typescript
-out.limitToLength;
+out.limitToLength(text: string, maxLength: number): string
 ```
 
 Limit the length of a string to the given length
@@ -926,12 +1347,21 @@ Limit the length of a string to the given length
 out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
 ```
 
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `text`         | **Yes**  | `string` |
+| *1* | `maxLength`    | **Yes**  | `number` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### limitToLengthStart
 
 ```typescript
-out.limitToLengthStart;
+out.limitToLengthStart(text: string, maxLength: number): string
 ```
 
 Limit the length of a string to the given length, keeping the end
@@ -940,12 +1370,21 @@ Limit the length of a string to the given length, keeping the end
 out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
 ```
 
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `text`         | **Yes**  | `string` |
+| *1* | `maxLength`    | **Yes**  | `number` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### truncate
 
 ```typescript
-out.truncate;
+out.truncate(text: string, maxLength: number, suffix: string): string
 ```
 
 Limit the length of a string to the given length, and add an ellipsis if necessary
@@ -954,12 +1393,22 @@ Limit the length of a string to the given length, and add an ellipsis if necessa
 out.truncate('This is a very long sentence', 15); // 'This is a ve...'
 ```
 
+|  #  | Parameter Name | Required | Type     | Default                        |
+|:---:|:---------------|:---------|:---------|:-------------------------------|
+| *0* | `text`         | **Yes**  | `string` |                                |
+| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
+| *2* | `suffix`       | *No*     | `string` | `chalk.dim('…')`               |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### truncateStart
 
 ```typescript
-out.truncateStart;
+out.truncateStart(text: string, maxLength: number, suffix: string): string
 ```
 
 Limit the length of a string to the given length, and add an ellipsis if necessary, keeping the end
@@ -968,12 +1417,22 @@ Limit the length of a string to the given length, and add an ellipsis if necessa
 out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
 ```
 
+|  #  | Parameter Name | Required | Type     | Default                        |
+|:---:|:---------------|:---------|:---------|:-------------------------------|
+| *0* | `text`         | **Yes**  | `string` |                                |
+| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
+| *2* | `suffix`       | *No*     | `string` | `chalk.dim('…')`               |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### concatLineGroups
 
 ```typescript
-out.concatLineGroups;
+out.concatLineGroups(...groups: string[][]): any
 ```
 
 Concatenate multiple line groups, aligning them by the longest line
@@ -983,12 +1442,20 @@ out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
 // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
 ```
 
+|  #   | Parameter Name | Required | Type         |
+|:----:|:---------------|:---------|:-------------|
+| *0…* | `groups`       | *No*     | `string[][]` |
+
+| Return Type |
+|-------------|
+| `any`       |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### getResponsiveValue
 
 ```typescript
-out.getResponsiveValue;
+out.getResponsiveValue(options: ResponsiveOption<T>[]): T
 ```
 
 Get a value based on the terminal width
@@ -1001,6 +1468,14 @@ out.getResponsiveValue([
   {minColumns: 1000, value: 'd'}
 ]) // c
 ```
+
+|  #  | Parameter Name | Required | Type                    |
+|:---:|:---------------|:---------|:------------------------|
+| *0* | `options`      | **Yes**  | `ResponsiveOption<T>[]` |
+
+| Return Type |
+|-------------|
+| `T`         |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1019,8 +1494,8 @@ See getResponsiveValue for an example
 ### getBreadcrumb
 
 ```typescript
-out.getBreadcrumb;
-getBreadcrumb;
+out.getBreadcrumb(...baseNames: string[]): Breadcrumb
+getBreadcrumb(...baseNames: string[]): Breadcrumb
 ```
 
 Provides a consistent format and style for questions/prompts
@@ -1041,6 +1516,14 @@ const subsub = sub.sub('c', 'd');
 subsub(); // 'a › b › c › d'
 subsub('e'); // 'a › b › c › d › e'
 ```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `baseNames`    | *No*     | `string[]` |
+
+| Return Type  |
+|--------------|
+| `Breadcrumb` |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1299,7 +1782,7 @@ lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 #### getTerminalWidth
 
 ```typescript
-out.utils.getTerminalWidth;
+out.utils.getTerminalWidth(undefined): number
 ```
 
 Get maximum terminal width (columns)
@@ -1308,12 +1791,16 @@ Get maximum terminal width (columns)
 print.utils.getTerminalWidth(); // 127
 ```
 
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getLines
 
 ```typescript
-out.utils.getLines;
+out.utils.getLines(text: Text): string[]
 ```
 
 Split multi-line text into an array of lines
@@ -1325,12 +1812,20 @@ this is line 2
 `); // [ '', 'this is line 1', 'this is line 2', '' ]
 ```
 
+|  #  | Parameter Name | Required | Type   |
+|:---:|:---------------|:---------|:-------|
+| *0* | `text`         | **Yes**  | `Text` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getNumLines
 
 ```typescript
-out.utils.getNumLines;
+out.utils.getNumLines(text: Text): number
 ```
 
 Get how many lines a string or array of lines has
@@ -1342,12 +1837,20 @@ this is line 2
 `); // 4
 ```
 
+|  #  | Parameter Name | Required | Type   |
+|:---:|:---------------|:---------|:-------|
+| *0* | `text`         | **Yes**  | `Text` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getLinesWidth
 
 ```typescript
-out.utils.getLinesWidth;
+out.utils.getLinesWidth(text: Text): number
 ```
 
 Get how wide a string or array of lines has
@@ -1359,12 +1862,20 @@ this is line 2
 `) // 14
 ```
 
+|  #  | Parameter Name | Required | Type   |
+|:---:|:---------------|:---------|:-------|
+| *0* | `text`         | **Yes**  | `Text` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getLogLines
 
 ```typescript
-out.utils.getLogLines;
+out.utils.getLogLines(item: any): string[]
 ```
 
 Split a log-formatted multi-line text into an array of lines
@@ -1376,12 +1887,20 @@ this is line 2
 `); // [ '', 'this is line 1', 'this is line 2', '' ]
 ```
 
+|  #  | Parameter Name | Required | Type  |
+|:---:|:---------------|:---------|:------|
+| *0* | `item`         | **Yes**  | `any` |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getNumLogLines
 
 ```typescript
-out.utils.getNumLogLines;
+out.utils.getNumLogLines(item: Text): number
 ```
 
 Get how many lines a log-formatted string or array of lines has
@@ -1393,12 +1912,20 @@ this is line 2
 `); // 4
 ```
 
+|  #  | Parameter Name | Required | Type   |
+|:---:|:---------------|:---------|:-------|
+| *0* | `item`         | **Yes**  | `Text` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### getLogLinesWidth
 
 ```typescript
-out.utils.getLogLinesWidth;
+out.utils.getLogLinesWidth(item: Text): number
 ```
 
 Get how wide a log-formatted string or array of lines has
@@ -1410,12 +1937,20 @@ this is line 2
 `) // 14
 ```
 
+|  #  | Parameter Name | Required | Type   |
+|:---:|:---------------|:---------|:-------|
+| *0* | `item`         | **Yes**  | `Text` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### joinLines
 
 ```typescript
-out.utils.joinLines;
+out.utils.joinLines(lines: string[]): string
 ```
 
 Join an array of lines into a single multi-line string
@@ -1426,12 +1961,20 @@ out.utils.joinLines(['this is line 1', 'this is line 2'])
 // 'this is line 2'
 ```
 
+|  #  | Parameter Name | Required | Type       |
+|:---:|:---------------|:---------|:-----------|
+| *0* | `lines`        | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### hasColor
 
 ```typescript
-out.utils.hasColor;
+out.utils.hasColor(str: string): boolean
 ```
 
 Determine whether a given string contains any chalk-ed colours
@@ -1440,6 +1983,14 @@ Determine whether a given string contains any chalk-ed colours
 out.utils.hasColor('this is line 1') // false
 out.utils.hasColor(chalk.red('this is line 1')) // true
 ```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `str`          | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `boolean`   |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1465,7 +2016,7 @@ A simple table generator
 ### print
 
 ```typescript
-table.print;
+table.print(body: any[][], header: any[][], options: TableOptions): number
 ```
 
 Print a table
@@ -1484,12 +2035,22 @@ table.print(body, header); // 7
 // └──────┴─────┘
 ```
 
+|  #  | Parameter Name | Required | Type           | Default |
+|:---:|:---------------|:---------|:---------------|:--------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         |
+| *1* | `header`       | *No*     | `any[][]`      |         |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 ### printObjects
 
 ```typescript
-table.printObjects;
+table.printObjects(objects: Object[], headers: Object, options: TableOptions): number
 ```
 
 Print a table of given objects
@@ -1522,12 +2083,22 @@ table.printObjects(objs, header); // 11
 // └───────┴───────┴───────┘
 ```
 
+|  #  | Parameter Name | Required | Type           | Default |
+|:---:|:---------------|:---------|:---------------|:--------|
+| *0* | `objects`      | **Yes**  | `Object[]`     |         |
+| *1* | `headers`      | *No*     | `Object`       | `{}`    |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+
+| Return Type |
+|-------------|
+| `number`    |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 ### markdown
 
 ```typescript
-table.markdown;
+table.markdown(body: any[][], header: any[][], options: TableOptions): string[]
 ```
 
 Generate a markdown table
@@ -1547,12 +2118,22 @@ console.log(md.join('\n'));
 // |      Jane |       26       | Software Engineer |
 ```
 
+|  #  | Parameter Name | Required | Type           | Default |
+|:---:|:---------------|:---------|:---------------|:--------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         |
+| *1* | `header`       | *No*     | `any[][]`      |         |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+
+| Return Type |
+|-------------|
+| `string[]`  |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 ### getLines
 
 ```typescript
-table.getLines;
+table.getLines(body: any[][], header: any[][], options: TableOptions): string[]
 ```
 
 Get the lines of a table (rather than printing it)
@@ -1571,6 +2152,16 @@ table.getLines(body, header);
 //   '└──────┴─────┘'
 // ]
 ```
+
+|  #  | Parameter Name | Required | Type           | Default |
+|:---:|:---------------|:---------|:---------------|:--------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         |
+| *1* | `header`       | *No*     | `any[][]`      |         |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+
+| Return Type |
+|-------------|
+| `string[]`  |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -1836,7 +2427,7 @@ Each item in each array is a character to use for the row type:
 #### objectsToTable
 
 ```typescript
-table.utils.objectsToTable;
+table.utils.objectsToTable(objects: Object[], headers: Object): { header: any[][]; body: any[][]; }
 ```
 
 Process an array of objects into a table format (string[][])
@@ -1853,12 +2444,21 @@ table.utils.objectsToTable(objs)
 // }
 ```
 
+|  #  | Parameter Name | Required | Type       | Default |
+|:---:|:---------------|:---------|:-----------|:--------|
+| *0* | `objects`      | **Yes**  | `Object[]` |         |
+| *1* | `headers`      | *No*     | `Object`   | `{}`    |
+
+| Return Type                           |
+|---------------------------------------|
+| `{ header: any[][]; body: any[][]; }` |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 #### transpose
 
 ```typescript
-table.utils.transpose;
+table.utils.transpose(rows: any[][]): any[][]
 ```
 
 Change rows into columns and vice versa
@@ -1876,12 +2476,20 @@ table.utils.transpose(input)
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type      |
+|:---:|:---------------|:---------|:----------|
+| *0* | `rows`         | **Yes**  | `any[][]` |
+
+| Return Type |
+|-------------|
+| `any[][]`   |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 #### concatRows
 
 ```typescript
-table.utils.concatRows;
+table.utils.concatRows(cells: { header: any[][]; body: any[][] }): any[][]
 ```
 
 Concatenate header and body rows into one list of rows
@@ -1902,12 +2510,20 @@ table.utils.concatRows({header, body})
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type                                 |
+|:---:|:---------------|:---------|:-------------------------------------|
+| *0* | `cells`        | **Yes**  | `{ header: any[][]; body: any[][] }` |
+
+| Return Type |
+|-------------|
+| `any[][]`   |
+
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 #### getFormat
 
 ```typescript
-table.utils.getFormat;
+table.utils.getFormat(format: Function | Colour, row: number, col: number, isHeader: boolean, isBody: boolean): TableFormatConfig
 ```
 
 A function for simplifying the format configuration
@@ -1939,6 +2555,18 @@ table.print(header, body, {format})
 // │ 6 │ 7 │ 8 │
 // └───┴───┴───┘
 ```
+
+|  #  | Parameter Name | Required | Type                 |
+|:---:|:---------------|:---------|:---------------------|
+| *0* | `format`       | **Yes**  | `Function \| Colour` |
+| *1* | `row`          | *No*     | `number`             |
+| *2* | `col`          | *No*     | `number`             |
+| *3* | `isHeader`     | *No*     | `boolean`            |
+| *4* | `isBody`       | *No*     | `boolean`            |
+
+| Return Type         |
+|---------------------|
+| `TableFormatConfig` |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -1976,7 +2604,7 @@ log.error('This is error');     // [12:00:00.123]  ERRR  This is error
 ### createLogger
 
 ```typescript
-createLogger;
+createLogger(extraConfigs: T, options: LogOptions): any
 ```
 
 Create a logger with custom configs
@@ -1994,6 +2622,15 @@ const log = createLogger({
 
 log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
 ```
+
+|  #  | Parameter Name | Required | Type         | Default   |
+|:---:|:---------------|:---------|:-------------|:----------|
+| *0* | `extraConfigs` | *No*     | `T`          | `{} as T` |
+| *1* | `options`      | *No*     | `LogOptions` | `{}`      |
+
+| Return Type |
+|-------------|
+| `any`       |
 
 <p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
 
@@ -2176,7 +2813,7 @@ grays[2]; // gray2
 ### gray
 
 ```typescript
-chlk.gray;
+chlk.gray(num: number): any
 ```
 
 Grays between 0 and 5.
@@ -2185,25 +2822,49 @@ Grays between 0 and 5.
 gray(2); // gray2
 ```
 
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `num`          | **Yes**  | `number` |
+
+| Return Type |
+|-------------|
+| `any`       |
+
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### clear
 
 ```typescript
-chlk.clear;
+chlk.clear(str: string): string
 ```
 
 Removes ANSI colours. Not same as chalk.reset
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `str`          | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
 ### not
 
 ```typescript
-chlk.not;
+chlk.not(style: Function): (item: string) => string
 ```
 
 Stops and restarts a style around a given string
+
+|  #  | Parameter Name | Required | Type       |
+|:---:|:---------------|:---------|:-----------|
+| *0* | `style`        | **Yes**  | `Function` |
+
+| Return Type                |
+|----------------------------|
+| `(item: string) => string` |
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
@@ -2718,8 +3379,8 @@ A collection of tools for logging
 ### getLogStr
 
 ```typescript
-LogTools.getLogStr;
-getLogStr;
+LogTools.getLogStr(item: any): string
+getLogStr(item: any): string
 ```
 
 Get a string for a given object as it would be printed by console.log
@@ -2757,27 +3418,54 @@ getLogStr([
 // ]
 ```
 
+|  #  | Parameter Name | Required | Type  |
+|:---:|:---------------|:---------|:------|
+| *0* | `item`         | **Yes**  | `any` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
 ### processLogContents
 
 ```typescript
-LogTools.processLogContents;
-processLogContents;
+LogTools.processLogContents(prefix: string, wrapper: Function, ...args: any[]): string
+processLogContents(prefix: string, wrapper: Function, ...args: any[]): string
 ```
 
 Process an item to be logged
+
+|  #   | Parameter Name | Required | Type       | Default    |
+|:----:|:---------------|:---------|:-----------|:-----------|
+| *0*  | `prefix`       | **Yes**  | `string`   |            |
+| *1*  | `wrapper`      | *No*     | `Function` | `fn.noact` |
+| *2…* | `args`         | *No*     | `any[]`    |            |
+
+| Return Type |
+|-------------|
+| `string`    |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
 ### getLog
 
 ```typescript
-LogTools.getLog;
-getLog;
+LogTools.getLog(prefix: string, wrapper: Function): (...args: any[]) => void
+getLog(prefix: string, wrapper: Function): (...args: any[]) => void
 ```
 
 Get a log function for a given prefix
+
+|  #  | Parameter Name | Required | Type       | Default    |
+|:---:|:---------------|:---------|:-----------|:-----------|
+| *0* | `prefix`       | **Yes**  | `string`   |            |
+| *1* | `wrapper`      | *No*     | `Function` | `fn.noact` |
+
+| Return Type                |
+|----------------------------|
+| `(...args: any[]) => void` |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -2796,8 +3484,8 @@ A collection of tools for working with paths
 ### explodePath
 
 ```typescript
-PathTools.explodePath;
-explodePath;
+PathTools.explodePath(path: string): ExplodedPath
+explodePath(path: string): ExplodedPath
 ```
 
 'Explodes' a path into its components
@@ -2819,6 +3507,14 @@ console.log(ext); // 'txt'
 console.log(filename); // 'file.txt'
 console.log(folders); // ['path', 'to']
 ```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `path`         | **Yes**  | `string` |
+
+| Return Type    |
+|----------------|
+| `ExplodedPath` |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -2878,7 +3574,7 @@ the full name of the file, including the extension (and dot)
 ### removeTrailSlash
 
 ```typescript
-PathTools.removeTrailSlash;
+PathTools.removeTrailSlash(path: string): string
 ```
 
 Remove trailing slash from path (if one exists)
@@ -2887,12 +3583,20 @@ Remove trailing slash from path (if one exists)
 '/path/to/file/' -> '/path/to/file'
 ```
 
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `path`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
 ### trailSlash
 
 ```typescript
-PathTools.trailSlash;
+PathTools.trailSlash(path: string): string
 ```
 
 Ensures there's a trailing slash on path
@@ -2901,12 +3605,20 @@ Ensures there's a trailing slash on path
 '/path/to/file' -> '/path/to/file/'
 ```
 
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `path`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
 ### removeDoubleSlashes
 
 ```typescript
-PathTools.removeDoubleSlashes;
+PathTools.removeDoubleSlashes(path: string): string
 ```
 
 Removes double slashes from path (an bug with Unix paths)
@@ -2914,6 +3626,14 @@ Removes double slashes from path (an bug with Unix paths)
 ```typescript
 '/path/to//file' -> '/path/to/file'
 ```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `path`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -2928,7 +3648,7 @@ A collection of tools for working with progress bars (from swiss-ak)
 ### getColouredProgressBarOpts
 
 ```typescript
-progressBarTools.getColouredProgressBarOpts;
+progressBarTools.getColouredProgressBarOpts(opts: ProgressBarOptions, randomise: boolean): (prefix?: string, override?: any, resetColours?: boolean) => any
 ```
 
 Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
@@ -2943,6 +3663,15 @@ const progressBar = getProgressBar(numThings, progOpts('Things'));
 progressBar.update();
 ```
 
+|  #  | Parameter Name | Required | Type                 | Default |
+|:---:|:---------------|:---------|:---------------------|:--------|
+| *0* | `opts`         | **Yes**  | `ProgressBarOptions` |         |
+| *1* | `randomise`    | *No*     | `boolean`            | `false` |
+
+| Return Type                                                        |
+|--------------------------------------------------------------------|
+| `(prefix?: string, override?: any, resetColours?: boolean) => any` |
+
 <p style="text-align: right" align="right"><a href="#progressbartools"> [↑ Back to <b>progressBarTools</b> ↑] </a></p>
 
 ## waiters
@@ -2954,8 +3683,8 @@ progressBar.update();
 ### nextTick
 
 ```typescript
-nextTick;
-waiters.nextTick;
+nextTick(undefined): Promise<unknown>
+waiters.nextTick(undefined): Promise<unknown>
 ```
 
 Wait for the next tick
@@ -2963,6 +3692,10 @@ Wait for the next tick
 ```typescript
 wait nextTick();
 ```
+
+| Return Type        |
+|--------------------|
+| `Promise<unknown>` |
 
 <p style="text-align: right" align="right"><a href="#waiters"> [↑ Back to <b>waiters</b> ↑] </a></p>
 
@@ -2978,7 +3711,7 @@ wait nextTick();
 ### getKeyListener
 
 ```typescript
-getKeyListener;
+getKeyListener(callback: (keyName?: string, rawValue?: string) => void, isStart: boolean, isDebugLog: boolean): KeyListener
 ```
 
 Listens for key presses and returns the key name and raw value.
@@ -2994,6 +3727,16 @@ kl.start();
 
 kl.stop();
 ```
+
+|  #  | Parameter Name | Required | Type                                            | Default |
+|:---:|:---------------|:---------|:------------------------------------------------|:--------|
+| *0* | `callback`     | **Yes**  | `(keyName?: string, rawValue?: string) => void` |         |
+| *1* | `isStart`      | *No*     | `boolean`                                       | `true`  |
+| *2* | `isDebugLog`   | *No*     | `boolean`                                       | `false` |
+
+| Return Type   |
+|---------------|
+| `KeyListener` |
 
 <p style="text-align: right" align="right"><a href="#keylistener"> [↑ Back to <b>keyListener</b> ↑] </a></p>
 

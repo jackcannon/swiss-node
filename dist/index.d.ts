@@ -547,6 +547,11 @@ declare namespace out {
      * pad('foo', 3, 1, '-'); // '---foo-'
      * pad('bar', 10, 5, '_'); // '__________bar_____'
      * ```
+     * @param {string} line
+     * @param {number} start
+     * @param {number} end
+     * @param {string} [replaceChar=' ']
+     * @returns {string}
      */
     export const pad: (line: string, start: number, end: number, replaceChar?: string) => string;
     export type AlignType = 'left' | 'right' | 'center' | 'justify';
@@ -568,6 +573,11 @@ declare namespace out {
      * // '  1  ' + '\n' +
      * // '  2  '
      * ```
+     * @param {any} item
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @param {boolean} [forceWidth=true]
+     * @returns {string}
      */
     export const center: AlignFunction;
     /**<!-- DOCS: out.left ### @ -->
@@ -587,6 +597,11 @@ declare namespace out {
      * // '1    ' + '\n' +
      * // '2    '
      * ```
+     * @param {any} item
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @param {boolean} [forceWidth=true]
+     * @returns {string}
      */
     export const left: AlignFunction;
     /**<!-- DOCS: out.right ### @ -->
@@ -606,6 +621,11 @@ declare namespace out {
      * // '    1' + '\n' +
      * // '    2'
      * ```
+     * @param {any} item
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @param {boolean} [forceWidth=true]
+     * @returns {string}
      */
     export const right: AlignFunction;
     /**<!-- DOCS: out.justify ### @ -->
@@ -625,6 +645,11 @@ declare namespace out {
      * // 'consectetur         ' + '\n' +
      * // 'adipiscing      elit'
      * ```
+     * @param {any} item
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @param {boolean} [forceWidth=true]
+     * @returns {string}
      */
     export const justify: AlignFunction;
     /**<!-- DOCS: out.leftLines ### @ -->
@@ -642,6 +667,9 @@ declare namespace out {
      * //   'Line 3                 '
      * // ]
      * ```
+     * @param {string[]} lines
+     * @param {number} [width=getLongestLen(lines)]
+     * @returns {string[]}
      */
     export const leftLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.centerLines ### @ -->
@@ -659,6 +687,9 @@ declare namespace out {
      * //   '                 Line 3'
      * // ]
      * ```
+     * @param {string[]} lines
+     * @param {number} [width=getLongestLen(lines)]
+     * @returns {string[]}
      */
     export const centerLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.rightLines ### @ -->
@@ -676,6 +707,9 @@ declare namespace out {
      * //   '        Line 3         '
      * // ]
      * ```
+     * @param {string[]} lines
+     * @param {number} [width=getLongestLen(lines)]
+     * @returns {string[]}
      */
     export const rightLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.justifyLines ### @ -->
@@ -693,6 +727,9 @@ declare namespace out {
      * //   'Line                  3'
      * // ]
      * ```
+     * @param {string[]} lines
+     * @param {number} [width=getLongestLen(lines)]
+     * @returns {string[]}
      */
     export const justifyLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.align ### @ -->
@@ -712,6 +749,12 @@ declare namespace out {
      * // '    1' + '\n' +
      * // '    2'
      * ```
+     * @param {any} item
+     * @param {AlignType} direction
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @param {boolean} [forceWidth=true]
+     * @returns {string}
      */
     export const align: (item: any, direction: AlignType, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
     /**<!-- DOCS: out.split ### @ -->
@@ -724,6 +767,11 @@ declare namespace out {
      * ```typescript
      * out.split('Left', 'Right', 15); // Left      Right
      * ```
+     * @param {any} leftItem
+     * @param {any} rightItem
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {string} [replaceChar=' ']
+     * @returns {string}
      */
     export const split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
     /**<!-- DOCS: out.wrap ### @ -->
@@ -738,6 +786,11 @@ declare namespace out {
      * // 'This is' + '\n' +
      * // 'a sentence'
      * ```
+     * @param {any} item
+     * @param {number} [width=out.utils.getTerminalWidth()]
+     * @param {AlignType} [alignment]
+     * @param {boolean} [forceWidth=false]
+     * @returns {string}
      */
     export const wrap: (item: any, width?: number, alignment?: AlignType, forceWidth?: boolean) => string;
     /**<!-- DOCS: out.moveUp ### @ -->
@@ -752,6 +805,8 @@ declare namespace out {
      * ```typescript
      * moveUp(1);
      * ```
+     * @param {number} [lines=1]
+     * @returns {void}
      */
     export const moveUp: (lines?: number) => void;
     /**<!-- DOCS: out.loading ### @ -->
@@ -766,6 +821,10 @@ declare namespace out {
      * // ...
      * loader.stop();
      * ```
+     * @param {(s: string) => any} [action=loadingDefault]
+     * @param {number} [lines=1]
+     * @param {string[]} [symbols=loadingChars]
+     * @returns {{ stop: () => void; }}
      */
     export const loading: (action?: (s: string) => any, lines?: number, symbols?: string[]) => {
         stop: () => void;
@@ -780,6 +839,9 @@ declare namespace out {
      * ```typescript
      * out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
      * ```
+     * @param {string} text
+     * @param {number} maxLength
+     * @returns {string}
      */
     export const limitToLength: (text: string, maxLength: number) => string;
     /**<!-- DOCS: out.limitToLengthStart ### @ -->
@@ -792,6 +854,9 @@ declare namespace out {
      * ```typescript
      * out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
      * ```
+     * @param {string} text
+     * @param {number} maxLength
+     * @returns {string}
      */
     export const limitToLengthStart: (text: string, maxLength: number) => string;
     /**<!-- DOCS: out.truncate ### @ -->
@@ -804,6 +869,10 @@ declare namespace out {
      * ```typescript
      * out.truncate('This is a very long sentence', 15); // 'This is a ve...'
      * ```
+     * @param {string} text
+     * @param {number} [maxLength=out.utils.getTerminalWidth()]
+     * @param {string} [suffix=chalk.dim('…')]
+     * @returns {string}
      */
     export const truncate: (text: string, maxLength?: number, suffix?: string) => string;
     /**<!-- DOCS: out.truncateStart ### @ -->
@@ -816,6 +885,10 @@ declare namespace out {
      * ```typescript
      * out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
      * ```
+     * @param {string} text
+     * @param {number} [maxLength=out.utils.getTerminalWidth()]
+     * @param {string} [suffix=chalk.dim('…')]
+     * @returns {string}
      */
     export const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
     /**<!-- DOCS: out.concatLineGroups ### @ -->
@@ -829,6 +902,8 @@ declare namespace out {
      * out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
      * // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
      * ```
+     * @param {...string[]} [groups]
+     * @returns {any}
      */
     export const concatLineGroups: (...groups: string[][]) => string[];
     /**<!-- DOCS: out.getResponsiveValue ### @ -->
@@ -846,6 +921,8 @@ declare namespace out {
      *   {minColumns: 1000, value: 'd'}
      * ]) // c
      * ```
+     * @param {ResponsiveOption<T>[]} options
+     * @returns {T}
      */
     export const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
     /**<!-- DOCS: out.ResponsiveOption #### -->
@@ -885,6 +962,8 @@ declare namespace out {
      * subsub(); // 'a › b › c › d'
      * subsub('e'); // 'a › b › c › d › e'
      * ```
+     * @param {...string} [baseNames]
+     * @returns {Breadcrumb}
      */
     export const getBreadcrumb: (...baseNames: string[]) => Breadcrumb$1;
     /**<!-- DOCS-ALIAS: out.Breadcrumb -->
@@ -947,6 +1026,7 @@ declare namespace out {
          * ```typescript
          * print.utils.getTerminalWidth(); // 127
          * ```
+         * @returns {number}
          */
         const getTerminalWidth: () => number;
         /**<!-- DOCS: out.utils.getLines #### 291 @ -->
@@ -962,6 +1042,8 @@ declare namespace out {
          * this is line 2
          * `); // [ '', 'this is line 1', 'this is line 2', '' ]
          * ```
+         * @param {Text} text
+         * @returns {string[]}
          */
         const getLines: (text: Text) => string[];
         /**<!-- DOCS: out.utils.getNumLines #### 291 @ -->
@@ -977,6 +1059,8 @@ declare namespace out {
          * this is line 2
          * `); // 4
          * ```
+         * @param {Text} text
+         * @returns {number}
          */
         const getNumLines: (text: Text) => number;
         /**<!-- DOCS: out.utils.getLinesWidth #### 291 @ -->
@@ -992,6 +1076,8 @@ declare namespace out {
          * this is line 2
          * `) // 14
          * ```
+         * @param {Text} text
+         * @returns {number}
          */
         const getLinesWidth: (text: Text) => number;
         /**<!-- DOCS: out.utils.getLogLines #### 291 @ -->
@@ -1007,6 +1093,8 @@ declare namespace out {
          * this is line 2
          * `); // [ '', 'this is line 1', 'this is line 2', '' ]
          * ```
+         * @param {any} item
+         * @returns {string[]}
          */
         const getLogLines: (item: any) => string[];
         /**<!-- DOCS: out.utils.getNumLogLines #### 291 @ -->
@@ -1022,6 +1110,8 @@ declare namespace out {
          * this is line 2
          * `); // 4
          * ```
+         * @param {Text} item
+         * @returns {number}
          */
         const getNumLogLines: (item: Text) => number;
         /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 @ -->
@@ -1037,6 +1127,8 @@ declare namespace out {
          * this is line 2
          * `) // 14
          * ```
+         * @param {Text} item
+         * @returns {number}
          */
         const getLogLinesWidth: (item: Text) => number;
         /**<!-- DOCS: out.utils.joinLines #### 291 @ -->
@@ -1051,6 +1143,8 @@ declare namespace out {
          * // 'this is line 1' + '\n' +
          * // 'this is line 2'
          * ```
+         * @param {string[]} lines
+         * @returns {string}
          */
         const joinLines: (lines: string[]) => string;
         /**<!-- DOCS: out.utils.hasColor #### 291 @ -->
@@ -1064,6 +1158,8 @@ declare namespace out {
          * out.utils.hasColor('this is line 1') // false
          * out.utils.hasColor(chalk.red('this is line 1')) // true
          * ```
+         * @param {string} str
+         * @returns {boolean}
          */
         const hasColor: (str: string) => boolean;
     }
@@ -1093,6 +1189,8 @@ declare namespace out {
  * subsub(); // 'a › b › c › d'
  * subsub('e'); // 'a › b › c › d › e'
  * ```
+ * @param {...string} [baseNames]
+ * @returns {Breadcrumb}
  */
 declare const getBreadcrumb: (...baseNames: string[]) => Breadcrumb$1;
 /**<!-- DOCS-ALIAS: out.Breadcrumb -->
@@ -1180,6 +1278,10 @@ declare namespace table {
      * // │ Jane │ 26  │
      * // └──────┴─────┘
      * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {number}
      */
     const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
     /**<!-- DOCS: table.printObjects ### @ -->
@@ -1216,6 +1318,10 @@ declare namespace table {
      * // │ 6     │       │       │
      * // └───────┴───────┴───────┘
      * ```
+     * @param {Object[]} objects
+     * @param {Object} [headers={}]
+     * @param {TableOptions} [options={}]
+     * @returns {number}
      */
     const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
     /**<!-- DOCS: table.markdown ### @ -->
@@ -1239,6 +1345,10 @@ declare namespace table {
      * // | Alexander |       25       | Builder           |
      * // |      Jane |       26       | Software Engineer |
      * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {string[]}
      */
     const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
     /**<!-- DOCS: table.getLines ### @ -->
@@ -1262,6 +1372,10 @@ declare namespace table {
      * //   '└──────┴─────┘'
      * // ]
      * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {string[]}
      */
     const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
     /**<!-- DOCS: table.FullTableOptions ###! -->
@@ -1550,6 +1664,9 @@ declare namespace table {
          * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
          * // }
          * ```
+         * @param {Object[]} objects
+         * @param {Object} [headers={}]
+         * @returns {{ header: any[][]; body: any[][]; }}
          */
         const objectsToTable: (objects: Object[], headers?: Object) => {
             header: any[][];
@@ -1574,6 +1691,8 @@ declare namespace table {
          * //   [ 25, 26, 27 ]
          * // ]
          * ```
+         * @param {any[][]} rows
+         * @returns {any[][]}
          */
         const transpose: (rows: any[][]) => any[][];
         /**<!-- DOCS: table.utils.concatRows #### @ -->
@@ -1598,6 +1717,8 @@ declare namespace table {
          * //   [ 'Derek', 27 ]
          * // ]
          * ```
+         * @param {{ header: any[][]; body: any[][] }} cells
+         * @returns {any[][]}
          */
         const concatRows: (cells: {
             header: any[][];
@@ -1637,6 +1758,12 @@ declare namespace table {
          * // │ 6 │ 7 │ 8 │
          * // └───┴───┴───┘
          * ```
+         * @param {Function | Colour} format
+         * @param {number} [row]
+         * @param {number} [col]
+         * @param {boolean} [isHeader]
+         * @param {boolean} [isBody]
+         * @returns {TableFormatConfig}
          */
         const getFormat: (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
     }
@@ -1664,6 +1791,9 @@ declare namespace ask {
      * ```typescript
      * const name = await ask.text('What is your name?'); // 'Jack'
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {string} [initial]
+     * @returns {Promise<string>}
      */
     export const text: (question: string | Breadcrumb$1, initial?: string) => Promise<string>;
     /**<!-- DOCS: ask.autotext ### @ -->
@@ -1676,6 +1806,11 @@ declare namespace ask {
      * ```typescript
      * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {PromptChoice<T>[]} choices
+     * @param {T | string} [initial]
+     * @param {number} [choiceLimit=10]
+     * @returns {Promise<T>}
      */
     export const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
     /**<!-- DOCS: ask.number ### @ -->
@@ -1688,6 +1823,9 @@ declare namespace ask {
      * ```typescript
      * const age = await ask.number('How old are you?'); // 30
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {number} [initial=1]
+     * @returns {Promise<number>}
      */
     export const number: (question: string | Breadcrumb$1, initial?: number) => Promise<number>;
     /**<!-- DOCS: ask.boolean ### @ -->
@@ -1700,6 +1838,11 @@ declare namespace ask {
      * ```typescript
      * const isCool = await ask.boolean('Is this cool?'); // true
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {boolean} [initial=true]
+     * @param {string} [yesTxt='yes']
+     * @param {string} [noTxt='no']
+     * @returns {Promise<boolean>}
      */
     export const boolean: (question: string | Breadcrumb$1, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
     /**<!-- DOCS: ask.booleanAlt ### @ -->
@@ -1714,6 +1857,9 @@ declare namespace ask {
      * ```typescript
      * const isCool = await ask.boolean('Is this cool?'); // true
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {boolean} [initial=true]
+     * @returns {Promise<boolean>}
      */
     export const booleanAlt: (question: string | Breadcrumb$1, initial?: boolean) => Promise<boolean>;
     /**<!-- DOCS: ask.select ### @ -->
@@ -1726,6 +1872,10 @@ declare namespace ask {
      * ```typescript
      * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {PromptChoice<T>[]} choices
+     * @param {T} [initial]
+     * @returns {Promise<T>}
      */
     export const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
     /**<!-- DOCS: ask.multiselect ### @ -->
@@ -1738,6 +1888,11 @@ declare namespace ask {
      * ```typescript
      * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {PromptChoice<T>[]} choices
+     * @param {PromptChoice<T> | PromptChoice<T>[]} [initial]
+     * @param {boolean} [canSelectAll=false]
+     * @returns {Promise<T[]>}
      */
     export const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: PromptChoice<T> | PromptChoice<T>[], canSelectAll?: boolean) => Promise<T[]>;
     export interface CRUDOptions {
@@ -1759,6 +1914,11 @@ declare namespace ask {
      * ```typescript
      * const action = await ask.crud('What do you want to do next?'); // 'none'
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {string} [itemName='item']
+     * @param {any[]} [items]
+     * @param {Partial<CRUDOptions>} [options={}]
+     * @returns {Promise<CRUD>}
      */
     export const crud: (question: string | Breadcrumb$1, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
     /**<!-- DOCS: ask.validate ### @ -->
@@ -1774,6 +1934,9 @@ declare namespace ask {
      *   (name) => name.length > 0
      * ); // 'Jack'
      * ```
+     * @param {(initialValue?: T) => Promise<I> | I} askFunc
+     * @param {(input: Awaited<I>) => boolean | string} validateFn
+     * @returns {Promise<I>}
      */
     export const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
     /**<!-- DOCS: ask.imitate ### @ -->
@@ -1788,6 +1951,10 @@ declare namespace ask {
      *
      * ask.imitate(true, 'What is your name?', 'Jack');
      * ```
+     * @param {boolean} done
+     * @param {string | Breadcrumb} question
+     * @param {any} [result]
+     * @returns {number}
      */
     export const imitate: (done: boolean, question: string | Breadcrumb$1, result?: any) => number;
     /**<!-- DOCS: ask.prefill ### @ -->
@@ -1808,6 +1975,10 @@ declare namespace ask {
      * data = {name: 'Jack'}
      * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
      * ```
+     * @param {T | undefined} value
+     * @param {string | Breadcrumb} question
+     * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
+     * @returns {Promise<T>}
      */
     export const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb$1, askFn: (question: string | Breadcrumb$1) => T | Promise<T>) => Promise<T>;
     /**<!-- DOCS: ask.loading ### @ -->
@@ -1822,6 +1993,8 @@ declare namespace ask {
      * // ...
      * loader.stop();
      * ```
+     * @param {string | Breadcrumb} question
+     * @returns {any}
      */
     export const loading: (question: string | Breadcrumb$1) => {
         stop: () => void;
@@ -1836,6 +2009,8 @@ declare namespace ask {
      * ```typescript
      * await ask.pause();
      * ```
+     * @param {string | Breadcrumb} [text='Press enter to continue...']
+     * @returns {Promise<void>}
      */
     export const pause: (text?: string | Breadcrumb$1) => Promise<void>;
     /**<!-- DOCS: ask.countdown ### @ -->
@@ -1848,6 +2023,10 @@ declare namespace ask {
      * ```typescript
      * await ask.countdown(5);
      * ```
+     * @param {number} totalSeconds
+     * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
+     * @param {string} [complete]
+     * @returns {Promise<void>}
      */
     export const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
     /**<!-- DOCS: ask.wizard ### @ -->
@@ -1878,6 +2057,8 @@ declare namespace ask {
      *
      * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
      * ```
+     * @param {Partial<T>} [startObj={}]
+     * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
      */
     export const wizard: <T extends unknown>(startObj?: Partial<T>) => {
         add(partial: Partial<T>): void;
@@ -1895,6 +2076,9 @@ declare namespace ask {
      * const date = await ask.date('Whats the date?');
      * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
      * ```
+     * @param {string | Breadcrumb} [questionText]
+     * @param {Date} [initial]
+     * @returns {Promise<Date>}
      */
     export const date: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.time -->
@@ -1911,6 +2095,9 @@ declare namespace ask {
      * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
      * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
      * ```
+     * @param {string | Breadcrumb} [questionText]
+     * @param {Date} [initial]
+     * @returns {Promise<Date>}
      */
     export const time: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.datetime -->
@@ -1924,6 +2111,9 @@ declare namespace ask {
      * const when = await ask.datetime('Whats the date/time?');
      * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
      * ```
+     * @param {string | Breadcrumb} [questionText]
+     * @param {Date} [initial]
+     * @returns {Promise<Date>}
      */
     export const datetime: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.dateRange -->
@@ -1940,6 +2130,10 @@ declare namespace ask {
      * //   [Date: 2023-03-31T12:00:00.000Z]
      * // ]
      * ```
+     * @param {string | Breadcrumb} [questionText]
+     * @param {Date} [initialStart]
+     * @param {Date} [initialEnd]
+     * @returns {Promise<[Date, Date]>}
      */
     export const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
     /**<!-- DOCS-ALIAS: ask.fileExplorer -->
@@ -1956,6 +2150,10 @@ declare namespace ask {
      * const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
      * // '/Users/jackcannon/Documents/some_folder'
      * ```
+     * @param {string | Breadcrumb} questionText
+     * @param {'d' | 'f'} [selectType='f']
+     * @param {string} [startPath=process.cwd()]
+     * @returns {Promise<string>}
      */
     export const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
@@ -1973,6 +2171,10 @@ declare namespace ask {
      * //   '/Users/user/Documents/some_file_3.txt'
      * // ]
      * ```
+     * @param {string | Breadcrumb} questionText
+     * @param {'d' | 'f'} [selectType='f']
+     * @param {string} [startPath=process.cwd()]
+     * @returns {Promise<string[]>}
      */
     export const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
@@ -1987,6 +2189,10 @@ declare namespace ask {
      * const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
      * // '/Users/user/Documents/data.json'
      * ```
+     * @param {string | Breadcrumb} questionText
+     * @param {string} [startPath=process.cwd()]
+     * @param {string} [suggestedFileName='']
+     * @returns {Promise<string>}
      */
     export const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
@@ -2023,6 +2229,13 @@ declare namespace ask {
          * // └───┴───────┴─────┘
          * // Returns: { name: 'Jane', age: 26 }
          * ```
+         * @param {string | Breadcrumb} question
+         * @param {T[]} items
+         * @param {T | number} [initial]
+         * @param {any[][] | ItemToRowMapFunction<T>} [rows]
+         * @param {any[][] | RemapOf<T, string>} [headers]
+         * @param {tableOut.TableOptions} [tableOptions]
+         * @returns {Promise<T>}
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number | T, rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
@@ -2056,6 +2269,13 @@ declare namespace ask {
          * //   { name: 'Derek', age: 27 }
          * // ]
          * ```
+         * @param {string | Breadcrumb} question
+         * @param {T[]} items
+         * @param {T[] | number[]} [initial]
+         * @param {any[][] | ItemToRowMapFunction<T>} [rows]
+         * @param {any[][] | RemapOf<T, string>} [headers]
+         * @param {tableOut.TableOptions} [tableOptions]
+         * @returns {Promise<T[]>}
          */
         const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number[] | T[], rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T[]>;
     }
@@ -2065,6 +2285,10 @@ declare namespace ask {
      * - `ask.trim`
      * 
      * Get a start and end frame from the user
+     * @param {number} totalFrames
+     * @param {number} frameRate
+     * @param {Partial<AskTrimOptions>} [options={}]
+     * @returns {Promise<Handles<number>>}
      */
     export const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
     /**<!-- DOCS-ALIAS: ask.separator -->
@@ -2084,6 +2308,11 @@ declare namespace ask {
      * ask.separator('up', 5, 2);
      * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
      * ```
+     * @param {'down' | 'none' | 'up'} [version='down']
+     * @param {number} [spacing=8]
+     * @param {number} [offset=0]
+     * @param {number} [width=out.utils.getTerminalWidth() - 2]
+     * @returns {number}
      */
     export const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number) => number;
     /**<!-- DOCS-ALIAS: ask.section -->
@@ -2120,6 +2349,10 @@ declare namespace ask {
      * Question 1: answer1
      * Question 2a: [ answer2, answer2b ]
      * ```
+     * @param {string | Breadcrumb} question
+     * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionFn]
+     * @param {...QuesT} [questionFns]
+     * @returns {Promise<UnwrapPromFuncs<QuesT>>}
      */
     export const section: <QuesT extends ((qst?: string | Breadcrumb$1, results?: any[], lc?: LineCounter$1, separator?: () => void) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionFn?: (lc: LineCounter$1, separator: () => void) => void | Promise<any>, ...questionFns: QuesT) => Promise<QuesT extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...any] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []>;
     /**<!-- DOCS: ask.utils 199 ### -->
@@ -2156,6 +2389,10 @@ declare namespace ask {
          * //   { title: 'DOLOR', value: 'dolor' }
          * // ]
          * ```
+         * @param {T[]} items
+         * @param {string[]} [titles=[]]
+         * @param {TitleFn<T>} [titleFn]
+         * @returns {{ title: string; value: T; }[]}
          */
         export const itemsToPromptObjects: <T = string>(items: T[], titles?: string[], titleFn?: TitleFn<T>) => {
             title: string;
@@ -2262,6 +2499,8 @@ declare namespace chlk {
      * ```typescript
      * gray(2); // gray2
      * ```
+     * @param {number} num
+     * @returns {any}
      */
     const gray: (num: number) => ChalkFn;
     /**<!-- DOCS: chlk.clear ### @ -->
@@ -2270,6 +2509,8 @@ declare namespace chlk {
      * - `chlk.clear`
      *
      * Removes ANSI colours. Not same as chalk.reset
+     * @param {string} str
+     * @returns {string}
      */
     const clear: (str: string) => string;
     /**<!-- DOCS: chlk.not ### @ -->
@@ -2278,6 +2519,8 @@ declare namespace chlk {
      * - `chlk.not`
      *
      * Stops and restarts a style around a given string
+     * @param {Function} style
+     * @returns {(item: string) => string}
      */
     const not: (style: Function) => (item: string) => string;
     /**<!-- DOCS: chlk.notUnderlined ### -->
@@ -2324,6 +2567,9 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  *
  * log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
  * ```
+ * @param {T} [extraConfigs={} as T]
+ * @param {LogOptions} [options={}]
+ * @returns {any}
  */
 declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
     readonly blank: LogConfig;
@@ -2444,6 +2690,8 @@ declare namespace LogTools {
      * //   [ [ [ 'm', 'n', 'o' ] ] ]
      * // ]
      * ```
+     * @param {any} item
+     * @returns {string}
      */
     const getLogStr: (item: any) => string;
     /**<!-- DOCS: LogTools.processLogContents ### @ -->
@@ -2453,6 +2701,10 @@ declare namespace LogTools {
      * - `processLogContents`
      *
      * Process an item to be logged
+     * @param {string} prefix
+     * @param {Function} [wrapper=fn.noact]
+     * @param {...any} [args]
+     * @returns {string}
      */
     const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
     /**<!-- DOCS: LogTools.getLog ### @ -->
@@ -2462,6 +2714,9 @@ declare namespace LogTools {
      * - `getLog`
      *
      * Get a log function for a given prefix
+     * @param {string} prefix
+     * @param {Function} [wrapper=fn.noact]
+     * @returns {(...args: any[]) => void}
      */
     const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) => void;
 }
@@ -2505,6 +2760,8 @@ declare namespace LogTools {
  * //   [ [ [ 'm', 'n', 'o' ] ] ]
  * // ]
  * ```
+ * @param {any} item
+ * @returns {string}
  */
 declare const getLogStr: (item: any) => string;
 /**<!-- DOCS-ALIAS: LogTools.processLogContents -->
@@ -2514,6 +2771,10 @@ declare const getLogStr: (item: any) => string;
  * - `processLogContents`
  * 
  * Process an item to be logged
+ * @param {string} prefix
+ * @param {Function} [wrapper=fn.noact]
+ * @param {...any} [args]
+ * @returns {string}
  */
 declare const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
 /**<!-- DOCS-ALIAS: LogTools.getLog -->
@@ -2523,6 +2784,9 @@ declare const processLogContents: (prefix: string, wrapper?: Function, ...args: 
  * - `getLog`
  * 
  * Get a log function for a given prefix
+ * @param {string} prefix
+ * @param {Function} [wrapper=fn.noact]
+ * @returns {(...args: any[]) => void}
  */
 declare const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) => void;
 
@@ -2557,6 +2821,8 @@ declare namespace PathTools {
      * console.log(filename); // 'file.txt'
      * console.log(folders); // ['path', 'to']
      * ```
+     * @param {string} path
+     * @returns {ExplodedPath}
      */
     const explodePath: (path: string) => ExplodedPath;
     /**<!-- DOCS: PathTools.ExplodedPath ###! -->
@@ -2619,6 +2885,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to/file/' -> '/path/to/file'
      * ```
+     * @param {string} path
+     * @returns {string}
      */
     const removeTrailSlash: (path: string) => string;
     /**<!-- DOCS: PathTools.trailSlash ### @ -->
@@ -2631,6 +2899,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to/file' -> '/path/to/file/'
      * ```
+     * @param {string} path
+     * @returns {string}
      */
     const trailSlash: (path: string) => string;
     /**<!-- DOCS: PathTools.removeDoubleSlashes ### @ -->
@@ -2643,6 +2913,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to//file' -> '/path/to/file'
      * ```
+     * @param {string} path
+     * @returns {string}
      */
     const removeDoubleSlashes: (path: string) => string;
 }
@@ -2671,6 +2943,8 @@ declare namespace PathTools {
  * console.log(filename); // 'file.txt'
  * console.log(folders); // ['path', 'to']
  * ```
+ * @param {string} path
+ * @returns {ExplodedPath}
  */
 declare const explodePath: (path: string) => ExplodedPath;
 /**<!-- DOCS-ALIAS: PathTools.ExplodedPath -->
@@ -2707,6 +2981,9 @@ declare namespace progressBarTools {
      * const progressBar = getProgressBar(numThings, progOpts('Things'));
      * progressBar.update();
      * ```
+     * @param {ProgressBarOptions} opts
+     * @param {boolean} [randomise=false]
+     * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
      */
     const getColouredProgressBarOpts: (opts: ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: ProgressBarOptions, resetColours?: boolean) => ProgressBarOptions;
 }
@@ -2726,6 +3003,7 @@ declare namespace waiters {
      * ```typescript
      * wait nextTick();
      * ```
+     * @returns {Promise<unknown>}
      */
     const nextTick: () => Promise<unknown>;
 }
@@ -2740,6 +3018,7 @@ declare namespace waiters {
  * ```typescript
  * wait nextTick();
  * ```
+ * @returns {Promise<unknown>}
  */
 declare const nextTick: () => Promise<unknown>;
 
@@ -2764,6 +3043,10 @@ declare const nextTick: () => Promise<unknown>;
  *
  * kl.stop();
  * ```
+ * @param {(keyName?: string, rawValue?: string) => void} callback
+ * @param {boolean} [isStart=true]
+ * @param {boolean} [isDebugLog=false]
+ * @returns {KeyListener}
  */
 declare const getKeyListener: (callback: (keyName?: string, rawValue?: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 /**<!-- DOCS: keyListener.KeyListener ### -->

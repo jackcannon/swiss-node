@@ -28,6 +28,11 @@ export namespace out {
    * pad('foo', 3, 1, '-'); // '---foo-'
    * pad('bar', 10, 5, '_'); // '__________bar_____'
    * ```
+   * @param {string} line
+   * @param {number} start
+   * @param {number} end
+   * @param {string} [replaceChar=' ']
+   * @returns {string}
    */
   export const pad = (line: string, start: number, end: number, replaceChar: string = ' '): string =>
     `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
@@ -55,6 +60,11 @@ export namespace out {
    * // '  1  ' + '\n' +
    * // '  2  '
    * ```
+   * @param {any} item
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @param {boolean} [forceWidth=true]
+   * @returns {string}
    */
   export const center: AlignFunction = (
     item: any,
@@ -91,6 +101,11 @@ export namespace out {
    * // '1    ' + '\n' +
    * // '2    '
    * ```
+   * @param {any} item
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @param {boolean} [forceWidth=true]
+   * @returns {string}
    */
   export const left: AlignFunction = (
     item: any,
@@ -120,6 +135,11 @@ export namespace out {
    * // '    1' + '\n' +
    * // '    2'
    * ```
+   * @param {any} item
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @param {boolean} [forceWidth=true]
+   * @returns {string}
    */
   export const right: AlignFunction = (
     item: any,
@@ -149,6 +169,11 @@ export namespace out {
    * // 'consectetur         ' + '\n' +
    * // 'adipiscing      elit'
    * ```
+   * @param {any} item
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @param {boolean} [forceWidth=true]
+   * @returns {string}
    */
   export const justify: AlignFunction = (
     item: any,
@@ -192,6 +217,9 @@ export namespace out {
    * //   'Line 3                 '
    * // ]
    * ```
+   * @param {string[]} lines
+   * @param {number} [width=getLongestLen(lines)]
+   * @returns {string[]}
    */
   export const leftLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => left(line, width));
 
@@ -210,6 +238,9 @@ export namespace out {
    * //   '                 Line 3'
    * // ]
    * ```
+   * @param {string[]} lines
+   * @param {number} [width=getLongestLen(lines)]
+   * @returns {string[]}
    */
   export const centerLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => center(line, width));
 
@@ -228,6 +259,9 @@ export namespace out {
    * //   '        Line 3         '
    * // ]
    * ```
+   * @param {string[]} lines
+   * @param {number} [width=getLongestLen(lines)]
+   * @returns {string[]}
    */
   export const rightLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => right(line, width));
 
@@ -246,6 +280,9 @@ export namespace out {
    * //   'Line                  3'
    * // ]
    * ```
+   * @param {string[]} lines
+   * @param {number} [width=getLongestLen(lines)]
+   * @returns {string[]}
    */
   export const justifyLines = (lines: string[], width: number = getLongestLen(lines)) => lines.map((line) => justify(line, width));
 
@@ -273,6 +310,12 @@ export namespace out {
    * // '    1' + '\n' +
    * // '    2'
    * ```
+   * @param {any} item
+   * @param {AlignType} direction
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @param {boolean} [forceWidth=true]
+   * @returns {string}
    */
   export const align = (
     item: any,
@@ -295,6 +338,11 @@ export namespace out {
    * ```typescript
    * out.split('Left', 'Right', 15); // Left      Right
    * ```
+   * @param {any} leftItem
+   * @param {any} rightItem
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {string} [replaceChar=' ']
+   * @returns {string}
    */
   export const split = (leftItem: any, rightItem: any, width: number = out.utils.getTerminalWidth(), replaceChar: string = ' ') =>
     `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + '') + stringWidth(rightItem + ''))))}${rightItem + ''}`;
@@ -311,6 +359,11 @@ export namespace out {
    * // 'This is' + '\n' +
    * // 'a sentence'
    * ```
+   * @param {any} item
+   * @param {number} [width=out.utils.getTerminalWidth()]
+   * @param {AlignType} [alignment]
+   * @param {boolean} [forceWidth=false]
+   * @returns {string}
    */
   export const wrap = (item: any, width: number = out.utils.getTerminalWidth(), alignment?: AlignType, forceWidth: boolean = false): string =>
     utils
@@ -376,6 +429,8 @@ export namespace out {
    * ```typescript
    * moveUp(1);
    * ```
+   * @param {number} [lines=1]
+   * @returns {void}
    */
   export const moveUp = (lines: number = 1) => {
     if (process?.stdout?.clearLine) {
@@ -418,6 +473,10 @@ export namespace out {
    * // ...
    * loader.stop();
    * ```
+   * @param {(s: string) => any} [action=loadingDefault]
+   * @param {number} [lines=1]
+   * @param {string[]} [symbols=loadingChars]
+   * @returns {{ stop: () => void; }}
    */
   export const loading = (action: (s: string) => any = loadingDefault, lines: number = 1, symbols: string[] = loadingChars) => {
     let stopped = false;
@@ -451,6 +510,9 @@ export namespace out {
    * ```typescript
    * out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
    * ```
+   * @param {string} text
+   * @param {number} maxLength
+   * @returns {string}
    */
   export const limitToLength = (text: string, maxLength: number): string =>
     utils.joinLines(
@@ -480,6 +542,9 @@ export namespace out {
    * ```typescript
    * out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
    * ```
+   * @param {string} text
+   * @param {number} maxLength
+   * @returns {string}
    */
   export const limitToLengthStart = (text: string, maxLength: number): string =>
     utils.joinLines(
@@ -509,6 +574,10 @@ export namespace out {
    * ```typescript
    * out.truncate('This is a very long sentence', 15); // 'This is a ve...'
    * ```
+   * @param {string} text
+   * @param {number} [maxLength=out.utils.getTerminalWidth()]
+   * @param {string} [suffix=chalk.dim('…')]
+   * @returns {string}
    */
   export const truncate = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
     utils.joinLines(
@@ -525,6 +594,10 @@ export namespace out {
    * ```typescript
    * out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
    * ```
+   * @param {string} text
+   * @param {number} [maxLength=out.utils.getTerminalWidth()]
+   * @param {string} [suffix=chalk.dim('…')]
+   * @returns {string}
    */
   export const truncateStart = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
     utils.joinLines(
@@ -542,6 +615,8 @@ export namespace out {
    * out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
    * // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
    * ```
+   * @param {...string[]} [groups]
+   * @returns {any}
    */
   export const concatLineGroups = (...groups: string[][]) => {
     const maxLen = Math.max(...groups.map((group) => group.length));
@@ -564,6 +639,8 @@ export namespace out {
    *   {minColumns: 1000, value: 'd'}
    * ]) // c
    * ```
+   * @param {ResponsiveOption<T>[]} options
+   * @returns {T}
    */
   export const getResponsiveValue = <T extends unknown>(options: ResponsiveOption<T>[]): T => {
     const mapped = options.map(({ minColumns, value }) => ({
@@ -614,6 +691,7 @@ export namespace out {
      * ```typescript
      * print.utils.getTerminalWidth(); // 127
      * ```
+     * @returns {number}
      */
     export const getTerminalWidth = () => (process?.stdout?.columns ? process.stdout.columns : 100);
 
@@ -631,6 +709,8 @@ export namespace out {
      * this is line 2
      * `); // [ '', 'this is line 1', 'this is line 2', '' ]
      * ```
+     * @param {Text} text
+     * @returns {string[]}
      */
     export const getLines = (text: Text): string[] => textToString(text).split(NEW_LINE);
 
@@ -647,6 +727,8 @@ export namespace out {
      * this is line 2
      * `); // 4
      * ```
+     * @param {Text} text
+     * @returns {number}
      */
     export const getNumLines = (text: Text): number => getLines(text).length;
 
@@ -663,6 +745,8 @@ export namespace out {
      * this is line 2
      * `) // 14
      * ```
+     * @param {Text} text
+     * @returns {number}
      */
     export const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
 
@@ -679,6 +763,8 @@ export namespace out {
      * this is line 2
      * `); // [ '', 'this is line 1', 'this is line 2', '' ]
      * ```
+     * @param {any} item
+     * @returns {string[]}
      */
     export const getLogLines = (item: any): string[] => getLines(getLogStr(item));
 
@@ -695,6 +781,8 @@ export namespace out {
      * this is line 2
      * `); // 4
      * ```
+     * @param {Text} item
+     * @returns {number}
      */
     export const getNumLogLines = (item: Text): number => getNumLines(getLogStr(item));
 
@@ -711,6 +799,8 @@ export namespace out {
      * this is line 2
      * `) // 14
      * ```
+     * @param {Text} item
+     * @returns {number}
      */
     export const getLogLinesWidth = (item: Text): number => getLinesWidth(getLogStr(item));
 
@@ -726,6 +816,8 @@ export namespace out {
      * // 'this is line 1' + '\n' +
      * // 'this is line 2'
      * ```
+     * @param {string[]} lines
+     * @returns {string}
      */
     export const joinLines = (lines: string[]): string => lines.map(fn.maps.toString).join(NEW_LINE);
 
@@ -740,6 +832,8 @@ export namespace out {
      * out.utils.hasColor('this is line 1') // false
      * out.utils.hasColor(chalk.red('this is line 1')) // true
      * ```
+     * @param {string} str
+     * @returns {boolean}
      */
     export const hasColor = (str: string): boolean => Boolean(str.match(new RegExp(`\\u001b\[[0-9]+m`, 'g')));
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

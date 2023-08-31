@@ -207,6 +207,9 @@ const overallHandler = (
  * const date = await ask.date('Whats the date?');
  * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
  * ```
+ * @param {string | Breadcrumb} [questionText]
+ * @param {Date} [initial]
+ * @returns {Promise<Date>}
  */
 export const date = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -229,6 +232,9 @@ export const date = async (questionText?: string | Breadcrumb, initial?: Date): 
  * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
  * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
  * ```
+ * @param {string | Breadcrumb} [questionText]
+ * @param {Date} [initial]
+ * @returns {Promise<Date>}
  */
 export const time = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -249,6 +255,9 @@ export const time = async (questionText?: string | Breadcrumb, initial?: Date): 
  * const when = await ask.datetime('Whats the date/time?');
  * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
  * ```
+ * @param {string | Breadcrumb} [questionText]
+ * @param {Date} [initial]
+ * @returns {Promise<Date>}
  */
 export const datetime = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
   const initDateObj = initial || new Date();
@@ -272,6 +281,10 @@ const range = await ask.dateRange('When is the festival?');
 //   [Date: 2023-03-31T12:00:00.000Z]
 // ]
  * ```
+ * @param {string | Breadcrumb} [questionText]
+ * @param {Date} [initialStart]
+ * @param {Date} [initialEnd]
+ * @returns {Promise<[Date, Date]>}
  */
 export const dateRange = async (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date): Promise<[Date, Date]> => {
   const initDateObj1 = initialStart || new Date();

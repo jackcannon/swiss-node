@@ -51,6 +51,8 @@ export namespace LogTools {
    * //   [ [ [ 'm', 'n', 'o' ] ] ]
    * // ]
    * ```
+   * @param {any} item
+   * @returns {string}
    */
   export const getLogStr = (item: any): string => {
     const inspectList = ['object', 'boolean', 'number'];
@@ -68,6 +70,10 @@ export namespace LogTools {
    * - `processLogContents`
    *
    * Process an item to be logged
+   * @param {string} prefix
+   * @param {Function} [wrapper=fn.noact]
+   * @param {...any} [args]
+   * @returns {string}
    */
   export const processLogContents = (prefix: string, wrapper: Function = fn.noact, ...args: any[]): string =>
     args
@@ -84,6 +90,9 @@ export namespace LogTools {
    * - `getLog`
    *
    * Get a log function for a given prefix
+   * @param {string} prefix
+   * @param {Function} [wrapper=fn.noact]
+   * @returns {(...args: any[]) => void}
    */
   export const getLog =
     (prefix: string, wrapper: Function = fn.noact) =>

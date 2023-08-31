@@ -32,6 +32,8 @@ export namespace PathTools {
    * console.log(filename); // 'file.txt'
    * console.log(folders); // ['path', 'to']
    * ```
+   * @param {string} path
+   * @returns {ExplodedPath}
    */
   export const explodePath = (path: string): ExplodedPath => {
     const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, ''); // everything up to last '/' or '\'
@@ -111,6 +113,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to/file/' -> '/path/to/file'
    * ```
+   * @param {string} path
+   * @returns {string}
    */
   export const removeTrailSlash = (path: string) => path.replace(/\/$/, '');
 
@@ -124,6 +128,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to/file' -> '/path/to/file/'
    * ```
+   * @param {string} path
+   * @returns {string}
    */
   export const trailSlash = (path: string) => removeTrailSlash(path) + '/';
 
@@ -137,6 +143,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to//file' -> '/path/to/file'
    * ```
+   * @param {string} path
+   * @returns {string}
    */
   export const removeDoubleSlashes = (path: string) => path.replace(/\/\//g, '/');
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

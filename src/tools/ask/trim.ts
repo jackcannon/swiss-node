@@ -97,6 +97,10 @@ const getColors = (opts: AskTrimOptions) => ({
  * - `ask.trim`
  *
  * Get a start and end frame from the user
+ * @param {number} totalFrames
+ * @param {number} frameRate
+ * @param {Partial<AskTrimOptions>} [options={}]
+ * @returns {Promise<Handles<number>>}
  */
 export const trim = async (totalFrames: number, frameRate: number, options: Partial<AskTrimOptions> = {}): Promise<Handles<number>> => {
   const opts = getFullOptions(options);

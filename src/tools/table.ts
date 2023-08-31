@@ -74,6 +74,10 @@ export namespace table {
    * // │ Jane │ 26  │
    * // └──────┴─────┘
    * ```
+   * @param {any[][]} body
+   * @param {any[][]} [header]
+   * @param {TableOptions} [options={}]
+   * @returns {number}
    */
   export const print = (body: any[][], header?: any[][], options: TableOptions = {}): number => {
     const lines = getLines(body, header, options);
@@ -127,6 +131,10 @@ export namespace table {
    * // │ 6     │       │       │
    * // └───────┴───────┴───────┘
    * ```
+   * @param {Object[]} objects
+   * @param {Object} [headers={}]
+   * @param {TableOptions} [options={}]
+   * @returns {number}
    */
   export const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
     const { body, header } = utils.objectsToTable(objects, headers);
@@ -154,6 +162,10 @@ export namespace table {
    * // | Alexander |       25       | Builder           |
    * // |      Jane |       26       | Software Engineer |
    * ```
+   * @param {any[][]} body
+   * @param {any[][]} [header]
+   * @param {TableOptions} [options={}]
+   * @returns {string[]}
    */
   export const markdown = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     const defaultMarkdownOptions: TableOptions = {
@@ -225,6 +237,10 @@ export namespace table {
    * //   '└──────┴─────┘'
    * // ]
    * ```
+   * @param {any[][]} body
+   * @param {any[][]} [header]
+   * @param {TableOptions} [options={}]
+   * @returns {string[]}
    */
   export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     // const lc = getLineCounter();
@@ -619,6 +635,9 @@ export namespace table {
      * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
      * // }
      * ```
+     * @param {Object[]} objects
+     * @param {Object} [headers={}]
+     * @returns {{ header: any[][]; body: any[][]; }}
      */
     export const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[][]; body: any[][] } => {
       const allKeys = getAllKeys(objects);
@@ -651,6 +670,8 @@ export namespace table {
      * //   [ 25, 26, 27 ]
      * // ]
      * ```
+     * @param {any[][]} rows
+     * @returns {any[][]}
      */
     export const transpose = (rows: any[][]): any[][] => {
       return ArrayTools.zip(...rows);
@@ -678,6 +699,8 @@ export namespace table {
      * //   [ 'Derek', 27 ]
      * // ]
      * ```
+     * @param {{ header: any[][]; body: any[][] }} cells
+     * @returns {any[][]}
      */
     export const concatRows = (cells: { header: any[][]; body: any[][] }): any[][] => {
       return [...(cells.header || []), ...cells.body] as any[][];
@@ -717,6 +740,12 @@ export namespace table {
      * // │ 6 │ 7 │ 8 │
      * // └───┴───┴───┘
      * ```
+     * @param {Function | Colour} format
+     * @param {number} [row]
+     * @param {number} [col]
+     * @param {boolean} [isHeader]
+     * @param {boolean} [isBody]
+     * @returns {TableFormatConfig}
      */
     export const getFormat = (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
       const result: TableFormatConfig = {

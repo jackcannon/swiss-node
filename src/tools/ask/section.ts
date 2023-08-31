@@ -23,6 +23,11 @@ import { ask } from '../ask';
  * ask.separator('up', 5, 2);
  * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
  * ```
+ * @param {'down' | 'none' | 'up'} [version='down']
+ * @param {number} [spacing=8]
+ * @param {number} [offset=0]
+ * @param {number} [width=out.utils.getTerminalWidth() - 2]
+ * @returns {number}
  */
 export const separator = (
   version: 'down' | 'none' | 'up' = 'down',
@@ -80,6 +85,10 @@ type UnwrapPromFuncs<T extends [...any[]]> = T extends [infer Head, ...infer Tai
  * Question 1: answer1
  * Question 2a: [ answer2, answer2b ]
  * ```
+ * @param {string | Breadcrumb} question
+ * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionFn]
+ * @param {...QuesT} [questionFns]
+ * @returns {Promise<UnwrapPromFuncs<QuesT>>}
  */
 export const section = async <
   QuesT extends [...((qst?: string | Breadcrumb, results?: any[], lc?: LineCounter, separator?: () => void) => Promise<any>)[]]

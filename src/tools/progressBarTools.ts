@@ -28,6 +28,9 @@ export namespace progressBarTools {
    * const progressBar = getProgressBar(numThings, progOpts('Things'));
    * progressBar.update();
    * ```
+   * @param {ProgressBarOptions} opts
+   * @param {boolean} [randomise=false]
+   * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
    */
   export const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean = false) => {
     // let wrapperFns = [chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.yellowBright, chalk.magentaBright, chalk.redBright];
