@@ -34,16 +34,16 @@ A collection of functions to ask the user for input.
     - [number](#number)
     - [boolean](#boolean)
     - [booleanAlt](#booleanalt)
-    - [select](#select)
-    - [multiselect](#multiselect)
+    - [select](#ask_select)
+    - [multiselect](#ask_multiselect)
     - [crud](#crud)
     - [validate](#validate)
     - [imitate](#imitate)
     - [prefill](#prefill)
-    - [loading](#loading)
+    - [loading](#ask_loading)
     - [pause](#pause)
     - [countdown](#countdown)
-    - [wizard](#wizard123)
+    - [wizard](#wizard)
     - [date](#date)
     - [time](#time)
     - [datetime](#datetime)
@@ -51,13 +51,13 @@ A collection of functions to ask the user for input.
     - [fileExplorer](#fileexplorer)
     - [multiFileExplorer](#multifileexplorer)
     - [saveFileExplorer](#savefileexplorer)
-    - [**table (ask)**](#table-ask)
-      - [select (ask.table)](#select-asktable)
-      - [multiselect (ask.table)](#multiselect-asktable)
+    - [**table**](#ask_table)
+      - [select](#ask_table_select)
+      - [multiselect](#ask_table_multiselect)
     - [trim](#trim)
     - [separator](#separator)
     - [section](#section)
-    - [**utils**](#utils)
+    - [**utils**](#ask_utils)
       - [itemsToPromptObjects](#itemstopromptobjects)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
@@ -183,7 +183,7 @@ const isCool = await ask.boolean('Is this cool?'); // true
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### select
+### <span id="ask_select">select</span>
 
 ```typescript
 ask.select(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: T): Promise<T>
@@ -207,7 +207,7 @@ const colour = await ask.select('Whats your favourite colour?', ['red', 'green',
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### multiselect
+### <span id="ask_multiselect">multiselect</span>
 
 ```typescript
 ask.multiselect(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: PromptChoice<T> | PromptChoice<T>[], canSelectAll: boolean): Promise<T[]>
@@ -343,7 +343,7 @@ const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### loading
+### <span id="ask_loading">loading</span>
 
 ```typescript
 ask.loading(question: string | Breadcrumb): any
@@ -413,7 +413,7 @@ await ask.countdown(5);
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### <span id="wizard123">wizard</span>
+### wizard
 
 ```typescript
 ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
@@ -639,12 +639,12 @@ const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### table (ask)
+### <span id="ask_table">table</span>
 A collection of functions for asking questions with tables.
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### select (ask.table)
+#### <span id="ask_table_select">select</span>
 
 ```typescript
 ask.table.select(question: string | Breadcrumb, items: T[], initial: T | number, rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T>
@@ -689,7 +689,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### multiselect (ask.table)
+#### <span id="ask_table_multiselect">multiselect</span>
 
 ```typescript
 ask.table.multiselect(question: string | Breadcrumb, items: T[], initial: T[] | number[], rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T[]>
@@ -837,7 +837,7 @@ Question 2a: [ answer2, answer2b ]
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### utils
+### <span id="ask_utils">utils</span>
 
 #### itemsToPromptObjects
 
@@ -895,14 +895,14 @@ A collection of functions to print to the console
     - [centerLines](#centerlines)
     - [rightLines](#rightlines)
     - [justifyLines](#justifylines)
-    - [align](#align)
+    - [align](#out_align)
     - [split](#split)
     - [wrap](#wrap)
     - [moveUp](#moveup)
-    - [loading](#loading)
+    - [loading](#out_loading)
     - [limitToLength](#limittolength)
     - [limitToLengthStart](#limittolengthstart)
-    - [truncate](#truncate)
+    - [truncate](#out_truncate)
     - [truncateStart](#truncatestart)
     - [concatLineGroups](#concatlinegroups)
     - [**getResponsiveValue**](#getresponsivevalue)
@@ -921,9 +921,9 @@ A collection of functions to print to the console
         - [lc.clearBack](#lcclearback)
         - [lc.checkpoint](#lccheckpoint)
         - [lc.clearToCheckpoint](#lccleartocheckpoint)
-    - [**utils**](#utils)
+    - [**utils**](#out_utils)
       - [getTerminalWidth](#getterminalwidth)
-      - [getLines](#getlines)
+      - [getLines](#out_utils_getlines)
       - [getNumLines](#getnumlines)
       - [getLinesWidth](#getlineswidth)
       - [getLogLines](#getloglines)
@@ -1200,7 +1200,7 @@ out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### align
+### <span id="out_align">align</span>
 
 ```typescript
 out.align(item: any, direction: AlignType, width: number, replaceChar: string, forceWidth: boolean): string
@@ -1309,7 +1309,7 @@ moveUp(1);
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### loading
+### <span id="out_loading">loading</span>
 
 ```typescript
 out.loading(action: (s: string) => any, lines: number, symbols: string[]): { stop: () => void; }
@@ -1381,7 +1381,7 @@ out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### truncate
+### <span id="out_truncate">truncate</span>
 
 ```typescript
 out.truncate(text: string, maxLength: number, suffix: string): string
@@ -1777,7 +1777,7 @@ lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### utils
+### <span id="out_utils">utils</span>
 
 #### getTerminalWidth
 
@@ -1797,7 +1797,7 @@ print.utils.getTerminalWidth(); // 127
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-#### getLines
+#### <span id="out_utils_getlines">getLines</span>
 
 ```typescript
 out.utils.getLines(text: Text): string[]
@@ -1994,20 +1994,20 @@ out.utils.hasColor(chalk.red('this is line 1')) // true
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-## table
+## <span id="table">table</span>
 A simple table generator
 
   - [**table**](#table)
     - [print](#print)
     - [printObjects](#printobjects)
     - [markdown](#markdown)
-    - [getLines](#getlines)
-    - [**TableOptions**](#tableoptions)
+    - [getLines](#table_getlines)
+    - [**TableOptions**](#table_fulltableoptions)
     - [**TableFormatConfig**](#tableformatconfig)
     - [TableCharLookup](#tablecharlookup)
-    - [**utils**](#utils)
+    - [**utils**](#table_utils)
       - [objectsToTable](#objectstotable)
-      - [transpose](#transpose)
+      - [transpose](#table_utils_transpose)
       - [concatRows](#concatrows)
       - [getFormat](#getformat)
 
@@ -2130,7 +2130,7 @@ console.log(md.join('\n'));
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
-### getLines
+### <span id="table_getlines">getLines</span>
 
 ```typescript
 table.getLines(body: any[][], header: any[][], options: TableOptions): string[]
@@ -2165,10 +2165,10 @@ table.getLines(body, header);
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
-### TableOptions
+### <span id="table_fulltableoptions">TableOptions</span>
 The configuration options for the table
 
-  - [**TableOptions**](#tableoptions)
+  - [**TableOptions**](#table_fulltableoptions)
     - [wrapperFn](#wrapperfn)
     - [wrapLinesFn](#wraplinesfn)
     - [wrapHeaderLinesFn](#wrapheaderlinesfn)
@@ -2184,14 +2184,14 @@ The configuration options for the table
     - [drawRowLines](#drawrowlines)
     - [drawColLines](#drawcollines)
     - [colWidths](#colwidths)
-    - [align](#align)
+    - [align](#table_fulltableoptions_align)
     - [alignCols](#aligncols)
-    - [transpose](#transpose)
+    - [transpose](#table_fulltableoptions_transpose)
     - [transposeBody](#transposebody)
     - [margin](#margin)
     - [cellPadding](#cellpadding)
     - [format](#format)
-    - [truncate](#truncate)
+    - [truncate](#table_fulltableoptions_truncate)
     - [maxWidth](#maxwidth)
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
@@ -2308,7 +2308,7 @@ Preferred width (in number of characters) of each column
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
-#### align
+#### <span id="table_fulltableoptions_align">align</span>
 How the table should be aligned on the screen
 
 left, right, center or justify
@@ -2322,7 +2322,7 @@ Array with alignment for each column: left, right, center or justify
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
-#### transpose
+#### <span id="table_fulltableoptions_transpose">transpose</span>
 Change rows into columns and vice versa
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
@@ -2347,7 +2347,7 @@ A set of formatting configurations
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
-#### truncate
+#### <span id="table_fulltableoptions_truncate">truncate</span>
 Truncates (cuts the end off) line instead of wrapping
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
@@ -2422,7 +2422,7 @@ Each item in each array is a character to use for the row type:
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
-### utils
+### <span id="table_utils">utils</span>
 
 #### objectsToTable
 
@@ -2455,7 +2455,7 @@ table.utils.objectsToTable(objs)
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
-#### transpose
+#### <span id="table_utils_transpose">transpose</span>
 
 ```typescript
 table.utils.transpose(rows: any[][]): any[][]
@@ -2660,12 +2660,12 @@ See createLogger
 A collection of colours and styles for use in the console.
 
   - [**chlk**](#chlk)
-    - [gray0](#gray0)
-    - [gray1](#gray1)
-    - [gray2](#gray2)
-    - [gray3](#gray3)
-    - [gray4](#gray4)
-    - [gray5](#gray5)
+    - [gray0](#chlk_gray0)
+    - [gray1](#chlk_gray1)
+    - [gray2](#chlk_gray2)
+    - [gray3](#chlk_gray3)
+    - [gray4](#chlk_gray4)
+    - [gray5](#chlk_gray5)
     - [grays](#grays)
     - [gray](#gray)
     - [clear](#clear)
@@ -2674,7 +2674,7 @@ A collection of colours and styles for use in the console.
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### gray0
+### <span id="chlk_gray0">gray0</span>
 
 ```typescript
 chlk.gray0(...args: string[]): string
@@ -2693,7 +2693,7 @@ Gray 0 (0-5). Equivalent to chalk.black
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
-### gray1
+### <span id="chlk_gray1">gray1</span>
 
 ```typescript
 chlk.gray1(...args: string[]): string
@@ -2712,7 +2712,7 @@ Gray 1 (0-5). Equivalent to chalk.gray.dim
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
-### gray2
+### <span id="chlk_gray2">gray2</span>
 
 ```typescript
 chlk.gray2(...args: string[]): string
@@ -2731,7 +2731,7 @@ Gray 2 (0-5). Equivalent to chalk.white.dim
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
-### gray3
+### <span id="chlk_gray3">gray3</span>
 
 ```typescript
 chlk.gray3(...args: string[]): string
@@ -2750,7 +2750,7 @@ Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
-### gray4
+### <span id="chlk_gray4">gray4</span>
 
 ```typescript
 chlk.gray4(...args: string[]): string
@@ -2769,7 +2769,7 @@ Gray 4 (0-5). Equivalent to chalk.white
 
 <p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
 
-### gray5
+### <span id="chlk_gray5">gray5</span>
 
 ```typescript
 chlk.gray5(...args: string[]): string
@@ -2901,12 +2901,12 @@ A collection of shortcuts and aliases for chalk functions
     - [t4](#t4)
     - [t5](#t5)
     - [t6](#t6)
-    - [gray0](#gray0)
-    - [gray1](#gray1)
-    - [gray2](#gray2)
-    - [gray3](#gray3)
-    - [gray4](#gray4)
-    - [gray5](#gray5)
+    - [gray0](#clr_gray0)
+    - [gray1](#clr_gray1)
+    - [gray2](#clr_gray2)
+    - [gray3](#clr_gray3)
+    - [gray4](#clr_gray4)
+    - [gray5](#clr_gray5)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -3252,7 +3252,7 @@ Theme 6
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray0
+### <span id="clr_gray0">gray0</span>
 
 ```typescript
 chlk.gray0(...args: string[]): string
@@ -3271,7 +3271,7 @@ Gray 0 (0-5). Equivalent to chalk.black
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray1
+### <span id="clr_gray1">gray1</span>
 
 ```typescript
 chlk.gray1(...args: string[]): string
@@ -3290,7 +3290,7 @@ Gray 1 (0-5). Equivalent to chalk.gray.dim
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray2
+### <span id="clr_gray2">gray2</span>
 
 ```typescript
 chlk.gray2(...args: string[]): string
@@ -3309,7 +3309,7 @@ Gray 2 (0-5). Equivalent to chalk.white.dim
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray3
+### <span id="clr_gray3">gray3</span>
 
 ```typescript
 chlk.gray3(...args: string[]): string
@@ -3328,7 +3328,7 @@ Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray4
+### <span id="clr_gray4">gray4</span>
 
 ```typescript
 chlk.gray4(...args: string[]): string
@@ -3347,7 +3347,7 @@ Gray 4 (0-5). Equivalent to chalk.white
 
 <p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
 
-### gray5
+### <span id="clr_gray5">gray5</span>
 
 ```typescript
 chlk.gray5(...args: string[]): string

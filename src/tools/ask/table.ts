@@ -123,13 +123,13 @@ const askTableHandler = <T extends unknown>(
 };
 
 /**<!-- DOCS: ask.table ### -->
- * table (ask)
+ * table
  *
  * A collection of functions for asking questions with tables.
  */
 
 /**<!-- DOCS: ask.table.select #### @ -->
- * select (ask.table)
+ * select
  *
  * - `ask.table.select`
  *
@@ -177,7 +177,7 @@ export const select = async <T extends unknown>(
 };
 
 /**<!-- DOCS: ask.table.multiselect #### @ -->
- * multiselect (ask.table)
+ * multiselect
  *
  * - `ask.table.multiselect`
  *

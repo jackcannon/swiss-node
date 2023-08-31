@@ -22,7 +22,7 @@
     "@types/jest": "^29.5.4",
     "@types/node": "^18.11.15",
     "jest": "^29.6.4",
-    "swiss-docs": "^0.7.1",
+    "swiss-docs": "^0.7.2",
     "ts-jest": "^29.1.1",
     "tsup": "^6.2.1",
     "typescript": "^4.7.4"
@@ -35,7 +35,8 @@
     "watch": "yarn build -- --watch src",
     "docs": "swiss-docs --src src --output README.md --alias dist/index.d.ts",
     "test": "yarn quickbuild && yarn test:raw",
-    "test:raw": "node --experimental-vm-modules ./node_modules/.bin/jest --no-cache"
+    "test:raw": "node --experimental-vm-modules ./node_modules/.bin/jest --no-cache",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "chalk": "^4.1.2",

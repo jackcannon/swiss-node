@@ -2196,13 +2196,13 @@ declare namespace ask {
      */
     export const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
-     * table (ask)
+     * table
      * 
      * A collection of functions for asking questions with tables.
      */
     export namespace table {
         /**<!-- DOCS-ALIAS: ask.table.select -->
-         * select (ask.table)
+         * select
          * 
          * - `ask.table.select`
          * 
@@ -2239,7 +2239,7 @@ declare namespace ask {
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number | T, rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
-         * multiselect (ask.table)
+         * multiselect
          * 
          * - `ask.table.multiselect`
          * 
