@@ -723,7 +723,7 @@ export namespace ask {
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 
   /**<!-- DOCS: ask.PromptChoice ### 190 -->
-   * PromptChoice<T>
+   * PromptChoice
    *
    * - `ask.PromptChoice<T>`
    *

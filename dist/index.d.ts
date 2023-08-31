@@ -2395,7 +2395,7 @@ declare namespace ask {
         export {};
     }
     /**<!-- DOCS: ask.PromptChoice ### 190 -->
-     * PromptChoice<T>
+     * PromptChoice
      *
      * - `ask.PromptChoice<T>`
      *
