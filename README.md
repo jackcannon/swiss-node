@@ -401,11 +401,11 @@ Animated countdown for a given number of seconds
 await ask.countdown(5);
 ```
 
-|  #  | Parameter Name | Required | Type                    | Default                         |
-|:---:|:---------------|:---------|:------------------------|:--------------------------------|
-| *0* | `totalSeconds` | **Yes**  | `number`                |                                 |
-| *1* | `template`     | *No*     | `(s: second) => string` | `(s) => `Starting in ${s}s...`` |
-| *2* | `complete`     | *No*     | `string`                |                                 |
+|  #  | Parameter Name | Required | Type                    | Default                            |
+|:---:|:---------------|:---------|:------------------------|:-----------------------------------|
+| *0* | `totalSeconds` | **Yes**  | `number`                |                                    |
+| *1* | `template`     | *No*     | `(s: second) => string` | ``(s) => `Starting in ${s}s...` `` |
+| *2* | `complete`     | *No*     | `string`                |                                    |
 
 | Return Type     |
 |-----------------|
