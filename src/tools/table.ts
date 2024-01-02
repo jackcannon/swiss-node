@@ -637,7 +637,7 @@ export namespace table {
      * ```
      * @param {Object[]} objects
      * @param {Object} [headers={}]
-     * @returns {{ header: any[][]; body: any[][]; }}
+     * @returns {{ header: any[][]; body: any[][] }}
      */
     export const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[][]; body: any[][] } => {
       const allKeys = getAllKeys(objects);

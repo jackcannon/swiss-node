@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { ArrayTools, ProgressBarOptions } from 'swiss-ak';
+import { ArrayTools, progressBar } from 'swiss-ak';
 
 import { out } from './out';
 
@@ -28,11 +28,11 @@ export namespace progressBarTools {
    * const progressBar = getProgressBar(numThings, progOpts('Things'));
    * progressBar.update();
    * ```
-   * @param {ProgressBarOptions} opts
+   * @param {progressBar.ProgressBarOptions} opts
    * @param {boolean} [randomise=false]
    * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
    */
-  export const getColouredProgressBarOpts = (opts: ProgressBarOptions, randomise: boolean = false) => {
+  export const getColouredProgressBarOpts = (opts: progressBar.ProgressBarOptions, randomise: boolean = false) => {
     // let wrapperFns = [chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.yellowBright, chalk.magentaBright, chalk.redBright];
     // let wrapperFns = [chalk.yellowBright, chalk.magenta];
     let wrapperFns = [chalk.yellowBright, chalk.magenta, chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.redBright];
@@ -40,7 +40,7 @@ export namespace progressBarTools {
       wrapperFns = ArrayTools.randomise(wrapperFns);
     }
     let index = 0;
-    return (prefix: string = '', override: ProgressBarOptions = {}, resetColours: boolean = false): ProgressBarOptions => {
+    return (prefix: string = '', override: progressBar.ProgressBarOptions = {}, resetColours: boolean = false): progressBar.ProgressBarOptions => {
       if (resetColours) {
         index = 0;
       }

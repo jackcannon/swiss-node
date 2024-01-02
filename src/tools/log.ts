@@ -129,7 +129,7 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
  * ```
  * @param {T} [extraConfigs={} as T]
  * @param {LogOptions} [options={}]
- * @returns {any}
+ * @returns {Logger<T>}
  */
 export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, options: LogOptions = {}): Logger<T> => {
   const completeOptions = { ...defaultOptions, ...options };

@@ -1,176 +1,347 @@
-import * as swissnode from '../src/index';
+import * as swissnode from '../';
+import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
+
+register({ describe, it, expect });
 
 describe('ask', () => {
   describe('text', () => {
-    it(`exists as 'ask.text'`, () => {
-      expect(swissnode.ask.text).toBeDefined();
+    singleTest(swissnode.ask.text, 'ask.text', (text, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(text).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('autotext', () => {
-    it(`exists as 'ask.autotext'`, () => {
-      expect(swissnode.ask.autotext).toBeDefined();
+    singleTest(swissnode.ask.autotext, 'ask.autotext', (autotext, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(autotext).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('number', () => {
-    it(`exists as 'ask.number'`, () => {
-      expect(swissnode.ask.number).toBeDefined();
+    singleTest(swissnode.ask.number, 'ask.number', (number, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(number).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('boolean', () => {
-    it(`exists as 'ask.boolean'`, () => {
-      expect(swissnode.ask.boolean).toBeDefined();
+    singleTest(swissnode.ask.boolean, 'ask.boolean', (boolean, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(boolean).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('booleanAlt', () => {
-    it(`exists as 'ask.booleanAlt'`, () => {
-      expect(swissnode.ask.booleanAlt).toBeDefined();
+    singleTest(swissnode.ask.booleanAlt, 'ask.booleanAlt', (booleanAlt, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(booleanAlt).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('select', () => {
-    it(`exists as 'ask.select'`, () => {
-      expect(swissnode.ask.select).toBeDefined();
+    singleTest(swissnode.ask.select, 'ask.select', (select, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(select).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('multiselect', () => {
-    it(`exists as 'ask.multiselect'`, () => {
-      expect(swissnode.ask.multiselect).toBeDefined();
+    singleTest(swissnode.ask.multiselect, 'ask.multiselect', (multiselect, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(multiselect).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('crud', () => {
-    it(`exists as 'ask.crud'`, () => {
-      expect(swissnode.ask.crud).toBeDefined();
+    singleTest(swissnode.ask.crud, 'ask.crud', (crud, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(crud).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('validate', () => {
-    it(`exists as 'ask.validate'`, () => {
-      expect(swissnode.ask.validate).toBeDefined();
+    singleTest(swissnode.ask.validate, 'ask.validate', (validate, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(validate).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('imitate', () => {
-    it(`exists as 'ask.imitate'`, () => {
-      expect(swissnode.ask.imitate).toBeDefined();
+    singleTest(swissnode.ask.imitate, 'ask.imitate', (imitate, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(imitate).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('prefill', () => {
-    it(`exists as 'ask.prefill'`, () => {
-      expect(swissnode.ask.prefill).toBeDefined();
+    singleTest(swissnode.ask.prefill, 'ask.prefill', (prefill, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(prefill).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('loading', () => {
-    it(`exists as 'ask.loading'`, () => {
-      expect(swissnode.ask.loading).toBeDefined();
+    singleTest(swissnode.ask.loading, 'ask.loading', (loading, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(loading).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('pause', () => {
-    it(`exists as 'ask.pause'`, () => {
-      expect(swissnode.ask.pause).toBeDefined();
+    singleTest(swissnode.ask.pause, 'ask.pause', (pause, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(pause).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('countdown', () => {
-    it(`exists as 'ask.countdown'`, () => {
-      expect(swissnode.ask.countdown).toBeDefined();
+    singleTest(swissnode.ask.countdown, 'ask.countdown', (countdown, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(countdown).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('wizard', () => {
-    it(`exists as 'ask.wizard'`, () => {
-      expect(swissnode.ask.wizard).toBeDefined();
+    singleTest(swissnode.ask.wizard, 'ask.wizard', (wizard, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(wizard).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('date', () => {
-    it(`exists as 'ask.date'`, () => {
-      expect(swissnode.ask.date).toBeDefined();
+    singleTest(swissnode.ask.date, 'ask.date', (date, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(date).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('time', () => {
-    it(`exists as 'ask.time'`, () => {
-      expect(swissnode.ask.time).toBeDefined();
+    singleTest(swissnode.ask.time, 'ask.time', (time, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(time).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('datetime', () => {
-    it(`exists as 'ask.datetime'`, () => {
-      expect(swissnode.ask.datetime).toBeDefined();
+    singleTest(swissnode.ask.datetime, 'ask.datetime', (datetime, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(datetime).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('dateRange', () => {
-    it(`exists as 'ask.dateRange'`, () => {
-      expect(swissnode.ask.dateRange).toBeDefined();
+    singleTest(swissnode.ask.dateRange, 'ask.dateRange', (dateRange, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(dateRange).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('fileExplorer', () => {
-    it(`exists as 'ask.fileExplorer'`, () => {
-      expect(swissnode.ask.fileExplorer).toBeDefined();
+    singleTest(swissnode.ask.fileExplorer, 'ask.fileExplorer', (fileExplorer, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(fileExplorer).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('multiFileExplorer', () => {
-    it(`exists as 'ask.multiFileExplorer'`, () => {
-      expect(swissnode.ask.multiFileExplorer).toBeDefined();
+    singleTest(swissnode.ask.multiFileExplorer, 'ask.multiFileExplorer', (multiFileExplorer, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(multiFileExplorer).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('saveFileExplorer', () => {
-    it(`exists as 'ask.saveFileExplorer'`, () => {
-      expect(swissnode.ask.saveFileExplorer).toBeDefined();
+    singleTest(swissnode.ask.saveFileExplorer, 'ask.saveFileExplorer', (saveFileExplorer, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(saveFileExplorer).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('select', () => {
-    it(`exists as 'table.select'`, () => {
-      expect(swissnode.ask.table.select).toBeDefined();
+    singleTest(swissnode.ask.table.select, 'ask.table.select', (select, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(select).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('multiselect', () => {
-    it(`exists as 'table.multiselect'`, () => {
-      expect(swissnode.ask.table.multiselect).toBeDefined();
+    singleTest(swissnode.ask.table.multiselect, 'ask.table.multiselect', (multiselect, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(multiselect).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('trim', () => {
-    it(`exists as 'ask.trim'`, () => {
-      expect(swissnode.ask.trim).toBeDefined();
+    singleTest(swissnode.ask.trim, 'ask.trim', (trim, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(trim).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('separator', () => {
-    it(`exists as 'ask.separator'`, () => {
-      expect(swissnode.ask.separator).toBeDefined();
+    singleTest(swissnode.ask.separator, 'ask.separator', (separator, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(separator).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('section', () => {
-    it(`exists as 'ask.section'`, () => {
-      expect(swissnode.ask.section).toBeDefined();
+    singleTest(swissnode.ask.section, 'ask.section', (section, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(section).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('utils', () => {
-    it(`exists as 'ask.utils'`, () => {
+    it(should` exist as 'ask.utils'`, () => {
       expect(swissnode.ask.utils).toBeDefined();
     });
 
     describe('itemsToPromptObjects', () => {
-      it(`exists as 'ask.utils.itemsToPromptObjects'`, () => {
-        expect(swissnode.ask.utils.itemsToPromptObjects).toBeDefined();
+      singleTest(swissnode.ask.utils.itemsToPromptObjects, 'ask.utils.itemsToPromptObjects', (itemsToPromptObjects, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(itemsToPromptObjects).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
   });

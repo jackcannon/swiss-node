@@ -1,31 +1,60 @@
-import * as swissnode from '../src/index';
+import * as swissnode from '../';
+import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
+
+register({ describe, it, expect });
 
 describe('PathTools', () => {
   describe('explodePath', () => {
-    it(`exists as 'PathTools.explodePath'`, () => {
-      expect(swissnode.PathTools.explodePath).toBeDefined();
-    });
+    multiTest(
+      [
+        [swissnode.PathTools.explodePath, 'PathTools.explodePath'],
+        [swissnode.explodePath, 'explodePath']
+      ],
+      (explodePath, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(explodePath).toBeDefined();
+        });
 
-    it(`exists as 'explodePath'`, () => {
-      expect(swissnode.explodePath).toBeDefined();
-    });
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      }
+    );
   });
 
   describe('removeTrailSlash', () => {
-    it(`exists as 'PathTools.removeTrailSlash'`, () => {
-      expect(swissnode.PathTools.removeTrailSlash).toBeDefined();
+    singleTest(swissnode.PathTools.removeTrailSlash, 'PathTools.removeTrailSlash', (removeTrailSlash, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(removeTrailSlash).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('trailSlash', () => {
-    it(`exists as 'PathTools.trailSlash'`, () => {
-      expect(swissnode.PathTools.trailSlash).toBeDefined();
+    singleTest(swissnode.PathTools.trailSlash, 'PathTools.trailSlash', (trailSlash, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(trailSlash).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('removeDoubleSlashes', () => {
-    it(`exists as 'PathTools.removeDoubleSlashes'`, () => {
-      expect(swissnode.PathTools.removeDoubleSlashes).toBeDefined();
+    singleTest(swissnode.PathTools.removeDoubleSlashes, 'PathTools.removeDoubleSlashes', (removeDoubleSlashes, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(removeDoubleSlashes).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 });

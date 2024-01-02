@@ -843,7 +843,7 @@ Question 2a: [ answer2, answer2b ]
 #### itemsToPromptObjects
 
 ```typescript
-ask.utils.itemsToPromptObjects(items: T[], titles: string[], titleFn: TitleFn<T>): { title: string; value: T; }[]
+ask.utils.itemsToPromptObjects(items: T[], titles: string[], titleFn: TitleFn<T>): { title: string; value: T }[]
 ```
 
 Take an array of items and convert them to an array of prompt objects
@@ -877,9 +877,9 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 | *1* | `titles`       | *No*     | `string[]`   | `[]`    |
 | *2* | `titleFn`      | *No*     | `TitleFn<T>` |         |
 
-| Return Type                      |
-|----------------------------------|
-| `{ title: string; value: T; }[]` |
+| Return Type                     |
+|---------------------------------|
+| `{ title: string; value: T }[]` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -2440,7 +2440,7 @@ Each item in each array is a character to use for the row type:
 #### objectsToTable
 
 ```typescript
-table.utils.objectsToTable(objects: Object[], headers: Object): { header: any[][]; body: any[][]; }
+table.utils.objectsToTable(objects: Object[], headers: Object): { header: any[][]; body: any[][] }
 ```
 
 Process an array of objects into a table format (string[][])
@@ -2462,9 +2462,9 @@ table.utils.objectsToTable(objs)
 | *0* | `objects`      | **Yes**  | `Object[]` |         |
 | *1* | `headers`      | *No*     | `Object`   | `{}`    |
 
-| Return Type                           |
-|---------------------------------------|
-| `{ header: any[][]; body: any[][]; }` |
+| Return Type                          |
+|--------------------------------------|
+| `{ header: any[][]; body: any[][] }` |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -2617,7 +2617,7 @@ log.error('This is error');     // [12:00:00.123]  ERRR  This is error
 ### createLogger
 
 ```typescript
-createLogger(extraConfigs: T, options: LogOptions): any
+createLogger(extraConfigs: T, options: LogOptions): Logger<T>
 ```
 
 Create a logger with custom configs
@@ -2643,7 +2643,7 @@ log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
 
 | Return Type |
 |-------------|
-| `any`       |
+| `Logger<T>` |
 
 <p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
 
@@ -3661,7 +3661,7 @@ A collection of tools for working with progress bars (from swiss-ak)
 ### getColouredProgressBarOpts
 
 ```typescript
-progressBarTools.getColouredProgressBarOpts(opts: ProgressBarOptions, randomise: boolean): (prefix?: string, override?: any, resetColours?: boolean) => any
+progressBarTools.getColouredProgressBarOpts(opts: progressBar.ProgressBarOptions, randomise: boolean): (prefix?: string, override?: any, resetColours?: boolean) => any
 ```
 
 Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
@@ -3676,10 +3676,10 @@ const progressBar = getProgressBar(numThings, progOpts('Things'));
 progressBar.update();
 ```
 
-|  #  | Parameter Name | Required | Type                 | Default |
-|:---:|:---------------|:---------|:---------------------|:--------|
-| *0* | `opts`         | **Yes**  | `ProgressBarOptions` |         |
-| *1* | `randomise`    | *No*     | `boolean`            | `false` |
+|  #  | Parameter Name | Required | Type                             | Default |
+|:---:|:---------------|:---------|:---------------------------------|:--------|
+| *0* | `opts`         | **Yes**  | `progressBar.ProgressBarOptions` |         |
+| *1* | `randomise`    | *No*     | `boolean`                        | `false` |
 
 | Return Type                                                        |
 |--------------------------------------------------------------------|

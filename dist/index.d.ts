@@ -1,5 +1,5 @@
 import * as swiss_ak from 'swiss-ak';
-import { Partial as Partial$1, second, OfType, ProgressBarOptions } from 'swiss-ak';
+import { Partial as Partial$1, second, OfType, progressBar } from 'swiss-ak';
 
 /**<!-- DOCS: out.LineCounter #### 261 -->
  * LineCounter
@@ -1666,7 +1666,7 @@ declare namespace table {
          * ```
          * @param {Object[]} objects
          * @param {Object} [headers={}]
-         * @returns {{ header: any[][]; body: any[][]; }}
+         * @returns {{ header: any[][]; body: any[][] }}
          */
         const objectsToTable: (objects: Object[], headers?: Object) => {
             header: any[][];
@@ -2386,7 +2386,7 @@ declare namespace ask {
          * @param {T[]} items
          * @param {string[]} [titles=[]]
          * @param {TitleFn<T>} [titleFn]
-         * @returns {{ title: string; value: T; }[]}
+         * @returns {{ title: string; value: T }[]}
          */
         export const itemsToPromptObjects: <T = string>(items: T[], titles?: string[], titleFn?: TitleFn<T>) => {
             title: string;
@@ -2576,7 +2576,7 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  * ```
  * @param {T} [extraConfigs={} as T]
  * @param {LogOptions} [options={}]
- * @returns {any}
+ * @returns {Logger<T>}
  */
 declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
     readonly blank: LogConfig;
@@ -2988,11 +2988,11 @@ declare namespace progressBarTools {
      * const progressBar = getProgressBar(numThings, progOpts('Things'));
      * progressBar.update();
      * ```
-     * @param {ProgressBarOptions} opts
+     * @param {progressBar.ProgressBarOptions} opts
      * @param {boolean} [randomise=false]
      * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
      */
-    const getColouredProgressBarOpts: (opts: ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: ProgressBarOptions, resetColours?: boolean) => ProgressBarOptions;
+    const getColouredProgressBarOpts: (opts: progressBar.ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: progressBar.ProgressBarOptions, resetColours?: boolean) => progressBar.ProgressBarOptions;
 }
 
 /**<!-- DOCS: waiters ##! -->

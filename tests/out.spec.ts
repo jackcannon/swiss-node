@@ -1,200 +1,399 @@
-import * as swissnode from '../src/index';
+import * as swissnode from '../';
+import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
+
+register({ describe, it, expect });
 
 describe('out', () => {
   describe('pad', () => {
-    it(`exists as 'out.pad'`, () => {
-      expect(swissnode.out.pad).toBeDefined();
+    singleTest(swissnode.out.pad, 'out.pad', (pad, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(pad).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('center', () => {
-    it(`exists as 'out.center'`, () => {
-      expect(swissnode.out.center).toBeDefined();
+    singleTest(swissnode.out.center, 'out.center', (center, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(center).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('left', () => {
-    it(`exists as 'out.left'`, () => {
-      expect(swissnode.out.left).toBeDefined();
+    singleTest(swissnode.out.left, 'out.left', (left, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(left).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('right', () => {
-    it(`exists as 'out.right'`, () => {
-      expect(swissnode.out.right).toBeDefined();
+    singleTest(swissnode.out.right, 'out.right', (right, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(right).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('justify', () => {
-    it(`exists as 'out.justify'`, () => {
-      expect(swissnode.out.justify).toBeDefined();
+    singleTest(swissnode.out.justify, 'out.justify', (justify, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(justify).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('leftLines', () => {
-    it(`exists as 'out.leftLines'`, () => {
-      expect(swissnode.out.leftLines).toBeDefined();
+    singleTest(swissnode.out.leftLines, 'out.leftLines', (leftLines, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(leftLines).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('centerLines', () => {
-    it(`exists as 'out.centerLines'`, () => {
-      expect(swissnode.out.centerLines).toBeDefined();
+    singleTest(swissnode.out.centerLines, 'out.centerLines', (centerLines, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(centerLines).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('rightLines', () => {
-    it(`exists as 'out.rightLines'`, () => {
-      expect(swissnode.out.rightLines).toBeDefined();
+    singleTest(swissnode.out.rightLines, 'out.rightLines', (rightLines, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(rightLines).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('justifyLines', () => {
-    it(`exists as 'out.justifyLines'`, () => {
-      expect(swissnode.out.justifyLines).toBeDefined();
+    singleTest(swissnode.out.justifyLines, 'out.justifyLines', (justifyLines, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(justifyLines).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('align', () => {
-    it(`exists as 'out.align'`, () => {
-      expect(swissnode.out.align).toBeDefined();
+    singleTest(swissnode.out.align, 'out.align', (align, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(align).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('split', () => {
-    it(`exists as 'out.split'`, () => {
-      expect(swissnode.out.split).toBeDefined();
+    singleTest(swissnode.out.split, 'out.split', (split, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(split).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('wrap', () => {
-    it(`exists as 'out.wrap'`, () => {
-      expect(swissnode.out.wrap).toBeDefined();
+    singleTest(swissnode.out.wrap, 'out.wrap', (wrap, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(wrap).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('moveUp', () => {
-    it(`exists as 'out.moveUp'`, () => {
-      expect(swissnode.out.moveUp).toBeDefined();
+    singleTest(swissnode.out.moveUp, 'out.moveUp', (moveUp, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(moveUp).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('loading', () => {
-    it(`exists as 'out.loading'`, () => {
-      expect(swissnode.out.loading).toBeDefined();
+    singleTest(swissnode.out.loading, 'out.loading', (loading, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(loading).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('limitToLength', () => {
-    it(`exists as 'out.limitToLength'`, () => {
-      expect(swissnode.out.limitToLength).toBeDefined();
+    singleTest(swissnode.out.limitToLength, 'out.limitToLength', (limitToLength, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(limitToLength).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('limitToLengthStart', () => {
-    it(`exists as 'out.limitToLengthStart'`, () => {
-      expect(swissnode.out.limitToLengthStart).toBeDefined();
+    singleTest(swissnode.out.limitToLengthStart, 'out.limitToLengthStart', (limitToLengthStart, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(limitToLengthStart).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('truncate', () => {
-    it(`exists as 'out.truncate'`, () => {
-      expect(swissnode.out.truncate).toBeDefined();
+    singleTest(swissnode.out.truncate, 'out.truncate', (truncate, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(truncate).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('truncateStart', () => {
-    it(`exists as 'out.truncateStart'`, () => {
-      expect(swissnode.out.truncateStart).toBeDefined();
+    singleTest(swissnode.out.truncateStart, 'out.truncateStart', (truncateStart, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(truncateStart).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('concatLineGroups', () => {
-    it(`exists as 'out.concatLineGroups'`, () => {
-      expect(swissnode.out.concatLineGroups).toBeDefined();
+    singleTest(swissnode.out.concatLineGroups, 'out.concatLineGroups', (concatLineGroups, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(concatLineGroups).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('getResponsiveValue', () => {
-    it(`exists as 'out.getResponsiveValue'`, () => {
-      expect(swissnode.out.getResponsiveValue).toBeDefined();
+    singleTest(swissnode.out.getResponsiveValue, 'out.getResponsiveValue', (getResponsiveValue, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(getResponsiveValue).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 
   describe('getBreadcrumb', () => {
-    it(`exists as 'getBreadcrumb'`, () => {
-      expect(swissnode.getBreadcrumb).toBeDefined();
-    });
-    it(`exists as 'out.getBreadcrumb'`, () => {
-      expect(swissnode.out.getBreadcrumb).toBeDefined();
-    });
+    multiTest(
+      [
+        [swissnode.getBreadcrumb, 'getBreadcrumb'],
+        [swissnode.out.getBreadcrumb, 'out.getBreadcrumb']
+      ],
+      (getBreadcrumb, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getBreadcrumb).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      }
+    );
   });
 
   describe('getLineCounter', () => {
-    it(`exists as 'getLineCounter'`, () => {
-      expect(swissnode.getLineCounter).toBeDefined();
-    });
-    it(`exists as 'out.getLineCounter'`, () => {
-      expect(swissnode.out.getLineCounter).toBeDefined();
-    });
+    multiTest(
+      [
+        [swissnode.getLineCounter, 'getLineCounter'],
+        [swissnode.out.getLineCounter, 'out.getLineCounter']
+      ],
+      (getLineCounter, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getLineCounter).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      }
+    );
   });
 
   describe('utils', () => {
-    it(`exists as 'out.utils'`, () => {
+    it(should` exist as 'out.utils'`, () => {
       expect(swissnode.out.utils).toBeDefined();
     });
 
+    // TODO tests
+    // TODO add arg safety
+    // TODO kitchenSink
+
     describe('getTerminalWidth', () => {
-      it(`exists as 'out.utils.getTerminalWidth'`, () => {
-        expect(swissnode.out.utils.getTerminalWidth).toBeDefined();
+      singleTest(swissnode.out.utils.getTerminalWidth, 'out.utils.getTerminalWidth', (getTerminalWidth, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getTerminalWidth).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getLines', () => {
-      it(`exists as 'out.utils.getLines'`, () => {
-        expect(swissnode.out.utils.getLines).toBeDefined();
+      singleTest(swissnode.out.utils.getLines, 'out.utils.getLines', (getLines, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getLines).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getNumLines', () => {
-      it(`exists as 'out.utils.getNumLines'`, () => {
-        expect(swissnode.out.utils.getNumLines).toBeDefined();
+      singleTest(swissnode.out.utils.getNumLines, 'out.utils.getNumLines', (getNumLines, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getNumLines).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getLinesWidth', () => {
-      it(`exists as 'out.utils.getLinesWidth'`, () => {
-        expect(swissnode.out.utils.getLinesWidth).toBeDefined();
+      singleTest(swissnode.out.utils.getLinesWidth, 'out.utils.getLinesWidth', (getLinesWidth, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getLinesWidth).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getLogLines', () => {
-      it(`exists as 'out.utils.getLogLines'`, () => {
-        expect(swissnode.out.utils.getLogLines).toBeDefined();
+      singleTest(swissnode.out.utils.getLogLines, 'out.utils.getLogLines', (getLogLines, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getLogLines).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getNumLogLines', () => {
-      it(`exists as 'out.utils.getNumLogLines'`, () => {
-        expect(swissnode.out.utils.getNumLogLines).toBeDefined();
+      singleTest(swissnode.out.utils.getNumLogLines, 'out.utils.getNumLogLines', (getNumLogLines, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getNumLogLines).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('getLogLinesWidth', () => {
-      it(`exists as 'out.utils.getLogLinesWidth'`, () => {
-        expect(swissnode.out.utils.getLogLinesWidth).toBeDefined();
+      singleTest(swissnode.out.utils.getLogLinesWidth, 'out.utils.getLogLinesWidth', (getLogLinesWidth, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getLogLinesWidth).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('joinLines', () => {
-      it(`exists as 'out.utils.joinLines'`, () => {
-        expect(swissnode.out.utils.joinLines).toBeDefined();
+      singleTest(swissnode.out.utils.joinLines, 'out.utils.joinLines', (joinLines, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(joinLines).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
 
     describe('hasColor', () => {
-      it(`exists as 'out.utils.hasColor'`, () => {
-        expect(swissnode.out.utils.hasColor).toBeDefined();
+      singleTest(swissnode.out.utils.hasColor, 'out.utils.hasColor', (hasColor, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(hasColor).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
       });
     });
   });

@@ -1,12 +1,24 @@
-import * as swissnode from '../src/index';
+import * as swissnode from '../';
+import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
+
+register({ describe, it, expect });
 
 describe('waiters', () => {
   describe('nextTick', () => {
-    it(`exists as 'nextTick'`, () => {
-      expect(swissnode.nextTick).toBeDefined();
-    });
-    it(`exists as 'waiters.nextTick'`, () => {
-      expect(swissnode.waiters.nextTick).toBeDefined();
-    });
+    multiTest(
+      [
+        [swissnode.nextTick, 'nextTick'],
+        [swissnode.waiters.nextTick, 'waiters.nextTick']
+      ],
+      (nextTick, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(nextTick).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      }
+    );
   });
 });

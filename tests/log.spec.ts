@@ -1,14 +1,29 @@
-import * as swissnode from '../src/index';
+import * as swissnode from '../';
+import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
+
+register({ describe, it, expect });
 
 describe('log', () => {
   describe('log', () => {
-    it(`exists as 'log'`, () => {
-      expect(swissnode.log).toBeDefined();
+    singleTest(swissnode.log, 'log', (log, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(log).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
   describe('createLogger', () => {
-    it(`exists as 'createLogger'`, () => {
-      expect(swissnode.createLogger).toBeDefined();
+    singleTest(swissnode.createLogger, 'createLogger', (createLogger, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(createLogger).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
     });
   });
 });
