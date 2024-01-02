@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 import * as fsP from 'fs/promises';
 
-import stringWidth from 'string-width';
-
 import {
   ArrayTools,
   fn,
@@ -31,7 +29,6 @@ import { getLineCounter } from '../out/lineCounter';
 import { table } from '../table';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { findDirs, findFiles, getProbe, isDirExist, isFileExist, MiniProbeResult, mkdir, open } from '../../utils/fsUtils';
-import { nextTick } from '../waiters';
 
 //<!-- DOCS: 120 -->
 
@@ -374,7 +371,7 @@ const fileExplorerHandler = async (
         const isSelected = isMulti && multiSelected.has(fullPath);
         const prefix = isSelected ? selectedPrefix : unselectedPrefix;
         const template = (text) => `${prefix}${text} ${symbol} `;
-        const extraChars = stringWidth(template(''));
+        const extraChars = out.getWidth(template(''));
         const stretched = template(out.left(out.truncate(name, width - extraChars, '…'), width - extraChars));
 
         let wrapFn: Function = fn.noact;
@@ -452,7 +449,7 @@ const fileExplorerHandler = async (
 
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
 
-        const fullWidth = stringWidth(formatDir(width, '', false, '')(''));
+        const fullWidth = out.getWidth(formatDir(width, '', false, '')(''));
         if (isScrollUp) slicedLines[0] = chalk.dim(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
         if (isScrollDown) slicedLines[slicedLines.length - 1] = chalk.dim(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
 
@@ -480,7 +477,7 @@ const fileExplorerHandler = async (
       maxWidth: Infinity
     });
     const tableOut = out.center(out.limitToLengthStart(tableLines.join('\n'), termWidth - 1), termWidth);
-    const tableWidth = stringWidth(tableLines[Math.floor(tableLines.length / 2)]);
+    const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
 
     const infoLine = (() => {
       if (loading) {
@@ -490,7 +487,7 @@ const fileExplorerHandler = async (
       const count = isMulti ? chalk.dim(`${chlk.gray1('[')} ${multiSelected.size} selected ${chlk.gray1(']')} `) : '';
       const curr = out.limitToLengthStart(
         `${currentPath} ${chalk.dim(`(${{ f: 'File', d: 'Directory' }[cursorType]})`)}`,
-        tableWidth - (stringWidth(count) + 3)
+        tableWidth - (out.getWidth(count) + 3)
       );
       const split = out.split(curr, count, tableWidth - 2);
       return out.center(split, termWidth);
@@ -608,7 +605,7 @@ const fileExplorerHandler = async (
           const info2 = chlk.gray3('Enter nothing to cancel');
 
           const info1Prefix = chlk.gray3('  Adding folder to ');
-          const maxValWidth = out.utils.getTerminalWidth() - (stringWidth(info1Prefix) + stringWidth(info2));
+          const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
           const info1Value = chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
 

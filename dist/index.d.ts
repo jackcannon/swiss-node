@@ -536,6 +536,34 @@ declare type Breadcrumb$1 = {
  * A collection of functions to print to the console
  */
 declare namespace out {
+    /**<!-- DOCS: out.getWidth ### @ -->
+     * getWidth
+     *
+     * - `out.getWidth`
+     *
+     * TODO docs
+     *
+     * ```typescript
+     * // TODO examples
+     * ```
+     * @param {string} text
+     * @returns {number}
+     */
+    export const getWidth: (text: string) => number;
+    /**<!-- DOCS: out.stripAnsi ### @ -->
+     * stripAnsi
+     *
+     * - `out.stripAnsi`
+     *
+     * TODO docs
+     *
+     * ```typescript
+     * // TODO examples
+     * ```
+     * @param {string} text
+     * @returns {string}
+     */
+    export const stripAnsi: (text: string) => string;
     /**<!-- DOCS: out.pad ### @ -->
      * pad
      *

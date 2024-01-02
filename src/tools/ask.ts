@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import stringWidth from 'string-width';
 import prompts from 'prompts';
 import Fuse from 'fuse.js'; // fuzzy-search
 import { second, seconds, wait, fn, symbols } from 'swiss-ak';
@@ -459,7 +458,7 @@ export namespace ask {
     const questionText = chalk.whiteBright.bold(message);
     const joiner = resultText ? chalk.gray(done ? '… ' : '› ') : '';
 
-    const mainLength = stringWidth(`${prefix} ${questionText} ${joiner}`);
+    const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
     const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
 
     let resultWrapper = out.utils.hasColor(resultText) ? fn.noact : done ? chalk.white : chalk.gray;

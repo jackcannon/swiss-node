@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import stringWidth from 'string-width';
 import { range } from 'swiss-ak';
 import {
   addDays,
@@ -97,15 +96,15 @@ const getMonthTable = (
     cellPadding: 0
   });
 
-  const monthWidth = stringWidth(lines[0]);
+  const monthWidth = out.getWidth(lines[0]);
 
-  const dispYear = stringWidth(lines[0]) > 20 ? ` ${year}` : '';
-  const dispMonth = monthNames[month - 1].slice(0, stringWidth(lines[0]) - 2);
+  const dispYear = out.getWidth(lines[0]) > 20 ? ` ${year}` : '';
+  const dispMonth = monthNames[month - 1].slice(0, out.getWidth(lines[0]) - 2);
 
   const getTitle = (text: string, prefix: string, suffix: string) => {
     const resPrefix = active ? styles.dark(prefix) : '';
     const resSuffix = active ? styles.dark(suffix) : '';
-    const resText = out.center(styles.normal(text), monthWidth - (stringWidth(resPrefix) + stringWidth(resSuffix)));
+    const resText = out.center(styles.normal(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
 

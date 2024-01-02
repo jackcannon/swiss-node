@@ -1,5 +1,4 @@
-import { wait, fn, ArrayTools, zipMax, sortByMapped } from 'swiss-ak';
-import stringWidth from 'string-width';
+import { wait, fn, ArrayTools, zipMax, sortByMapped, safe } from 'swiss-ak';
 import { getLogStr } from './LogTools';
 import { Text } from '../utils/processTableInput';
 import { getLineCounter as getLineCounterOut, LineCounter as LineCounterOut } from './out/lineCounter';
@@ -16,6 +15,54 @@ export namespace out {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
   const NEW_LINE = '\n';
+
+  /**<!-- DOCS: out.getWidth ### @ -->
+   * getWidth
+   *
+   * - `out.getWidth`
+   *
+   * TODO docs
+   *
+   * ```typescript
+   * // TODO examples
+   * ```
+   * @param {string} text
+   * @returns {number}
+   */
+  export const getWidth = (text: string): number => {
+    const args = {
+      text: safe.str(text)
+    };
+
+    // TODO this is basic - upgrade to full on version later down the line
+
+    return stripAnsi(args.text).length;
+  };
+
+  /**<!-- DOCS: out.stripAnsi ### @ -->
+   * stripAnsi
+   *
+   * - `out.stripAnsi`
+   *
+   * TODO docs
+   *
+   * ```typescript
+   * // TODO examples
+   * ```
+   * @param {string} text
+   * @returns {string}
+   */
+  export const stripAnsi = (text: string): string => {
+    const args = {
+      text: safe.str(text)
+    };
+    const pattern = [
+      '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+      '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
+    ].join('|');
+    const regex = new RegExp(pattern, 'g');
+    return args.text.replace(regex, '');
+  };
 
   /**<!-- DOCS: out.pad ### @ -->
    * pad
@@ -77,8 +124,8 @@ export namespace out {
       .map((line) =>
         pad(
           line,
-          Math.floor((correctWidth(width) - stringWidth(line)) / 2),
-          forceWidth ? Math.ceil((correctWidth(width) - stringWidth(line)) / 2) : 0,
+          Math.floor((correctWidth(width) - out.getWidth(line)) / 2),
+          forceWidth ? Math.ceil((correctWidth(width) - out.getWidth(line)) / 2) : 0,
           replaceChar
         )
       )
@@ -115,7 +162,7 @@ export namespace out {
   ): string =>
     utils
       .getLogLines(item)
-      .map((line) => pad(line, 0, forceWidth ? correctWidth(width) - stringWidth(line) : 0, replaceChar))
+      .map((line) => pad(line, 0, forceWidth ? correctWidth(width) - out.getWidth(line) : 0, replaceChar))
       .join(NEW_LINE);
 
   /**<!-- DOCS: out.right ### @ -->
@@ -149,7 +196,7 @@ export namespace out {
   ): string =>
     utils
       .getLogLines(item)
-      .map((line) => pad(line, correctWidth(width) - stringWidth(line), 0, replaceChar))
+      .map((line) => pad(line, correctWidth(width) - out.getWidth(line), 0, replaceChar))
       .join(NEW_LINE);
 
   /**<!-- DOCS: out.justify ### @ -->
@@ -200,7 +247,7 @@ export namespace out {
       })
       .join(NEW_LINE);
 
-  const getLongestLen = (lines: string[]): number => Math.max(...lines.map((line) => stringWidth(line)));
+  const getLongestLen = (lines: string[]): number => Math.max(...lines.map((line) => out.getWidth(line)));
 
   /**<!-- DOCS: out.leftLines ### @ -->
    * leftLines
@@ -345,7 +392,7 @@ export namespace out {
    * @returns {string}
    */
   export const split = (leftItem: any, rightItem: any, width: number = out.utils.getTerminalWidth(), replaceChar: string = ' ') =>
-    `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (stringWidth(leftItem + '') + stringWidth(rightItem + ''))))}${rightItem + ''}`;
+    `${leftItem + ''}${replaceChar.repeat(Math.max(0, width - (out.getWidth(leftItem + '') + out.getWidth(rightItem + ''))))}${rightItem + ''}`;
 
   /**<!-- DOCS: out.wrap ### @ -->
    * wrap
@@ -369,16 +416,16 @@ export namespace out {
     utils
       .getLogLines(item)
       .map((line) => {
-        if (stringWidth(line) > width) {
+        if (out.getWidth(line) > width) {
           let words: string[] = line.split(/(?<=#?[ -]+)/g);
           const rows: string[][] = [];
 
           words = words
             .map((orig: string) => {
-              if (stringWidth(orig.replace(/\s$/, '')) > width) {
+              if (out.getWidth(orig.replace(/\s$/, '')) > width) {
                 let remaining = orig;
                 let result = [];
-                while (stringWidth(remaining) > width - 1) {
+                while (out.getWidth(remaining) > width - 1) {
                   result.push(remaining.slice(0, width - 1) + '-');
                   remaining = remaining.slice(width - 1);
                 }
@@ -397,7 +444,7 @@ export namespace out {
             const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
             const candText = candidateRow.join('');
 
-            if (stringWidth(candText) + stringWidth(word) > width) {
+            if (out.getWidth(candText) + out.getWidth(word) > width) {
               rows.push(candidateRow);
               rowStartIndex = Number(wIndex);
             }
@@ -519,7 +566,7 @@ export namespace out {
       utils.getLines(text).map((line) => {
         let specials = '';
         let result = line;
-        while (stringWidth(result) > maxLength) {
+        while (out.getWidth(result) > maxLength) {
           const match = result.match(new RegExp(`(\\u001b\[[0-9]+m|.)$`));
           const { 0: removed, index } = match || { 0: result.slice(-1), index: result.length - 1 };
 
@@ -551,7 +598,7 @@ export namespace out {
       utils.getLines(text).map((line) => {
         let specials = '';
         let result = line;
-        while (stringWidth(result) > maxLength) {
+        while (out.getWidth(result) > maxLength) {
           const match = result.match(new RegExp(`^(\\u001b\[[0-9]+m|.)`));
           const { 0: removed, index } = match || { 0: result.slice(0, 1), index: 1 };
 
@@ -581,7 +628,7 @@ export namespace out {
    */
   export const truncate = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
     utils.joinLines(
-      utils.getLines(text).map((line) => (stringWidth(line) > maxLength ? limitToLength(line, maxLength - stringWidth(suffix)) + suffix : line))
+      utils.getLines(text).map((line) => (out.getWidth(line) > maxLength ? limitToLength(line, maxLength - out.getWidth(suffix)) + suffix : line))
     );
 
   /**<!-- DOCS: out.truncateStart ### @ -->
@@ -601,7 +648,9 @@ export namespace out {
    */
   export const truncateStart = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
     utils.joinLines(
-      utils.getLines(text).map((line) => (stringWidth(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - stringWidth(suffix)) : line))
+      utils
+        .getLines(text)
+        .map((line) => (out.getWidth(line) > maxLength ? suffix + limitToLengthStart(line, maxLength - out.getWidth(suffix)) : line))
     );
 
   /**<!-- DOCS: out.concatLineGroups ### @ -->
@@ -748,7 +797,7 @@ export namespace out {
      * @param {Text} text
      * @returns {number}
      */
-    export const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => stringWidth(line)));
+    export const getLinesWidth = (text: Text): number => Math.max(...getLines(text).map((line) => out.getWidth(line)));
 
     /**<!-- DOCS: out.utils.getLogLines #### 291 @ -->
      * getLogLines

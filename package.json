@@ -34,8 +34,8 @@
     "build:code": "tsup-node src/index.ts --format cjs,esm --dts --clean",
     "watch": "yarn build -- --watch src",
     "docs": "swiss-docs --src src --output README.md --alias dist/index.d.ts",
-    "test": "yarn quickbuild && yarn test:node && yarn test:bun",
-    "test:node": "node --experimental-vm-modules ./node_modules/.bin/jest --no-cache",
+    "test": "yarn quickbuild && yarn test:bun && yarn test:node",
+    "test:node": "NODE_NO_WARNINGS=1 node --experimental-vm-modules ./node_modules/.bin/jest --no-cache",
     "test:bun": "bun test",
     "prepublishOnly": "yarn build"
   },
@@ -43,7 +43,6 @@
     "chalk": "^4.1.2",
     "fuse.js": "^6.6.2",
     "prompts": "^2.4.2",
-    "string-width": "^5.1.2",
     "swiss-ak": "^2.11.0"
   }
 }

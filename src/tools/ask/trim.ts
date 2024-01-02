@@ -1,5 +1,4 @@
 import { getDeferred, hours, ms, ObjectTools, seconds, symbols } from 'swiss-ak';
-import stringWidth from 'string-width';
 
 import { table } from '../table';
 import { out } from '../out';
@@ -10,7 +9,7 @@ import chalk from 'chalk';
 //<!-- DOCS: 140 -->
 
 const toTimeCode = (frame: number, frameRate: number = 60, includeHours: boolean = false, includeMinutes: boolean = true) => {
-  const frLength = stringWidth(frameRate + '');
+  const frLength = out.getWidth(frameRate + '');
   const toSecs: ms = seconds(Math.floor(frame / frameRate));
   const remaining = frame % frameRate;
 
@@ -147,7 +146,7 @@ export const trim = async (totalFrames: number, frameRate: number, options: Part
         ''
       ]);
       const handleLabelWidths: Handles<number> = ObjectTools.mapValues(handleLabelsRaw, (_k, value: string[]) =>
-        Math.max(...value.map((s) => stringWidth(s)))
+        Math.max(...value.map((s) => out.getWidth(s)))
       );
       const handleAligns: Handles<string> = {
         start: handleLabelWidths.start > befSpace ? 'left' : 'right',
@@ -163,11 +162,11 @@ export const trim = async (totalFrames: number, frameRate: number, options: Part
       const potentialMaxLabelSpace = handlePositions.end - handlePositions.start;
       if (!strtBef && potentialMaxLabelSpace < handleLabelWidths.start) {
         handleLabels.start = handleLabels.start.map((s) => s.slice(0, Math.max(0, potentialMaxLabelSpace - 1)));
-        handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => stringWidth(s)));
+        handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => out.getWidth(s)));
       }
       if (endBef && potentialMaxLabelSpace < handleLabelWidths.end) {
         handleLabels.end = handleLabels.end.map((s) => s.slice(s.length - Math.max(0, potentialMaxLabelSpace - 1)));
-        handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => stringWidth(s)));
+        handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => out.getWidth(s)));
       }
 
       const befLabelSpace = Math.max(0, befSpace - (strtBef ? handleLabelWidths.start : 0));
@@ -195,9 +194,9 @@ export const trim = async (totalFrames: number, frameRate: number, options: Part
       const endVideoLabel = `[${toTimeCode(totalFrames - 1, frameRate, showHours)}]`;
       const trimmedVideoLabel = toTimeCode(handles.end - handles.start, frameRate, showHours);
 
-      const availSpace = width - (stringWidth(startVideoLabel) + stringWidth(endVideoLabel) + stringWidth(trimmedVideoLabel));
+      const availSpace = width - (out.getWidth(startVideoLabel) + out.getWidth(endVideoLabel) + out.getWidth(trimmedVideoLabel));
       const centerPosition = handlePositions.start + Math.floor((handlePositions.end - handlePositions.start) / 2);
-      const centerInSpace = centerPosition - stringWidth(startVideoLabel) - Math.floor(stringWidth(trimmedVideoLabel) / 2) + 1;
+      const centerInSpace = centerPosition - out.getWidth(startVideoLabel) - Math.floor(out.getWidth(trimmedVideoLabel) / 2) + 1;
 
       const bef = ' '.repeat(Math.max(0, Math.min(availSpace, centerInSpace)));
       const aft = ' '.repeat(Math.max(0, Math.min(availSpace, availSpace - centerInSpace)));

@@ -899,6 +899,8 @@ Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
 A collection of functions to print to the console
 
   - [**out**](#out)
+    - [getWidth](#getwidth)
+    - [stripAnsi](#stripansi)
     - [pad](#pad)
     - [center](#center)
     - [left](#left)
@@ -946,6 +948,50 @@ A collection of functions to print to the console
       - [hasColor](#hascolor)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### getWidth
+
+```typescript
+out.getWidth(text: string): number
+```
+
+TODO docs
+
+```typescript
+// TODO examples
+```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `text`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `number`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+### stripAnsi
+
+```typescript
+out.stripAnsi(text: string): string
+```
+
+TODO docs
+
+```typescript
+// TODO examples
+```
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `text`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 ### pad
 

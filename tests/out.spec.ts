@@ -4,6 +4,30 @@ import { register, should, singleTest, multiTest, kitchenSink } from './test-uti
 register({ describe, it, expect });
 
 describe('out', () => {
+  describe('getWidth', () => {
+    singleTest(swissnode.out.getWidth, 'out.getWidth', (getWidth, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(getWidth).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
+    });
+  });
+
+  describe('stripAnsi', () => {
+    singleTest(swissnode.out.stripAnsi, 'out.stripAnsi', (stripAnsi, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(stripAnsi).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
+    });
+  });
+
   describe('pad', () => {
     singleTest(swissnode.out.pad, 'out.pad', (pad, name) => {
       it(should` exist as ${name}`, () => {
