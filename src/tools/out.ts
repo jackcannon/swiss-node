@@ -21,47 +21,30 @@ export namespace out {
    *
    * - `out.getWidth`
    *
-   * TODO docs
+   * A rough approximation of the width of the given text (as it would appear in the terminal)
    *
-   * ```typescript
-   * // TODO examples
-   * ```
+   * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
+   *
+   * Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
    * @param {string} text
    * @returns {number}
    */
   export const getWidth = (text: string): number => {
+    // TODO examples
     const args = {
       text: safe.str(text)
     };
 
-    // TODO this is basic - upgrade to full on version later down the line
+    let result = args.text;
 
-    return stripAnsi(args.text).length;
-  };
+    // remove all the ansi escape codes
+    result = out.utils.stripAnsi(result);
 
-  /**<!-- DOCS: out.stripAnsi ### @ -->
-   * stripAnsi
-   *
-   * - `out.stripAnsi`
-   *
-   * TODO docs
-   *
-   * ```typescript
-   * // TODO examples
-   * ```
-   * @param {string} text
-   * @returns {string}
-   */
-  export const stripAnsi = (text: string): string => {
-    const args = {
-      text: safe.str(text)
-    };
-    const pattern = [
-      '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
-      '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
-    ].join('|');
-    const regex = new RegExp(pattern, 'g');
-    return args.text.replace(regex, '');
+    // replace emojis with 2 spaces as they are 2 characters wide
+    // This is a very rough approximation
+    result = result.replace(out.utils.getEmojiRegex('gu'), '  ');
+
+    return result.length;
   };
 
   /**<!-- DOCS: out.pad ### @ -->
@@ -885,6 +868,46 @@ export namespace out {
      * @returns {boolean}
      */
     export const hasColor = (str: string): boolean => Boolean(str.match(new RegExp(`\\u001b\[[0-9]+m`, 'g')));
+
+    /**<!-- DOCS: out.utils.stripAnsi #### 291 @ -->
+     * stripAnsi
+     *
+     * - `out.utils.stripAnsi`
+     *
+     * Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+     * @param {string} text
+     * @returns {string}
+     */
+    export const stripAnsi = (text: string): string => {
+      const args = {
+        text: safe.str(text)
+      };
+      const pattern = [
+        '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+        '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
+      ].join('|');
+      const regex = new RegExp(pattern, 'g');
+      return args.text.replace(regex, '');
+    };
+
+    /**<!-- DOCS: out.utils.getEmojiRegex #### 291 @ -->
+     * getEmojiRegex
+     *
+     * - `out.utils.getEmojiRegex`
+     *
+     * A _very_ rough way to regex emojis
+     * @param {string} [flags='g']
+     * @returns {RegExp}
+     */
+    export const getEmojiRegex = (flags: string = 'g'): RegExp => {
+      const args = {
+        flags: safe.str(flags)
+      };
+      return new RegExp(
+        /(\u00a9|\u00ae|[\u231A-\u231B]|[\u23E9-\u23EC]|\u23F0|\u23F3|[\u25FD-\u25FE]|[\u2614-\u2615]|[\u2648-\u2653]|\u267F|\u2693|\u26A1|[\u26AA-\u26AB]|[\u26BD-\u26BE]|[\u26C4-\u26C5]|\u26CE|\u26D4|\u26EA|[\u26F2-\u26F3]|\u26F5|\u26FA|\u26FD|\u2705|[\u270A-\u270B]|\u2728|\u274C|\u274E|[\u2753-\u2755]|\u2757|[\u2795-\u2797]|\u27B0|\u27BF|[\u2B1B-\u2B1C]|\u2B50|\u2B55|\u27A1\uFE0F|\u2934\uFE0F|\u2935\uFE0F|\u2B05\uFE0F|\u2B06\uFE0F|\u2B07\uFE0F|\u0023\uFE0F\u20E3|\u2744\uFE0F|\uD83D\uDDFB|\u26E9\uFE0F|\u23F2\uFE0F|\u2139\uFE0F|\u24C2\uFE0F\uFE0F\uFE0F\uFE0F|\u3299\uFE0F|\u3297\uFE0F\uFE0F\uFE0F\uFE0F\uFE0F\uFE0F|\u303D\uFE0F|\u26A7\uFE0F|\u2642\uFE0F|\u2640\uFE0F|\u2620\uFE0F|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/,
+        args.flags
+      );
+    };
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 

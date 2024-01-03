@@ -259,18 +259,10 @@ var out;
     const args = {
       text: import_swiss_ak3.safe.str(text)
     };
-    return out2.stripAnsi(args.text).length;
-  };
-  out2.stripAnsi = (text) => {
-    const args = {
-      text: import_swiss_ak3.safe.str(text)
-    };
-    const pattern = [
-      "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
-      "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
-    ].join("|");
-    const regex = new RegExp(pattern, "g");
-    return args.text.replace(regex, "");
+    let result = args.text;
+    result = out2.utils.stripAnsi(result);
+    result = result.replace(out2.utils.getEmojiRegex("gu"), "  ");
+    return result.length;
   };
   out2.pad = (line, start, end, replaceChar = " ") => `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
   const correctWidth = (width) => width < 0 || width === Infinity ? utils.getTerminalWidth() : Math.min(width, utils.getTerminalWidth());
@@ -459,6 +451,26 @@ var out;
     utils2.getLogLinesWidth = (item) => utils2.getLinesWidth(getLogStr(item));
     utils2.joinLines = (lines) => lines.map(import_swiss_ak3.fn.maps.toString).join(NEW_LINE);
     utils2.hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
+    utils2.stripAnsi = (text) => {
+      const args = {
+        text: import_swiss_ak3.safe.str(text)
+      };
+      const pattern = [
+        "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
+        "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
+      ].join("|");
+      const regex = new RegExp(pattern, "g");
+      return args.text.replace(regex, "");
+    };
+    utils2.getEmojiRegex = (flags = "g") => {
+      const args = {
+        flags: import_swiss_ak3.safe.str(flags)
+      };
+      return new RegExp(
+        /(\u00a9|\u00ae|[\u231A-\u231B]|[\u23E9-\u23EC]|\u23F0|\u23F3|[\u25FD-\u25FE]|[\u2614-\u2615]|[\u2648-\u2653]|\u267F|\u2693|\u26A1|[\u26AA-\u26AB]|[\u26BD-\u26BE]|[\u26C4-\u26C5]|\u26CE|\u26D4|\u26EA|[\u26F2-\u26F3]|\u26F5|\u26FA|\u26FD|\u2705|[\u270A-\u270B]|\u2728|\u274C|\u274E|[\u2753-\u2755]|\u2757|[\u2795-\u2797]|\u27B0|\u27BF|[\u2B1B-\u2B1C]|\u2B50|\u2B55|\u27A1\uFE0F|\u2934\uFE0F|\u2935\uFE0F|\u2B05\uFE0F|\u2B06\uFE0F|\u2B07\uFE0F|\u0023\uFE0F\u20E3|\u2744\uFE0F|\uD83D\uDDFB|\u26E9\uFE0F|\u23F2\uFE0F|\u2139\uFE0F|\u24C2\uFE0F\uFE0F\uFE0F\uFE0F|\u3299\uFE0F|\u3297\uFE0F\uFE0F\uFE0F\uFE0F\uFE0F\uFE0F|\u303D\uFE0F|\u26A7\uFE0F|\u2642\uFE0F|\u2640\uFE0F|\u2620\uFE0F|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/,
+        args.flags
+      );
+    };
   })(utils = out2.utils || (out2.utils = {}));
 })(out || (out = {}));
 var getBreadcrumb2 = getBreadcrumb;

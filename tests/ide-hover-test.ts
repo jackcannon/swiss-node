@@ -33,6 +33,7 @@ swissnode.ask.utils;
 swissnode.ask.utils.itemsToPromptObjects;
 
 swissnode.out;
+swissnode.out.getWidth;
 swissnode.out.pad;
 swissnode.out.center;
 swissnode.out.left;
@@ -72,6 +73,8 @@ swissnode.out.utils.getNumLogLines;
 swissnode.out.utils.getLogLinesWidth;
 swissnode.out.utils.joinLines;
 swissnode.out.utils.hasColor;
+swissnode.out.utils.stripAnsi;
+swissnode.out.utils.getEmojiRegex;
 
 swissnode.chlk;
 swissnode.chlk.gray0;

@@ -16,18 +16,6 @@ describe('out', () => {
     });
   });
 
-  describe('stripAnsi', () => {
-    singleTest(swissnode.out.stripAnsi, 'out.stripAnsi', (stripAnsi, name) => {
-      it(should` exist as ${name}`, () => {
-        expect(stripAnsi).toBeDefined();
-      });
-
-      // TODO tests
-      // TODO add arg safety
-      // TODO kitchenSink
-    });
-  });
-
   describe('pad', () => {
     singleTest(swissnode.out.pad, 'out.pad', (pad, name) => {
       it(should` exist as ${name}`, () => {
@@ -413,6 +401,29 @@ describe('out', () => {
       singleTest(swissnode.out.utils.hasColor, 'out.utils.hasColor', (hasColor, name) => {
         it(should` exist as ${name}`, () => {
           expect(hasColor).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      });
+    });
+
+    describe('stripAnsi', () => {
+      singleTest(swissnode.out.utils.stripAnsi, 'out.utils.stripAnsi', (stripAnsi, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(stripAnsi).toBeDefined();
+        });
+
+        // TODO tests
+        // TODO add arg safety
+        // TODO kitchenSink
+      });
+    });
+    describe('getEmojiRegex', () => {
+      singleTest(swissnode.out.utils.getEmojiRegex, 'out.utils.getEmojiRegex', (getEmojiRegex, name) => {
+        it(should` exist as ${name}`, () => {
+          expect(getEmojiRegex).toBeDefined();
         });
 
         // TODO tests

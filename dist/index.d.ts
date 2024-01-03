@@ -541,29 +541,15 @@ declare namespace out {
      *
      * - `out.getWidth`
      *
-     * TODO docs
+     * A rough approximation of the width of the given text (as it would appear in the terminal)
      *
-     * ```typescript
-     * // TODO examples
-     * ```
+     * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
+     *
+     * Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
      * @param {string} text
      * @returns {number}
      */
     export const getWidth: (text: string) => number;
-    /**<!-- DOCS: out.stripAnsi ### @ -->
-     * stripAnsi
-     *
-     * - `out.stripAnsi`
-     *
-     * TODO docs
-     *
-     * ```typescript
-     * // TODO examples
-     * ```
-     * @param {string} text
-     * @returns {string}
-     */
-    export const stripAnsi: (text: string) => string;
     /**<!-- DOCS: out.pad ### @ -->
      * pad
      *
@@ -1190,6 +1176,26 @@ declare namespace out {
          * @returns {boolean}
          */
         const hasColor: (str: string) => boolean;
+        /**<!-- DOCS: out.utils.stripAnsi #### 291 @ -->
+         * stripAnsi
+         *
+         * - `out.utils.stripAnsi`
+         *
+         * Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+         * @param {string} text
+         * @returns {string}
+         */
+        const stripAnsi: (text: string) => string;
+        /**<!-- DOCS: out.utils.getEmojiRegex #### 291 @ -->
+         * getEmojiRegex
+         *
+         * - `out.utils.getEmojiRegex`
+         *
+         * A _very_ rough way to regex emojis
+         * @param {string} [flags='g']
+         * @returns {RegExp}
+         */
+        const getEmojiRegex: (flags?: string) => RegExp;
     }
     export {};
 }

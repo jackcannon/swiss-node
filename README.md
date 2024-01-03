@@ -900,7 +900,6 @@ A collection of functions to print to the console
 
   - [**out**](#out)
     - [getWidth](#getwidth)
-    - [stripAnsi](#stripansi)
     - [pad](#pad)
     - [center](#center)
     - [left](#left)
@@ -946,6 +945,8 @@ A collection of functions to print to the console
       - [getLogLinesWidth](#getloglineswidth)
       - [joinLines](#joinlines)
       - [hasColor](#hascolor)
+      - [stripAnsi](#stripansi)
+      - [getEmojiRegex](#getemojiregex)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -955,11 +956,11 @@ A collection of functions to print to the console
 out.getWidth(text: string): number
 ```
 
-TODO docs
+A rough approximation of the width of the given text (as it would appear in the terminal)
 
-```typescript
-// TODO examples
-```
+Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
+
+Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
 
 |  #  | Parameter Name | Required | Type     |
 |:---:|:---------------|:---------|:---------|
@@ -968,28 +969,6 @@ TODO docs
 | Return Type |
 |-------------|
 | `number`    |
-
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
-
-### stripAnsi
-
-```typescript
-out.stripAnsi(text: string): string
-```
-
-TODO docs
-
-```typescript
-// TODO examples
-```
-
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `text`         | **Yes**  | `string` |
-
-| Return Type |
-|-------------|
-| `string`    |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -2050,6 +2029,42 @@ out.utils.hasColor(chalk.red('this is line 1')) // true
 | Return Type |
 |-------------|
 | `boolean`   |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+#### stripAnsi
+
+```typescript
+out.utils.stripAnsi(text: string): string
+```
+
+Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `text`         | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+#### getEmojiRegex
+
+```typescript
+out.utils.getEmojiRegex(flags: string): RegExp
+```
+
+A _very_ rough way to regex emojis
+
+|  #  | Parameter Name | Required | Type     | Default |
+|:---:|:---------------|:---------|:---------|:--------|
+| *0* | `flags`        | *No*     | `string` | `'g'`   |
+
+| Return Type |
+|-------------|
+| `RegExp`    |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
