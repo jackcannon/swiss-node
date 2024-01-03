@@ -686,6 +686,11 @@
   dependencies:
     "@types/yargs-parser" "*"
 
+"@unicode/unicode-15.1.0@^1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@unicode/unicode-15.1.0/-/unicode-15.1.0-1.5.2.tgz#0358d05ab99a7d05c12c68cc2123cf124c34beb9"
+  integrity sha512-7PAgnShDr8ziK6XeHB/TUVFboDFEhaQKKyrw55/Kx9o6AQDy1s7dJ9KRpRerW9nrR5qMGUQvOqTXOAek6ZIXkg==
+
 ansi-escapes@^4.2.1:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/ansi-escapes/-/ansi-escapes-4.3.2.tgz#6b2291d1db7d98b6521d5f1efa42d0f3a9feb65e"

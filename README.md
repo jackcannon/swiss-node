@@ -2056,7 +2056,9 @@ Removes all ANSI escape codes from a string. This includes any colour or styling
 out.utils.getEmojiRegex(flags: string): RegExp
 ```
 
-A _very_ rough way to regex emojis
+A rough way to regex emojis
+
+Note: Certain symbols removed to minimise false positives
 
 |  #  | Parameter Name | Required | Type     | Default |
 |:---:|:---------------|:---------|:---------|:--------|

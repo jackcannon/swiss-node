@@ -1191,7 +1191,9 @@ declare namespace out {
          *
          * - `out.utils.getEmojiRegex`
          *
-         * A _very_ rough way to regex emojis
+         * A rough way to regex emojis
+         *
+         * Note: Certain symbols removed to minimise false positives
          * @param {string} [flags='g']
          * @returns {RegExp}
          */
