@@ -2762,10 +2762,408 @@ var ask;
   })(utils = ask2.utils || (ask2.utils = {}));
 })(ask || (ask = {}));
 
+// src/tools/colr.ts
+import { cachier } from "swiss-ak";
+import { ArrayTools as ArrayTools7, ObjectTools as ObjectTools2, StringTools as StringTools3, safe as safe2 } from "swiss-ak";
+var wrapAnsi = (codes) => [codes].flat().map((code) => `\x1B[${code}m`).join("");
+var simpleStringify = (item, depth = 0) => {
+  if (depth > 4)
+    return "";
+  try {
+    if (item === void 0 || item === null)
+      return "";
+    if (Array.isArray(item)) {
+      return "[" + item.map((v) => simpleStringify(v, depth + 1)).join(", ") + "]";
+    }
+    if (typeof item === "object") {
+      return JSON.stringify(item);
+    }
+    if (item.toString)
+      return item.toString();
+    return "" + item;
+  } catch (err) {
+    try {
+      return "" + item;
+    } catch (err2) {
+      return "";
+    }
+  }
+};
+var optionConfigs = {
+  light: { isLight: true },
+  dark: { isLight: false },
+  lightBg: { isLightBG: true },
+  darkBg: { isLightBG: false }
+};
+var fullStyleConfigs = null;
+var calculateFullStyleConfigs = () => {
+  const modifierStyleConfigs = {
+    reset: [0, 0],
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    overline: [53, 55],
+    underline: [4, 24],
+    strikethrough: [9, 29],
+    inverse: [7, 27],
+    hidden: [8, 28]
+  };
+  const colourStyleConfigs = {
+    red: {
+      isBG: false,
+      dark: [31, 39],
+      light: [91, 39]
+    },
+    green: {
+      isBG: false,
+      dark: [32, 39],
+      light: [92, 39]
+    },
+    yellow: {
+      isBG: false,
+      dark: [33, 39],
+      light: [93, 39]
+    },
+    blue: {
+      isBG: false,
+      dark: [34, 39],
+      light: [94, 39]
+    },
+    magenta: {
+      isBG: false,
+      dark: [35, 39],
+      light: [95, 39]
+    },
+    cyan: {
+      isBG: false,
+      dark: [36, 39],
+      light: [96, 39]
+    },
+    white: {
+      isBG: false,
+      dark: [37, 39],
+      light: [97, 39]
+    },
+    redBg: {
+      isBG: true,
+      dark: [41, 49],
+      light: [101, 49]
+    },
+    greenBg: {
+      isBG: true,
+      dark: [42, 49],
+      light: [102, 49]
+    },
+    yellowBg: {
+      isBG: true,
+      dark: [43, 49],
+      light: [103, 49]
+    },
+    blueBg: {
+      isBG: true,
+      dark: [44, 49],
+      light: [104, 49]
+    },
+    magentaBg: {
+      isBG: true,
+      dark: [45, 49],
+      light: [105, 49]
+    },
+    cyanBg: {
+      isBG: true,
+      dark: [46, 49],
+      light: [106, 49]
+    },
+    whiteBg: {
+      isBG: true,
+      dark: [47, 49],
+      light: [107, 49]
+    }
+  };
+  const blackStyleConfigs = {
+    black: [30, 39],
+    darkBlack: [30, 39],
+    lightBlack: [90, 39],
+    blackBg: [40, 49],
+    darkBlackBg: [40, 49],
+    lightBlackBg: [100, 49]
+  };
+  const mergeEntries = (...entries) => [
+    entries.map((entry) => entry instanceof Array ? entry[0] : entry.light[0]).flat(),
+    entries.map((entry) => entry instanceof Array ? entry[1] : entry.light[1]).flat()
+  ];
+  const greyColourStyleConfigs = {
+    grey: blackStyleConfigs.lightBlack,
+    greyBg: blackStyleConfigs.lightBlackBg,
+    grey0: blackStyleConfigs.darkBlack,
+    grey1: mergeEntries(blackStyleConfigs.lightBlack, modifierStyleConfigs.dim),
+    grey2: mergeEntries(colourStyleConfigs.white.dark, modifierStyleConfigs.dim),
+    grey3: mergeEntries(colourStyleConfigs.white.light, modifierStyleConfigs.dim),
+    grey4: colourStyleConfigs.white.dark,
+    grey5: colourStyleConfigs.white.light
+  };
+  const otherColourStyleConfigs = {
+    primary: colourStyleConfigs.magenta.light,
+    secondary: colourStyleConfigs.yellow.light,
+    success: colourStyleConfigs.green.light,
+    danger: colourStyleConfigs.red.dark,
+    warning: colourStyleConfigs.yellow.dark,
+    info: colourStyleConfigs.blue.light,
+    primaryBg: mergeEntries(colourStyleConfigs.magentaBg.light, blackStyleConfigs.darkBlack),
+    secondaryBg: mergeEntries(colourStyleConfigs.yellowBg.light, blackStyleConfigs.darkBlack),
+    successBg: mergeEntries(colourStyleConfigs.greenBg.light, blackStyleConfigs.darkBlack),
+    dangerBg: mergeEntries(colourStyleConfigs.redBg.dark, blackStyleConfigs.darkBlack),
+    warningBg: mergeEntries(colourStyleConfigs.yellowBg.dark, blackStyleConfigs.darkBlack),
+    infoBg: mergeEntries(colourStyleConfigs.blueBg.light, blackStyleConfigs.darkBlack)
+  };
+  fullStyleConfigs = {
+    ...Object.fromEntries(
+      Object.entries(colourStyleConfigs).flatMap(([key, value]) => {
+        const colourName = value.isBG ? key.slice(0, -2) : key;
+        const bgSuffix = value.isBG ? "Bg" : "";
+        return [
+          [colourName + bgSuffix, value],
+          ["dark" + StringTools3.capitalise(colourName, false) + bgSuffix, [...value.dark]],
+          ["light" + StringTools3.capitalise(colourName, false) + bgSuffix, [...value.light]]
+        ];
+      })
+    ),
+    ...blackStyleConfigs,
+    ...Object.fromEntries(
+      Object.entries(greyColourStyleConfigs).flatMap(([key, value]) => [
+        [key, value],
+        [key.replace("grey", "gray"), value]
+      ])
+    ),
+    ...otherColourStyleConfigs,
+    ...modifierStyleConfigs
+  };
+};
+var debugReplacements = null;
+var populateDebugReplacements = () => {
+  debugReplacements = {
+    [wrapAnsi(fullStyleConfigs.darkRed[1])]: "(<)",
+    [wrapAnsi(fullStyleConfigs.darkRedBg[1])]: "{<}",
+    [wrapAnsi(fullStyleConfigs.darkRed[0])]: "(red>)",
+    [wrapAnsi(fullStyleConfigs.lightRed[0])]: "(RED>)",
+    [wrapAnsi(fullStyleConfigs.darkGreen[0])]: "(grn>)",
+    [wrapAnsi(fullStyleConfigs.lightGreen[0])]: "(GRN>)",
+    [wrapAnsi(fullStyleConfigs.darkYellow[0])]: "(ylw>)",
+    [wrapAnsi(fullStyleConfigs.lightYellow[0])]: "(YLW>)",
+    [wrapAnsi(fullStyleConfigs.darkBlue[0])]: "(blu>)",
+    [wrapAnsi(fullStyleConfigs.lightBlue[0])]: "(BLU>)",
+    [wrapAnsi(fullStyleConfigs.darkMagenta[0])]: "(mag>)",
+    [wrapAnsi(fullStyleConfigs.lightMagenta[0])]: "(MAG>)",
+    [wrapAnsi(fullStyleConfigs.darkCyan[0])]: "(cyn>)",
+    [wrapAnsi(fullStyleConfigs.lightCyan[0])]: "(CYN>)",
+    [wrapAnsi(fullStyleConfigs.darkBlack[0])]: "(blk>)",
+    [wrapAnsi(fullStyleConfigs.lightBlack[0])]: "(BLK>)",
+    [wrapAnsi(fullStyleConfigs.darkWhite[0])]: "(wht>)",
+    [wrapAnsi(fullStyleConfigs.lightWhite[0])]: "(WHT>)",
+    [wrapAnsi(fullStyleConfigs.darkRedBg[0])]: "{red>}",
+    [wrapAnsi(fullStyleConfigs.lightRedBg[0])]: "{RED>}",
+    [wrapAnsi(fullStyleConfigs.darkGreenBg[0])]: "{grn>}",
+    [wrapAnsi(fullStyleConfigs.lightGreenBg[0])]: "{GRN>}",
+    [wrapAnsi(fullStyleConfigs.darkYellowBg[0])]: "{ylw>}",
+    [wrapAnsi(fullStyleConfigs.lightYellowBg[0])]: "{YLW>}",
+    [wrapAnsi(fullStyleConfigs.darkBlueBg[0])]: "{blu>}",
+    [wrapAnsi(fullStyleConfigs.lightBlueBg[0])]: "{BLU>}",
+    [wrapAnsi(fullStyleConfigs.darkMagentaBg[0])]: "{mag>}",
+    [wrapAnsi(fullStyleConfigs.lightMagentaBg[0])]: "{MAG>}",
+    [wrapAnsi(fullStyleConfigs.darkCyanBg[0])]: "{cyn>}",
+    [wrapAnsi(fullStyleConfigs.lightCyanBg[0])]: "{CYN>}",
+    [wrapAnsi(fullStyleConfigs.darkBlackBg[0])]: "{blk>}",
+    [wrapAnsi(fullStyleConfigs.lightBlackBg[0])]: "{BLK>}",
+    [wrapAnsi(fullStyleConfigs.darkWhiteBg[0])]: "{wht>}",
+    [wrapAnsi(fullStyleConfigs.lightWhiteBg[0])]: "{WHT>}",
+    [wrapAnsi(fullStyleConfigs.reset[0])]: "[rst>]",
+    [wrapAnsi(fullStyleConfigs.reset[1])]: "[<rst]",
+    [wrapAnsi(fullStyleConfigs.bold[0])]: "[bld>]",
+    [wrapAnsi(fullStyleConfigs.bold[1])]: "[<bld]",
+    [wrapAnsi(fullStyleConfigs.dim[0])]: "[dim>]",
+    [wrapAnsi(fullStyleConfigs.dim[1])]: "[<dim]",
+    [wrapAnsi(fullStyleConfigs.italic[0])]: "[itl>]",
+    [wrapAnsi(fullStyleConfigs.italic[1])]: "[<itl]",
+    [wrapAnsi(fullStyleConfigs.overline[0])]: "[ovr>]",
+    [wrapAnsi(fullStyleConfigs.overline[1])]: "[<ovr]",
+    [wrapAnsi(fullStyleConfigs.underline[0])]: "[und>]",
+    [wrapAnsi(fullStyleConfigs.underline[1])]: "[<und]",
+    [wrapAnsi(fullStyleConfigs.strikethrough[0])]: "[str>]",
+    [wrapAnsi(fullStyleConfigs.strikethrough[1])]: "[<str]",
+    [wrapAnsi(fullStyleConfigs.inverse[0])]: "[inv>]",
+    [wrapAnsi(fullStyleConfigs.inverse[1])]: "[<inv]",
+    [wrapAnsi(fullStyleConfigs.hidden[0])]: "[hdn>]",
+    [wrapAnsi(fullStyleConfigs.hidden[1])]: "[<hdn]"
+  };
+};
+var setConfigs = {
+  red: ["red", "redBg"],
+  green: ["green", "greenBg"],
+  yellow: ["yellow", "yellowBg"],
+  blue: ["blue", "blueBg"],
+  magenta: ["magenta", "magentaBg"],
+  cyan: ["cyan", "cyanBg"],
+  white: ["white", "whiteBg"],
+  black: ["black", "blackBg"],
+  lightBlack: ["lightBlack", "lightBlackBg"],
+  grey: ["grey", "greyBg"],
+  gray: ["gray", "grayBg"],
+  primary: ["primary", "primaryBg"],
+  secondary: ["secondary", "secondaryBg"],
+  success: ["success", "successBg"],
+  danger: ["danger", "dangerBg"],
+  warning: ["warning", "warningBg"],
+  info: ["info", "infoBg"]
+};
+var getColrFn = (name, styles = [], options) => {
+  if (fullStyleConfigs === null) {
+    calculateFullStyleConfigs();
+  }
+  const result = (...text) => {
+    const args = {
+      text: text.map((item) => simpleStringify(item)).join(" ")
+    };
+    const entries = styles.map((value) => {
+      if (value instanceof Array) {
+        return value;
+      }
+      const config = value;
+      const isLight = config.isBG ? options.isLightBG : options.isLight;
+      return isLight ? config.light || config.dark : config.dark || config.light;
+    });
+    const prefix = entries.flatMap((entry) => entry[0]).map((value) => wrapAnsi(value)).join("");
+    const suffix = entries.flatMap((entry) => entry[1]).map((value) => wrapAnsi(value)).reverse().join("");
+    let output = args.text;
+    const flatStarts = entries.flatMap((entry) => entry[0]);
+    const flatEnds = entries.flatMap((entry) => entry[1]);
+    const pairs = ArrayTools7.zipMax(flatStarts, flatEnds);
+    output = pairs.reduceRight((txt, pair) => {
+      const start = wrapAnsi(pair[0]);
+      const end = wrapAnsi(pair[1]);
+      return StringTools3.replaceAll(txt, end, end + start);
+    }, output);
+    output = output.replace(/\r?\n/g, (match) => `${suffix}${match}${prefix}`);
+    output = prefix + output + suffix;
+    return output;
+  };
+  const colrFnCache = cachier.create();
+  Object.defineProperties(
+    result,
+    ObjectTools2.mapValues(optionConfigs, (key, value) => ({
+      enumerable: false,
+      get: () => colrFnCache.getOrRun(
+        key,
+        () => getColrFn(name + "." + key, styles, {
+          ...options,
+          ...typeof value === "function" ? value(options) : value
+        })
+      ),
+      set(v) {
+      }
+    }))
+  );
+  Object.defineProperties(
+    result,
+    ObjectTools2.mapValues(fullStyleConfigs, (key, value) => ({
+      enumerable: true,
+      get: () => colrFnCache.getOrRun(key, () => getColrFn(name + "." + key, [...styles, value], options)),
+      set(v) {
+      }
+    }))
+  );
+  const templateFn = (strings, ...exps) => {
+    const args = {
+      strings: safe2.arrOf.str([...strings]),
+      exps: safe2.arr(exps)
+    };
+    const styledExps = args.exps.map((v) => result(v));
+    const zipped = ArrayTools7.zipMax(args.strings, styledExps);
+    return zipped.flat().join("");
+  };
+  Object.defineProperties(result, {
+    $: {
+      enumerable: false,
+      get: () => templateFn,
+      set(v) {
+      }
+    },
+    template: {
+      enumerable: false,
+      get: () => templateFn,
+      set(v) {
+      }
+    }
+  });
+  const debugFn = (text) => {
+    const args = {
+      text: safe2.str(text)
+    };
+    if (debugReplacements === null) {
+      populateDebugReplacements();
+    }
+    return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools3.replaceAll(txt, search, replace), args.text);
+  };
+  Object.defineProperties(result, {
+    debug: {
+      enumerable: false,
+      get: () => debugFn,
+      set(v) {
+      }
+    }
+  });
+  const setsCache = cachier.create();
+  Object.defineProperties(result, {
+    sets: {
+      enumerable: false,
+      get: () => setsCache.getOrRun("sets", () => {
+        const setCache = cachier.create();
+        return Object.defineProperties(
+          {},
+          ObjectTools2.mapValues(setConfigs, (name2, [textKey, bgKey]) => ({
+            enumerable: true,
+            get: () => setCache.getOrRun(name2, () => {
+              const fnCache = cachier.create();
+              return Object.defineProperties({}, {
+                text: {
+                  enumerable: true,
+                  get: () => fnCache.getOrRun("text", () => result[textKey]),
+                  set(v) {
+                  }
+                },
+                bg: {
+                  enumerable: true,
+                  get: () => fnCache.getOrRun("bg", () => result[bgKey]),
+                  set(v) {
+                  }
+                }
+              });
+            }),
+            set(v) {
+            }
+          }))
+        );
+      }),
+      set(v) {
+      }
+    }
+  });
+  Object.defineProperties(result, {
+    name: {
+      enumerable: false,
+      value: name
+    }
+  });
+  return result;
+};
+var colr = getColrFn("colr", [], {
+  isLight: true,
+  isLightBG: true
+});
+
 // src/tools/log.ts
 import util from "util";
 import chalk15 from "chalk";
-import { ObjectTools as ObjectTools2 } from "swiss-ak";
+import { ObjectTools as ObjectTools3 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
   showTime: true,
@@ -2846,7 +3244,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return ObjectTools2.mapValues(allConfigs, (key, config) => {
+  return ObjectTools3.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -2858,13 +3256,13 @@ var log = createLogger({});
 
 // src/tools/progressBarTools.ts
 import chalk16 from "chalk";
-import { ArrayTools as ArrayTools7 } from "swiss-ak";
+import { ArrayTools as ArrayTools8 } from "swiss-ak";
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [chalk16.yellowBright, chalk16.magenta, chalk16.blueBright, chalk16.cyanBright, chalk16.greenBright, chalk16.redBright];
     if (randomise) {
-      wrapperFns = ArrayTools7.randomise(wrapperFns);
+      wrapperFns = ArrayTools8.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {
@@ -2900,6 +3298,7 @@ export {
   ask,
   chlk,
   clr,
+  colr,
   createLogger,
   explodePath,
   getBreadcrumb2 as getBreadcrumb,

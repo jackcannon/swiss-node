@@ -2,6 +2,7 @@ export * from './tools/ask';
 export * from './tools/out';
 export * from './tools/table';
 export * from './tools/chlk';
+export * from './tools/colr';
 export * from './tools/clr';
 export * from './tools/log';
 export * from './tools/LogTools';

@@ -1,4 +1,4 @@
-import * as swissnode from '../';
+import * as swissnode from '../dist';
 import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
 
 register({ describe, it, expect });

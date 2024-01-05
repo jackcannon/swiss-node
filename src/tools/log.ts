@@ -4,7 +4,7 @@ import { ObjectTools, OfType } from 'swiss-ak';
 
 import { out } from './out';
 
-//<!-- DOCS: 400 -->
+//<!-- DOCS: 600 -->
 /**<!-- DOCS: log ##! -->
  * Logger
  */
@@ -107,7 +107,7 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
     .join('\n');
 };
 
-/**<!-- DOCS: log.createLogger ### 401 @ -->
+/**<!-- DOCS: log.createLogger ### 601 -->
  * createLogger
  *
  * - `createLogger`
@@ -146,7 +146,7 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
   }) as Logger<T>;
 };
 
-/**<!-- DOCS: log.log ### 400 -->
+/**<!-- DOCS: log.log ### 600 -->
  * log
  *
  * - `log`
@@ -167,7 +167,7 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
  */
 export const log = createLogger({}) as DefaultLogger;
 
-/**<!-- DOCS: log.LogOptions ### 450 -->
+/**<!-- DOCS: log.LogOptions ### 650 -->
  * LogOptions
  *
  * - `LogOptions`
@@ -184,7 +184,7 @@ interface LogConfigs {
   [key: string]: LogConfig;
 }
 
-/**<!-- DOCS: log.LogConfig ### 460 -->
+/**<!-- DOCS: log.LogConfig ### 660 -->
  * LogConfig
  *
  * - `LogConfig`

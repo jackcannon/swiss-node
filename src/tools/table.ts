@@ -6,7 +6,7 @@ import { CharLookup, getTableCharacters } from '../utils/tableCharacters';
 import { clr, Colour } from './clr';
 import chalk from 'chalk';
 
-//<!-- DOCS: 300 -->
+//<!-- DOCS: 400 -->
 /**<!-- DOCS: table ##! -->
  * table
  *
@@ -303,7 +303,7 @@ export namespace table {
     return result;
   };
 
-  //<!-- DOCS: 350 -->
+  //<!-- DOCS: 450 -->
   /**<!-- DOCS: table.FullTableOptions ###! -->
    * TableOptions
    *
@@ -527,7 +527,7 @@ export namespace table {
    */
   export type TableOptions = Partial<FullTableOptions>;
 
-  /**<!-- DOCS: table.TableCharLookup ### 351 -->
+  /**<!-- DOCS: table.TableCharLookup ### 451 -->
    * TableCharLookup
    *
    * The configuration for the table line characters
@@ -610,7 +610,7 @@ export namespace table {
     isBody: boolean;
   }
 
-  //<!-- DOCS: 390 -->
+  //<!-- DOCS: 490 -->
   /**<!-- DOCS: table.utils ### -->
    * utils
    */
@@ -637,7 +637,7 @@ export namespace table {
      * ```
      * @param {Object[]} objects
      * @param {Object} [headers={}]
-     * @returns {{ header: any[][]; body: any[][] }}
+     * @returns {{ header: any[][]; body: any[][]; }}
      */
     export const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[][]; body: any[][] } => {
       const allKeys = getAllKeys(objects);

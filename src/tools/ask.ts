@@ -714,7 +714,7 @@ export namespace ask {
      * @param {T[]} items
      * @param {string[]} [titles=[]]
      * @param {TitleFn<T>} [titleFn]
-     * @returns {{ title: string; value: T }[]}
+     * @returns {{ title: string; value: T; }[]}
      */
     export const itemsToPromptObjects = <T = string>(items: T[], titles: string[] = [], titleFn?: TitleFn<T>): { title: string; value: T }[] => {
       return items.map((item, index, arr) => ({ title: (titleFn && titleFn(item, index, arr)) || titles[index] || item + '', value: item as T }));

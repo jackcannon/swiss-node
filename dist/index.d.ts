@@ -196,319 +196,32 @@ interface AskTrimOptions {
 
 declare type Text = string | string[];
 
-interface ChalkFn {
-    (...text: string[]): string;
-    level: 0 | 1 | 2 | 3;
-    readonly reset: this;
-    readonly bold: this;
-    readonly dim: this;
-    readonly italic: this;
-    readonly underline: this;
-    readonly overline: this;
-    readonly inverse: this;
-    readonly hidden: this;
-    readonly strikethrough: this;
-    readonly visible: this;
-    readonly black: this;
-    readonly red: this;
-    readonly green: this;
-    readonly yellow: this;
-    readonly blue: this;
-    readonly magenta: this;
-    readonly cyan: this;
-    readonly white: this;
-    readonly gray: this;
-    readonly grey: this;
-    readonly blackBright: this;
-    readonly redBright: this;
-    readonly greenBright: this;
-    readonly yellowBright: this;
-    readonly blueBright: this;
-    readonly magentaBright: this;
-    readonly cyanBright: this;
-    readonly whiteBright: this;
-    readonly bgBlack: this;
-    readonly bgRed: this;
-    readonly bgGreen: this;
-    readonly bgYellow: this;
-    readonly bgBlue: this;
-    readonly bgMagenta: this;
-    readonly bgCyan: this;
-    readonly bgWhite: this;
-    readonly bgGray: this;
-    readonly bgGrey: this;
-    readonly bgBlackBright: this;
-    readonly bgRedBright: this;
-    readonly bgGreenBright: this;
-    readonly bgYellowBright: this;
-    readonly bgBlueBright: this;
-    readonly bgMagentaBright: this;
-    readonly bgCyanBright: this;
-    readonly bgWhiteBright: this;
-}
-
-/**<!-- DOCS: clr ##! -->
- * clr
- *
- * A collection of shortcuts and aliases for chalk functions
- */
 declare namespace clr {
-    /**<!-- DOCS: clr.hl1 ### -->
-     * hl1
-     *
-     * - `clr.hl1`
-     *
-     * Highlight 1
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const hl1: ChalkFn;
-    /**<!-- DOCS: clr.hl2 ### -->
-     * hl2
-     *
-     * - `clr.hl2`
-     *
-     * Highlight 2
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const hl2: ChalkFn;
-    /**<!-- DOCS: clr.approve ### -->
-     * approve
-     *
-     * - `clr.approve`
-     *
-     * Approval colour (green)
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const approve: ChalkFn;
-    /**<!-- DOCS: clr.create ### -->
-     * create
-     *
-     * - `clr.create`
-     *
-     * Create colour (greenBright)
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const create: ChalkFn;
-    /**<!-- DOCS: clr.update ### -->
-     * update
-     *
-     * - `clr.update`
-     *
-     * Update colour (yellow)
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const update: ChalkFn;
-    /**<!-- DOCS: clr.remove ### -->
-     * remove
-     *
-     * - `clr.remove`
-     *
-     * Remove/delete colour (red)
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const remove: ChalkFn;
-    /**<!-- DOCS: clr.removeAll ### -->
-     * removeAll
-     *
-     * - `clr.removeAll`
-     *
-     * Remove/delete all colour (red)
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const removeAll: ChalkFn;
-    /**<!-- DOCS: clr.blue ### -->
-     * blue
-     *
-     * - `clr.blue`
-     *
-     * Alias for chalk.blueBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const blue: ChalkFn;
-    /**<!-- DOCS: clr.cyan ### -->
-     * cyan
-     *
-     * - `clr.cyan`
-     *
-     * Alias for chalk.cyanBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const cyan: ChalkFn;
-    /**<!-- DOCS: clr.green ### -->
-     * green
-     *
-     * - `clr.green`
-     *
-     * Alias for chalk.greenBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const green: ChalkFn;
-    /**<!-- DOCS: clr.magenta ### -->
-     * magenta
-     *
-     * - `clr.magenta`
-     *
-     * Alias for chalk.magentaBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const magenta: ChalkFn;
-    /**<!-- DOCS: clr.red ### -->
-     * red
-     *
-     * - `clr.red`
-     *
-     * Alias for chalk.redBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const red: ChalkFn;
-    /**<!-- DOCS: clr.yellow ### -->
-     * yellow
-     *
-     * - `clr.yellow`
-     *
-     * Alias for chalk.yellowBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const yellow: ChalkFn;
-    /**<!-- DOCS: clr.t1 ### -->
-     * t1
-     *
-     * - `clr.t1`
-     *
-     * Theme 1
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t1: ChalkFn;
-    /**<!-- DOCS: clr.t2 ### -->
-     * t2
-     *
-     * - `clr.t2`
-     *
-     * Theme 2
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t2: ChalkFn;
-    /**<!-- DOCS: clr.t3 ### -->
-     * t3
-     *
-     * - `clr.t3`
-     *
-     * Theme 3
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t3: ChalkFn;
-    /**<!-- DOCS: clr.t4 ### -->
-     * t4
-     *
-     * - `clr.t4`
-     *
-     * Theme 4
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t4: ChalkFn;
-    /**<!-- DOCS: clr.t5 ### -->
-     * t5
-     *
-     * - `clr.t5`
-     *
-     * Theme 5
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t5: ChalkFn;
-    /**<!-- DOCS: clr.t6 ### -->
-     * t6
-     *
-     * - `clr.t6`
-     *
-     * Theme 6
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const t6: ChalkFn;
-    /**<!-- DOCS: clr.gray0 ### -->
-     * gray0
-     *
-     * - `chlk.gray0`
-     * - `clr.gray0`
-     *
-     * Gray 0 (0-5). Equivalent to chalk.black
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray0: ChalkFn;
-    /**<!-- DOCS: clr.gray1 ### -->
-     * gray1
-     *
-     * - `chlk.gray1`
-     * - `clr.gray1`
-     *
-     * Gray 1 (0-5). Equivalent to chalk.gray.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray1: ChalkFn;
-    /**<!-- DOCS: clr.gray2 ### -->
-     * gray2
-     *
-     * - `chlk.gray2`
-     * - `clr.gray2`
-     *
-     * Gray 2 (0-5). Equivalent to chalk.white.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray2: ChalkFn;
-    /**<!-- DOCS: clr.gray3 ### -->
-     * gray3
-     *
-     * - `chlk.gray3`
-     * - `clr.gray3`
-     *
-     * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray3: ChalkFn;
-    /**<!-- DOCS: clr.gray4 ### -->
-     * gray4
-     *
-     * - `chlk.gray4`
-     * - `clr.gray4`
-     *
-     * Gray 4 (0-5). Equivalent to chalk.white
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray4: ChalkFn;
-    /**<!-- DOCS: clr.gray5 ### -->
-     * gray5
-     *
-     * - `chlk.gray5`
-     * - `clr.gray5`
-     *
-     * Gray 5 (0-5). Equivalent to chalk.whiteBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray5: ChalkFn;
+    const hl1: any;
+    const hl2: any;
+    const approve: any;
+    const create: any;
+    const update: any;
+    const remove: any;
+    const removeAll: any;
+    const blue: any;
+    const cyan: any;
+    const green: any;
+    const magenta: any;
+    const red: any;
+    const yellow: any;
+    const t1: any;
+    const t2: any;
+    const t3: any;
+    const t4: any;
+    const t5: any;
+    const t6: any;
+    const gray0: any;
+    const gray1: any;
+    const gray2: any;
+    const gray3: any;
+    const gray4: any;
+    const gray5: any;
 }
 declare type Colour = keyof typeof clr;
 
@@ -1181,7 +894,7 @@ declare namespace out {
          *
          * - `out.utils.stripAnsi`
          *
-         * Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+         * Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
          * @param {string} text
          * @returns {string}
          */
@@ -1612,7 +1325,7 @@ declare namespace table {
      * The configuration options for the table
      */
     type TableOptions = Partial$1<FullTableOptions>;
-    /**<!-- DOCS: table.TableCharLookup ### 351 -->
+    /**<!-- DOCS: table.TableCharLookup ### 451 -->
      * TableCharLookup
      *
      * The configuration for the table line characters
@@ -1702,7 +1415,7 @@ declare namespace table {
          * ```
          * @param {Object[]} objects
          * @param {Object} [headers={}]
-         * @returns {{ header: any[][]; body: any[][] }}
+         * @returns {{ header: any[][]; body: any[][]; }}
          */
         const objectsToTable: (objects: Object[], headers?: Object) => {
             header: any[][];
@@ -2422,7 +2135,7 @@ declare namespace ask {
          * @param {T[]} items
          * @param {string[]} [titles=[]]
          * @param {TitleFn<T>} [titleFn]
-         * @returns {{ title: string; value: T }[]}
+         * @returns {{ title: string; value: T; }[]}
          */
         export const itemsToPromptObjects: <T = string>(items: T[], titles?: string[], titleFn?: TitleFn<T>) => {
             title: string;
@@ -2446,134 +2159,2309 @@ declare namespace ask {
     };
 }
 
-/**<!-- DOCS: chlk.chlk ##! -->
- * chlk
- *
- * A collection of colours and styles for use in the console.
- */
 declare namespace chlk {
-    /**<!-- DOCS: chlk.gray0 ### -->
-     * gray0
-     *
-     * - `chlk.gray0`
-     * - `clr.gray0`
-     *
-     * Gray 0 (0-5). Equivalent to chalk.black
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
+    const gray0: any;
+    const gray1: any;
+    const gray2: any;
+    const gray3: any;
+    const gray4: any;
+    const gray5: any;
+    const grays: any[];
+    const gray: (num: number) => any;
+    const clear: (str: string) => string;
+    const not: (style: Function) => (item: string) => string;
+    const notUnderlined: (item: string) => string;
+}
+
+/**<!-- DOCS: colr ##! -->
+ * colr
+ *
+ * - `colr`
+ *
+ * Tool for creating coloured/styled strings
+ *
+ * Chain/combine different combinations of colours and styles to get the appearance you want.
+ *
+ * | Name      | Type       | Modifier |                    | Description                                  |
+ * |-----------|------------|----------|--------------------|----------------------------------------------|
+ * | `light`   | Text       | Light    | `colr.light()`   | Use light text colours (on by default)       |
+ * | `dark`    | Text       | Dark     | `colr.dark()`    | Use dark text colours                        |
+ * | `lightBg` | Background | Light    | `colr.lightBg()` | Use light background colours (on by default) |
+ * | `darkBg`  | Background | Dark     | `colr.darkBg()`  | Use dark background colours                  |
+
+ * | Name             | Affects    | Colour     | Type                    | Recommended                | Alt                     |
+ * |------------------|------------|------------|-------------------------|----------------------------|-------------------------|
+ * | `red`            | Text       | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.red()`               |                         |
+ * | `darkRed`        | Text       | 🟥 Red     | Dark                    | `colr.dark.red()`          | `colr.darkRed()`        |
+ * | `lightRed`       | Text       | 🟥 Red     | Light                   | `colr.light.red()`         | `colr.lightRed()`       |
+ * | `green`          | Text       | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.green()`             |                         |
+ * | `darkGreen`      | Text       | 🟩 Green   | Dark                    | `colr.dark.green()`        | `colr.darkGreen()`      |
+ * | `lightGreen`     | Text       | 🟩 Green   | Light                   | `colr.light.green()`       | `colr.lightGreen()`     |
+ * | `yellow`         | Text       | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellow()`            |                         |
+ * | `darkYellow`     | Text       | 🟨 Yellow  | Dark                    | `colr.dark.yellow()`       | `colr.darkYellow()`     |
+ * | `lightYellow`    | Text       | 🟨 Yellow  | Light                   | `colr.light.yellow()`      | `colr.lightYellow()`    |
+ * | `blue`           | Text       | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blue()`              |                         |
+ * | `darkBlue`       | Text       | 🟦 Blue    | Dark                    | `colr.dark.blue()`         | `colr.darkBlue()`       |
+ * | `lightBlue`      | Text       | 🟦 Blue    | Light                   | `colr.light.blue()`        | `colr.lightBlue()`      |
+ * | `magenta`        | Text       | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magenta()`           |                         |
+ * | `darkMagenta`    | Text       | 🟪 Magenta | Dark                    | `colr.dark.magenta()`      | `colr.darkMagenta()`    |
+ * | `lightMagenta`   | Text       | 🟪 Magenta | Light                   | `colr.light.magenta()`     | `colr.lightMagenta()`   |
+ * | `cyan`           | Text       | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyan()`              |                         |
+ * | `darkCyan`       | Text       | 💠 Cyan    | Dark                    | `colr.dark.cyan()`         | `colr.darkCyan()`       |
+ * | `lightCyan`      | Text       | 💠 Cyan    | Light                   | `colr.light.cyan()`        | `colr.lightCyan()`      |
+ * | `white`          | Text       | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.white()`             |                         |
+ * | `darkWhite`      | Text       | ⬜ White   | Dark                    | `colr.dark.white()`        | `colr.darkWhite()`      |
+ * | `lightWhite`     | Text       | ⬜ White   | Light                   | `colr.light.white()`       | `colr.lightWhite()`     |
+ * | `redBg`          | Background | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.redBg()`             |                         |
+ * | `darkRedBg`      | Background | 🟥 Red     | Dark                    | `colr.darkBg.redBg()`      | `colr.darkRedBg()`      |
+ * | `lightRedBg`     | Background | 🟥 Red     | Light                   | `colr.lightBg.redBg()`     | `colr.lightRedBg()`     |
+ * | `greenBg`        | Background | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.greenBg()`           |                         |
+ * | `darkGreenBg`    | Background | 🟩 Green   | Dark                    | `colr.darkBg.greenBg()`    | `colr.darkGreenBg()`    |
+ * | `lightGreenBg`   | Background | 🟩 Green   | Light                   | `colr.lightBg.greenBg()`   | `colr.lightGreenBg()`   |
+ * | `yellowBg`       | Background | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellowBg()`          |                         |
+ * | `darkYellowBg`   | Background | 🟨 Yellow  | Dark                    | `colr.darkBg.yellowBg()`   | `colr.darkYellowBg()`   |
+ * | `lightYellowBg`  | Background | 🟨 Yellow  | Light                   | `colr.lightBg.yellowBg()`  | `colr.lightYellowBg()`  |
+ * | `blueBg`         | Background | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blueBg()`            |                         |
+ * | `darkBlueBg`     | Background | 🟦 Blue    | Dark                    | `colr.darkBg.blueBg()`     | `colr.darkBlueBg()`     |
+ * | `lightBlueBg`    | Background | 🟦 Blue    | Light                   | `colr.lightBg.blueBg()`    | `colr.lightBlueBg()`    |
+ * | `magentaBg`      | Background | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magentaBg()`         |                         |
+ * | `darkMagentaBg`  | Background | 🟪 Magenta | Dark                    | `colr.darkBg.magentaBg()`  | `colr.darkMagentaBg()`  |
+ * | `lightMagentaBg` | Background | 🟪 Magenta | Light                   | `colr.lightBg.magentaBg()` | `colr.lightMagentaBg()` |
+ * | `cyanBg`         | Background | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyanBg()`            |                         |
+ * | `darkCyanBg`     | Background | 💠 Cyan    | Dark                    | `colr.darkBg.cyanBg()`     | `colr.darkCyanBg()`     |
+ * | `lightCyanBg`    | Background | 💠 Cyan    | Light                   | `colr.lightBg.cyanBg()`    | `colr.lightCyanBg()`    |
+ * | `whiteBg`        | Background | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.whiteBg()`           |                         |
+ * | `darkWhiteBg`    | Background | ⬜ White   | Dark                    | `colr.darkBg.whiteBg()`    | `colr.darkWhiteBg()`    |
+ * | `lightWhiteBg`   | Background | ⬜ White   | Light                   | `colr.lightBg.whiteBg()`   | `colr.lightWhiteBg()`   |
+ * | `black`          | Text       | ⬛ Black   | __Always Dark__         | `colr.black()`             |                         |
+ * | `darkBlack`      | Text       | ⬛ Black   | Dark                    | `colr.black()`             | `colr.darkBlack()`      |
+ * | `lightBlack`     | Text       | ⬛ Black   | Light                   | `colr.light.black()`       | `colr.lightBlack()`     |
+ * | `blackBg`        | Background | ⬛ Black   | __Always Dark__         | `colr.blackBg()`           |                         |
+ * | `darkBlackBg`    | Background | ⬛ Black   | Dark                    | `colr.blackBg()`           | `colr.darkBlackBg()`    |
+ * | `lightBlackBg`   | Background | ⬛ Black   | Light                   | `colr.lightBg.blackBg()`   | `colr.lightBlackBg()`   |
+ * | `grey`           | Text       | 🩶 Grey    | Greys                   | `colr.grey()`              |                         |
+ * | `greyBg`         | Background | 🩶 Grey    | Greys                   | `colr.greyBg()`            |                         |
+ * | `grey0`          | Text       | ⬛ Black   | Greys                   | `colr.grey0()`             |                         |
+ * | `grey1`          | Text       | 🩶 Grey    | Greys                   | `colr.grey1()`             |                         |
+ * | `grey2`          | Text       | 🩶 Grey    | Greys                   | `colr.grey2()`             |                         |
+ * | `grey3`          | Text       | 🩶 Grey    | Greys                   | `colr.grey3()`             |                         |
+ * | `grey4`          | Text       | 🩶 Grey    | Greys                   | `colr.grey4()`             |                         |
+ * | `grey5`          | Text       | ⬜ White   | Greys                   | `colr.grey5()`             |
+ * | `primary`        | Text       | 🟪 Magenta | Theme                   | `colr.primary()`           |                         |
+ * | `secondary`      | Text       | 🟨 Yellow  | Theme                   | `colr.secondary()`         |                         |
+ * | `success`        | Text       | 🟩 Green   | Theme                   | `colr.success()`           |                         |
+ * | `danger`         | Text       | 🟥 Red     | Theme                   | `colr.danger()`            |                         |
+ * | `warning`        | Text       | 🟨 Yellow  | Theme                   | `colr.warning()`           |                         |
+ * | `info`           | Text       | 🟦 Blue    | Theme                   | `colr.info()`              |                         |
+ * | `primaryBg`      | Background | 🟪 Magenta | Theme                   | `colr.primaryBg()`         |                         |
+ * | `secondaryBg`    | Background | 🟨 Yellow  | Theme                   | `colr.secondaryBg()`       |                         |
+ * | `successBg`      | Background | 🟩 Green   | Theme                   | `colr.successBg()`         |                         |
+ * | `dangerBg`       | Background | 🟥 Red     | Theme                   | `colr.dangerBg()`          |                         |
+ * | `warningBg`      | Background | 🟨 Yellow  | Theme                   | `colr.warningBg()`         |                         |
+ * | `infoBg`         | Background | 🟦 Blue    | Theme                   | `colr.infoBg()`            |                         |
+ *
+ * | Name            |                          | Description                                                      |
+ * |-----------------|--------------------------|------------------------------------------------------------------|
+ * | `reset`         | `colr.reset('')`         | This returns the text back to normal colours/styles              |
+ * | `bold`          | `colr.bold('')`          | This makes the text __bold__                                     |
+ * | `dim`           | `colr.dim('')`           | This dims the brightness of the text colour                      |
+ * | `italic`        | `colr.italic('')`        | This makes the text _italic_                                     |
+ * | `overline`      | `colr.overline('')`      | This adds a horizontal line above the text                       |
+ * | `underline`     | `colr.underline('')`     | This adds a horizontal line below the text                       |
+ * | `strikethrough` | `colr.strikethrough('')` | This add a horizontal line through the middle of the given text  |
+ * | `inverse`       | `colr.inverse('')`       | This inverses the text and background colours for the given text |
+ * | `hidden`        | `colr.hidden('')`        | This makes the text invisible.                                   |
+ *
+ * ```typescript
+ * colr.yellow('Hello World!'); // 'Hello World!' with yellow text
+ * colr.dark.yellow('Hello World!'); // 'Hello World!' with dark yellow text
+ * colr.yellow.dim('Hello World!'); // 'Hello World!' with dimmed yellow text
+ * colr.dark.yellow.dim('Hello World!'); // 'Hello World!' with dimmed dark yellow text
+ *
+ * colr.yellow.blueBg('Hello World!'); // 'Hello World!' with yellow text and blue background
+ * colr.yellow.darkBg.blueBg('Hello World!'); // 'Hello World!' with yellow text and dark blue background
+ *
+ * // pass in multiple arguments to get them all coloured/styled
+ * colr.red('Hello', 'World!'); // 'Hello World!' with red text
+ *
+ * // nested styles
+ * colr.red(`A ${colr.blue('blue')} world`); // 'A blue world' with with red text, except 'blue' which is blue
+ *
+ * // template literals
+ * colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+ *
+ * // Debugging
+ * colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A (RED>)red(<)(YLW>) world{<}(<)'
+ * ```
+ */
+declare const colr: ColrFn;
+/**<!-- DOCS: colr.WrapFn ### 302 -->
+ * WrapFn
+ *
+ * Type for a function that manipulates a string
+ *
+ * Can by a cplr `ColrFn`, a `chalk` function, or something else
+ */
+declare type WrapFn = (...text: string[]) => string;
+/**<!-- DOCS: colr.ColrFn ### 303 -->
+ * ColrFn
+ *
+ * Type for a function that manipulates a string, but also has properties for chaining more colours/styles
+ *
+ * See `colr`
+ */
+interface ColrFn extends WrapFn {
+    /**<!-- DOCS: colr.optionHeader ### -->
+     * Option Modifiers
      */
-    const gray0: ChalkFn;
-    /**<!-- DOCS: chlk.gray1 ### -->
-     * gray1
+    /**<!-- DOCS: colr.light #### -->
+     * light
      *
-     * - `chlk.gray1`
-     * - `clr.gray1`
+     * - `colr.light`
      *
-     * Gray 1 (0-5). Equivalent to chalk.gray.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray1: ChalkFn;
-    /**<!-- DOCS: chlk.gray2 ### -->
-     * gray2
+     * Modifies base (`red`, `blue`, `green`, etc) text colours to use the __light__ version of the colour.
      *
-     * - `chlk.gray2`
-     * - `clr.gray2`
+     * `light` is __on__ by default.
      *
-     * Gray 2 (0-5). Equivalent to chalk.white.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray2: ChalkFn;
-    /**<!-- DOCS: chlk.gray3 ### -->
-     * gray3
-     *
-     * - `chlk.gray3`
-     * - `clr.gray3`
-     *
-     * Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray3: ChalkFn;
-    /**<!-- DOCS: chlk.gray4 ### -->
-     * gray4
-     *
-     * - `chlk.gray4`
-     * - `clr.gray4`
-     *
-     * Gray 4 (0-5). Equivalent to chalk.white
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray4: ChalkFn;
-    /**<!-- DOCS: chlk.gray5 ### -->
-     * gray5
-     *
-     * - `chlk.gray5`
-     * - `clr.gray5`
-     *
-     * Gray 5 (0-5). Equivalent to chalk.whiteBright
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const gray5: ChalkFn;
-    /**<!-- DOCS: chlk.grays ### -->
-     * grays
-     *
-     * - `chlk.grays`
-     *
-     * Grays between 0 and 5.
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
      * ```typescript
-     * grays[2]; // gray2
+     * colr.light.red('Hello World!'); // 'Hello World!' with light red text
+     * colr.red.light('Hello World!'); // 'Hello World!' with light red text
      * ```
-     * @param {...string} args Strings to be styled
-     * @returns {string} Styled string
-     */
-    const grays: ChalkFn[];
-    /**<!-- DOCS: chlk.gray ### @ -->
-     * gray
      *
-     * - `chlk.gray`
-     *
-     * Grays between 0 and 5.
-     *
-     * ```typescript
-     * gray(2); // gray2
-     * ```
-     * @param {number} num
-     * @returns {any}
-     */
-    const gray: (num: number) => ChalkFn;
-    /**<!-- DOCS: chlk.clear ### @ -->
-     * clear
-     *
-     * - `chlk.clear`
-     *
-     * Removes ANSI colours. Not same as chalk.reset
-     * @param {string} str
+     * @param {...string} text
      * @returns {string}
      */
-    const clear: (str: string) => string;
-    /**<!-- DOCS: chlk.not ### @ -->
-     * not
+    readonly light: ColrFn;
+    /**<!-- DOCS: colr.dark #### -->
+     * dark
      *
-     * - `chlk.not`
+     * - `colr.dark`
      *
-     * Stops and restarts a style around a given string
-     * @param {Function} style
-     * @returns {(item: string) => string}
+     * Modifies base (`red`, `blue`, `green`, etc) text colours to use the __dark__ version of the colour.
+     *
+     * `dark` is __off__ by default (defaults to `light`).
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.dark.red('Hello World!'); // 'Hello World!' with dark red text
+     * colr.red.dark('Hello World!'); // 'Hello World!' with dark red text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
      */
-    const not: (style: Function) => (item: string) => string;
-    /**<!-- DOCS: chlk.notUnderlined ### -->
-     * notUnderlined
+    readonly dark: ColrFn;
+    /**<!-- DOCS: colr.lightBg #### -->
+     * lightBg
      *
-     * - `chlk.notUnderlined`
+     * - `colr.lightBg`
      *
-     * Dont underline a section of text
+     * Modifies base (`redBg`, `blueBg`, `greenBg`, etc) background colours to use the __light__ version of the colour.
+     *
+     * `lightBg` is __on__ by default.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a light red background
+     * colr.redBg.lightBg('Hello World!'); // 'Hello World!' with a light red background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
      */
-    const notUnderlined: (item: string) => string;
+    readonly lightBg: ColrFn;
+    /**<!-- DOCS: colr.darkBg #### -->
+     * darkBg
+     *
+     * - `colr.darkBg`
+     *
+     * Modifies base (`redBg`, `blueBg`, `greenBg`, etc) background colours to use the __dark__ version of the colour.
+     *
+     * `darkBg` is __off__ by default (defaults to `lightBg`).
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a dark red background
+     * colr.redBg.darkBg('Hello World!'); // 'Hello World!' with a dark red background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkBg: ColrFn;
+    /**<!-- DOCS: colr.textColourHeader ### -->
+     * Text Colours
+     */
+    /**<!-- DOCS: colr.red #### -->
+     * red
+     *
+     * - `colr.red`
+     *
+     * Makes the given text __red__.
+     *
+     * Uses `lightRed` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkRed` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.red('Hello World!'); // 'Hello World!' with __light__ red text
+     * colr.light.red('Hello World!'); // 'Hello World!' with __light__ red text
+     * colr.dark.red('Hello World!'); // 'Hello World!' with __dark__ red text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly red: ColrFn;
+    /**<!-- DOCS: colr.darkRed ##### -->
+     * darkRed
+     *
+     * - `colr.darkRed`
+     * - `colr.dark.red`
+     *
+     * Makes the given text __dark red__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.red`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkRed: ColrFn;
+    /**<!-- DOCS: colr.lightRed ##### -->
+     * lightRed
+     *
+     * - `colr.lightRed`
+     * - `colr.light.red`
+     * - `colr.red`
+     *
+     * Makes the given text __light red__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.red`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightRed: ColrFn;
+    /**<!-- DOCS: colr.green #### -->
+     * green
+     *
+     * - `colr.green`
+     *
+     * Makes the given text __green__.
+     *
+     * Uses `lightGreen` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkGreen` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.green('Hello World!'); // 'Hello World!' with __light__ green text
+     * colr.light.green('Hello World!'); // 'Hello World!' with __light__ green text
+     * colr.dark.green('Hello World!'); // 'Hello World!' with __dark__ green text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly green: ColrFn;
+    /**<!-- DOCS: colr.darkGreen ##### -->
+     * darkGreen
+     *
+     * - `colr.darkGreen`
+     * - `colr.dark.green`
+     *
+     * Makes the given text __dark green__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.green`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkGreen: ColrFn;
+    /**<!-- DOCS: colr.lightGreen ##### -->
+     * lightGreen
+     *
+     * - `colr.lightGreen`
+     * - `colr.light.green`
+     * - `colr.green`
+     *
+     * Makes the given text __light green__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.green`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightGreen: ColrFn;
+    /**<!-- DOCS: colr.yellow #### -->
+     * yellow
+     *
+     * - `colr.yellow`
+     *
+     * Makes the given text __yellow__.
+     *
+     * Uses `lightYellow` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkYellow` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.yellow('Hello World!'); // 'Hello World!' with __light__ yellow text
+     * colr.light.yellow('Hello World!'); // 'Hello World!' with __light__ yellow text
+     * colr.dark.yellow('Hello World!'); // 'Hello World!' with __dark__ yellow text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly yellow: ColrFn;
+    /**<!-- DOCS: colr.darkYellow ##### -->
+     * darkYellow
+     *
+     * - `colr.darkYellow`
+     * - `colr.dark.yellow`
+     *
+     * Makes the given text __dark yellow__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.yellow`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkYellow: ColrFn;
+    /**<!-- DOCS: colr.lightYellow ##### -->
+     * lightYellow
+     *
+     * - `colr.lightYellow`
+     * - `colr.light.yellow`
+     * - `colr.yellow`
+     *
+     * Makes the given text __light yellow__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.yellow`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightYellow: ColrFn;
+    /**<!-- DOCS: colr.blue #### -->
+     * blue
+     *
+     * - `colr.blue`
+     *
+     * Makes the given text __blue__.
+     *
+     * Uses `lightBlue` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkBlue` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.blue('Hello World!'); // 'Hello World!' with __light__ blue text
+     * colr.light.blue('Hello World!'); // 'Hello World!' with __light__ blue text
+     * colr.dark.blue('Hello World!'); // 'Hello World!' with __dark__ blue text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly blue: ColrFn;
+    /**<!-- DOCS: colr.darkBlue ##### -->
+     * darkBlue
+     *
+     * - `colr.darkBlue`
+     * - `colr.dark.blue`
+     *
+     * Makes the given text __dark blue__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.blue`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkBlue: ColrFn;
+    /**<!-- DOCS: colr.lightBlue ##### -->
+     * lightBlue
+     *
+     * - `colr.lightBlue`
+     * - `colr.light.blue`
+     * - `colr.blue`
+     *
+     * Makes the given text __light blue__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.blue`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightBlue: ColrFn;
+    /**<!-- DOCS: colr.magenta #### -->
+     * magenta
+     *
+     * - `colr.magenta`
+     *
+     * Makes the given text __magenta__.
+     *
+     * Uses `lightMagenta` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkMagenta` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.magenta('Hello World!'); // 'Hello World!' with __light__ magenta text
+     * colr.light.magenta('Hello World!'); // 'Hello World!' with __light__ magenta text
+     * colr.dark.magenta('Hello World!'); // 'Hello World!' with __dark__ magenta text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly magenta: ColrFn;
+    /**<!-- DOCS: colr.darkMagenta ##### -->
+     * darkMagenta
+     *
+     * - `colr.darkMagenta`
+     * - `colr.dark.magenta`
+     *
+     * Makes the given text __dark magenta__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.magenta`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkMagenta: ColrFn;
+    /**<!-- DOCS: colr.lightMagenta ##### -->
+     * lightMagenta
+     *
+     * - `colr.lightMagenta`
+     * - `colr.light.magenta`
+     * - `colr.magenta`
+     *
+     * Makes the given text __light magenta__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.magenta`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightMagenta: ColrFn;
+    /**<!-- DOCS: colr.cyan #### -->
+     * cyan
+     *
+     * - `colr.cyan`
+     *
+     * Makes the given text __cyan__.
+     *
+     * Uses `lightCyan` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkCyan` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.cyan('Hello World!'); // 'Hello World!' with __light__ cyan text
+     * colr.light.cyan('Hello World!'); // 'Hello World!' with __light__ cyan text
+     * colr.dark.cyan('Hello World!'); // 'Hello World!' with __dark__ cyan text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly cyan: ColrFn;
+    /**<!-- DOCS: colr.darkCyan ##### -->
+     * darkCyan
+     *
+     * - `colr.darkCyan`
+     * - `colr.dark.cyan`
+     *
+     * Makes the given text __dark cyan__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.cyan`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkCyan: ColrFn;
+    /**<!-- DOCS: colr.lightCyan ##### -->
+     * lightCyan
+     *
+     * - `colr.lightCyan`
+     * - `colr.light.cyan`
+     * - `colr.cyan`
+     *
+     * Makes the given text __light cyan__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.cyan`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightCyan: ColrFn;
+    /**<!-- DOCS: colr.white #### -->
+     * white
+     *
+     * - `colr.white`
+     *
+     * Makes the given text __white__.
+     *
+     * Uses `lightWhite` _by default_, or if `light` modifier is used in the chain.
+     * Uses `darkWhite` if `dark` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.white('Hello World!'); // 'Hello World!' with __light__ white text
+     * colr.light.white('Hello World!'); // 'Hello World!' with __light__ white text
+     * colr.dark.white('Hello World!'); // 'Hello World!' with __dark__ white text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly white: ColrFn;
+    /**<!-- DOCS: colr.darkWhite ##### -->
+     * darkWhite
+     *
+     * - `colr.darkWhite`
+     * - `colr.dark.white`
+     *
+     * Makes the given text __dark white__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Prefer `dark.white`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkWhite: ColrFn;
+    /**<!-- DOCS: colr.lightWhite ##### -->
+     * lightWhite
+     *
+     * - `colr.lightWhite`
+     * - `colr.light.white`
+     * - `colr.white`
+     *
+     * Makes the given text __light white__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * Prefer `light.white`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightWhite: ColrFn;
+    /**<!-- DOCS: colr.backgroundColourHeader ### -->
+     * Background Colours
+     */
+    /**<!-- DOCS: colr.redBg #### -->
+     * redBg
+     *
+     * - `colr.redBg`
+     *
+     * Makes the __background__ of the given text __red__.
+     *
+     * Uses `lightRedBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkRedBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.redBg('Hello World!'); // 'Hello World!' with a __light__ red background
+     * colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a __light__ red background
+     * colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a __dark__ red background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly redBg: ColrFn;
+    /**<!-- DOCS: colr.darkRedBg ##### -->
+     * darkRedBg
+     *
+     * - `colr.darkRedBg`
+     * - `colr.darkBg.redBg`
+     * - `colr.redBg`
+     *
+     * Makes the __background__ of the given text __dark red__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.redBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkRedBg: ColrFn;
+    /**<!-- DOCS: colr.lightRedBg ##### -->
+     * lightRedBg
+     *
+     * - `colr.lightBg.redBg`
+     * - `colr.lightRedBg`
+     *
+     * Makes the __background__ of the given text __light red__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.redBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightRedBg: ColrFn;
+    /**<!-- DOCS: colr.greenBg #### -->
+     * greenBg
+     *
+     * - `colr.greenBg`
+     *
+     * Makes the __background__ of the given text __green__.
+     *
+     * Uses `lightGreenBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkGreenBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.greenBg('Hello World!'); // 'Hello World!' with a __light__ green background
+     * colr.lightBg.greenBg('Hello World!'); // 'Hello World!' with a __light__ green background
+     * colr.darkBg.greenBg('Hello World!'); // 'Hello World!' with a __dark__ green background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly greenBg: ColrFn;
+    /**<!-- DOCS: colr.darkGreenBg ##### -->
+     * darkGreenBg
+     *
+     * - `colr.darkGreenBg`
+     * - `colr.darkBg.greenBg`
+     * - `colr.greenBg`
+     *
+     * Makes the __background__ of the given text __dark green__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.greenBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkGreenBg: ColrFn;
+    /**<!-- DOCS: colr.lightGreenBg ##### -->
+     * lightGreenBg
+     *
+     * - `colr.lightBg.greenBg`
+     * - `colr.lightGreenBg`
+     *
+     * Makes the __background__ of the given text __light green__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.greenBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightGreenBg: ColrFn;
+    /**<!-- DOCS: colr.yellowBg #### -->
+     * yellowBg
+     *
+     * - `colr.yellowBg`
+     *
+     * Makes the __background__ of the given text __yellow__.
+     *
+     * Uses `lightYellowBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkYellowBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.yellowBg('Hello World!'); // 'Hello World!' with a __light__ yellow background
+     * colr.lightBg.yellowBg('Hello World!'); // 'Hello World!' with a __light__ yellow background
+     * colr.darkBg.yellowBg('Hello World!'); // 'Hello World!' with a __dark__ yellow background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly yellowBg: ColrFn;
+    /**<!-- DOCS: colr.darkYellowBg ##### -->
+     * darkYellowBg
+     *
+     * - `colr.darkYellowBg`
+     * - `colr.darkBg.yellowBg`
+     * - `colr.yellowBg`
+     *
+     * Makes the __background__ of the given text __dark yellow__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.yellowBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkYellowBg: ColrFn;
+    /**<!-- DOCS: colr.lightYellowBg ##### -->
+     * lightYellowBg
+     *
+     * - `colr.lightBg.yellowBg`
+     * - `colr.lightYellowBg`
+     *
+     * Makes the __background__ of the given text __light yellow__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.yellowBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightYellowBg: ColrFn;
+    /**<!-- DOCS: colr.blueBg #### -->
+     * blueBg
+     *
+     * - `colr.blueBg`
+     *
+     * Makes the __background__ of the given text __blue__.
+     *
+     * Uses `lightBlueBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkBlueBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.blueBg('Hello World!'); // 'Hello World!' with a __light__ blue background
+     * colr.lightBg.blueBg('Hello World!'); // 'Hello World!' with a __light__ blue background
+     * colr.darkBg.blueBg('Hello World!'); // 'Hello World!' with a __dark__ blue background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly blueBg: ColrFn;
+    /**<!-- DOCS: colr.darkBlueBg ##### -->
+     * darkBlueBg
+     *
+     * - `colr.darkBlueBg`
+     * - `colr.darkBg.blueBg`
+     * - `colr.blueBg`
+     *
+     * Makes the __background__ of the given text __dark blue__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.blueBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkBlueBg: ColrFn;
+    /**<!-- DOCS: colr.lightBlueBg ##### -->
+     * lightBlueBg
+     *
+     * - `colr.lightBg.blueBg`
+     * - `colr.lightBlueBg`
+     *
+     * Makes the __background__ of the given text __light blue__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.blueBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightBlueBg: ColrFn;
+    /**<!-- DOCS: colr.magentaBg #### -->
+     * magentaBg
+     *
+     * - `colr.magentaBg`
+     *
+     * Makes the __background__ of the given text __magenta__.
+     *
+     * Uses `lightMagentaBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkMagentaBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.magentaBg('Hello World!'); // 'Hello World!' with a __light__ magenta background
+     * colr.lightBg.magentaBg('Hello World!'); // 'Hello World!' with a __light__ magenta background
+     * colr.darkBg.magentaBg('Hello World!'); // 'Hello World!' with a __dark__ magenta background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly magentaBg: ColrFn;
+    /**<!-- DOCS: colr.darkMagentaBg ##### -->
+     * darkMagentaBg
+     *
+     * - `colr.darkMagentaBg`
+     * - `colr.darkBg.magentaBg`
+     * - `colr.magentaBg`
+     *
+     * Makes the __background__ of the given text __dark magenta__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.magentaBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkMagentaBg: ColrFn;
+    /**<!-- DOCS: colr.lightMagentaBg ##### -->
+     * lightMagentaBg
+     *
+     * - `colr.lightBg.magentaBg`
+     * - `colr.lightMagentaBg`
+     *
+     * Makes the __background__ of the given text __light magenta__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.magentaBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightMagentaBg: ColrFn;
+    /**<!-- DOCS: colr.cyanBg #### -->
+     * cyanBg
+     *
+     * - `colr.cyanBg`
+     *
+     * Makes the __background__ of the given text __cyan__.
+     *
+     * Uses `lightCyanBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkCyanBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.cyanBg('Hello World!'); // 'Hello World!' with a __light__ cyan background
+     * colr.lightBg.cyanBg('Hello World!'); // 'Hello World!' with a __light__ cyan background
+     * colr.darkBg.cyanBg('Hello World!'); // 'Hello World!' with a __dark__ cyan background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly cyanBg: ColrFn;
+    /**<!-- DOCS: colr.darkCyanBg ##### -->
+     * darkCyanBg
+     *
+     * - `colr.darkCyanBg`
+     * - `colr.darkBg.cyanBg`
+     * - `colr.cyanBg`
+     *
+     * Makes the __background__ of the given text __dark cyan__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.cyanBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkCyanBg: ColrFn;
+    /**<!-- DOCS: colr.lightCyanBg ##### -->
+     * lightCyanBg
+     *
+     * - `colr.lightBg.cyanBg`
+     * - `colr.lightCyanBg`
+     *
+     * Makes the __background__ of the given text __light cyan__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.cyanBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightCyanBg: ColrFn;
+    /**<!-- DOCS: colr.whiteBg #### -->
+     * whiteBg
+     *
+     * - `colr.whiteBg`
+     *
+     * Makes the __background__ of the given text __white__.
+     *
+     * Uses `lightWhiteBg` _by default_, or if `lightBg` modifier is used in the chain.
+     * Uses `darkWhiteBg` if `darkBg` modifier is used in the chain.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.whiteBg('Hello World!'); // 'Hello World!' with a __light__ white background
+     * colr.lightBg.whiteBg('Hello World!'); // 'Hello World!' with a __light__ white background
+     * colr.darkBg.whiteBg('Hello World!'); // 'Hello World!' with a __dark__ white background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly whiteBg: ColrFn;
+    /**<!-- DOCS: colr.darkWhiteBg ##### -->
+     * darkWhiteBg
+     *
+     * - `colr.darkWhiteBg`
+     * - `colr.darkBg.whiteBg`
+     * - `colr.whiteBg`
+     *
+     * Makes the __background__ of the given text __dark white__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Prefer `darkBg.whiteBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkWhiteBg: ColrFn;
+    /**<!-- DOCS: colr.lightWhiteBg ##### -->
+     * lightWhiteBg
+     *
+     * - `colr.lightBg.whiteBg`
+     * - `colr.lightWhiteBg`
+     *
+     * Makes the __background__ of the given text __light white__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * Prefer `lightBg.whiteBg`
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightWhiteBg: ColrFn;
+    /**<!-- DOCS: colr.blacksHeader ### -->
+     * Black Colours
+     */
+    /**<!-- DOCS: colr.black #### -->
+     * black
+     *
+     * - `colr.black`
+     * - `colr.darkBlack`
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * Makes the given text __dark black__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.black('Hello World!'); // 'Hello World!' with __dark__ black text
+     * colr.light.black('Hello World!'); // 'Hello World!' with __dark__ black text
+     * colr.dark.black('Hello World!'); // 'Hello World!' with __dark__ black text
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly black: ColrFn;
+    /**<!-- DOCS: colr.darkBlack ##### -->
+     * darkBlack
+     *
+     * - `colr.black`
+     * - `colr.darkBlack`
+     *
+     * Makes the given text __dark black__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be dark__.
+     *
+     * Same as `black`.
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkBlack: ColrFn;
+    /**<!-- DOCS: colr.lightBlack ##### -->
+     * lightBlack
+     *
+     * - `colr.lightBlack`
+     *
+     * Makes the given text __light black__.
+     *
+     * Unaffected by `light`/`dark` modifiers and __will always be light__.
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightBlack: ColrFn;
+    /**<!-- DOCS: colr.blackBg #### -->
+     * blackBg
+     *
+     * - `colr.blackBg`
+     * - `colr.darkBlackBg`
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * Makes the __background__ of the given text __dark black__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * ```typescript
+     * colr.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+     * colr.lightBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+     * colr.darkBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+     * ```
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly blackBg: ColrFn;
+    /**<!-- DOCS: colr.darkBlackBg ##### -->
+     * darkBlackBg
+     *
+     * - `colr.blackBg`
+     * - `colr.darkBlackBg`
+     *
+     * Makes the __background__ of the given text __dark black__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+     *
+     * Same as `blackBg`.
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly darkBlackBg: ColrFn;
+    /**<!-- DOCS: colr.lightBlackBg ##### -->
+     * lightBlackBg
+     *
+     * - `colr.lightBlackBg`
+     *
+     * Makes the __background__ of the given text __light black__.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+     *
+     * > __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly lightBlackBg: ColrFn;
+    /**<!-- DOCS: colr.greysHeader ### -->
+     * Grey / Gray Colours
+     */
+    /**<!-- DOCS: colr.grey #### -->
+     * grey / gray
+     *
+     * - `colr.grey`
+     * - `colr.gray`
+     *
+     * Makes the given text __grey__.
+     *
+     * Equivalent to `colr.light.black`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey -->
+     * grey / gray
+     * 
+     * - `colr.grey`
+     * - `colr.gray`
+     * 
+     * Makes the given text __grey__.
+     * 
+     * Equivalent to `colr.light.black`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray: ColrFn;
+    /**<!-- DOCS: colr.greyBg #### -->
+     * greyBg / grayBg
+     *
+     * - `colr.greyBg`
+     * - `colr.grayBg`
+     *
+     * Makes the __background__ of the given text __grey__.
+     *
+     * Equivalent to `colr.lightBg.blackBg`.
+     *
+     * Unaffected by `lightBg`/`darkBg` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly greyBg: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.greyBg -->
+     * greyBg / grayBg
+     * 
+     * - `colr.greyBg`
+     * - `colr.grayBg`
+     * 
+     * Makes the __background__ of the given text __grey__.
+     * 
+     * Equivalent to `colr.lightBg.blackBg`.
+     * 
+     * Unaffected by `lightBg`/`darkBg` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grayBg: ColrFn;
+    /**<!-- DOCS: colr.grey0 #### -->
+     * grey0 / gray0
+     *
+     * - `colr.grey0`
+     * - `colr.gray0`
+     *
+     * Makes the given text __grey__. 0 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.black`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey0: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey0 -->
+     * grey0 / gray0
+     * 
+     * - `colr.grey0`
+     * - `colr.gray0`
+     * 
+     * Makes the given text __grey__. 0 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.black`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray0: ColrFn;
+    /**<!-- DOCS: colr.grey1 #### -->
+     * grey1 / gray1
+     *
+     * - `colr.grey1`
+     * - `colr.gray1`
+     *
+     * Makes the given text __grey__. 1 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.light.black.dim`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey1: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey1 -->
+     * grey1 / gray1
+     * 
+     * - `colr.grey1`
+     * - `colr.gray1`
+     * 
+     * Makes the given text __grey__. 1 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.light.black.dim`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray1: ColrFn;
+    /**<!-- DOCS: colr.grey2 #### -->
+     * grey2 / gray2
+     *
+     * - `colr.grey2`
+     * - `colr.gray2`
+     *
+     * Makes the given text __grey__. 2 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.dark.white.dim`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey2: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey2 -->
+     * grey2 / gray2
+     * 
+     * - `colr.grey2`
+     * - `colr.gray2`
+     * 
+     * Makes the given text __grey__. 2 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.dark.white.dim`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray2: ColrFn;
+    /**<!-- DOCS: colr.grey3 #### -->
+     * grey3 / gray3
+     *
+     * - `colr.grey3`
+     * - `colr.gray3`
+     *
+     * Makes the given text __grey__. 3 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.light.white.dim`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey3: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey3 -->
+     * grey3 / gray3
+     * 
+     * - `colr.grey3`
+     * - `colr.gray3`
+     * 
+     * Makes the given text __grey__. 3 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.light.white.dim`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray3: ColrFn;
+    /**<!-- DOCS: colr.grey4 #### -->
+     * grey4 / gray4
+     *
+     * - `colr.grey4`
+     * - `colr.gray4`
+     *
+     * Makes the given text __grey__. 4 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.dark.white`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey4: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey4 -->
+     * grey4 / gray4
+     * 
+     * - `colr.grey4`
+     * - `colr.gray4`
+     * 
+     * Makes the given text __grey__. 4 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.dark.white`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray4: ColrFn;
+    /**<!-- DOCS: colr.grey5 #### -->
+     * grey5 / gray5
+     *
+     * - `colr.grey5`
+     * - `colr.gray5`
+     *
+     * Makes the given text __grey__. 5 out of 5 _(where 0 is black and 5 is white)_.
+     *
+     * Equivalent to `colr.light.white`.
+     *
+     * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly grey5: ColrFn;
+    /**<!-- DOCS-ALIAS: colr.grey5 -->
+     * grey5 / gray5
+     * 
+     * - `colr.grey5`
+     * - `colr.gray5`
+     * 
+     * Makes the given text __grey__. 5 out of 5 _(where 0 is black and 5 is white)_.
+     * 
+     * Equivalent to `colr.light.white`.
+     * 
+     * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly gray5: ColrFn;
+    /**<!-- DOCS: colr.themesHeader ### -->
+     * Theme Colours
+     */
+    /**<!-- DOCS: colr.primary #### -->
+     * primary
+     *
+     * - `colr.primary`
+     *
+     * Makes the given text __'primary'__ (magenta) themed.
+     *
+     * Equivalent to `colr.light.magenta`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly primary: ColrFn;
+    /**<!-- DOCS: colr.secondary #### -->
+     * secondary
+     *
+     * - `colr.secondary`
+     *
+     * Makes the given text __'secondary'__ (light yellow) themed.
+     *
+     * Equivalent to `colr.light.yellow`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly secondary: ColrFn;
+    /**<!-- DOCS: colr.success #### -->
+     * success
+     *
+     * - `colr.success`
+     *
+     * Makes the given text __'success'__ (green) themed.
+     *
+     * Equivalent to `colr.light.green`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly success: ColrFn;
+    /**<!-- DOCS: colr.danger #### -->
+     * danger
+     *
+     * - `colr.danger`
+     *
+     * Makes the given text __'danger'__ (red) themed.
+     *
+     * Equivalent to `colr.dark.red`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly danger: ColrFn;
+    /**<!-- DOCS: colr.warning #### -->
+     * warning
+     *
+     * - `colr.warning`
+     *
+     * Makes the given text __'warning'__ (dark yellow) themed.
+     *
+     * Equivalent to `colr.dark.yellow`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly warning: ColrFn;
+    /**<!-- DOCS: colr.info #### -->
+     * info
+     *
+     * - `colr.info`
+     *
+     * Makes the given text __'info'__ (blue) themed.
+     *
+     * Equivalent to `colr.light.blue`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly info: ColrFn;
+    /**<!-- DOCS: colr.primaryBg #### -->
+     * primaryBg
+     *
+     * - `colr.primaryBg`
+     *
+     * Makes the __background__ of the given text __'primary'__ (magenta) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.lightBg.magentaBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly primaryBg: ColrFn;
+    /**<!-- DOCS: colr.secondaryBg #### -->
+     * secondaryBg
+     *
+     * - `colr.secondaryBg`
+     *
+     * Makes the __background__ of the given text __'secondary'__ (light yellow) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.lightBg.yellowBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly secondaryBg: ColrFn;
+    /**<!-- DOCS: colr.successBg #### -->
+     * successBg
+     *
+     * - `colr.successBg`
+     *
+     * Makes the __background__ of the given text __'success'__ (green) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.lightBg.greenBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly successBg: ColrFn;
+    /**<!-- DOCS: colr.dangerBg #### -->
+     * dangerBg
+     *
+     * - `colr.dangerBg`
+     *
+     * Makes the __background__ of the given text __'danger'__ (red) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.darkBg.redBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly dangerBg: ColrFn;
+    /**<!-- DOCS: colr.warningBg #### -->
+     * warningBg
+     *
+     * - `colr.warningBg`
+     *
+     * Makes the __background__ of the given text __'warning'__ (dark yellow) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.darkBg.yellowBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly warningBg: ColrFn;
+    /**<!-- DOCS: colr.infoBg #### -->
+     * infoBg
+     *
+     * - `colr.infoBg`
+     *
+     * Makes the __background__ of the given text __'info'__ (blue) themed and makes the text __black__.
+     *
+     * Equivalent to `colr.lightBg.blueBg.black`.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly infoBg: ColrFn;
+    /**<!-- DOCS: colr.otherStyleHeader ### -->
+     * Other Styles
+     */
+    /**<!-- DOCS: colr.reset #### -->
+     * reset
+     *
+     * - `colr.reset`
+     *
+     * Applies the __'reset'__ style to the given text.
+     *
+     * This returns the text back to normal colours/styles.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly reset: ColrFn;
+    /**<!-- DOCS: colr.bold #### -->
+     * bold
+     *
+     * - `colr.bold`
+     *
+     * Applies the __'bold'__ style to the given text.
+     *
+     * This makes the text __bold__.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly bold: ColrFn;
+    /**<!-- DOCS: colr.dim #### -->
+     * dim
+     *
+     * - `colr.dim`
+     *
+     * Applies the __'dim'__ style to the given text.
+     *
+     * This dims the brightness of the text colour.
+     *
+     * > __Note:__ Not the same as `dark` colours.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly dim: ColrFn;
+    /**<!-- DOCS: colr.italic #### -->
+     * italic
+     *
+     * - `colr.italic`
+     *
+     * Applies the __'italic'__ style to the given text.
+     *
+     * This makes the text _italic_.
+     *
+     * > __Note:__ Not widely supported
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly italic: ColrFn;
+    /**<!-- DOCS: colr.overline #### -->
+     * overline
+     *
+     * - `colr.overline`
+     *
+     * Applies the __'overline'__ style to the given text.
+     *
+     * This adds a horizontal line above the text
+     *
+     * > __Note:__ Not widely supported
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly overline: ColrFn;
+    /**<!-- DOCS: colr.underline #### -->
+     * underline
+     *
+     * - `colr.underline`
+     *
+     * Applies the __'underline'__ style to the given text.
+     *
+     * This adds a horizontal line below the text
+     *
+     * > __Note:__ Not widely supported
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly underline: ColrFn;
+    /**<!-- DOCS: colr.strikethrough #### -->
+     * strikethrough
+     *
+     * - `colr.strikethrough`
+     *
+     * Applies the __'strikethrough'__ style to the given text.
+     *
+     * This add a horizontal line through the middle of the given text.
+     *
+     * > __Note:__ Not widely supported
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly strikethrough: ColrFn;
+    /**<!-- DOCS: colr.inverse #### -->
+     * inverse
+     *
+     * - `colr.inverse`
+     *
+     * Applies the __'inverse'__ style to the given text.
+     *
+     * This inverses the text and background colours for the given text.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly inverse: ColrFn;
+    /**<!-- DOCS: colr.hidden #### -->
+     * hidden
+     *
+     * - `colr.hidden`
+     *
+     * Applies the __'hidden'__ style to the given text.
+     *
+     * This makes the text invisible.
+     *
+     * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+     *
+     * @param {...string} text
+     * @returns {string}
+     */
+    readonly hidden: ColrFn;
+    /**<!-- DOCS: colr.helpersHeader ### -->
+     * Helper Functions
+     */
+    /**<!-- DOCS-ALIAS: colr.template -->
+     * $ / template
+     * 
+     * - `colr.$`
+     * - `colr.template`
+     * 
+     * A helper function to make it easier to use colr with template strings.
+     * 
+     * Applies the given template string to the $'d expressions in the template string.
+     * 
+     * ```typescript
+     * colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+     * colr.red.template`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+     * 
+     * colr.blueBg(colr.red.$`A ${'red'} word in a blue world`); // 'A red word in a blue world' with a blue background, and 'red' has red text
+     * ```
+     */
+    readonly $: (strings: TemplateStringsArray, ...exps: any[]) => string;
+    /**<!-- DOCS: colr.template #### -->
+     * $ / template
+     *
+     * - `colr.$`
+     * - `colr.template`
+     *
+     * A helper function to make it easier to use colr with template strings.
+     *
+     * Applies the given template string to the $'d expressions in the template string.
+     *
+     * ```typescript
+     * colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+     * colr.red.template`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+     *
+     * colr.blueBg(colr.red.$`A ${'red'} word in a blue world`); // 'A red word in a blue world' with a blue background, and 'red' has red text
+     * ```
+     */
+    readonly template: (strings: TemplateStringsArray, ...exps: any[]) => string;
+    /**<!-- DOCS: colr.debug #### -->
+     * debug
+     *
+     * - `colr.debug`
+     *
+     * Replaces all colr ANSI escapes code with human readable indicators to help debugging why a style might not be working.
+     *
+     * - Each colour/style has a 3 letter key and is wrapped in backets with a direction indicator.
+     * - The direction indicator is `>` for opening and `<` for closing.
+     * - The key is uppercase for light colours, and lowercase for dark colours.
+     * - The key is wrapped in `()` for text colours, `{}` for background colours, and `[]` for other styles.
+     * - Colours have common ending codes, so `(<)` (text) or `{<}` (background) is used for these codes.
+     *
+     * | Colour  | Light Text     | Dark Text      | Light BG       | Dark BG        |
+     * |---------|----------------|----------------|----------------|----------------|
+     * | black   | `(BLK>)...(<)` | `(blk>)...(<)` | `{BLK>}...{<}` | `{blk>}...{<}` |
+     * | red     | `(RED>)...(<)` | `(red>)...(<)` | `{RED>}...{<}` | `{red>}...{<}` |
+     * | green   | `(GRN>)...(<)` | `(grn>)...(<)` | `{GRN>}...{<}` | `{grn>}...{<}` |
+     * | yellow  | `(YLW>)...(<)` | `(ylw>)...(<)` | `{YLW>}...{<}` | `{ylw>}...{<}` |
+     * | blue    | `(BLU>)...(<)` | `(blu>)...(<)` | `{BLU>}...{<}` | `{blu>}...{<}` |
+     * | magenta | `(MAG>)...(<)` | `(mag>)...(<)` | `{MAG>}...{<}` | `{mag>}...{<}` |
+     * | cyan    | `(CYN>)...(<)` | `(cyn>)...(<)` | `{CYN>}...{<}` | `{cyn>}...{<}` |
+     * | white   | `(WHT>)...(<)` | `(wht>)...(<)` | `{WHT>}...{<}` | `{wht>}...{<}` |
+  
+     * | Style         |                   |
+     * |---------------|-------------------|
+     * | reset         | `[rst>]...[<rst]` |
+     * | bold          | `[bld>]...[<bld]` |
+     * | dim           | `[dim>]...[<dim]` |
+     * | italic        | `[itl>]...[<itl]` |
+     * | overline      | `[ovr>]...[<ovr]` |
+     * | underline     | `[und>]...[<und]` |
+     * | strikethrough | `[str>]...[<str]` |
+     * | inverse       | `[inv>]...[<inv]` |
+     * | hidden        | `[hdn>]...[<hdn]` |
+     *
+     * ```typescript
+     * colr.debug(colr.yellow('Hello World!')); // '(YLW>)Hello World!(<)'
+     * colr.debug(colr.dark.yellow('Hello World!')); // '(ylw>)Hello World!(<)'
+     * colr.debug(colr.yellow.dim('Hello World!')); // '(YLW>)[dim>]Hello World![<dim](<)'
+     * colr.debug(colr.dark.yellow.dim('Hello World!')); // '(ylw>)[dim>]Hello World![<dim](<)'
+     *
+     * colr.debug(colr.yellow.blueBg('Hello World!')); // '(YLW>){blu>}Hello World!{<}(<)'
+     * colr.debug(colr.yellow.lightBg.blueBg('Hello World!')); // '(YLW>){BLU>}Hello World!{<}(<)'
+     * ```
+     */
+    readonly debug: (text: string) => string;
+    /**<!-- DOCS: colr.sets ### 301 -->
+     * sets
+     *
+     * - `colr.sets`
+     *
+     * A collection of different colour 'sets'.
+     *
+     * A set is a collection of `ColrFn`'s for a certain colour/theme that affect the text or the background.
+     *
+     * Useful for when you want to attribute a certain colour/theme, and apply it to the text colour or background colour in different applications.
+     *
+     * | Name         | `text`            | `bg`                |
+     * |--------------|-------------------|---------------------|
+     * | `red`        | `colr.red`        | `colr.redBg`        |
+     * | `green`      | `colr.green`      | `colr.greenBg`      |
+     * | `yellow`     | `colr.yellow`     | `colr.yellowBg`     |
+     * | `blue`       | `colr.blue`       | `colr.blueBg`       |
+     * | `magenta`    | `colr.magenta`    | `colr.magentaBg`    |
+     * | `cyan`       | `colr.cyan`       | `colr.cyanBg`       |
+     * | `white`      | `colr.white`      | `colr.whiteBg`      |
+     * | `black`      | `colr.black`      | `colr.blackBg`      |
+     * | `lightBlack` | `colr.lightBlack` | `colr.lightBlackBg` |
+     * | `grey`       | `colr.grey`       | `colr.greyBg`       |
+     * | `gray`       | `colr.gray`       | `colr.grayBg`       |
+     * | `primary`    | `colr.primary`    | `colr.primaryBg`    |
+     * | `secondary`  | `colr.secondary`  | `colr.secondaryBg`  |
+     * | `success`    | `colr.success`    | `colr.successBg`    |
+     * | `danger`     | `colr.danger`     | `colr.dangerBg`     |
+     * | `warning`    | `colr.warning`    | `colr.warningBg`    |
+     * | `info`       | `colr.info`       | `colr.infoBg`       |
+     *
+     * ```typescript
+     * const printOption = (name: string, colour: ColrSet) => {
+     *   console.log(' ' + colour.bg.darkBlack('   ') + ' ' + colour.text(name));
+     * };
+     * printOption('Approve', colr.lightBg.sets.green);
+     * printOption('Decline', colr.dark.sets.red);
+     *
+     * // Rough output:
+     * // '███ Approve' in green
+     * // '███ Decline' in red
+     * ```
+     */
+    readonly sets: ColrSets;
+    /**<!-- DOCS-ALIAS: colr -->
+     * colr
+     * 
+     * - `colr`
+     * 
+     * Tool for creating coloured/styled strings
+     * 
+     * Chain/combine different combinations of colours and styles to get the appearance you want.
+     * 
+     * | Name      | Type       | Modifier |                    | Description                                  |
+     * |-----------|------------|----------|--------------------|----------------------------------------------|
+     * | `light`   | Text       | Light    | `colr.light()`   | Use light text colours (on by default)       |
+     * | `dark`    | Text       | Dark     | `colr.dark()`    | Use dark text colours                        |
+     * | `lightBg` | Background | Light    | `colr.lightBg()` | Use light background colours (on by default) |
+     * | `darkBg`  | Background | Dark     | `colr.darkBg()`  | Use dark background colours                  |
+     * 
+     * | Name             | Affects    | Colour     | Type                    | Recommended                | Alt                     |
+     * |------------------|------------|------------|-------------------------|----------------------------|-------------------------|
+     * | `red`            | Text       | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.red()`               |                         |
+     * | `darkRed`        | Text       | 🟥 Red     | Dark                    | `colr.dark.red()`          | `colr.darkRed()`        |
+     * | `lightRed`       | Text       | 🟥 Red     | Light                   | `colr.light.red()`         | `colr.lightRed()`       |
+     * | `green`          | Text       | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.green()`             |                         |
+     * | `darkGreen`      | Text       | 🟩 Green   | Dark                    | `colr.dark.green()`        | `colr.darkGreen()`      |
+     * | `lightGreen`     | Text       | 🟩 Green   | Light                   | `colr.light.green()`       | `colr.lightGreen()`     |
+     * | `yellow`         | Text       | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellow()`            |                         |
+     * | `darkYellow`     | Text       | 🟨 Yellow  | Dark                    | `colr.dark.yellow()`       | `colr.darkYellow()`     |
+     * | `lightYellow`    | Text       | 🟨 Yellow  | Light                   | `colr.light.yellow()`      | `colr.lightYellow()`    |
+     * | `blue`           | Text       | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blue()`              |                         |
+     * | `darkBlue`       | Text       | 🟦 Blue    | Dark                    | `colr.dark.blue()`         | `colr.darkBlue()`       |
+     * | `lightBlue`      | Text       | 🟦 Blue    | Light                   | `colr.light.blue()`        | `colr.lightBlue()`      |
+     * | `magenta`        | Text       | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magenta()`           |                         |
+     * | `darkMagenta`    | Text       | 🟪 Magenta | Dark                    | `colr.dark.magenta()`      | `colr.darkMagenta()`    |
+     * | `lightMagenta`   | Text       | 🟪 Magenta | Light                   | `colr.light.magenta()`     | `colr.lightMagenta()`   |
+     * | `cyan`           | Text       | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyan()`              |                         |
+     * | `darkCyan`       | Text       | 💠 Cyan    | Dark                    | `colr.dark.cyan()`         | `colr.darkCyan()`       |
+     * | `lightCyan`      | Text       | 💠 Cyan    | Light                   | `colr.light.cyan()`        | `colr.lightCyan()`      |
+     * | `white`          | Text       | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.white()`             |                         |
+     * | `darkWhite`      | Text       | ⬜ White   | Dark                    | `colr.dark.white()`        | `colr.darkWhite()`      |
+     * | `lightWhite`     | Text       | ⬜ White   | Light                   | `colr.light.white()`       | `colr.lightWhite()`     |
+     * | `redBg`          | Background | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.redBg()`             |                         |
+     * | `darkRedBg`      | Background | 🟥 Red     | Dark                    | `colr.darkBg.redBg()`      | `colr.darkRedBg()`      |
+     * | `lightRedBg`     | Background | 🟥 Red     | Light                   | `colr.lightBg.redBg()`     | `colr.lightRedBg()`     |
+     * | `greenBg`        | Background | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.greenBg()`           |                         |
+     * | `darkGreenBg`    | Background | 🟩 Green   | Dark                    | `colr.darkBg.greenBg()`    | `colr.darkGreenBg()`    |
+     * | `lightGreenBg`   | Background | 🟩 Green   | Light                   | `colr.lightBg.greenBg()`   | `colr.lightGreenBg()`   |
+     * | `yellowBg`       | Background | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellowBg()`          |                         |
+     * | `darkYellowBg`   | Background | 🟨 Yellow  | Dark                    | `colr.darkBg.yellowBg()`   | `colr.darkYellowBg()`   |
+     * | `lightYellowBg`  | Background | 🟨 Yellow  | Light                   | `colr.lightBg.yellowBg()`  | `colr.lightYellowBg()`  |
+     * | `blueBg`         | Background | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blueBg()`            |                         |
+     * | `darkBlueBg`     | Background | 🟦 Blue    | Dark                    | `colr.darkBg.blueBg()`     | `colr.darkBlueBg()`     |
+     * | `lightBlueBg`    | Background | 🟦 Blue    | Light                   | `colr.lightBg.blueBg()`    | `colr.lightBlueBg()`    |
+     * | `magentaBg`      | Background | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magentaBg()`         |                         |
+     * | `darkMagentaBg`  | Background | 🟪 Magenta | Dark                    | `colr.darkBg.magentaBg()`  | `colr.darkMagentaBg()`  |
+     * | `lightMagentaBg` | Background | 🟪 Magenta | Light                   | `colr.lightBg.magentaBg()` | `colr.lightMagentaBg()` |
+     * | `cyanBg`         | Background | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyanBg()`            |                         |
+     * | `darkCyanBg`     | Background | 💠 Cyan    | Dark                    | `colr.darkBg.cyanBg()`     | `colr.darkCyanBg()`     |
+     * | `lightCyanBg`    | Background | 💠 Cyan    | Light                   | `colr.lightBg.cyanBg()`    | `colr.lightCyanBg()`    |
+     * | `whiteBg`        | Background | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.whiteBg()`           |                         |
+     * | `darkWhiteBg`    | Background | ⬜ White   | Dark                    | `colr.darkBg.whiteBg()`    | `colr.darkWhiteBg()`    |
+     * | `lightWhiteBg`   | Background | ⬜ White   | Light                   | `colr.lightBg.whiteBg()`   | `colr.lightWhiteBg()`   |
+     * | `black`          | Text       | ⬛ Black   | __Always Dark__         | `colr.black()`             |                         |
+     * | `darkBlack`      | Text       | ⬛ Black   | Dark                    | `colr.black()`             | `colr.darkBlack()`      |
+     * | `lightBlack`     | Text       | ⬛ Black   | Light                   | `colr.light.black()`       | `colr.lightBlack()`     |
+     * | `blackBg`        | Background | ⬛ Black   | __Always Dark__         | `colr.blackBg()`           |                         |
+     * | `darkBlackBg`    | Background | ⬛ Black   | Dark                    | `colr.blackBg()`           | `colr.darkBlackBg()`    |
+     * | `lightBlackBg`   | Background | ⬛ Black   | Light                   | `colr.lightBg.blackBg()`   | `colr.lightBlackBg()`   |
+     * | `grey`           | Text       | 🩶 Grey    | Greys                   | `colr.grey()`              |                         |
+     * | `greyBg`         | Background | 🩶 Grey    | Greys                   | `colr.greyBg()`            |                         |
+     * | `grey0`          | Text       | ⬛ Black   | Greys                   | `colr.grey0()`             |                         |
+     * | `grey1`          | Text       | 🩶 Grey    | Greys                   | `colr.grey1()`             |                         |
+     * | `grey2`          | Text       | 🩶 Grey    | Greys                   | `colr.grey2()`             |                         |
+     * | `grey3`          | Text       | 🩶 Grey    | Greys                   | `colr.grey3()`             |                         |
+     * | `grey4`          | Text       | 🩶 Grey    | Greys                   | `colr.grey4()`             |                         |
+     * | `grey5`          | Text       | ⬜ White   | Greys                   | `colr.grey5()`             |
+     * | `primary`        | Text       | 🟪 Magenta | Theme                   | `colr.primary()`           |                         |
+     * | `secondary`      | Text       | 🟨 Yellow  | Theme                   | `colr.secondary()`         |                         |
+     * | `success`        | Text       | 🟩 Green   | Theme                   | `colr.success()`           |                         |
+     * | `danger`         | Text       | 🟥 Red     | Theme                   | `colr.danger()`            |                         |
+     * | `warning`        | Text       | 🟨 Yellow  | Theme                   | `colr.warning()`           |                         |
+     * | `info`           | Text       | 🟦 Blue    | Theme                   | `colr.info()`              |                         |
+     * | `primaryBg`      | Background | 🟪 Magenta | Theme                   | `colr.primaryBg()`         |                         |
+     * | `secondaryBg`    | Background | 🟨 Yellow  | Theme                   | `colr.secondaryBg()`       |                         |
+     * | `successBg`      | Background | 🟩 Green   | Theme                   | `colr.successBg()`         |                         |
+     * | `dangerBg`       | Background | 🟥 Red     | Theme                   | `colr.dangerBg()`          |                         |
+     * | `warningBg`      | Background | 🟨 Yellow  | Theme                   | `colr.warningBg()`         |                         |
+     * | `infoBg`         | Background | 🟦 Blue    | Theme                   | `colr.infoBg()`            |                         |
+     * 
+     * | Name            |                          | Description                                                      |
+     * |-----------------|--------------------------|------------------------------------------------------------------|
+     * | `reset`         | `colr.reset('')`         | This returns the text back to normal colours/styles              |
+     * | `bold`          | `colr.bold('')`          | This makes the text __bold__                                     |
+     * | `dim`           | `colr.dim('')`           | This dims the brightness of the text colour                      |
+     * | `italic`        | `colr.italic('')`        | This makes the text _italic_                                     |
+     * | `overline`      | `colr.overline('')`      | This adds a horizontal line above the text                       |
+     * | `underline`     | `colr.underline('')`     | This adds a horizontal line below the text                       |
+     * | `strikethrough` | `colr.strikethrough('')` | This add a horizontal line through the middle of the given text  |
+     * | `inverse`       | `colr.inverse('')`       | This inverses the text and background colours for the given text |
+     * | `hidden`        | `colr.hidden('')`        | This makes the text invisible.                                   |
+     * 
+     * ```typescript
+     * colr.yellow('Hello World!'); // 'Hello World!' with yellow text
+     * colr.dark.yellow('Hello World!'); // 'Hello World!' with dark yellow text
+     * colr.yellow.dim('Hello World!'); // 'Hello World!' with dimmed yellow text
+     * colr.dark.yellow.dim('Hello World!'); // 'Hello World!' with dimmed dark yellow text
+     * 
+     * colr.yellow.blueBg('Hello World!'); // 'Hello World!' with yellow text and blue background
+     * colr.yellow.darkBg.blueBg('Hello World!'); // 'Hello World!' with yellow text and dark blue background
+     * 
+     * // pass in multiple arguments to get them all coloured/styled
+     * colr.red('Hello', 'World!'); // 'Hello World!' with red text
+     * 
+     * // nested styles
+     * colr.red(`A ${colr.blue('blue')} world`); // 'A blue world' with with red text, except 'blue' which is blue
+     * 
+     * // template literals
+     * colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+     * 
+     * // Debugging
+     * colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A (RED>)red(<)(YLW>) world{<}(<)'
+     * ```
+     */
+    (...text: unknown[]): string;
+}
+/**<!-- DOCS: colr.WrapSet ### -->
+ * WrapSet
+ *
+ * An agnostic set of functions to wrap/modify the given text with the given colour/style.
+ *
+ * Same as `ColrSet`, but not limited to colr library.
+ *
+ * Has two properties:
+ * - `text` - A function to wrap/modify the given text with the given colour/style.
+ * - `bg` - A function to wrap/modify the background of the given text with the given colour/style.
+ *
+ * Example:
+ * ```typescript
+ * const chalkSet: WrapSet = {
+ *   text: chalk.redBright,
+ *   bg: chalk.bgRedBright,
+ * };
+ * ```
+ */
+interface WrapSet {
+    /**<!-- DOCS: colr.WrapSet.text #### -1 -->
+     * text
+     *
+     * A function to wrap/modify the given text with the given colour/style.
+     */
+    text: WrapFn;
+    /**<!-- DOCS: colr.WrapSet.bg #### -1 -->
+     * bg
+     *
+     * A function to wrap/modify the background of the given text with the given colour/style.
+     */
+    bg: WrapFn;
+}
+/**<!-- DOCS: colr.ColrSet ### -->
+ * ColrSet
+ *
+ * A set of ColrFns for a certain colour/theme.
+ *
+ * Has two properties:
+ * - `text` - A function to set the text colour to the given colour/style.
+ * - `bg` - A function to set the background colour to the given colour/style.
+ */
+interface ColrSet {
+    /**<!-- DOCS: colr.ColrSet.text #### -1 -->
+     * text
+     *
+     * A ColrFn to style the given text with the given colour/style.
+     */
+    readonly text: ColrFn;
+    /**<!-- DOCS: colr.ColrSet.bg #### -1 -->
+     * bg
+     *
+     * A ColrFn to style the background of the given text with the given colour/style.
+     */
+    readonly bg: ColrFn;
+}
+interface ColrSets {
+    /**<!-- DOCS: colr.sets.red #### 301 -->
+     * red
+     *
+     * - `colr.sets.red`
+     *
+     * A ColrSet object for the colour `red`.
+     *
+     * - The `text` function is: `colr.red`.
+     * - The `bg` function is: `colr.redBg`.
+     */
+    readonly red: ColrSet;
+    /**<!-- DOCS: colr.sets.green #### 301 -->
+     * green
+     *
+     * - `colr.sets.green`
+     *
+     * A ColrSet object for the colour `green`.
+     *
+     * - The `text` function is: `colr.green`.
+     * - The `bg` function is: `colr.greenBg`.
+     */
+    readonly green: ColrSet;
+    /**<!-- DOCS: colr.sets.yellow #### 301 -->
+     * yellow
+     *
+     * - `colr.sets.yellow`
+     *
+     * A ColrSet object for the colour `yellow`.
+     *
+     * - The `text` function is: `colr.yellow`.
+     * - The `bg` function is: `colr.yellowBg`.
+     */
+    readonly yellow: ColrSet;
+    /**<!-- DOCS: colr.sets.blue #### 301 -->
+     * blue
+     *
+     * - `colr.sets.blue`
+     *
+     * A ColrSet object for the colour `blue`.
+     *
+     * - The `text` function is: `colr.blue`.
+     * - The `bg` function is: `colr.blueBg`.
+     */
+    readonly blue: ColrSet;
+    /**<!-- DOCS: colr.sets.magenta #### 301 -->
+     * magenta
+     *
+     * - `colr.sets.magenta`
+     *
+     * A ColrSet object for the colour `magenta`.
+     *
+     * - The `text` function is: `colr.magenta`.
+     * - The `bg` function is: `colr.magentaBg`.
+     */
+    readonly magenta: ColrSet;
+    /**<!-- DOCS: colr.sets.cyan #### 301 -->
+     * cyan
+     *
+     * - `colr.sets.cyan`
+     *
+     * A ColrSet object for the colour `cyan`.
+     *
+     * - The `text` function is: `colr.cyan`.
+     * - The `bg` function is: `colr.cyanBg`.
+     */
+    readonly cyan: ColrSet;
+    /**<!-- DOCS: colr.sets.white #### 301 -->
+     * white
+     *
+     * - `colr.sets.white`
+     *
+     * A ColrSet object for the colour `white`.
+     *
+     * - The `text` function is: `colr.white`.
+     * - The `bg` function is: `colr.whiteBg`.
+     */
+    readonly white: ColrSet;
+    /**<!-- DOCS: colr.sets.black #### 301 -->
+     * black
+     *
+     * - `colr.sets.black`
+     *
+     * A ColrSet object for the colour `black`.
+     *
+     * - The `text` function is: `colr.black`.
+     * - The `bg` function is: `colr.blackBg`.
+     */
+    readonly black: ColrSet;
+    /**<!-- DOCS: colr.sets.lightBlack #### 301 -->
+     * lightBlack
+     *
+     * - `colr.sets.lightBlack`
+     *
+     * A ColrSet object for the colour `lightBlack`.
+     *
+     * - The `text` function is: `colr.lightBlack`.
+     * - The `bg` function is: `colr.lightBlackBg`.
+     */
+    readonly lightBlack: ColrSet;
+    /**<!-- DOCS: colr.sets.grey #### 301 -->
+     * grey
+     *
+     * - `colr.sets.grey`
+     *
+     * A ColrSet object for the colour `grey`.
+     *
+     * - The `text` function is: `colr.grey`.
+     * - The `bg` function is: `colr.greyBg`.
+     */
+    readonly grey: ColrSet;
+    /**<!-- DOCS: colr.sets.gray #### 301 -->
+     * gray
+     *
+     * - `colr.sets.gray`
+     *
+     * A ColrSet object for the colour `gray`.
+     *
+     * - The `text` function is: `colr.gray`.
+     * - The `bg` function is: `colr.grayBg`.
+     */
+    readonly gray: ColrSet;
+    /**<!-- DOCS: colr.sets.primary #### 301 -->
+     * primary
+     *
+     * - `colr.sets.primary`
+     *
+     * A ColrSet object for the theme `primary`.
+     *
+     * - The `text` function is: `colr.primary`.
+     * - The `bg` function is: `colr.primaryBg`.
+     */
+    readonly primary: ColrSet;
+    /**<!-- DOCS: colr.sets.secondary #### 301 -->
+     * secondary
+     *
+     * - `colr.sets.secondary`
+     *
+     * A ColrSet object for the theme `secondary`.
+     *
+     * - The `text` function is: `colr.secondary`.
+     * - The `bg` function is: `colr.secondaryBg`.
+     */
+    readonly secondary: ColrSet;
+    /**<!-- DOCS: colr.sets.success #### 301 -->
+     * success
+     *
+     * - `colr.sets.success`
+     *
+     * A ColrSet object for the theme `success`.
+     *
+     * - The `text` function is: `colr.success`.
+     * - The `bg` function is: `colr.successBg`.
+     */
+    readonly success: ColrSet;
+    /**<!-- DOCS: colr.sets.danger #### 301 -->
+     * danger
+     *
+     * - `colr.sets.danger`
+     *
+     * A ColrSet object for the theme `danger`.
+     *
+     * - The `text` function is: `colr.danger`.
+     * - The `bg` function is: `colr.dangerBg`.
+     */
+    readonly danger: ColrSet;
+    /**<!-- DOCS: colr.sets.warning #### 301 -->
+     * warning
+     *
+     * - `colr.sets.warning`
+     *
+     * A ColrSet object for the theme `warning`.
+     *
+     * - The `text` function is: `colr.warning`.
+     * - The `bg` function is: `colr.warningBg`.
+     */
+    readonly warning: ColrSet;
+    /**<!-- DOCS: colr.sets.info #### 301 -->
+     * info
+     *
+     * - `colr.sets.info`
+     *
+     * A ColrSet object for the theme `info`.
+     *
+     * - The `text` function is: `colr.info`.
+     * - The `bg` function is: `colr.infoBg`.
+     */
+    readonly info: ColrSet;
 }
 
 declare const defaultConfigs: {
@@ -2590,7 +4478,7 @@ declare const defaultConfigs: {
 declare type LogFunction = (...args: any[]) => void;
 declare type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
 declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
-/**<!-- DOCS: log.createLogger ### 401 @ -->
+/**<!-- DOCS: log.createLogger ### 601 -->
  * createLogger
  *
  * - `createLogger`
@@ -2625,7 +4513,7 @@ declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: L
     readonly warn: LogConfig;
     readonly error: LogConfig;
 } & T, LogFunction>;
-/**<!-- DOCS: log.log ### 400 -->
+/**<!-- DOCS: log.log ### 600 -->
  * log
  *
  * - `log`
@@ -2655,7 +4543,7 @@ declare const log: OfType<{
     readonly warn: LogConfig;
     readonly error: LogConfig;
 }, LogFunction>;
-/**<!-- DOCS: log.LogOptions ### 450 -->
+/**<!-- DOCS: log.LogOptions ### 650 -->
  * LogOptions
  *
  * - `LogOptions`
@@ -2670,7 +4558,7 @@ interface LogOptions {
 interface LogConfigs {
     [key: string]: LogConfig;
 }
-/**<!-- DOCS: log.LogConfig ### 460 -->
+/**<!-- DOCS: log.LogConfig ### 660 -->
  * LogConfig
  *
  * - `LogConfig`
@@ -3120,4 +5008,4 @@ interface KeyListener {
     stop(): void;
 }
 
-export { Breadcrumb, Colour, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, ask, chlk, clr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };
+export { Breadcrumb, Colour, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ask, chlk, clr, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };

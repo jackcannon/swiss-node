@@ -874,7 +874,7 @@ export namespace out {
      *
      * - `out.utils.stripAnsi`
      *
-     * Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+     * Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
      * @param {string} text
      * @returns {string}
      */

@@ -11,10 +11,9 @@ Uses `swiss-ak`
   - [**Table of Contents**](#)
     - [**ask**](#ask)
     - [**out**](#out)
+    - [**colr**](#colr)
     - [**table**](#table)
     - [**Logger**](#logger)
-    - [**chlk**](#chlk)
-    - [**clr**](#clr)
     - [**LogTools**](#logtools)
     - [**PathTools**](#pathtools)
     - [**progressBarTools**](#progressbartools)
@@ -29,7 +28,7 @@ Uses `swiss-ak`
 A collection of functions to ask the user for input.
 
   - [**ask**](#ask)
-    - [text](#text)
+    - [text](#ask_text)
     - [autotext](#autotext)
     - [number](#number)
     - [boolean](#boolean)
@@ -63,7 +62,7 @@ A collection of functions to ask the user for input.
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
-### text
+### <span id="ask_text">text</span>
 
 ```typescript
 ask.text(question: string | Breadcrumb, initial: string): Promise<string>
@@ -843,7 +842,7 @@ Question 2a: [ answer2, answer2b ]
 #### itemsToPromptObjects
 
 ```typescript
-ask.utils.itemsToPromptObjects(items: T[], titles: string[], titleFn: TitleFn<T>): { title: string; value: T }[]
+ask.utils.itemsToPromptObjects(items: T[], titles: string[], titleFn: TitleFn<T>): { title: string; value: T; }[]
 ```
 
 Take an array of items and convert them to an array of prompt objects
@@ -877,9 +876,9 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 | *1* | `titles`       | *No*     | `string[]`   | `[]`    |
 | *2* | `titleFn`      | *No*     | `TitleFn<T>` |         |
 
-| Return Type                     |
-|---------------------------------|
-| `{ title: string; value: T }[]` |
+| Return Type                      |
+|----------------------------------|
+| `{ title: string; value: T; }[]` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -1579,8 +1578,8 @@ Return type for getBreadcrumb
 ### getLineCounter
 
 ```typescript
-out.getLineCounter(undefined): LineCounter
-getLineCounter(undefined): LineCounter
+out.getLineCounter(): LineCounter
+getLineCounter(): LineCounter
 ```
 
 Get line counter for counter output lines
@@ -1820,7 +1819,7 @@ lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 #### getTerminalWidth
 
 ```typescript
-out.utils.getTerminalWidth(undefined): number
+out.utils.getTerminalWidth(): number
 ```
 
 Get maximum terminal width (columns)
@@ -2038,7 +2037,7 @@ out.utils.hasColor(chalk.red('this is line 1')) // true
 out.utils.stripAnsi(text: string): string
 ```
 
-Removes all ANSI escape codes from a string. This includes any colour or styling added by clr or libraries like chalk.
+Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
 
 |  #  | Parameter Name | Required | Type     |
 |:---:|:---------------|:---------|:---------|
@@ -2069,6 +2068,2703 @@ Note: Certain symbols removed to minimise false positives
 | `RegExp`    |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+## colr
+
+```typescript
+colr;
+```
+
+Tool for creating coloured/styled strings
+
+Chain/combine different combinations of colours and styles to get the appearance you want.
+
+| Name      | Type       | Modifier |                    | Description                                  |
+|-----------|------------|----------|--------------------|----------------------------------------------|
+| `light`   | Text       | Light    | `colr.light()`   | Use light text colours (on by default)       |
+| `dark`    | Text       | Dark     | `colr.dark()`    | Use dark text colours                        |
+| `lightBg` | Background | Light    | `colr.lightBg()` | Use light background colours (on by default) |
+| `darkBg`  | Background | Dark     | `colr.darkBg()`  | Use dark background colours                  |
+
+| Name             | Affects    | Colour     | Type                    | Recommended                | Alt                     |
+|------------------|------------|------------|-------------------------|----------------------------|-------------------------|
+| `red`            | Text       | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.red()`               |                         |
+| `darkRed`        | Text       | 🟥 Red     | Dark                    | `colr.dark.red()`          | `colr.darkRed()`        |
+| `lightRed`       | Text       | 🟥 Red     | Light                   | `colr.light.red()`         | `colr.lightRed()`       |
+| `green`          | Text       | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.green()`             |                         |
+| `darkGreen`      | Text       | 🟩 Green   | Dark                    | `colr.dark.green()`        | `colr.darkGreen()`      |
+| `lightGreen`     | Text       | 🟩 Green   | Light                   | `colr.light.green()`       | `colr.lightGreen()`     |
+| `yellow`         | Text       | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellow()`            |                         |
+| `darkYellow`     | Text       | 🟨 Yellow  | Dark                    | `colr.dark.yellow()`       | `colr.darkYellow()`     |
+| `lightYellow`    | Text       | 🟨 Yellow  | Light                   | `colr.light.yellow()`      | `colr.lightYellow()`    |
+| `blue`           | Text       | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blue()`              |                         |
+| `darkBlue`       | Text       | 🟦 Blue    | Dark                    | `colr.dark.blue()`         | `colr.darkBlue()`       |
+| `lightBlue`      | Text       | 🟦 Blue    | Light                   | `colr.light.blue()`        | `colr.lightBlue()`      |
+| `magenta`        | Text       | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magenta()`           |                         |
+| `darkMagenta`    | Text       | 🟪 Magenta | Dark                    | `colr.dark.magenta()`      | `colr.darkMagenta()`    |
+| `lightMagenta`   | Text       | 🟪 Magenta | Light                   | `colr.light.magenta()`     | `colr.lightMagenta()`   |
+| `cyan`           | Text       | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyan()`              |                         |
+| `darkCyan`       | Text       | 💠 Cyan    | Dark                    | `colr.dark.cyan()`         | `colr.darkCyan()`       |
+| `lightCyan`      | Text       | 💠 Cyan    | Light                   | `colr.light.cyan()`        | `colr.lightCyan()`      |
+| `white`          | Text       | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.white()`             |                         |
+| `darkWhite`      | Text       | ⬜ White   | Dark                    | `colr.dark.white()`        | `colr.darkWhite()`      |
+| `lightWhite`     | Text       | ⬜ White   | Light                   | `colr.light.white()`       | `colr.lightWhite()`     |
+| `redBg`          | Background | 🟥 Red     | __Base__&nbsp;_(Light)_ | `colr.redBg()`             |                         |
+| `darkRedBg`      | Background | 🟥 Red     | Dark                    | `colr.darkBg.redBg()`      | `colr.darkRedBg()`      |
+| `lightRedBg`     | Background | 🟥 Red     | Light                   | `colr.lightBg.redBg()`     | `colr.lightRedBg()`     |
+| `greenBg`        | Background | 🟩 Green   | __Base__&nbsp;_(Light)_ | `colr.greenBg()`           |                         |
+| `darkGreenBg`    | Background | 🟩 Green   | Dark                    | `colr.darkBg.greenBg()`    | `colr.darkGreenBg()`    |
+| `lightGreenBg`   | Background | 🟩 Green   | Light                   | `colr.lightBg.greenBg()`   | `colr.lightGreenBg()`   |
+| `yellowBg`       | Background | 🟨 Yellow  | __Base__&nbsp;_(Light)_ | `colr.yellowBg()`          |                         |
+| `darkYellowBg`   | Background | 🟨 Yellow  | Dark                    | `colr.darkBg.yellowBg()`   | `colr.darkYellowBg()`   |
+| `lightYellowBg`  | Background | 🟨 Yellow  | Light                   | `colr.lightBg.yellowBg()`  | `colr.lightYellowBg()`  |
+| `blueBg`         | Background | 🟦 Blue    | __Base__&nbsp;_(Light)_ | `colr.blueBg()`            |                         |
+| `darkBlueBg`     | Background | 🟦 Blue    | Dark                    | `colr.darkBg.blueBg()`     | `colr.darkBlueBg()`     |
+| `lightBlueBg`    | Background | 🟦 Blue    | Light                   | `colr.lightBg.blueBg()`    | `colr.lightBlueBg()`    |
+| `magentaBg`      | Background | 🟪 Magenta | __Base__&nbsp;_(Light)_ | `colr.magentaBg()`         |                         |
+| `darkMagentaBg`  | Background | 🟪 Magenta | Dark                    | `colr.darkBg.magentaBg()`  | `colr.darkMagentaBg()`  |
+| `lightMagentaBg` | Background | 🟪 Magenta | Light                   | `colr.lightBg.magentaBg()` | `colr.lightMagentaBg()` |
+| `cyanBg`         | Background | 💠 Cyan    | __Base__&nbsp;_(Light)_ | `colr.cyanBg()`            |                         |
+| `darkCyanBg`     | Background | 💠 Cyan    | Dark                    | `colr.darkBg.cyanBg()`     | `colr.darkCyanBg()`     |
+| `lightCyanBg`    | Background | 💠 Cyan    | Light                   | `colr.lightBg.cyanBg()`    | `colr.lightCyanBg()`    |
+| `whiteBg`        | Background | ⬜ White   | __Base__&nbsp;_(Light)_ | `colr.whiteBg()`           |                         |
+| `darkWhiteBg`    | Background | ⬜ White   | Dark                    | `colr.darkBg.whiteBg()`    | `colr.darkWhiteBg()`    |
+| `lightWhiteBg`   | Background | ⬜ White   | Light                   | `colr.lightBg.whiteBg()`   | `colr.lightWhiteBg()`   |
+| `black`          | Text       | ⬛ Black   | __Always Dark__         | `colr.black()`             |                         |
+| `darkBlack`      | Text       | ⬛ Black   | Dark                    | `colr.black()`             | `colr.darkBlack()`      |
+| `lightBlack`     | Text       | ⬛ Black   | Light                   | `colr.light.black()`       | `colr.lightBlack()`     |
+| `blackBg`        | Background | ⬛ Black   | __Always Dark__         | `colr.blackBg()`           |                         |
+| `darkBlackBg`    | Background | ⬛ Black   | Dark                    | `colr.blackBg()`           | `colr.darkBlackBg()`    |
+| `lightBlackBg`   | Background | ⬛ Black   | Light                   | `colr.lightBg.blackBg()`   | `colr.lightBlackBg()`   |
+| `grey`           | Text       | 🩶 Grey    | Greys                   | `colr.grey()`              |                         |
+| `greyBg`         | Background | 🩶 Grey    | Greys                   | `colr.greyBg()`            |                         |
+| `grey0`          | Text       | ⬛ Black   | Greys                   | `colr.grey0()`             |                         |
+| `grey1`          | Text       | 🩶 Grey    | Greys                   | `colr.grey1()`             |                         |
+| `grey2`          | Text       | 🩶 Grey    | Greys                   | `colr.grey2()`             |                         |
+| `grey3`          | Text       | 🩶 Grey    | Greys                   | `colr.grey3()`             |                         |
+| `grey4`          | Text       | 🩶 Grey    | Greys                   | `colr.grey4()`             |                         |
+| `grey5`          | Text       | ⬜ White   | Greys                   | `colr.grey5()`             |
+| `primary`        | Text       | 🟪 Magenta | Theme                   | `colr.primary()`           |                         |
+| `secondary`      | Text       | 🟨 Yellow  | Theme                   | `colr.secondary()`         |                         |
+| `success`        | Text       | 🟩 Green   | Theme                   | `colr.success()`           |                         |
+| `danger`         | Text       | 🟥 Red     | Theme                   | `colr.danger()`            |                         |
+| `warning`        | Text       | 🟨 Yellow  | Theme                   | `colr.warning()`           |                         |
+| `info`           | Text       | 🟦 Blue    | Theme                   | `colr.info()`              |                         |
+| `primaryBg`      | Background | 🟪 Magenta | Theme                   | `colr.primaryBg()`         |                         |
+| `secondaryBg`    | Background | 🟨 Yellow  | Theme                   | `colr.secondaryBg()`       |                         |
+| `successBg`      | Background | 🟩 Green   | Theme                   | `colr.successBg()`         |                         |
+| `dangerBg`       | Background | 🟥 Red     | Theme                   | `colr.dangerBg()`          |                         |
+| `warningBg`      | Background | 🟨 Yellow  | Theme                   | `colr.warningBg()`         |                         |
+| `infoBg`         | Background | 🟦 Blue    | Theme                   | `colr.infoBg()`            |                         |
+
+| Name            |                          | Description                                                      |
+|-----------------|--------------------------|------------------------------------------------------------------|
+| `reset`         | `colr.reset('')`         | This returns the text back to normal colours/styles              |
+| `bold`          | `colr.bold('')`          | This makes the text __bold__                                     |
+| `dim`           | `colr.dim('')`           | This dims the brightness of the text colour                      |
+| `italic`        | `colr.italic('')`        | This makes the text _italic_                                     |
+| `overline`      | `colr.overline('')`      | This adds a horizontal line above the text                       |
+| `underline`     | `colr.underline('')`     | This adds a horizontal line below the text                       |
+| `strikethrough` | `colr.strikethrough('')` | This add a horizontal line through the middle of the given text  |
+| `inverse`       | `colr.inverse('')`       | This inverses the text and background colours for the given text |
+| `hidden`        | `colr.hidden('')`        | This makes the text invisible.                                   |
+
+```typescript
+colr.yellow('Hello World!'); // 'Hello World!' with yellow text
+colr.dark.yellow('Hello World!'); // 'Hello World!' with dark yellow text
+colr.yellow.dim('Hello World!'); // 'Hello World!' with dimmed yellow text
+colr.dark.yellow.dim('Hello World!'); // 'Hello World!' with dimmed dark yellow text
+
+colr.yellow.blueBg('Hello World!'); // 'Hello World!' with yellow text and blue background
+colr.yellow.darkBg.blueBg('Hello World!'); // 'Hello World!' with yellow text and dark blue background
+
+// pass in multiple arguments to get them all coloured/styled
+colr.red('Hello', 'World!'); // 'Hello World!' with red text
+
+// nested styles
+colr.red(`A ${colr.blue('blue')} world`); // 'A blue world' with with red text, except 'blue' which is blue
+
+// template literals
+colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+
+// Debugging
+colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A (RED>)red(<)(YLW>) world{<}(<)'
+```
+
+  - [**colr**](#colr)
+    - [**Option Modifiers**](#option-modifiers)
+      - [light](#light)
+      - [dark](#dark)
+      - [lightBg](#lightbg)
+      - [darkBg](#darkbg)
+    - [**Text Colours**](#text-colours)
+      - [**red**](#colr_red)
+        - [darkRed](#darkred)
+        - [lightRed](#lightred)
+      - [**green**](#colr_green)
+        - [darkGreen](#darkgreen)
+        - [lightGreen](#lightgreen)
+      - [**yellow**](#colr_yellow)
+        - [darkYellow](#darkyellow)
+        - [lightYellow](#lightyellow)
+      - [**blue**](#colr_blue)
+        - [darkBlue](#darkblue)
+        - [lightBlue](#lightblue)
+      - [**magenta**](#colr_magenta)
+        - [darkMagenta](#darkmagenta)
+        - [lightMagenta](#lightmagenta)
+      - [**cyan**](#colr_cyan)
+        - [darkCyan](#darkcyan)
+        - [lightCyan](#lightcyan)
+      - [**white**](#colr_white)
+        - [darkWhite](#darkwhite)
+        - [lightWhite](#lightwhite)
+    - [**Background Colours**](#background-colours)
+      - [**redBg**](#redbg)
+        - [darkRedBg](#darkredbg)
+        - [lightRedBg](#lightredbg)
+      - [**greenBg**](#greenbg)
+        - [darkGreenBg](#darkgreenbg)
+        - [lightGreenBg](#lightgreenbg)
+      - [**yellowBg**](#yellowbg)
+        - [darkYellowBg](#darkyellowbg)
+        - [lightYellowBg](#lightyellowbg)
+      - [**blueBg**](#bluebg)
+        - [darkBlueBg](#darkbluebg)
+        - [lightBlueBg](#lightbluebg)
+      - [**magentaBg**](#magentabg)
+        - [darkMagentaBg](#darkmagentabg)
+        - [lightMagentaBg](#lightmagentabg)
+      - [**cyanBg**](#cyanbg)
+        - [darkCyanBg](#darkcyanbg)
+        - [lightCyanBg](#lightcyanbg)
+      - [**whiteBg**](#whitebg)
+        - [darkWhiteBg](#darkwhitebg)
+        - [lightWhiteBg](#lightwhitebg)
+    - [**Black Colours**](#black-colours)
+      - [**black**](#colr_black)
+        - [darkBlack](#darkblack)
+        - [lightBlack](#colr_lightblack)
+      - [**blackBg**](#blackbg)
+        - [darkBlackBg](#darkblackbg)
+        - [lightBlackBg](#lightblackbg)
+    - [**Grey / Gray Colours**](#grey--gray-colours)
+      - [grey / gray](#grey--gray)
+      - [greyBg / grayBg](#greybg--graybg)
+      - [grey0 / gray0](#grey0--gray0)
+      - [grey1 / gray1](#grey1--gray1)
+      - [grey2 / gray2](#grey2--gray2)
+      - [grey3 / gray3](#grey3--gray3)
+      - [grey4 / gray4](#grey4--gray4)
+      - [grey5 / gray5](#grey5--gray5)
+    - [**Theme Colours**](#theme-colours)
+      - [primary](#colr_primary)
+      - [secondary](#colr_secondary)
+      - [success](#colr_success)
+      - [danger](#colr_danger)
+      - [warning](#colr_warning)
+      - [info](#colr_info)
+      - [primaryBg](#primarybg)
+      - [secondaryBg](#secondarybg)
+      - [successBg](#successbg)
+      - [dangerBg](#dangerbg)
+      - [warningBg](#warningbg)
+      - [infoBg](#infobg)
+    - [**Other Styles**](#other-styles)
+      - [reset](#reset)
+      - [bold](#bold)
+      - [dim](#dim)
+      - [italic](#italic)
+      - [overline](#overline)
+      - [underline](#underline)
+      - [strikethrough](#strikethrough)
+      - [inverse](#inverse)
+      - [hidden](#hidden)
+    - [**Helper Functions**](#helper-functions)
+      - [$ / template](#--template)
+      - [debug](#debug)
+    - [**sets**](#sets)
+      - [red](#colr_sets_red)
+      - [green](#colr_sets_green)
+      - [yellow](#colr_sets_yellow)
+      - [blue](#colr_sets_blue)
+      - [magenta](#colr_sets_magenta)
+      - [cyan](#colr_sets_cyan)
+      - [white](#colr_sets_white)
+      - [black](#colr_sets_black)
+      - [lightBlack](#colr_sets_lightblack)
+      - [grey](#grey)
+      - [gray](#gray)
+      - [primary](#colr_sets_primary)
+      - [secondary](#colr_sets_secondary)
+      - [success](#colr_sets_success)
+      - [danger](#colr_sets_danger)
+      - [warning](#colr_sets_warning)
+      - [info](#colr_sets_info)
+    - [WrapFn](#wrapfn)
+    - [ColrFn](#colrfn)
+    - [WrapSet](#wrapset)
+    - [ColrSet](#colrset)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### Option Modifiers
+
+#### light
+
+```typescript
+colr.light(...text: string[]): string
+```
+
+Modifies base (`red`, `blue`, `green`, etc) text colours to use the __light__ version of the colour.
+
+`light` is __on__ by default.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.light.red('Hello World!'); // 'Hello World!' with light red text
+colr.red.light('Hello World!'); // 'Hello World!' with light red text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### dark
+
+```typescript
+colr.dark(...text: string[]): string
+```
+
+Modifies base (`red`, `blue`, `green`, etc) text colours to use the __dark__ version of the colour.
+
+`dark` is __off__ by default (defaults to `light`).
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.dark.red('Hello World!'); // 'Hello World!' with dark red text
+colr.red.dark('Hello World!'); // 'Hello World!' with dark red text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### lightBg
+
+```typescript
+colr.lightBg(...text: string[]): string
+```
+
+Modifies base (`redBg`, `blueBg`, `greenBg`, etc) background colours to use the __light__ version of the colour.
+
+`lightBg` is __on__ by default.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a light red background
+colr.redBg.lightBg('Hello World!'); // 'Hello World!' with a light red background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### darkBg
+
+```typescript
+colr.darkBg(...text: string[]): string
+```
+
+Modifies base (`redBg`, `blueBg`, `greenBg`, etc) background colours to use the __dark__ version of the colour.
+
+`darkBg` is __off__ by default (defaults to `lightBg`).
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a dark red background
+colr.redBg.darkBg('Hello World!'); // 'Hello World!' with a dark red background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Text Colours
+
+#### <span id="colr_red">red</span>
+
+```typescript
+colr.red(...text: string[]): string
+```
+
+Makes the given text __red__.
+
+Uses `lightRed` _by default_, or if `light` modifier is used in the chain.
+Uses `darkRed` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.red('Hello World!'); // 'Hello World!' with __light__ red text
+colr.light.red('Hello World!'); // 'Hello World!' with __light__ red text
+colr.dark.red('Hello World!'); // 'Hello World!' with __dark__ red text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkRed
+
+```typescript
+colr.darkRed(...text: string[]): string
+colr.dark.red(...text: string[]): string
+```
+
+Makes the given text __dark red__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.red`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightRed
+
+```typescript
+colr.lightRed(...text: string[]): string
+colr.light.red(...text: string[]): string
+colr.red(...text: string[]): string
+```
+
+Makes the given text __light red__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.red`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_green">green</span>
+
+```typescript
+colr.green(...text: string[]): string
+```
+
+Makes the given text __green__.
+
+Uses `lightGreen` _by default_, or if `light` modifier is used in the chain.
+Uses `darkGreen` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.green('Hello World!'); // 'Hello World!' with __light__ green text
+colr.light.green('Hello World!'); // 'Hello World!' with __light__ green text
+colr.dark.green('Hello World!'); // 'Hello World!' with __dark__ green text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkGreen
+
+```typescript
+colr.darkGreen(...text: string[]): string
+colr.dark.green(...text: string[]): string
+```
+
+Makes the given text __dark green__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.green`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightGreen
+
+```typescript
+colr.lightGreen(...text: string[]): string
+colr.light.green(...text: string[]): string
+colr.green(...text: string[]): string
+```
+
+Makes the given text __light green__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.green`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_yellow">yellow</span>
+
+```typescript
+colr.yellow(...text: string[]): string
+```
+
+Makes the given text __yellow__.
+
+Uses `lightYellow` _by default_, or if `light` modifier is used in the chain.
+Uses `darkYellow` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.yellow('Hello World!'); // 'Hello World!' with __light__ yellow text
+colr.light.yellow('Hello World!'); // 'Hello World!' with __light__ yellow text
+colr.dark.yellow('Hello World!'); // 'Hello World!' with __dark__ yellow text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkYellow
+
+```typescript
+colr.darkYellow(...text: string[]): string
+colr.dark.yellow(...text: string[]): string
+```
+
+Makes the given text __dark yellow__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.yellow`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightYellow
+
+```typescript
+colr.lightYellow(...text: string[]): string
+colr.light.yellow(...text: string[]): string
+colr.yellow(...text: string[]): string
+```
+
+Makes the given text __light yellow__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.yellow`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_blue">blue</span>
+
+```typescript
+colr.blue(...text: string[]): string
+```
+
+Makes the given text __blue__.
+
+Uses `lightBlue` _by default_, or if `light` modifier is used in the chain.
+Uses `darkBlue` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.blue('Hello World!'); // 'Hello World!' with __light__ blue text
+colr.light.blue('Hello World!'); // 'Hello World!' with __light__ blue text
+colr.dark.blue('Hello World!'); // 'Hello World!' with __dark__ blue text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkBlue
+
+```typescript
+colr.darkBlue(...text: string[]): string
+colr.dark.blue(...text: string[]): string
+```
+
+Makes the given text __dark blue__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.blue`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightBlue
+
+```typescript
+colr.lightBlue(...text: string[]): string
+colr.light.blue(...text: string[]): string
+colr.blue(...text: string[]): string
+```
+
+Makes the given text __light blue__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.blue`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_magenta">magenta</span>
+
+```typescript
+colr.magenta(...text: string[]): string
+```
+
+Makes the given text __magenta__.
+
+Uses `lightMagenta` _by default_, or if `light` modifier is used in the chain.
+Uses `darkMagenta` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.magenta('Hello World!'); // 'Hello World!' with __light__ magenta text
+colr.light.magenta('Hello World!'); // 'Hello World!' with __light__ magenta text
+colr.dark.magenta('Hello World!'); // 'Hello World!' with __dark__ magenta text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkMagenta
+
+```typescript
+colr.darkMagenta(...text: string[]): string
+colr.dark.magenta(...text: string[]): string
+```
+
+Makes the given text __dark magenta__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.magenta`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightMagenta
+
+```typescript
+colr.lightMagenta(...text: string[]): string
+colr.light.magenta(...text: string[]): string
+colr.magenta(...text: string[]): string
+```
+
+Makes the given text __light magenta__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.magenta`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_cyan">cyan</span>
+
+```typescript
+colr.cyan(...text: string[]): string
+```
+
+Makes the given text __cyan__.
+
+Uses `lightCyan` _by default_, or if `light` modifier is used in the chain.
+Uses `darkCyan` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.cyan('Hello World!'); // 'Hello World!' with __light__ cyan text
+colr.light.cyan('Hello World!'); // 'Hello World!' with __light__ cyan text
+colr.dark.cyan('Hello World!'); // 'Hello World!' with __dark__ cyan text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkCyan
+
+```typescript
+colr.darkCyan(...text: string[]): string
+colr.dark.cyan(...text: string[]): string
+```
+
+Makes the given text __dark cyan__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.cyan`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightCyan
+
+```typescript
+colr.lightCyan(...text: string[]): string
+colr.light.cyan(...text: string[]): string
+colr.cyan(...text: string[]): string
+```
+
+Makes the given text __light cyan__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.cyan`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_white">white</span>
+
+```typescript
+colr.white(...text: string[]): string
+```
+
+Makes the given text __white__.
+
+Uses `lightWhite` _by default_, or if `light` modifier is used in the chain.
+Uses `darkWhite` if `dark` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.white('Hello World!'); // 'Hello World!' with __light__ white text
+colr.light.white('Hello World!'); // 'Hello World!' with __light__ white text
+colr.dark.white('Hello World!'); // 'Hello World!' with __dark__ white text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkWhite
+
+```typescript
+colr.darkWhite(...text: string[]): string
+colr.dark.white(...text: string[]): string
+```
+
+Makes the given text __dark white__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Prefer `dark.white`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightWhite
+
+```typescript
+colr.lightWhite(...text: string[]): string
+colr.light.white(...text: string[]): string
+colr.white(...text: string[]): string
+```
+
+Makes the given text __light white__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+Prefer `light.white`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Background Colours
+
+#### redBg
+
+```typescript
+colr.redBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __red__.
+
+Uses `lightRedBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkRedBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.redBg('Hello World!'); // 'Hello World!' with a __light__ red background
+colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a __light__ red background
+colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a __dark__ red background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkRedBg
+
+```typescript
+colr.darkRedBg(...text: string[]): string
+colr.darkBg.redBg(...text: string[]): string
+colr.redBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark red__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.redBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightRedBg
+
+```typescript
+colr.lightBg.redBg(...text: string[]): string
+colr.lightRedBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light red__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.redBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### greenBg
+
+```typescript
+colr.greenBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __green__.
+
+Uses `lightGreenBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkGreenBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.greenBg('Hello World!'); // 'Hello World!' with a __light__ green background
+colr.lightBg.greenBg('Hello World!'); // 'Hello World!' with a __light__ green background
+colr.darkBg.greenBg('Hello World!'); // 'Hello World!' with a __dark__ green background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkGreenBg
+
+```typescript
+colr.darkGreenBg(...text: string[]): string
+colr.darkBg.greenBg(...text: string[]): string
+colr.greenBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark green__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.greenBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightGreenBg
+
+```typescript
+colr.lightBg.greenBg(...text: string[]): string
+colr.lightGreenBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light green__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.greenBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### yellowBg
+
+```typescript
+colr.yellowBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __yellow__.
+
+Uses `lightYellowBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkYellowBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.yellowBg('Hello World!'); // 'Hello World!' with a __light__ yellow background
+colr.lightBg.yellowBg('Hello World!'); // 'Hello World!' with a __light__ yellow background
+colr.darkBg.yellowBg('Hello World!'); // 'Hello World!' with a __dark__ yellow background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkYellowBg
+
+```typescript
+colr.darkYellowBg(...text: string[]): string
+colr.darkBg.yellowBg(...text: string[]): string
+colr.yellowBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark yellow__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.yellowBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightYellowBg
+
+```typescript
+colr.lightBg.yellowBg(...text: string[]): string
+colr.lightYellowBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light yellow__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.yellowBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### blueBg
+
+```typescript
+colr.blueBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __blue__.
+
+Uses `lightBlueBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkBlueBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.blueBg('Hello World!'); // 'Hello World!' with a __light__ blue background
+colr.lightBg.blueBg('Hello World!'); // 'Hello World!' with a __light__ blue background
+colr.darkBg.blueBg('Hello World!'); // 'Hello World!' with a __dark__ blue background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkBlueBg
+
+```typescript
+colr.darkBlueBg(...text: string[]): string
+colr.darkBg.blueBg(...text: string[]): string
+colr.blueBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark blue__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.blueBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightBlueBg
+
+```typescript
+colr.lightBg.blueBg(...text: string[]): string
+colr.lightBlueBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light blue__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.blueBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### magentaBg
+
+```typescript
+colr.magentaBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __magenta__.
+
+Uses `lightMagentaBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkMagentaBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.magentaBg('Hello World!'); // 'Hello World!' with a __light__ magenta background
+colr.lightBg.magentaBg('Hello World!'); // 'Hello World!' with a __light__ magenta background
+colr.darkBg.magentaBg('Hello World!'); // 'Hello World!' with a __dark__ magenta background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkMagentaBg
+
+```typescript
+colr.darkMagentaBg(...text: string[]): string
+colr.darkBg.magentaBg(...text: string[]): string
+colr.magentaBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark magenta__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.magentaBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightMagentaBg
+
+```typescript
+colr.lightBg.magentaBg(...text: string[]): string
+colr.lightMagentaBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light magenta__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.magentaBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### cyanBg
+
+```typescript
+colr.cyanBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __cyan__.
+
+Uses `lightCyanBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkCyanBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.cyanBg('Hello World!'); // 'Hello World!' with a __light__ cyan background
+colr.lightBg.cyanBg('Hello World!'); // 'Hello World!' with a __light__ cyan background
+colr.darkBg.cyanBg('Hello World!'); // 'Hello World!' with a __dark__ cyan background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkCyanBg
+
+```typescript
+colr.darkCyanBg(...text: string[]): string
+colr.darkBg.cyanBg(...text: string[]): string
+colr.cyanBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark cyan__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.cyanBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightCyanBg
+
+```typescript
+colr.lightBg.cyanBg(...text: string[]): string
+colr.lightCyanBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light cyan__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.cyanBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### whiteBg
+
+```typescript
+colr.whiteBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __white__.
+
+Uses `lightWhiteBg` _by default_, or if `lightBg` modifier is used in the chain.
+Uses `darkWhiteBg` if `darkBg` modifier is used in the chain.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.whiteBg('Hello World!'); // 'Hello World!' with a __light__ white background
+colr.lightBg.whiteBg('Hello World!'); // 'Hello World!' with a __light__ white background
+colr.darkBg.whiteBg('Hello World!'); // 'Hello World!' with a __dark__ white background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkWhiteBg
+
+```typescript
+colr.darkWhiteBg(...text: string[]): string
+colr.darkBg.whiteBg(...text: string[]): string
+colr.whiteBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark white__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Prefer `darkBg.whiteBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightWhiteBg
+
+```typescript
+colr.lightBg.whiteBg(...text: string[]): string
+colr.lightWhiteBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light white__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+Prefer `lightBg.whiteBg`
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Black Colours
+
+#### <span id="colr_black">black</span>
+
+```typescript
+colr.black(...text: string[]): string
+colr.darkBlack(...text: string[]): string
+```
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+Makes the given text __dark black__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.black('Hello World!'); // 'Hello World!' with __dark__ black text
+colr.light.black('Hello World!'); // 'Hello World!' with __dark__ black text
+colr.dark.black('Hello World!'); // 'Hello World!' with __dark__ black text
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkBlack
+
+```typescript
+colr.black(...text: string[]): string
+colr.darkBlack(...text: string[]): string
+```
+
+Makes the given text __dark black__.
+
+Unaffected by `light`/`dark` modifiers and __will always be dark__.
+
+Same as `black`.
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### <span id="colr_lightblack">lightBlack</span>
+
+```typescript
+colr.lightBlack(...text: string[]): string
+```
+
+Makes the given text __light black__.
+
+Unaffected by `light`/`dark` modifiers and __will always be light__.
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### blackBg
+
+```typescript
+colr.blackBg(...text: string[]): string
+colr.darkBlackBg(...text: string[]): string
+```
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+Makes the __background__ of the given text __dark black__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+```typescript
+colr.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+colr.lightBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+colr.darkBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
+```
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### darkBlackBg
+
+```typescript
+colr.blackBg(...text: string[]): string
+colr.darkBlackBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __dark black__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be dark__.
+
+Same as `blackBg`.
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+##### lightBlackBg
+
+```typescript
+colr.lightBlackBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __light black__.
+
+Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
+
+> __Note:__ Black behaves differently to other colours as the 'base' is always dark, regardless of modifiers.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Grey / Gray Colours
+
+#### grey / gray
+
+```typescript
+colr.grey(...text: string[]): string
+colr.gray(...text: string[]): string
+```
+
+Makes the given text __grey__.
+
+Equivalent to `colr.light.black`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### greyBg / grayBg
+
+```typescript
+colr.greyBg(...text: string[]): string
+colr.grayBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __grey__.
+
+Equivalent to `colr.lightBg.blackBg`.
+
+Unaffected by `lightBg`/`darkBg` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey0 / gray0
+
+```typescript
+colr.grey0(...text: string[]): string
+colr.gray0(...text: string[]): string
+```
+
+Makes the given text __grey__. 0 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.black`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey1 / gray1
+
+```typescript
+colr.grey1(...text: string[]): string
+colr.gray1(...text: string[]): string
+```
+
+Makes the given text __grey__. 1 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.light.black.dim`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey2 / gray2
+
+```typescript
+colr.grey2(...text: string[]): string
+colr.gray2(...text: string[]): string
+```
+
+Makes the given text __grey__. 2 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.dark.white.dim`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey3 / gray3
+
+```typescript
+colr.grey3(...text: string[]): string
+colr.gray3(...text: string[]): string
+```
+
+Makes the given text __grey__. 3 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.light.white.dim`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey4 / gray4
+
+```typescript
+colr.grey4(...text: string[]): string
+colr.gray4(...text: string[]): string
+```
+
+Makes the given text __grey__. 4 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.dark.white`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey5 / gray5
+
+```typescript
+colr.grey5(...text: string[]): string
+colr.gray5(...text: string[]): string
+```
+
+Makes the given text __grey__. 5 out of 5 _(where 0 is black and 5 is white)_.
+
+Equivalent to `colr.light.white`.
+
+Unaffected by `light`/`dark` modifiers
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Theme Colours
+
+#### <span id="colr_primary">primary</span>
+
+```typescript
+colr.primary(...text: string[]): string
+```
+
+Makes the given text __'primary'__ (magenta) themed.
+
+Equivalent to `colr.light.magenta`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_secondary">secondary</span>
+
+```typescript
+colr.secondary(...text: string[]): string
+```
+
+Makes the given text __'secondary'__ (light yellow) themed.
+
+Equivalent to `colr.light.yellow`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_success">success</span>
+
+```typescript
+colr.success(...text: string[]): string
+```
+
+Makes the given text __'success'__ (green) themed.
+
+Equivalent to `colr.light.green`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_danger">danger</span>
+
+```typescript
+colr.danger(...text: string[]): string
+```
+
+Makes the given text __'danger'__ (red) themed.
+
+Equivalent to `colr.dark.red`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_warning">warning</span>
+
+```typescript
+colr.warning(...text: string[]): string
+```
+
+Makes the given text __'warning'__ (dark yellow) themed.
+
+Equivalent to `colr.dark.yellow`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_info">info</span>
+
+```typescript
+colr.info(...text: string[]): string
+```
+
+Makes the given text __'info'__ (blue) themed.
+
+Equivalent to `colr.light.blue`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### primaryBg
+
+```typescript
+colr.primaryBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'primary'__ (magenta) themed and makes the text __black__.
+
+Equivalent to `colr.lightBg.magentaBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### secondaryBg
+
+```typescript
+colr.secondaryBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'secondary'__ (light yellow) themed and makes the text __black__.
+
+Equivalent to `colr.lightBg.yellowBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### successBg
+
+```typescript
+colr.successBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'success'__ (green) themed and makes the text __black__.
+
+Equivalent to `colr.lightBg.greenBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### dangerBg
+
+```typescript
+colr.dangerBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'danger'__ (red) themed and makes the text __black__.
+
+Equivalent to `colr.darkBg.redBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### warningBg
+
+```typescript
+colr.warningBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'warning'__ (dark yellow) themed and makes the text __black__.
+
+Equivalent to `colr.darkBg.yellowBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### infoBg
+
+```typescript
+colr.infoBg(...text: string[]): string
+```
+
+Makes the __background__ of the given text __'info'__ (blue) themed and makes the text __black__.
+
+Equivalent to `colr.lightBg.blueBg.black`.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Other Styles
+
+#### reset
+
+```typescript
+colr.reset(...text: string[]): string
+```
+
+Applies the __'reset'__ style to the given text.
+
+This returns the text back to normal colours/styles.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### bold
+
+```typescript
+colr.bold(...text: string[]): string
+```
+
+Applies the __'bold'__ style to the given text.
+
+This makes the text __bold__.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### dim
+
+```typescript
+colr.dim(...text: string[]): string
+```
+
+Applies the __'dim'__ style to the given text.
+
+This dims the brightness of the text colour.
+
+> __Note:__ Not the same as `dark` colours.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### italic
+
+```typescript
+colr.italic(...text: string[]): string
+```
+
+Applies the __'italic'__ style to the given text.
+
+This makes the text _italic_.
+
+> __Note:__ Not widely supported
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### overline
+
+```typescript
+colr.overline(...text: string[]): string
+```
+
+Applies the __'overline'__ style to the given text.
+
+This adds a horizontal line above the text
+
+> __Note:__ Not widely supported
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### underline
+
+```typescript
+colr.underline(...text: string[]): string
+```
+
+Applies the __'underline'__ style to the given text.
+
+This adds a horizontal line below the text
+
+> __Note:__ Not widely supported
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### strikethrough
+
+```typescript
+colr.strikethrough(...text: string[]): string
+```
+
+Applies the __'strikethrough'__ style to the given text.
+
+This add a horizontal line through the middle of the given text.
+
+> __Note:__ Not widely supported
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### inverse
+
+```typescript
+colr.inverse(...text: string[]): string
+```
+
+Applies the __'inverse'__ style to the given text.
+
+This inverses the text and background colours for the given text.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### hidden
+
+```typescript
+colr.hidden(...text: string[]): string
+```
+
+Applies the __'hidden'__ style to the given text.
+
+This makes the text invisible.
+
+> __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
+
+|  #   | Parameter Name | Required | Type       |
+|:----:|:---------------|:---------|:-----------|
+| *0…* | `text`         | **Yes**  | `string[]` |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### Helper Functions
+
+#### $ / template
+
+```typescript
+colr.$;
+colr.template;
+```
+
+A helper function to make it easier to use colr with template strings.
+
+Applies the given template string to the $'d expressions in the template string.
+
+```typescript
+colr.red.$`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+colr.red.template`A ${'red'} world`; // 'A red world' with default colours, except 'World!' which is red
+
+colr.blueBg(colr.red.$`A ${'red'} word in a blue world`); // 'A red word in a blue world' with a blue background, and 'red' has red text
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### debug
+
+```typescript
+colr.debug;
+```
+
+Replaces all colr ANSI escapes code with human readable indicators to help debugging why a style might not be working.
+
+- Each colour/style has a 3 letter key and is wrapped in backets with a direction indicator.
+- The direction indicator is `>` for opening and `<` for closing.
+- The key is uppercase for light colours, and lowercase for dark colours.
+- The key is wrapped in `()` for text colours, `{}` for background colours, and `[]` for other styles.
+- Colours have common ending codes, so `(<)` (text) or `{<}` (background) is used for these codes.
+
+| Colour  | Light Text     | Dark Text      | Light BG       | Dark BG        |
+|---------|----------------|----------------|----------------|----------------|
+| black   | `(BLK>)...(<)` | `(blk>)...(<)` | `{BLK>}...{<}` | `{blk>}...{<}` |
+| red     | `(RED>)...(<)` | `(red>)...(<)` | `{RED>}...{<}` | `{red>}...{<}` |
+| green   | `(GRN>)...(<)` | `(grn>)...(<)` | `{GRN>}...{<}` | `{grn>}...{<}` |
+| yellow  | `(YLW>)...(<)` | `(ylw>)...(<)` | `{YLW>}...{<}` | `{ylw>}...{<}` |
+| blue    | `(BLU>)...(<)` | `(blu>)...(<)` | `{BLU>}...{<}` | `{blu>}...{<}` |
+| magenta | `(MAG>)...(<)` | `(mag>)...(<)` | `{MAG>}...{<}` | `{mag>}...{<}` |
+| cyan    | `(CYN>)...(<)` | `(cyn>)...(<)` | `{CYN>}...{<}` | `{cyn>}...{<}` |
+| white   | `(WHT>)...(<)` | `(wht>)...(<)` | `{WHT>}...{<}` | `{wht>}...{<}` |
+
+| Style         |                   |
+|---------------|-------------------|
+| reset         | `[rst>]...[<rst]` |
+| bold          | `[bld>]...[<bld]` |
+| dim           | `[dim>]...[<dim]` |
+| italic        | `[itl>]...[<itl]` |
+| overline      | `[ovr>]...[<ovr]` |
+| underline     | `[und>]...[<und]` |
+| strikethrough | `[str>]...[<str]` |
+| inverse       | `[inv>]...[<inv]` |
+| hidden        | `[hdn>]...[<hdn]` |
+
+```typescript
+colr.debug(colr.yellow('Hello World!')); // '(YLW>)Hello World!(<)'
+colr.debug(colr.dark.yellow('Hello World!')); // '(ylw>)Hello World!(<)'
+colr.debug(colr.yellow.dim('Hello World!')); // '(YLW>)[dim>]Hello World![<dim](<)'
+colr.debug(colr.dark.yellow.dim('Hello World!')); // '(ylw>)[dim>]Hello World![<dim](<)'
+
+colr.debug(colr.yellow.blueBg('Hello World!')); // '(YLW>){blu>}Hello World!{<}(<)'
+colr.debug(colr.yellow.lightBg.blueBg('Hello World!')); // '(YLW>){BLU>}Hello World!{<}(<)'
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### sets
+
+```typescript
+colr.sets;
+```
+
+A collection of different colour 'sets'.
+
+A set is a collection of `ColrFn`'s for a certain colour/theme that affect the text or the background.
+
+Useful for when you want to attribute a certain colour/theme, and apply it to the text colour or background colour in different applications.
+
+| Name         | `text`            | `bg`                |
+|--------------|-------------------|---------------------|
+| `red`        | `colr.red`        | `colr.redBg`        |
+| `green`      | `colr.green`      | `colr.greenBg`      |
+| `yellow`     | `colr.yellow`     | `colr.yellowBg`     |
+| `blue`       | `colr.blue`       | `colr.blueBg`       |
+| `magenta`    | `colr.magenta`    | `colr.magentaBg`    |
+| `cyan`       | `colr.cyan`       | `colr.cyanBg`       |
+| `white`      | `colr.white`      | `colr.whiteBg`      |
+| `black`      | `colr.black`      | `colr.blackBg`      |
+| `lightBlack` | `colr.lightBlack` | `colr.lightBlackBg` |
+| `grey`       | `colr.grey`       | `colr.greyBg`       |
+| `gray`       | `colr.gray`       | `colr.grayBg`       |
+| `primary`    | `colr.primary`    | `colr.primaryBg`    |
+| `secondary`  | `colr.secondary`  | `colr.secondaryBg`  |
+| `success`    | `colr.success`    | `colr.successBg`    |
+| `danger`     | `colr.danger`     | `colr.dangerBg`     |
+| `warning`    | `colr.warning`    | `colr.warningBg`    |
+| `info`       | `colr.info`       | `colr.infoBg`       |
+
+```typescript
+const printOption = (name: string, colour: ColrSet) => {
+  console.log(' ' + colour.bg.darkBlack('   ') + ' ' + colour.text(name));
+};
+printOption('Approve', colr.lightBg.sets.green);
+printOption('Decline', colr.dark.sets.red);
+
+// Rough output:
+// '███ Approve' in green
+// '███ Decline' in red
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_red">red</span>
+
+```typescript
+colr.sets.red;
+```
+
+A ColrSet object for the colour `red`.
+
+- The `text` function is: `colr.red`.
+- The `bg` function is: `colr.redBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_green">green</span>
+
+```typescript
+colr.sets.green;
+```
+
+A ColrSet object for the colour `green`.
+
+- The `text` function is: `colr.green`.
+- The `bg` function is: `colr.greenBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_yellow">yellow</span>
+
+```typescript
+colr.sets.yellow;
+```
+
+A ColrSet object for the colour `yellow`.
+
+- The `text` function is: `colr.yellow`.
+- The `bg` function is: `colr.yellowBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_blue">blue</span>
+
+```typescript
+colr.sets.blue;
+```
+
+A ColrSet object for the colour `blue`.
+
+- The `text` function is: `colr.blue`.
+- The `bg` function is: `colr.blueBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_magenta">magenta</span>
+
+```typescript
+colr.sets.magenta;
+```
+
+A ColrSet object for the colour `magenta`.
+
+- The `text` function is: `colr.magenta`.
+- The `bg` function is: `colr.magentaBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_cyan">cyan</span>
+
+```typescript
+colr.sets.cyan;
+```
+
+A ColrSet object for the colour `cyan`.
+
+- The `text` function is: `colr.cyan`.
+- The `bg` function is: `colr.cyanBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_white">white</span>
+
+```typescript
+colr.sets.white;
+```
+
+A ColrSet object for the colour `white`.
+
+- The `text` function is: `colr.white`.
+- The `bg` function is: `colr.whiteBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_black">black</span>
+
+```typescript
+colr.sets.black;
+```
+
+A ColrSet object for the colour `black`.
+
+- The `text` function is: `colr.black`.
+- The `bg` function is: `colr.blackBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_lightblack">lightBlack</span>
+
+```typescript
+colr.sets.lightBlack;
+```
+
+A ColrSet object for the colour `lightBlack`.
+
+- The `text` function is: `colr.lightBlack`.
+- The `bg` function is: `colr.lightBlackBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### grey
+
+```typescript
+colr.sets.grey;
+```
+
+A ColrSet object for the colour `grey`.
+
+- The `text` function is: `colr.grey`.
+- The `bg` function is: `colr.greyBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### gray
+
+```typescript
+colr.sets.gray;
+```
+
+A ColrSet object for the colour `gray`.
+
+- The `text` function is: `colr.gray`.
+- The `bg` function is: `colr.grayBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_primary">primary</span>
+
+```typescript
+colr.sets.primary;
+```
+
+A ColrSet object for the theme `primary`.
+
+- The `text` function is: `colr.primary`.
+- The `bg` function is: `colr.primaryBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_secondary">secondary</span>
+
+```typescript
+colr.sets.secondary;
+```
+
+A ColrSet object for the theme `secondary`.
+
+- The `text` function is: `colr.secondary`.
+- The `bg` function is: `colr.secondaryBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_success">success</span>
+
+```typescript
+colr.sets.success;
+```
+
+A ColrSet object for the theme `success`.
+
+- The `text` function is: `colr.success`.
+- The `bg` function is: `colr.successBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_danger">danger</span>
+
+```typescript
+colr.sets.danger;
+```
+
+A ColrSet object for the theme `danger`.
+
+- The `text` function is: `colr.danger`.
+- The `bg` function is: `colr.dangerBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_warning">warning</span>
+
+```typescript
+colr.sets.warning;
+```
+
+A ColrSet object for the theme `warning`.
+
+- The `text` function is: `colr.warning`.
+- The `bg` function is: `colr.warningBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### <span id="colr_sets_info">info</span>
+
+```typescript
+colr.sets.info;
+```
+
+A ColrSet object for the theme `info`.
+
+- The `text` function is: `colr.info`.
+- The `bg` function is: `colr.infoBg`.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### WrapFn
+Type for a function that manipulates a string
+
+Can by a cplr `ColrFn`, a `chalk` function, or something else
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### ColrFn
+Type for a function that manipulates a string, but also has properties for chaining more colours/styles
+
+See `colr`
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### WrapSet
+An agnostic set of functions to wrap/modify the given text with the given colour/style.
+
+Same as `ColrSet`, but not limited to colr library.
+
+Has two properties:
+- `text` - A function to wrap/modify the given text with the given colour/style.
+- `bg` - A function to wrap/modify the background of the given text with the given colour/style.
+
+Example:
+```typescript
+const chalkSet: WrapSet = {
+  text: chalk.redBright,
+  bg: chalk.bgRedBright,
+};
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+### ColrSet
+A set of ColrFns for a certain colour/theme.
+
+Has two properties:
+- `text` - A function to set the text colour to the given colour/style.
+- `bg` - A function to set the background colour to the given colour/style.
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
 ## <span id="table">table</span>
 A simple table generator
@@ -2503,7 +5199,7 @@ Each item in each array is a character to use for the row type:
 #### objectsToTable
 
 ```typescript
-table.utils.objectsToTable(objects: Object[], headers: Object): { header: any[][]; body: any[][] }
+table.utils.objectsToTable(objects: Object[], headers: Object): { header: any[][]; body: any[][]; }
 ```
 
 Process an array of objects into a table format (string[][])
@@ -2525,9 +5221,9 @@ table.utils.objectsToTable(objs)
 | *0* | `objects`      | **Yes**  | `Object[]` |         |
 | *1* | `headers`      | *No*     | `Object`   | `{}`    |
 
-| Return Type                          |
-|--------------------------------------|
-| `{ header: any[][]; body: any[][] }` |
+| Return Type                           |
+|---------------------------------------|
+| `{ header: any[][]; body: any[][]; }` |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -2649,9 +5345,6 @@ table.print(header, body, {format})
 ## Logger
   - [**Logger**](#logger)
     - [log](#log)
-    - [createLogger](#createlogger)
-    - [LogOptions](#logoptions)
-    - [LogConfig](#logconfig)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -2677,771 +5370,6 @@ log.error('This is error');     // [12:00:00.123]  ERRR  This is error
 
 <p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
 
-### createLogger
-
-```typescript
-createLogger(extraConfigs: T, options: LogOptions): Logger<T>
-```
-
-Create a logger with custom configs
-
-```typescript
-const log = createLogger({
-  myLog: {
-    name: 'MYLOG',
-    nameColour: chalk.magenta,
-    showDate: false,
-    showTime: true,
-    contentColour: chalk.yellowBright
-  }
-});
-
-log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
-```
-
-|  #  | Parameter Name | Required | Type         | Default   |
-|:---:|:---------------|:---------|:-------------|:----------|
-| *0* | `extraConfigs` | *No*     | `T`          | `{} as T` |
-| *1* | `options`      | *No*     | `LogOptions` | `{}`      |
-
-| Return Type |
-|-------------|
-| `Logger<T>` |
-
-<p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
-
-### LogOptions
-
-```typescript
-LogOptions;
-```
-
-Options for the log function
-
-<p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
-
-### LogConfig
-
-```typescript
-LogConfig;
-```
-
-Configuration for the log function
-
-See createLogger
-
-<p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
-
-## chlk
-A collection of colours and styles for use in the console.
-
-  - [**chlk**](#chlk)
-    - [gray0](#chlk_gray0)
-    - [gray1](#chlk_gray1)
-    - [gray2](#chlk_gray2)
-    - [gray3](#chlk_gray3)
-    - [gray4](#chlk_gray4)
-    - [gray5](#chlk_gray5)
-    - [grays](#grays)
-    - [gray](#gray)
-    - [clear](#clear)
-    - [not](#not)
-    - [notUnderlined](#notunderlined)
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
-### <span id="chlk_gray0">gray0</span>
-
-```typescript
-chlk.gray0(...args: string[]): string
-clr.gray0(...args: string[]): string
-```
-
-Gray 0 (0-5). Equivalent to chalk.black
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### <span id="chlk_gray1">gray1</span>
-
-```typescript
-chlk.gray1(...args: string[]): string
-clr.gray1(...args: string[]): string
-```
-
-Gray 1 (0-5). Equivalent to chalk.gray.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### <span id="chlk_gray2">gray2</span>
-
-```typescript
-chlk.gray2(...args: string[]): string
-clr.gray2(...args: string[]): string
-```
-
-Gray 2 (0-5). Equivalent to chalk.white.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### <span id="chlk_gray3">gray3</span>
-
-```typescript
-chlk.gray3(...args: string[]): string
-clr.gray3(...args: string[]): string
-```
-
-Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### <span id="chlk_gray4">gray4</span>
-
-```typescript
-chlk.gray4(...args: string[]): string
-clr.gray4(...args: string[]): string
-```
-
-Gray 4 (0-5). Equivalent to chalk.white
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### <span id="chlk_gray5">gray5</span>
-
-```typescript
-chlk.gray5(...args: string[]): string
-clr.gray5(...args: string[]): string
-```
-
-Gray 5 (0-5). Equivalent to chalk.whiteBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### grays
-
-```typescript
-chlk.grays(...args: string[]): string
-```
-
-Grays between 0 and 5.
-
-```typescript
-grays[2]; // gray2
-```
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### gray
-
-```typescript
-chlk.gray(num: number): any
-```
-
-Grays between 0 and 5.
-
-```typescript
-gray(2); // gray2
-```
-
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `num`          | **Yes**  | `number` |
-
-| Return Type |
-|-------------|
-| `any`       |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### clear
-
-```typescript
-chlk.clear(str: string): string
-```
-
-Removes ANSI colours. Not same as chalk.reset
-
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `str`          | **Yes**  | `string` |
-
-| Return Type |
-|-------------|
-| `string`    |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### not
-
-```typescript
-chlk.not(style: Function): (item: string) => string
-```
-
-Stops and restarts a style around a given string
-
-|  #  | Parameter Name | Required | Type       |
-|:---:|:---------------|:---------|:-----------|
-| *0* | `style`        | **Yes**  | `Function` |
-
-| Return Type                |
-|----------------------------|
-| `(item: string) => string` |
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-### notUnderlined
-
-```typescript
-chlk.notUnderlined;
-```
-
-Dont underline a section of text
-
-<p style="text-align: right" align="right"><a href="#chlk"> [↑ Back to <b>chlk</b> ↑] </a></p>
-
-## clr
-A collection of shortcuts and aliases for chalk functions
-
-  - [**clr**](#clr)
-    - [hl1](#hl1)
-    - [hl2](#hl2)
-    - [approve](#approve)
-    - [create](#create)
-    - [update](#update)
-    - [remove](#remove)
-    - [removeAll](#removeall)
-    - [blue](#blue)
-    - [cyan](#cyan)
-    - [green](#green)
-    - [magenta](#magenta)
-    - [red](#red)
-    - [yellow](#yellow)
-    - [t1](#t1)
-    - [t2](#t2)
-    - [t3](#t3)
-    - [t4](#t4)
-    - [t5](#t5)
-    - [t6](#t6)
-    - [gray0](#clr_gray0)
-    - [gray1](#clr_gray1)
-    - [gray2](#clr_gray2)
-    - [gray3](#clr_gray3)
-    - [gray4](#clr_gray4)
-    - [gray5](#clr_gray5)
-
-<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
-
-### hl1
-
-```typescript
-clr.hl1(...args: string[]): string
-```
-
-Highlight 1
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### hl2
-
-```typescript
-clr.hl2(...args: string[]): string
-```
-
-Highlight 2
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### approve
-
-```typescript
-clr.approve(...args: string[]): string
-```
-
-Approval colour (green)
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### create
-
-```typescript
-clr.create(...args: string[]): string
-```
-
-Create colour (greenBright)
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### update
-
-```typescript
-clr.update(...args: string[]): string
-```
-
-Update colour (yellow)
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### remove
-
-```typescript
-clr.remove(...args: string[]): string
-```
-
-Remove/delete colour (red)
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### removeAll
-
-```typescript
-clr.removeAll(...args: string[]): string
-```
-
-Remove/delete all colour (red)
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### blue
-
-```typescript
-clr.blue(...args: string[]): string
-```
-
-Alias for chalk.blueBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### cyan
-
-```typescript
-clr.cyan(...args: string[]): string
-```
-
-Alias for chalk.cyanBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### green
-
-```typescript
-clr.green(...args: string[]): string
-```
-
-Alias for chalk.greenBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### magenta
-
-```typescript
-clr.magenta(...args: string[]): string
-```
-
-Alias for chalk.magentaBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### red
-
-```typescript
-clr.red(...args: string[]): string
-```
-
-Alias for chalk.redBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### yellow
-
-```typescript
-clr.yellow(...args: string[]): string
-```
-
-Alias for chalk.yellowBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t1
-
-```typescript
-clr.t1(...args: string[]): string
-```
-
-Theme 1
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t2
-
-```typescript
-clr.t2(...args: string[]): string
-```
-
-Theme 2
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t3
-
-```typescript
-clr.t3(...args: string[]): string
-```
-
-Theme 3
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t4
-
-```typescript
-clr.t4(...args: string[]): string
-```
-
-Theme 4
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t5
-
-```typescript
-clr.t5(...args: string[]): string
-```
-
-Theme 5
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### t6
-
-```typescript
-clr.t6(...args: string[]): string
-```
-
-Theme 6
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray0">gray0</span>
-
-```typescript
-chlk.gray0(...args: string[]): string
-clr.gray0(...args: string[]): string
-```
-
-Gray 0 (0-5). Equivalent to chalk.black
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray1">gray1</span>
-
-```typescript
-chlk.gray1(...args: string[]): string
-clr.gray1(...args: string[]): string
-```
-
-Gray 1 (0-5). Equivalent to chalk.gray.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray2">gray2</span>
-
-```typescript
-chlk.gray2(...args: string[]): string
-clr.gray2(...args: string[]): string
-```
-
-Gray 2 (0-5). Equivalent to chalk.white.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray3">gray3</span>
-
-```typescript
-chlk.gray3(...args: string[]): string
-clr.gray3(...args: string[]): string
-```
-
-Gray 3 (0-5). Equivalent to chalk.whiteBright.dim
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray4">gray4</span>
-
-```typescript
-chlk.gray4(...args: string[]): string
-clr.gray4(...args: string[]): string
-```
-
-Gray 4 (0-5). Equivalent to chalk.white
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
-### <span id="clr_gray5">gray5</span>
-
-```typescript
-chlk.gray5(...args: string[]): string
-clr.gray5(...args: string[]): string
-```
-
-Gray 5 (0-5). Equivalent to chalk.whiteBright
-
-|  #   | Parameter Name | Required | Type       | Description          |
-|:----:|:---------------|:---------|:-----------|:---------------------|
-| *0…* | `args`         | **Yes**  | `string[]` | Strings to be styled |
-
-| Return Type |        |
-|-------------|--------|
-| `string`    | string |
-
-<p style="text-align: right" align="right"><a href="#clr"> [↑ Back to <b>clr</b> ↑] </a></p>
-
 ## LogTools
 A collection of tools for logging
 
@@ -3449,6 +5377,9 @@ A collection of tools for logging
     - [getLogStr](#getlogstr)
     - [processLogContents](#processlogcontents)
     - [getLog](#getlog)
+    - [createLogger](#createlogger)
+    - [LogOptions](#logoptions)
+    - [LogConfig](#logconfig)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -3542,6 +5473,61 @@ Get a log function for a given prefix
 | Return Type                |
 |----------------------------|
 | `(...args: any[]) => void` |
+
+<p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
+
+### createLogger
+
+```typescript
+createLogger(extraConfigs: T, options: LogOptions): Logger<T>
+```
+
+Create a logger with custom configs
+
+```typescript
+const log = createLogger({
+  myLog: {
+    name: 'MYLOG',
+    nameColour: chalk.magenta,
+    showDate: false,
+    showTime: true,
+    contentColour: chalk.yellowBright
+  }
+});
+
+log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
+```
+
+|  #  | Parameter Name | Required | Type         | Default   |
+|:---:|:---------------|:---------|:-------------|:----------|
+| *0* | `extraConfigs` | *No*     | `T`          | `{} as T` |
+| *1* | `options`      | *No*     | `LogOptions` | `{}`      |
+
+| Return Type |
+|-------------|
+| `Logger<T>` |
+
+<p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
+
+### LogOptions
+
+```typescript
+LogOptions;
+```
+
+Options for the log function
+
+<p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
+
+### LogConfig
+
+```typescript
+LogConfig;
+```
+
+Configuration for the log function
+
+See createLogger
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -3759,8 +5745,8 @@ progressBar.update();
 ### nextTick
 
 ```typescript
-nextTick(undefined): Promise<unknown>
-waiters.nextTick(undefined): Promise<unknown>
+nextTick(): Promise<unknown>
+waiters.nextTick(): Promise<unknown>
 ```
 
 Wait for the next tick
@@ -3829,7 +5815,7 @@ Returned by `getKeyListener`
 #### start
 
 ```typescript
-kl.start(undefined): void
+kl.start(): void
 ```
 
 Start listening for key presses
@@ -3843,7 +5829,7 @@ Start listening for key presses
 #### stop
 
 ```typescript
-kl.stop(undefined): void
+kl.stop(): void
 ```
 
 Stop listening for key presses
