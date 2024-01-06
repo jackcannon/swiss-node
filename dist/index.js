@@ -1754,7 +1754,7 @@ var getFilePanel = (path, panelWidth, maxLines) => {
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
   const primaryWrapFn = colr.yellow;
   const cursorWrapFn = colr.darkBg.yellowBg.black;
-  const ancestralCursorWrapFn = colr.darkBg.greyBg.black;
+  const ancestralCursorWrapFn = colr.greyBg.black;
   const selectedIconWrapFn = colr.green;
   const selectedWrapFn = colr.green;
   const cursorOnSelectedWrapFn = colr.greenBg.black;
@@ -3118,27 +3118,27 @@ var defaultConfigs = {
   },
   log: {
     name: "LOG",
-    nameColour: colr.whiteBg.black
+    nameColour: colr.darkBg.whiteBg.black
   },
   out: {
     name: "OUT",
-    nameColour: colr.dark.whiteBg.black
+    nameColour: colr.darkBg.whiteBg.black
   },
   normal: {
     name: "LOG",
-    nameColour: colr.dark.whiteBg.black
+    nameColour: colr.darkBg.whiteBg.black
   },
   verbose: {
     name: "LOG",
-    nameColour: colr.dark.whiteBg.black
+    nameColour: colr.darkBg.whiteBg.black
   },
   debug: {
     name: "DBUG",
-    nameColour: colr.dark.magentaBg.white
+    nameColour: colr.darkBg.magentaBg.white
   },
   info: {
     name: "INFO",
-    nameColour: colr.dark.blueBg.white
+    nameColour: colr.darkBg.blueBg.white
   },
   warn: {
     name: "WARN",
@@ -3146,7 +3146,7 @@ var defaultConfigs = {
   },
   error: {
     name: "ERRR",
-    nameColour: colr.dark.redBg.white
+    nameColour: colr.darkBg.redBg.white
   }
 };
 var getStr = (enableColours) => (item) => {
