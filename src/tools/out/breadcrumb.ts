@@ -1,9 +1,8 @@
-import chalk from 'chalk';
 import { symbols } from 'swiss-ak';
 import { out } from '../out';
 import { ColrFn, WrapFn, colr } from '../colr';
 
-const seperatorChar = ` ${colr.gray2(symbols.CHEV_RGT)} `;
+const seperatorChar = ` ${colr.grey2(symbols.CHEV_RGT)} `;
 
 //<!-- DOCS: 250 -->
 /**<!-- DOCS: out.getBreadcrumb ### @ -->
@@ -55,7 +54,7 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   const spaceForInput = 25;
 
   const get = (...tempNames: string[]) =>
-    chalk.bold(
+    colr.bold(
       out.truncate(
         getColouredNames(...tempNames)
           .join(seperatorChar)

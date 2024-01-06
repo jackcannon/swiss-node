@@ -1,8 +1,8 @@
 import util from 'util';
-import chalk from 'chalk';
 import { ObjectTools, OfType } from 'swiss-ak';
 
 import { out } from './out';
+import { colr } from './colr';
 
 //<!-- DOCS: 600 -->
 /**<!-- DOCS: log ##! -->
@@ -18,41 +18,41 @@ const defaultOptions: LogOptions = {
 const defaultConfigs = {
   blank: {
     name: '',
-    nameColour: chalk,
+    nameColour: colr,
     showDate: false,
     showTime: false
   } as LogConfig,
   log: {
     name: 'LOG',
-    nameColour: chalk.bgWhite.black
+    nameColour: colr.darkBg.whiteBg.black
   } as LogConfig,
   out: {
     name: 'OUT',
-    nameColour: chalk.bgWhite.black
+    nameColour: colr.darkBg.whiteBg.black
   } as LogConfig,
   normal: {
     name: 'LOG',
-    nameColour: chalk.bgWhite.black
+    nameColour: colr.darkBg.whiteBg.black
   } as LogConfig,
   verbose: {
     name: 'LOG',
-    nameColour: chalk.bgWhite.black
+    nameColour: colr.darkBg.whiteBg.black
   } as LogConfig,
   debug: {
     name: 'DBUG',
-    nameColour: chalk.bgMagenta.whiteBright
+    nameColour: colr.darkBg.magentaBg.white
   } as LogConfig,
   info: {
     name: 'INFO',
-    nameColour: chalk.bgBlue.whiteBright
+    nameColour: colr.darkBg.blueBg.white
   } as LogConfig,
   warn: {
     name: 'WARN',
-    nameColour: chalk.bgYellowBright.black
+    nameColour: colr.yellowBg.black
   } as LogConfig,
   error: {
     name: 'ERRR',
-    nameColour: chalk.bgRed.whiteBright
+    nameColour: colr.darkBg.redBg.white
   } as LogConfig
 } as const;
 
@@ -90,7 +90,7 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
   const { name, nameColour, contentColour, showDate, showTime } = config;
 
-  const dateWrapper = enableColours ? chalk.dim : (str: string) => str;
+  const dateWrapper = enableColours ? colr.dim : (str: string) => str;
   const nameWrapper = !enableColours ? (str: string) => `|${str}|` : nameColour ? nameColour : (str: string) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str: string) => str;
 
@@ -118,10 +118,10 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
  * const log = createLogger({
  *   myLog: {
  *     name: 'MYLOG',
- *     nameColour: chalk.magenta,
+ *     nameColour: colr.dark.magenta,
  *     showDate: false,
  *     showTime: true,
- *     contentColour: chalk.yellowBright
+ *     contentColour: colr.yellow
  *   }
  * });
  *

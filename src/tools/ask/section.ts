@@ -43,7 +43,7 @@ export const separator = (
     up: '▵'
   };
   const line = ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(colr.gray1(out.center(line, undefined, lineChar)));
+  console.log(colr.grey1(out.center(line, undefined, lineChar)));
   return 1;
 };
 

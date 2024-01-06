@@ -323,7 +323,7 @@ declare const colr: ColrFn;
  *
  * Type for a function that manipulates a string
  *
- * Can by a cplr `ColrFn`, a `chalk` function, or something else
+ * Can by a colr `ColrFn`, a `chalk` function, or something else
  */
 declare type WrapFn = (...text: string[]) => string;
 /**<!-- DOCS: colr.ColrFn ### 303 -->
@@ -2873,7 +2873,7 @@ declare namespace out {
      * ```
      * @param {string} text
      * @param {number} [maxLength=out.utils.getTerminalWidth()]
-     * @param {string} [suffix=chalk.dim('…')]
+     * @param {string} [suffix=colr.dim('…')]
      * @returns {string}
      */
     export const truncate: (text: string, maxLength?: number, suffix?: string) => string;
@@ -2889,7 +2889,7 @@ declare namespace out {
      * ```
      * @param {string} text
      * @param {number} [maxLength=out.utils.getTerminalWidth()]
-     * @param {string} [suffix=chalk.dim('…')]
+     * @param {string} [suffix=colr.dim('…')]
      * @returns {string}
      */
     export const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
@@ -3154,11 +3154,11 @@ declare namespace out {
          *
          * - `out.utils.hasColor`
          *
-         * Determine whether a given string contains any chalk-ed colours
+         * Determine whether a given string contains any colr-ed colours
          *
          * ```typescript
          * out.utils.hasColor('this is line 1') // false
-         * out.utils.hasColor(chalk.red('this is line 1')) // true
+         * out.utils.hasColor(colr.red('this is line 1')) // true
          * ```
          * @param {string} str
          * @returns {boolean}
@@ -3411,27 +3411,27 @@ declare namespace table {
         /**<!-- DOCS: table.FullTableOptions.wrapperFn #### -->
          * wrapperFn
          *
-         * Function to wrap each line of the output in (e.g. chalk.blue)
+         * Function to wrap each line of the output in (e.g. colr.blue)
          */
         wrapperFn: Function;
         /**<!-- DOCS: table.FullTableOptions.wrapLinesFn #### -->
          * wrapLinesFn
          *
-         * Function to wrap the output lines of each cell of the table (e.g. chalk.blue)
+         * Function to wrap the output lines of each cell of the table (e.g. colr.blue)
          */
         wrapLinesFn: Function;
         /**<!-- DOCS: table.FullTableOptions.wrapHeaderLinesFn #### -->
          * wrapHeaderLinesFn
          *
-         * Function to wrap the output lines of each cell of the header of the table (e.g. chalk.blue)
+         * Function to wrap the output lines of each cell of the header of the table (e.g. colr.blue)
          *
-         * Default: `chalk.bold`
+         * Default: `colr.bold`
          */
         wrapHeaderLinesFn: Function;
         /**<!-- DOCS: table.FullTableOptions.wrapBodyLinesFn #### -->
          * wrapBodyLinesFn
          *
-         * Function to wrap the output lines of each cell of the body of the table (e.g. chalk.blue)
+         * Function to wrap the output lines of each cell of the body of the table (e.g. colr.blue)
          */
         wrapBodyLinesFn: Function;
         /**<!-- DOCS: table.FullTableOptions.overrideChar #### -->
@@ -4459,10 +4459,10 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  * const log = createLogger({
  *   myLog: {
  *     name: 'MYLOG',
- *     nameColour: chalk.magenta,
+ *     nameColour: colr.dark.magenta,
  *     showDate: false,
  *     showTime: true,
- *     contentColour: chalk.yellowBright
+ *     contentColour: colr.yellow
  *   }
  * });
  *

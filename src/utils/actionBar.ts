@@ -1,7 +1,7 @@
-import chalk from 'chalk';
 import { fn } from 'swiss-ak';
 import { out } from '../tools/out';
 import { table } from '../tools/table';
+import { colr } from '../tools/colr';
 
 type actionBarId = string;
 
@@ -28,10 +28,10 @@ export const getActionBar = (
   const format: table.TableFormatConfig[] = [];
 
   if (pressedId) {
-    format.push({ formatFn: chalk.bgWhite.black, col: keyList.indexOf(pressedId) });
+    format.push({ formatFn: colr.darkBg.whiteBg.black, col: keyList.indexOf(pressedId) });
   }
   if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: chalk.dim.strikethrough, col: keyList.indexOf(key) }));
+    disabledIds.forEach((key) => format.push({ formatFn: colr.dim.strikethrough, col: keyList.indexOf(key) }));
   }
 
   return out.utils.joinLines(

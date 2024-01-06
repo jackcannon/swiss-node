@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import prompts from 'prompts';
 import Fuse from 'fuse.js'; // fuzzy-search
 import { second, seconds, wait, fn, symbols } from 'swiss-ak';
@@ -348,7 +347,7 @@ export namespace ask {
       ...options
     };
 
-    const opts = [{ title: chalk.dim(`${colr.dark.success.bold(symbols.TICK)} [ Finished ]`), value: 'none' as CRUD }];
+    const opts = [{ title: colr.dim(`${colr.dark.success.bold(symbols.TICK)} [ Finished ]`), value: 'none' as CRUD }];
     if (fullOptions.canCreate) {
       opts.push({ title: `${colr.success.bold(symbols.PLUS)} Add another ${itemName}`, value: 'create' as CRUD });
     }
@@ -396,14 +395,14 @@ export namespace ask {
       } else {
         const message = validateResponse || '';
         out.moveUp(1 + extraLines);
-        console.log(chalk.red(message));
+        console.log(colr.dark.red(message));
         return runLoop(input, message.split('\n').length);
       }
     };
     return runLoop();
   };
 
-  const imitateHighlight = chalk.cyanBright.bold.underline;
+  const imitateHighlight = colr.cyan.bold.underline;
   const getImitateResultText = (result: any, isChild: boolean = false): string => {
     if (result instanceof Array) {
       if (result.length > 3) return `${result.length} selected`;
@@ -453,14 +452,14 @@ export namespace ask {
   export const imitate = (done: boolean, question: string | Breadcrumb, result?: any): number => {
     const message = typeof question === 'string' ? question : question.get();
     const resultText = getImitateResultText(result);
-    const prefix = done ? chalk.green('✔') : chalk.cyan('?');
-    const questionText = chalk.whiteBright.bold(message);
-    const joiner = resultText ? chalk.gray(done ? '… ' : '› ') : '';
+    const prefix = done ? colr.dark.green('✔') : colr.dark.cyan('?');
+    const questionText = colr.white.bold(message);
+    const joiner = resultText ? colr.grey(done ? '… ' : '› ') : '';
 
     const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
     const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
 
-    let resultWrapper = out.utils.hasColor(resultText) ? fn.noact : done ? chalk.white : chalk.gray;
+    let resultWrapper = out.utils.hasColor(resultText) ? fn.noact : done ? colr.dark.white : colr.grey;
 
     const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : '';
 
@@ -536,7 +535,7 @@ export namespace ask {
   export const pause = async (text: string | Breadcrumb = 'Press enter to continue...'): Promise<void> => {
     return new Promise((resolve) => {
       const message = typeof text === 'string' ? text : text.get();
-      console.log(chalk.gray(message));
+      console.log(colr.grey(message));
 
       const finish = () => {
         kl.stop();
@@ -579,7 +578,7 @@ export namespace ask {
       const textValue = template(s);
       out.moveUp(lines);
       lines = textValue.split('\n').length;
-      console.log(chalk.blackBright(textValue));
+      console.log(colr.lightBlack(textValue));
       await wait(seconds(1));
     }
     out.moveUp(lines);

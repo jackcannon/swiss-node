@@ -1434,7 +1434,7 @@ out.truncate('This is a very long sentence', 15); // 'This is a ve...'
 |:---:|:---------------|:---------|:---------|:-------------------------------|
 | *0* | `text`         | **Yes**  | `string` |                                |
 | *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
-| *2* | `suffix`       | *No*     | `string` | `chalk.dim('…')`               |
+| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                |
 
 | Return Type |
 |-------------|
@@ -1458,7 +1458,7 @@ out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
 |:---:|:---------------|:---------|:---------|:-------------------------------|
 | *0* | `text`         | **Yes**  | `string` |                                |
 | *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
-| *2* | `suffix`       | *No*     | `string` | `chalk.dim('…')`               |
+| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                |
 
 | Return Type |
 |-------------|
@@ -2014,11 +2014,11 @@ out.utils.joinLines(['this is line 1', 'this is line 2'])
 out.utils.hasColor(str: string): boolean
 ```
 
-Determine whether a given string contains any chalk-ed colours
+Determine whether a given string contains any colr-ed colours
 
 ```typescript
 out.utils.hasColor('this is line 1') // false
-out.utils.hasColor(chalk.red('this is line 1')) // true
+out.utils.hasColor(colr.red('this is line 1')) // true
 ```
 
 |  #  | Parameter Name | Required | Type     |
@@ -4743,7 +4743,7 @@ A ColrSet object for the theme `info`.
 ### WrapFn
 Type for a function that manipulates a string
 
-Can by a cplr `ColrFn`, a `chalk` function, or something else
+Can by a colr `ColrFn`, a `chalk` function, or something else
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4985,24 +4985,24 @@ The configuration options for the table
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
 #### wrapperFn
-Function to wrap each line of the output in (e.g. chalk.blue)
+Function to wrap each line of the output in (e.g. colr.blue)
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
 #### wrapLinesFn
-Function to wrap the output lines of each cell of the table (e.g. chalk.blue)
+Function to wrap the output lines of each cell of the table (e.g. colr.blue)
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
 #### wrapHeaderLinesFn
-Function to wrap the output lines of each cell of the header of the table (e.g. chalk.blue)
+Function to wrap the output lines of each cell of the header of the table (e.g. colr.blue)
 
-Default: `chalk.bold`
+Default: `colr.bold`
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
 #### wrapBodyLinesFn
-Function to wrap the output lines of each cell of the body of the table (e.g. chalk.blue)
+Function to wrap the output lines of each cell of the body of the table (e.g. colr.blue)
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
@@ -5504,10 +5504,10 @@ Create a logger with custom configs
 const log = createLogger({
   myLog: {
     name: 'MYLOG',
-    nameColour: chalk.magenta,
+    nameColour: colr.dark.magenta,
     showDate: false,
     showTime: true,
-    contentColour: chalk.yellowBright
+    contentColour: colr.yellow
   }
 });
 

@@ -5,14 +5,14 @@ import { getLineCounter } from '../out/lineCounter';
 
 import { table as tableOut } from '../table';
 import { Breadcrumb } from '../out/breadcrumb';
-import chalk from 'chalk';
 import { ask } from '../ask';
+import { colr } from '../colr';
 
 //<!-- DOCS: 130 -->
 
 type ItemToRowMapFunction<T extends unknown> = (item?: T, index?: number, items?: T[]) => any[];
 
-const highlightFn = chalk.cyan.underline;
+const highlightFn = colr.dark.cyan.underline;
 
 const askTableHandler = <T extends unknown>(
   isMulti: boolean,
@@ -66,9 +66,9 @@ const askTableHandler = <T extends unknown>(
         const selectedSym = symbols.RADIO_FULL;
         const unselectedSym = symbols.RADIO_EMPTY;
 
-        firstCell = selectedIndexes.includes(index) ? chalk.reset(chalk.green(selectedSym)) : chalk.reset(unselectedSym);
+        firstCell = selectedIndexes.includes(index) ? colr.reset(colr.dark.green(selectedSym)) : colr.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? chalk.reset(chalk.cyan(symbols.CURSOR)) : ' ';
+        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(symbols.CURSOR)) : ' ';
       }
 
       return [firstCell, ...row];

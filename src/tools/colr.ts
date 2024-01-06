@@ -632,7 +632,7 @@ export const colr = getColrFn('colr', [], {
  *
  * Type for a function that manipulates a string
  *
- * Can by a cplr `ColrFn`, a `chalk` function, or something else
+ * Can by a colr `ColrFn`, a `chalk` function, or something else
  */
 export type WrapFn = (...text: string[]) => string;
 

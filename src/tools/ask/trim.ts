@@ -4,7 +4,7 @@ import { table } from '../table';
 import { out } from '../out';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
-import chalk from 'chalk';
+import { colr } from '../colr';
 
 //<!-- DOCS: 140 -->
 
@@ -58,9 +58,9 @@ const getFullOptions = (opts: Partial<AskTrimOptions>): AskTrimOptions => ({
   charHandle: '┃',
   charBar: '█',
 
-  wrapTrack: chalk.bgGray,
-  wrapHandle: chalk.whiteBright,
-  wrapBar: chalk.white,
+  wrapTrack: colr.greyBg,
+  wrapHandle: colr.white,
+  wrapBar: colr.dark.white,
 
   ...opts,
 
@@ -68,9 +68,9 @@ const getFullOptions = (opts: Partial<AskTrimOptions>): AskTrimOptions => ({
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? '█',
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? '█',
 
-  wrapActiveHandle: opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk.yellowBright.bold,
-  wrapHandleBase: opts.wrapHandleBase ?? opts.wrapHandle ?? chalk.whiteBright,
-  wrapActiveHandleBase: opts.wrapActiveHandleBase ?? opts.wrapHandleBase ?? opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk.yellowBright.bold
+  wrapActiveHandle: opts.wrapActiveHandle ?? opts.wrapHandle ?? colr.yellow.bold,
+  wrapHandleBase: opts.wrapHandleBase ?? opts.wrapHandle ?? colr.white,
+  wrapActiveHandleBase: opts.wrapActiveHandleBase ?? opts.wrapHandleBase ?? opts.wrapActiveHandle ?? opts.wrapHandle ?? colr.yellow.bold
 });
 
 const getChars = (opts: AskTrimOptions) => ({
@@ -222,10 +222,10 @@ export const trim = async (totalFrames: number, frameRate: number, options: Part
         // expensive, so only show at the beginning
         const body = [
           [
-            chalk.gray.dim(`[${symbols.TRI_LFT}/${symbols.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? 's' : ''}`),
-            chalk.gray.dim(`[${symbols.TRI_UPP}/${symbols.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? 's' : ''}`),
-            chalk.gray.dim(`[TAB] switch handle`),
-            chalk.gray.dim(`[ENTER] submit`)
+            colr.grey.dim(`[${symbols.TRI_LFT}/${symbols.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? 's' : ''}`),
+            colr.grey.dim(`[${symbols.TRI_UPP}/${symbols.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? 's' : ''}`),
+            colr.grey.dim(`[TAB] switch handle`),
+            colr.grey.dim(`[ENTER] submit`)
           ]
         ];
 

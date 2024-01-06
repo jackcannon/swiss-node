@@ -17,7 +17,6 @@ import {
   tryOr,
   wait
 } from 'swiss-ak';
-import chalk from 'chalk';
 
 import { ask } from '../ask';
 import { out } from '../out';
@@ -150,8 +149,8 @@ const getFileIcon = (ext: string) => {
   if (category === 'image') {
     return out.left(
       `╔══════════════╗
-║  ${chalk.whiteBright('☀')}  ┌────┐${chalk.whiteBright('☀')}  ║
-║ ${chalk.whiteBright('☀')}┌──┤▫▫▪▫│  ${chalk.whiteBright('☀')}║
+║  ${colr.white('☀')}  ┌────┐${colr.white('☀')}  ║
+║ ${colr.white('☀')}┌──┤▫▫▪▫│  ${colr.white('☀')}║
 ╟──┤▫▪│▫▫▫▫├───╢
 ║▪▫│▫▫│▪▫▫▫│▫▪▫║
 ╚══╧══╧════╧═══╝`,
@@ -213,14 +212,14 @@ const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
 
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(chalk.dim(`${ext.toUpperCase()} ${category ? `${StringTools.capitalise(category)} ` : ''}File`), panelWidth));
+  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${StringTools.capitalise(category)} ` : ''}File`), panelWidth));
 
-  result.push(out.center(colr.gray1('─'.repeat(Math.round(panelWidth * 0.75))), panelWidth));
+  result.push(out.center(colr.grey1('─'.repeat(Math.round(panelWidth * 0.75))), panelWidth));
 
   const now = Date.now();
 
   const addItem = (title: string, value: string, extra?: string) => {
-    result.push(out.split(`${chalk.bold.dim(title)}`, `${value}${extra ? chalk.dim(` (${chalk.dim(extra)})`) : ''}`, panelWidth));
+    result.push(out.split(`${colr.bold.dim(title)}`, `${value}${extra ? colr.dim(` (${colr.dim(extra)})`) : ''}`, panelWidth));
   };
   const addTimeItem = (title: string, time: ms, append?: string) => {
     addItem(title, `${TimeTools.toReadableDuration(now - time, false, 2)}${append || ''}`);
@@ -238,7 +237,7 @@ const getFilePanel = (path: string, panelWidth: number, maxLines: number) => {
   }
 
   const resultStr = out.left(out.wrap(result.join('\n'), panelWidth), panelWidth);
-  return chalk.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
+  return colr.dark.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 
 const fileExplorerHandler = async (
@@ -250,13 +249,13 @@ const fileExplorerHandler = async (
   suggestedFileName: string = ''
 ): Promise<string[]> => {
   // options
-  const primaryWrapFn = chalk.yellowBright;
-  const cursorWrapFn = chalk.bgYellow.black;
-  const ancestralCursorWrapFn = chalk.bgGray.black;
+  const primaryWrapFn = colr.yellow;
+  const cursorWrapFn = colr.darkBg.yellowBg.black;
+  const ancestralCursorWrapFn = colr.greyBg.black;
 
-  const selectedIconWrapFn = chalk.greenBright;
-  const selectedWrapFn = chalk.greenBright;
-  const cursorOnSelectedWrapFn = chalk.bgGreenBright.black;
+  const selectedIconWrapFn = colr.green;
+  const selectedWrapFn = colr.green;
+  const cursorOnSelectedWrapFn = colr.greenBg.black;
 
   const minWidth = 25;
   const maxWidth = 25;
@@ -391,31 +390,31 @@ const fileExplorerHandler = async (
     const { dir: formatDir, file: formatFile } = {
       single: {
         d: {
-          dir: formatter('›', colr.gray5),
-          file: formatter(' ', chalk.dim)
+          dir: formatter('›', colr.grey5),
+          file: formatter(' ', colr.dim)
         },
         f: {
-          dir: formatter('›', colr.gray3),
-          file: formatter(' ', colr.gray5)
+          dir: formatter('›', colr.grey3),
+          file: formatter(' ', colr.grey5)
         },
         df: {
-          dir: formatter('›', colr.gray5),
-          file: formatter(' ', colr.gray5)
+          dir: formatter('›', colr.grey5),
+          file: formatter(' ', colr.grey5)
         }
       },
       multi: {
         d: {
-          dir: formatter('›', colr.gray5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `),
-          file: formatter(' ', chalk.dim, '   ', '   ')
+          dir: formatter('›', colr.grey5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `),
+          file: formatter(' ', colr.dim, '   ', '   ')
         },
         f: {
-          dir: formatter('›', colr.gray3, '   ', '   '),
-          file: formatter(' ', colr.gray5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `)
+          dir: formatter('›', colr.grey3, '   ', '   '),
+          file: formatter(' ', colr.grey5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `)
         },
         df: {
           // shouldn't happen, but here anyway
-          dir: formatter('›', colr.gray5, '   ', '   '),
-          file: formatter(' ', colr.gray5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `)
+          dir: formatter('›', colr.grey5, '   ', '   '),
+          file: formatter(' ', colr.grey5, ` ${selectedIconWrapFn(symbols.RADIO_FULL)} `, ` ${symbols.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? 'multi' : 'single'][accepted.join('')] as { dir: Formatter; file: Formatter };
@@ -450,8 +449,8 @@ const fileExplorerHandler = async (
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
 
         const fullWidth = out.getWidth(formatDir(width, '', false, '')(''));
-        if (isScrollUp) slicedLines[0] = chalk.dim(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
-        if (isScrollDown) slicedLines[slicedLines.length - 1] = chalk.dim(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
+        if (isScrollUp) slicedLines[0] = colr.dim(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
+        if (isScrollDown) slicedLines[slicedLines.length - 1] = colr.dim(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
 
         return out.utils.joinLines(slicedLines);
       }
@@ -470,7 +469,7 @@ const fileExplorerHandler = async (
     const termWidth = out.utils.getTerminalWidth();
 
     const tableLines = table.getLines([columns], undefined, {
-      wrapLinesFn: colr.gray1,
+      wrapLinesFn: colr.grey1,
       drawOuter: true,
       cellPadding: 0,
       truncate: '',
@@ -481,12 +480,12 @@ const fileExplorerHandler = async (
 
     const infoLine = (() => {
       if (loading) {
-        return chalk.dim(out.center('='.repeat(20) + ' Loading... ' + '='.repeat(20)));
+        return colr.dim(out.center('='.repeat(20) + ' Loading... ' + '='.repeat(20)));
       }
 
-      const count = isMulti ? chalk.dim(`${colr.gray1('[')} ${multiSelected.size} selected ${colr.gray1(']')} `) : '';
+      const count = isMulti ? colr.dim(`${colr.grey1('[')} ${multiSelected.size} selected ${colr.grey1(']')} `) : '';
       const curr = out.limitToLengthStart(
-        `${currentPath} ${chalk.dim(`(${{ f: 'File', d: 'Directory' }[cursorType]})`)}`,
+        `${currentPath} ${colr.dim(`(${{ f: 'File', d: 'Directory' }[cursorType]})`)}`,
         tableWidth - (out.getWidth(count) + 3)
       );
       const split = out.split(curr, count, tableWidth - 2);
@@ -602,11 +601,11 @@ const fileExplorerHandler = async (
 
       await userActions.takeInput(
         () => {
-          const info2 = colr.gray3('Enter nothing to cancel');
+          const info2 = colr.grey3('Enter nothing to cancel');
 
-          const info1Prefix = colr.gray3('  Adding folder to ');
+          const info1Prefix = colr.grey3('  Adding folder to ');
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = colr.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = colr.grey4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
 
           lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
@@ -640,7 +639,7 @@ const fileExplorerHandler = async (
 
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(colr.gray3('  Saving file to ') + colr.gray4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          lc.log(colr.grey3('  Saving file to ') + colr.grey4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
         },
         () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn('name')} the file?`, initial)),
         () => true

@@ -3,8 +3,7 @@ import { getLineCounter } from './out/lineCounter';
 import { out } from './out';
 import { processInput } from '../utils/processTableInput';
 import { CharLookup, getTableCharacters } from '../utils/tableCharacters';
-import chalk from 'chalk';
-import { WrapFn } from './colr';
+import { WrapFn, colr } from './colr';
 
 //<!-- DOCS: 400 -->
 /**<!-- DOCS: table ##! -->
@@ -32,7 +31,7 @@ export namespace table {
     ...opts,
     wrapperFn: typeof opts.wrapperFn !== 'function' ? fn.noact : opts.wrapperFn,
     wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
-    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? chalk.bold : opts.wrapHeaderLinesFn,
+    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
     wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
     drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
     drawRowLines: typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines,
@@ -313,30 +312,30 @@ export namespace table {
     /**<!-- DOCS: table.FullTableOptions.wrapperFn #### -->
      * wrapperFn
      *
-     * Function to wrap each line of the output in (e.g. chalk.blue)
+     * Function to wrap each line of the output in (e.g. colr.blue)
      */
     wrapperFn: Function;
 
     /**<!-- DOCS: table.FullTableOptions.wrapLinesFn #### -->
      * wrapLinesFn
      *
-     * Function to wrap the output lines of each cell of the table (e.g. chalk.blue)
+     * Function to wrap the output lines of each cell of the table (e.g. colr.blue)
      */
     wrapLinesFn: Function;
 
     /**<!-- DOCS: table.FullTableOptions.wrapHeaderLinesFn #### -->
      * wrapHeaderLinesFn
      *
-     * Function to wrap the output lines of each cell of the header of the table (e.g. chalk.blue)
+     * Function to wrap the output lines of each cell of the header of the table (e.g. colr.blue)
      *
-     * Default: `chalk.bold`
+     * Default: `colr.bold`
      */
     wrapHeaderLinesFn: Function;
 
     /**<!-- DOCS: table.FullTableOptions.wrapBodyLinesFn #### -->
      * wrapBodyLinesFn
      *
-     * Function to wrap the output lines of each cell of the body of the table (e.g. chalk.blue)
+     * Function to wrap the output lines of each cell of the body of the table (e.g. colr.blue)
      */
     wrapBodyLinesFn: Function;
 

@@ -1,7 +1,7 @@
-import chalk from 'chalk';
 import { ArrayTools, progressBar } from 'swiss-ak';
 
 import { out } from './out';
+import { colr } from './colr';
 
 //<!-- DOCS: 800 -->
 /**<!-- DOCS: progressBarTools ##! -->
@@ -33,9 +33,9 @@ export namespace progressBarTools {
    * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
    */
   export const getColouredProgressBarOpts = (opts: progressBar.ProgressBarOptions, randomise: boolean = false) => {
-    // let wrapperFns = [chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.yellowBright, chalk.magentaBright, chalk.redBright];
-    // let wrapperFns = [chalk.yellowBright, chalk.magenta];
-    let wrapperFns = [chalk.yellowBright, chalk.magenta, chalk.blueBright, chalk.cyanBright, chalk.greenBright, chalk.redBright];
+    // let wrapperFns = [colr.blue, colr.cyan, colr.green, colr.yellow, colr.magenta, colr.red];
+    // let wrapperFns = [colr.yellow, colr.dark.magenta];
+    let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
       wrapperFns = ArrayTools.randomise(wrapperFns);
     }

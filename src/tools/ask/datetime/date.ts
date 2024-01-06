@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { range } from 'swiss-ak';
 import {
   addDays,
@@ -15,6 +14,7 @@ import { out } from '../../out';
 import { table } from '../../table';
 import { getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
+import { colr } from '../../colr';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -65,14 +65,14 @@ const getMonthTable = (
   const formatCursor: table.TableFormatConfig[] = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => colr.reset(styles.primary(s)), y, x)));
   }
 
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => chalk.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat((s) => colr.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
     }
 
     const inter = getIntermediaryDates(cursors[0], cursors[1]);

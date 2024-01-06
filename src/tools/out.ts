@@ -3,7 +3,7 @@ import { getLogStr } from './LogTools';
 import { Text } from '../utils/processTableInput';
 import { getLineCounter as getLineCounterOut, LineCounter as LineCounterOut } from './out/lineCounter';
 import { getBreadcrumb as getBreadcrumbOut, Breadcrumb as BreadcrumbOut } from './out/breadcrumb';
-import chalk from 'chalk';
+import { colr } from './colr';
 
 //<!-- DOCS: 200 -->
 /**<!-- DOCS: out ##! -->
@@ -473,7 +473,7 @@ export namespace out {
     }
   };
 
-  const loadingDefault = (s) => console.log(chalk.dim(`${s}`));
+  const loadingDefault = (s) => console.log(colr.dim(`${s}`));
   const loadingWords = [
     'ℓ-o-𝔞-𝓭-ɪ-ռ-𝗴',
     '𝚕-σ-a-𝔡-𝓲-ɴ-ɢ',
@@ -486,7 +486,7 @@ export namespace out {
   ].map((word) => word.split('-'));
   const loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) =>
-      chalk.bold('loading'.slice(0, Math.floor(Math.floor(index) / loadingWords.length))) +
+      colr.bold('loading'.slice(0, Math.floor(Math.floor(index) / loadingWords.length))) +
       word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join('') +
       ['   ', '.  ', '.. ', '...'][Math.floor(index / 3) % 4]
   );
@@ -606,10 +606,10 @@ export namespace out {
    * ```
    * @param {string} text
    * @param {number} [maxLength=out.utils.getTerminalWidth()]
-   * @param {string} [suffix=chalk.dim('…')]
+   * @param {string} [suffix=colr.dim('…')]
    * @returns {string}
    */
-  export const truncate = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
+  export const truncate = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = colr.dim('…')): string =>
     utils.joinLines(
       utils.getLines(text).map((line) => (out.getWidth(line) > maxLength ? limitToLength(line, maxLength - out.getWidth(suffix)) + suffix : line))
     );
@@ -626,10 +626,10 @@ export namespace out {
    * ```
    * @param {string} text
    * @param {number} [maxLength=out.utils.getTerminalWidth()]
-   * @param {string} [suffix=chalk.dim('…')]
+   * @param {string} [suffix=colr.dim('…')]
    * @returns {string}
    */
-  export const truncateStart = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = chalk.dim('…')): string =>
+  export const truncateStart = (text: string, maxLength: number = out.utils.getTerminalWidth(), suffix: string = colr.dim('…')): string =>
     utils.joinLines(
       utils
         .getLines(text)
@@ -858,11 +858,11 @@ export namespace out {
      *
      * - `out.utils.hasColor`
      *
-     * Determine whether a given string contains any chalk-ed colours
+     * Determine whether a given string contains any colr-ed colours
      *
      * ```typescript
      * out.utils.hasColor('this is line 1') // false
-     * out.utils.hasColor(chalk.red('this is line 1')) // true
+     * out.utils.hasColor(colr.red('this is line 1')) // true
      * ```
      * @param {string} str
      * @returns {boolean}

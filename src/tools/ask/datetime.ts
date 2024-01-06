@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import { getDeferred, getTimer } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '../../utils/dynDates';
@@ -11,12 +10,13 @@ import { getLineCounter } from '../out/lineCounter';
 import { dateHandler } from './datetime/date';
 import { timeHandler } from './datetime/time';
 import { DateTimeHandlerObj } from './datetime/types';
+import { colr } from '../colr';
 
 //<!-- DOCS: 110 -->
 
 type DateTimeSection = 'date' | 'time';
 
-const DEBUG_TIMER = getTimer('DEBUG', false, chalk.red, chalk);
+const DEBUG_TIMER = getTimer('DEBUG', false, colr.dark.red, colr);
 const IS_DEBUG = false;
 
 const actionConfig: ActionBarConfig = {

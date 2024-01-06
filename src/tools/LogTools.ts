@@ -1,6 +1,6 @@
 import { inspect } from 'util';
-import chalk from 'chalk';
 import { fn } from 'swiss-ak';
+import { colr } from './colr';
 
 //<!-- DOCS: 600 -->
 /**<!-- DOCS: LogTools ##! -->
@@ -80,7 +80,7 @@ export namespace LogTools {
       .map(getLogStr)
       .join(' ')
       .split('\n')
-      .map((line, index) => chalk.bold(index ? ' '.repeat(prefix.length) : prefix) + ' ' + wrapper(line))
+      .map((line, index) => colr.bold(index ? ' '.repeat(prefix.length) : prefix) + ' ' + wrapper(line))
       .join('\n');
 
   /**<!-- DOCS: LogTools.getLog ### @ -->
