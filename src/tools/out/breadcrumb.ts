@@ -1,10 +1,9 @@
 import chalk from 'chalk';
 import { symbols } from 'swiss-ak';
-import { clr, Colour } from '../clr';
-import { chlk } from '../chlk';
 import { out } from '../out';
+import { ColrFn, WrapFn, colr } from '../colr';
 
-const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
+const seperatorChar = ` ${colr.gray2(symbols.CHEV_RGT)} `;
 
 //<!-- DOCS: 250 -->
 /**<!-- DOCS: out.getBreadcrumb ### @ -->
@@ -36,16 +35,16 @@ const seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
  */
 export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
   let current = [];
-  let colours: Colour[] = ['t1', 't2', 't3', 't4', 't5', 't6'];
+  let colours: WrapFn[] = [colr.primary, colr.secondary, colr.blue, colr.red, colr.green, colr.cyan];
 
-  const setColours = (newColours: Colour[]) => {
+  const setColours = (newColours: WrapFn[]) => {
     colours = newColours;
   };
 
   const add = (...names: string[]) => current.push(...names);
 
   const getColouredName = (name: string, index: number, arr: string[]) =>
-    out.utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
+    out.utils.hasColor(name) || index === arr.length - 1 ? name : colours[index % colours.length](name);
   const getColouredNames = (...tempNames: string[]) => getNames(...tempNames).map(getColouredName);
 
   const getNames = (...tempNames: string[]) => [...baseNames, ...current, ...tempNames];
@@ -87,7 +86,7 @@ export const getBreadcrumb = (...baseNames: string[]): Breadcrumb => {
  */
 export type Breadcrumb = {
   (...tempNames: string[]): Breadcrumb;
-  setColours: (colours: Colour[]) => void;
+  setColours: (colours: WrapFn[]) => void;
   add: (...names: string[]) => number;
   getNames: (...tempNames: string[]) => any[];
   sub: (...tempNames: string[]) => Breadcrumb;

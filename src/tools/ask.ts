@@ -4,8 +4,6 @@ import Fuse from 'fuse.js'; // fuzzy-search
 import { second, seconds, wait, fn, symbols } from 'swiss-ak';
 
 import { out } from './out';
-import { clr } from './clr';
-import { chlk } from './chlk';
 import { Breadcrumb } from './out/breadcrumb';
 import { getKeyListener } from './keyListener';
 
@@ -14,6 +12,7 @@ import * as fileExplorerAsk from './ask/fileExplorer';
 import * as dateAsk from './ask/datetime';
 import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
+import { colr } from './colr';
 
 const PROMPT_VALUE_PROPERTY = 'SWISS_NODE_PROMPT_VALUE';
 
@@ -286,7 +285,7 @@ export namespace ask {
       }));
     }
     if (canSelectAll) {
-      choiceObjs = [{ title: chlk.gray4('[Select all]'), value: '***SELECT_ALL***' }, ...choiceObjs];
+      choiceObjs = [{ title: colr.grey4('[Select all]'), value: '***SELECT_ALL***' }, ...choiceObjs];
     }
 
     const response = await prompts(
@@ -349,19 +348,19 @@ export namespace ask {
       ...options
     };
 
-    const opts = [{ title: chalk.dim(`${clr.approve(symbols.TICK)} [ Finished ]`), value: 'none' as CRUD }];
+    const opts = [{ title: chalk.dim(`${colr.dark.success.bold(symbols.TICK)} [ Finished ]`), value: 'none' as CRUD }];
     if (fullOptions.canCreate) {
-      opts.push({ title: `${clr.create(symbols.PLUS)} Add another ${itemName}`, value: 'create' as CRUD });
+      opts.push({ title: `${colr.success.bold(symbols.PLUS)} Add another ${itemName}`, value: 'create' as CRUD });
     }
     if (items.length > 0) {
       if (fullOptions.canUpdate) {
-        opts.push({ title: `${clr.update(symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: 'update' as CRUD });
+        opts.push({ title: `${colr.dark.yellow.bold(symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: 'update' as CRUD });
       }
       if (fullOptions.canDelete) {
-        opts.push({ title: `${clr.remove(symbols.CROSS)} Remove ${itemName}`, value: 'delete' as CRUD });
+        opts.push({ title: `${colr.danger.bold(symbols.CROSS)} Remove ${itemName}`, value: 'delete' as CRUD });
       }
       if (fullOptions.canDeleteAll) {
-        opts.push({ title: `${clr.removeAll(symbols.TIMES)} Remove all`, value: 'delete-all' as CRUD });
+        opts.push({ title: `${colr.danger.bold(symbols.TIMES)} Remove all`, value: 'delete-all' as CRUD });
       }
     }
 

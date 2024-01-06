@@ -1,9 +1,9 @@
 import { ArrayTools } from 'swiss-ak';
-import { chlk } from '../chlk';
 import { getLineCounter, LineCounter } from '../out/lineCounter';
 import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { ask } from '../ask';
+import { colr } from '../colr';
 
 //<!-- DOCS: 150 -->
 /**<!-- DOCS: ask.separator ### @ -->
@@ -43,7 +43,7 @@ export const separator = (
     up: '▵'
   };
   const line = ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(chlk.gray1(out.center(line, undefined, lineChar)));
+  console.log(colr.gray1(out.center(line, undefined, lineChar)));
   return 1;
 };
 

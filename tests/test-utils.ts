@@ -139,42 +139,42 @@ const kitchenSinkSamples = {
 
 const kitchenSinkSafe = {
   num:
-    (defaultValue: number, isInt: boolean = false, min?: number, max?: number, fallback: number = 0) =>
-    (input: number = defaultValue): number =>
+    (defaultValue?: number, isInt: boolean = false, min?: number, max?: number, fallback: number = 0) =>
+    (input: number = defaultValue || (undefined as unknown as number)): number =>
       safeOriginal.num(input, isInt, min, max, fallback),
   str:
-    (defaultValue: string, allowBasicStringify: boolean = false, fallback: string = '') =>
-    (input: string = defaultValue): string =>
+    (defaultValue?: string, allowBasicStringify: boolean = false, fallback: string = '') =>
+    (input: string = defaultValue || (undefined as unknown as string)): string =>
       safeOriginal.str(input, allowBasicStringify, fallback),
   bool:
-    (defaultValue: boolean, fallback: boolean = false) =>
-    (input: boolean = defaultValue): boolean =>
+    (defaultValue?: boolean, fallback: boolean = false) =>
+    (input: boolean = defaultValue || (undefined as unknown as boolean)): boolean =>
       safeOriginal.bool(input, fallback),
   func:
-    <T extends Function>(defaultValue: T, fallback: T = (() => {}) as unknown as T) =>
-    (input: T = defaultValue): T =>
+    <T extends Function>(defaultValue?: T, fallback: T = (() => {}) as unknown as T) =>
+    (input: T = defaultValue || (undefined as unknown as T)): T =>
       safeOriginal.func(input, fallback),
   obj:
-    <T extends unknown>(defaultValue: T, allowArrays: boolean = false, fallback: T = {} as T) =>
-    (input: T = defaultValue): T =>
+    <T extends unknown>(defaultValue?: T, allowArrays: boolean = false, fallback: T = {} as T) =>
+    (input: T = defaultValue || (undefined as unknown as T)): T =>
       safeOriginal.obj(input, allowArrays, fallback),
   objWith:
-    <T extends unknown>(defaultValue: T, objConfig: safeOriginal.ObjWithConfig<T>, allowComposition: boolean = true) =>
-    (input: T = defaultValue): T =>
+    <T extends unknown>(defaultValue?: T, objConfig: safeOriginal.ObjWithConfig<T> = {}, allowComposition: boolean = true) =>
+    (input: T = defaultValue || (undefined as unknown as T)): T =>
       safeOriginal.objWith(input, objConfig, allowComposition),
   arr:
-    <T extends unknown>(defaultValue: T[], fallback: T[] = []) =>
-    (input: T[] = defaultValue): T[] =>
+    <T extends unknown>(defaultValue?: T[], fallback: T[] = []) =>
+    (input: T[] = defaultValue || (undefined as unknown as T[])): T[] =>
       safeOriginal.arr(input, fallback),
   prop:
-    (defaultValue: string | number, fallback: string | number = '') =>
-    (input: string | number = defaultValue): string | number =>
+    (defaultValue?: string | number, fallback: string | number = '') =>
+    (input: string | number = defaultValue || (undefined as unknown as string | number)): string | number =>
       safeOriginal.prop(input, fallback),
 
   arrOf: {
     num:
       (
-        defaultValue: number[],
+        defaultValue?: number[],
         isInt: boolean = false,
         min?: number,
         max?: number,
@@ -183,62 +183,62 @@ const kitchenSinkSafe = {
         arrMinLength: number = 0,
         arrMaxLength: number = Infinity
       ) =>
-      (input: number[] = defaultValue): number[] =>
+      (input: number[] = defaultValue || (undefined as unknown as number[])): number[] =>
         safeOriginal.arrOf.num(input, isInt, min, max, fallback, fallbackArr, arrMinLength, arrMaxLength),
     str:
       (
-        defaultValue: string[],
+        defaultValue?: string[],
         allowStringify: boolean = false,
         fallback?: string,
         fallbackArr: string[] = [],
         arrMinLength: number = 0,
         arrMaxLength: number = Infinity
       ) =>
-      (input: string[] = defaultValue): string[] =>
+      (input: string[] = defaultValue || (undefined as unknown as string[])): string[] =>
         safeOriginal.arrOf.str(input, allowStringify, fallback, fallbackArr, arrMinLength, arrMaxLength),
     bool:
-      (defaultValue: boolean[], fallback?: boolean, fallbackArr: boolean[] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
-      (input: boolean[] = defaultValue): boolean[] =>
+      (defaultValue?: boolean[], fallback?: boolean, fallbackArr: boolean[] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
+      (input: boolean[] = defaultValue || (undefined as unknown as boolean[])): boolean[] =>
         safeOriginal.arrOf.bool(input, fallback, fallbackArr, arrMinLength, arrMaxLength),
     func:
-      <T extends Function>(defaultValue: T[], fallback?: T, fallbackArr: T[] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
-      (input: T[] = defaultValue): T[] =>
+      <T extends Function>(defaultValue?: T[], fallback?: T, fallbackArr: T[] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
+      (input: T[] = defaultValue || (undefined as unknown as T[])): T[] =>
         safeOriginal.arrOf.func(input, fallback, fallbackArr, arrMinLength, arrMaxLength),
     obj:
       <T extends unknown>(
-        defaultValue: T[],
+        defaultValue?: T[],
         allowArrays: boolean = false,
         fallback?: T,
         fallbackArr: T[] = [],
         arrMinLength: number = 0,
         arrMaxLength: number = Infinity
       ) =>
-      (input: T[] = defaultValue): T[] =>
+      (input: T[] = defaultValue || (undefined as unknown as T[])): T[] =>
         safeOriginal.arrOf.obj(input, allowArrays, fallback, fallbackArr, arrMinLength, arrMaxLength),
     objWith:
       <T extends unknown>(
-        defaultValue: T[],
-        objConfig: safeOriginal.ObjWithConfig<T>,
+        defaultValue?: T[],
+        objConfig: safeOriginal.ObjWithConfig<T> = {},
         allowComposition: boolean = true,
         fallbackArr: T[] = [],
         arrMinLength: number = 0,
         arrMaxLength: number = Infinity
       ) =>
-      (input: T[] = defaultValue): T[] =>
+      (input: T[] = defaultValue || (undefined as unknown as T[])): T[] =>
         safeOriginal.arrOf.objWith(input, objConfig, allowComposition, fallbackArr, arrMinLength, arrMaxLength),
     arr:
-      <T extends unknown>(defaultValue: T[][], fallback?: T[], fallbackArr: T[][] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
-      (input: T[][] = defaultValue): T[][] =>
+      <T extends unknown>(defaultValue?: T[][], fallback?: T[], fallbackArr: T[][] = [], arrMinLength: number = 0, arrMaxLength: number = Infinity) =>
+      (input: T[][] = defaultValue || (undefined as unknown as T[][])): T[][] =>
         safeOriginal.arrOf.arr(input, fallback, fallbackArr, arrMinLength, arrMaxLength),
     prop:
       (
-        defaultValue: (string | number)[],
+        defaultValue?: (string | number)[],
         fallback?: string | number,
         fallbackArr: (string | number)[] = [],
         arrMinLength: number = 0,
         arrMaxLength: number = Infinity
       ) =>
-      (input: (string | number)[] = defaultValue): (string | number)[] =>
+      (input: (string | number)[] = defaultValue || (undefined as unknown as (string | number)[])): (string | number)[] =>
         safeOriginal.arrOf.prop(input, fallback, fallbackArr, arrMinLength, arrMaxLength)
   }
 };

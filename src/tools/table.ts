@@ -3,8 +3,8 @@ import { getLineCounter } from './out/lineCounter';
 import { out } from './out';
 import { processInput } from '../utils/processTableInput';
 import { CharLookup, getTableCharacters } from '../utils/tableCharacters';
-import { clr, Colour } from './clr';
 import chalk from 'chalk';
+import { WrapFn } from './colr';
 
 //<!-- DOCS: 400 -->
 /**<!-- DOCS: table ##! -->
@@ -740,16 +740,16 @@ export namespace table {
      * // │ 6 │ 7 │ 8 │
      * // └───┴───┴───┘
      * ```
-     * @param {Function | Colour} format
+     * @param {WrapFn} format
      * @param {number} [row]
      * @param {number} [col]
      * @param {boolean} [isHeader]
      * @param {boolean} [isBody]
      * @returns {TableFormatConfig}
      */
-    export const getFormat = (format: Function | Colour, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
+    export const getFormat = (format: WrapFn, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
       const result: TableFormatConfig = {
-        formatFn: typeof format === 'function' ? format : clr[format],
+        formatFn: format,
         row,
         col
       };

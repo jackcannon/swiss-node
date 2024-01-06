@@ -295,7 +295,7 @@ const populateDebugReplacements = () => {
   };
 };
 
-/**
+/*
  * Configs for constructing the ColrSets objects (happens every time `colr.sets` is called)
  */
 const setConfigs = {
@@ -316,6 +316,16 @@ const setConfigs = {
   danger: ['danger', 'dangerBg'],
   warning: ['warning', 'warningBg'],
   info: ['info', 'infoBg']
+};
+
+/*
+ * Clear - remove all the ansi codes from a string
+ */
+const clear = (text: string): string => {
+  const args = {
+    text: safe.str(text)
+  };
+  return StringTools.replaceAll(args.text, /\u001B\[\d+m/g, '');
 };
 
 const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOptions): ColrFn => {
@@ -413,6 +423,15 @@ const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOp
     template: {
       enumerable: false,
       get: () => templateFn,
+      set(v) {}
+    }
+  });
+
+  // Attach clear function
+  Object.defineProperties(result, {
+    clear: {
+      enumerable: false,
+      get: () => clear,
       set(v) {}
     }
   });
@@ -2281,6 +2300,20 @@ export interface ColrFn extends WrapFn {
    */
   readonly template: (strings: TemplateStringsArray, ...exps: any[]) => string;
 
+  /**<!-- DOCS: colr.clear #### -->
+   * clear
+   *
+   * - `colr.clear`
+   *
+   * Removes all colr ANSI escapes code from the given text.
+   *
+   * ```typescript
+   * const text = colr.red('Hello World!'); // 'Hello World!' with red text
+   * colr.clear(text); // 'Hello World!' with no colours
+   * ```
+   */
+  readonly clear: (text: string) => string;
+
   /**<!-- DOCS: colr.debug #### -->
    * debug
    *
@@ -2423,7 +2456,7 @@ export interface WrapSet {
  * - `text` - A function to set the text colour to the given colour/style.
  * - `bg` - A function to set the background colour to the given colour/style.
  */
-export interface ColrSet {
+export interface ColrSet extends WrapSet {
   /**<!-- DOCS: colr.ColrSet.text #### -1 -->
    * text
    *

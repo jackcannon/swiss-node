@@ -2282,6 +2282,7 @@ colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A 
       - [hidden](#hidden)
     - [**Helper Functions**](#helper-functions)
       - [$ / template](#--template)
+      - [clear](#clear)
       - [debug](#debug)
     - [**sets**](#sets)
       - [red](#colr_sets_red)
@@ -4408,6 +4409,21 @@ colr.blueBg(colr.red.$`A ${'red'} word in a blue world`); // 'A red word in a bl
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
+#### clear
+
+```typescript
+colr.clear;
+```
+
+Removes all colr ANSI escapes code from the given text.
+
+```typescript
+const text = colr.red('Hello World!'); // 'Hello World!' with red text
+colr.clear(text); // 'Hello World!' with no colours
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
 #### debug
 
 ```typescript
@@ -5295,7 +5311,7 @@ table.utils.concatRows({header, body})
 #### getFormat
 
 ```typescript
-table.utils.getFormat(format: Function | Colour, row: number, col: number, isHeader: boolean, isBody: boolean): TableFormatConfig
+table.utils.getFormat(format: WrapFn, row: number, col: number, isHeader: boolean, isBody: boolean): TableFormatConfig
 ```
 
 A function for simplifying the format configuration
@@ -5328,13 +5344,13 @@ table.print(header, body, {format})
 // └───┴───┴───┘
 ```
 
-|  #  | Parameter Name | Required | Type                 |
-|:---:|:---------------|:---------|:---------------------|
-| *0* | `format`       | **Yes**  | `Function \| Colour` |
-| *1* | `row`          | *No*     | `number`             |
-| *2* | `col`          | *No*     | `number`             |
-| *3* | `isHeader`     | *No*     | `boolean`            |
-| *4* | `isBody`       | *No*     | `boolean`            |
+|  #  | Parameter Name | Required | Type      |
+|:---:|:---------------|:---------|:----------|
+| *0* | `format`       | **Yes**  | `WrapFn`  |
+| *1* | `row`          | *No*     | `number`  |
+| *2* | `col`          | *No*     | `number`  |
+| *3* | `isHeader`     | *No*     | `boolean` |
+| *4* | `isBody`       | *No*     | `boolean` |
 
 | Return Type         |
 |---------------------|

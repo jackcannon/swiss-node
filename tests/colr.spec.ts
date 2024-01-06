@@ -1,3 +1,4 @@
+import exp from 'constants';
 import * as swissnode from '../';
 import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
 
@@ -8517,6 +8518,73 @@ describe('colr', () => {
             'one \u001B[91mtwo\u001B[39m three \u001B[91mfour\u001B[39m five \u001B[91msix\u001B[39m'
           );
         });
+      });
+    });
+
+    describe('clear', () => {
+      singleTest(swissnode.colr, 'colr', (colr, name) => {
+        it(should` exist as ${name + '.clear'}`, () => {
+          expect(colr.clear).toBeDefined();
+        });
+
+        it(should` clear style ANSI code in a string`, () => {
+          const input = colr.red('hello world');
+          expect(input).toEqual('\u001b[91mhello world\u001b[39m');
+          const result = colr.clear(input);
+          expect(result).toEqual('hello world');
+        });
+
+        it(should` clear style ANSI code in a string - multiple styles`, () => {
+          const colouredString = [
+            colr.darkRed('darkRed'),
+            colr.lightRed('lightRed'),
+            colr.darkGreen('darkGreen'),
+            colr.lightGreen('lightGreen'),
+            colr.darkYellow('darkYellow'),
+            colr.lightYellow('lightYellow'),
+            colr.darkBlue('darkBlue'),
+            colr.lightBlue('lightBlue'),
+            colr.darkMagenta('darkMagenta'),
+            colr.lightMagenta('lightMagenta'),
+            colr.darkCyan('darkCyan'),
+            colr.lightCyan('lightCyan'),
+            colr.darkBlack('darkBlack'),
+            colr.lightBlack('lightBlack'),
+            colr.darkWhite('darkWhite'),
+            colr.lightWhite('lightWhite'),
+            colr.darkRedBg('darkRedBg'),
+            colr.lightRedBg('lightRedBg'),
+            colr.darkGreenBg('darkGreenBg'),
+            colr.lightGreenBg('lightGreenBg'),
+            colr.darkYellowBg('darkYellowBg'),
+            colr.lightYellowBg('lightYellowBg'),
+            colr.darkBlueBg('darkBlueBg'),
+            colr.lightBlueBg('lightBlueBg'),
+            colr.darkMagentaBg('darkMagentaBg'),
+            colr.lightMagentaBg('lightMagentaBg'),
+            colr.darkCyanBg('darkCyanBg'),
+            colr.lightCyanBg('lightCyanBg'),
+            colr.darkBlackBg('darkBlackBg'),
+            colr.lightBlackBg('lightBlackBg'),
+            colr.darkWhiteBg('darkWhiteBg'),
+            colr.lightWhiteBg('lightWhiteBg'),
+            colr.reset('reset'),
+            colr.bold('bold'),
+            colr.dim('dim'),
+            colr.italic('italic'),
+            colr.overline('overline'),
+            colr.underline('underline'),
+            colr.strikethrough('strikethrough'),
+            colr.inverse('inverse'),
+            colr.hidden('hidden')
+          ].join(' ');
+          const result = colr.clear(colouredString);
+          expect(result).toEqual(
+            'darkRed lightRed darkGreen lightGreen darkYellow lightYellow darkBlue lightBlue darkMagenta lightMagenta darkCyan lightCyan darkBlack lightBlack darkWhite lightWhite darkRedBg lightRedBg darkGreenBg lightGreenBg darkYellowBg lightYellowBg darkBlueBg lightBlueBg darkMagentaBg lightMagentaBg darkCyanBg lightCyanBg darkBlackBg lightBlackBg darkWhiteBg lightWhiteBg reset bold dim italic overline underline strikethrough inverse hidden'
+          );
+        });
+
+        kitchenSink.toEqual('text', (v) => colr.clear(v), kitchenSink.safe.str(undefined), kitchenSink.samples.general);
       });
     });
 

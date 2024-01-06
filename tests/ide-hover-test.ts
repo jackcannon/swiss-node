@@ -228,19 +228,6 @@ type ColrSet = swissnode.ColrSet;
 (({}) as ColrSet).text;
 (({}) as ColrSet).bg;
 
-swissnode.chlk;
-swissnode.chlk.gray0;
-swissnode.chlk.gray1;
-swissnode.chlk.gray2;
-swissnode.chlk.gray3;
-swissnode.chlk.gray4;
-swissnode.chlk.gray5;
-swissnode.chlk.grays;
-swissnode.chlk.gray;
-swissnode.chlk.clear;
-swissnode.chlk.not;
-swissnode.chlk.notUnderlined;
-
 swissnode.table;
 swissnode.table.print;
 swissnode.table.printObjects;

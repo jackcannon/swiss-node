@@ -1,11 +1,11 @@
 // src/tools/ask.ts
-import chalk14 from "chalk";
+import chalk12 from "chalk";
 import prompts from "prompts";
 import Fuse from "fuse.js";
 import { seconds as seconds4, wait as wait3, fn as fn10, symbols as symbols5 } from "swiss-ak";
 
 // src/tools/out.ts
-import { wait, fn as fn2, ArrayTools, zipMax, sortByMapped, safe } from "swiss-ak";
+import { wait, fn as fn2, ArrayTools as ArrayTools2, zipMax, sortByMapped, safe as safe2 } from "swiss-ak";
 
 // src/tools/LogTools.ts
 import { inspect } from "util";
@@ -86,7 +86,7 @@ var getLineCounter = () => {
     out.moveUp(linesToMoveBack);
     lineCount -= linesToMoveBack;
   };
-  const clear = () => {
+  const clear2 = () => {
     out.moveUp(lineCount);
     lineCount = 0;
   };
@@ -99,93 +99,444 @@ var getLineCounter = () => {
     getSince,
     checkpoint,
     clearToCheckpoint,
-    clear,
+    clear: clear2,
     clearBack
   };
   return lc;
 };
 
 // src/tools/out/breadcrumb.ts
-import chalk4 from "chalk";
+import chalk2 from "chalk";
 import { symbols } from "swiss-ak";
 
-// src/tools/clr.ts
-import chalk3 from "chalk";
-
-// src/tools/chlk.ts
-import chalk2 from "chalk";
-var chlk;
-((chlk2) => {
-  chlk2.gray0 = chalk2.black;
-  chlk2.gray1 = chalk2.gray.dim;
-  chlk2.gray2 = chalk2.white.dim;
-  chlk2.gray3 = chalk2.whiteBright.dim;
-  chlk2.gray4 = chalk2.white;
-  chlk2.gray5 = chalk2.whiteBright;
-  chlk2.grays = [
-    chlk2.gray0,
-    chlk2.gray1,
-    chlk2.gray2,
-    chlk2.gray3,
-    chlk2.gray4,
-    chlk2.gray5
-  ];
-  chlk2.gray = (num) => chlk2.grays[Math.max(0, Math.min(num, chlk2.grays.length - 1))];
-  chlk2.clear = (str) => str.replace(new RegExp(`\\u001b[[0-9]+m`, "g"), "");
-  chlk2.not = (style) => {
-    const styled = style("**xxx**");
-    const [after, before] = styled.split("**xxx**");
-    return (item) => `${before}${item}${after}`;
+// src/tools/colr.ts
+import { cachier } from "swiss-ak";
+import { ArrayTools, ObjectTools, StringTools, safe } from "swiss-ak";
+var wrapAnsi = (codes) => [codes].flat().map((code) => `\x1B[${code}m`).join("");
+var simpleStringify = (item, depth = 0) => {
+  if (depth > 4)
+    return "";
+  try {
+    if (item === void 0 || item === null)
+      return "";
+    if (Array.isArray(item)) {
+      return "[" + item.map((v) => simpleStringify(v, depth + 1)).join(", ") + "]";
+    }
+    if (typeof item === "object") {
+      return JSON.stringify(item);
+    }
+    if (item.toString)
+      return item.toString();
+    return "" + item;
+  } catch (err) {
+    try {
+      return "" + item;
+    } catch (err2) {
+      return "";
+    }
+  }
+};
+var optionConfigs = {
+  light: { isLight: true },
+  dark: { isLight: false },
+  lightBg: { isLightBG: true },
+  darkBg: { isLightBG: false }
+};
+var fullStyleConfigs = null;
+var calculateFullStyleConfigs = () => {
+  const modifierStyleConfigs = {
+    reset: [0, 0],
+    bold: [1, 22],
+    dim: [2, 22],
+    italic: [3, 23],
+    overline: [53, 55],
+    underline: [4, 24],
+    strikethrough: [9, 29],
+    inverse: [7, 27],
+    hidden: [8, 28]
   };
-  chlk2.notUnderlined = chlk2.not(chalk2.underline);
-})(chlk || (chlk = {}));
-
-// src/tools/clr.ts
-var clr;
-((clr2) => {
-  clr2.hl1 = chalk3.yellowBright.bold;
-  clr2.hl2 = chalk3.yellow;
-  clr2.approve = chalk3.green.bold;
-  clr2.create = chalk3.greenBright.bold;
-  clr2.update = chalk3.yellow.bold;
-  clr2.remove = chalk3.redBright.bold;
-  clr2.removeAll = chalk3.redBright.bold;
-  clr2.blue = chalk3.blueBright;
-  clr2.cyan = chalk3.cyanBright;
-  clr2.green = chalk3.greenBright;
-  clr2.magenta = chalk3.magentaBright;
-  clr2.red = chalk3.redBright;
-  clr2.yellow = chalk3.yellowBright;
-  clr2.t1 = chalk3.yellowBright;
-  clr2.t2 = chalk3.magentaBright;
-  clr2.t3 = chalk3.blueBright;
-  clr2.t4 = chalk3.redBright;
-  clr2.t5 = chalk3.greenBright;
-  clr2.t6 = chalk3.cyanBright;
-  clr2.gray0 = chlk.gray0;
-  clr2.gray1 = chlk.gray1;
-  clr2.gray2 = chlk.gray2;
-  clr2.gray3 = chlk.gray3;
-  clr2.gray4 = chlk.gray4;
-  clr2.gray5 = chlk.gray5;
-})(clr || (clr = {}));
+  const colourStyleConfigs = {
+    red: {
+      isBG: false,
+      dark: [31, 39],
+      light: [91, 39]
+    },
+    green: {
+      isBG: false,
+      dark: [32, 39],
+      light: [92, 39]
+    },
+    yellow: {
+      isBG: false,
+      dark: [33, 39],
+      light: [93, 39]
+    },
+    blue: {
+      isBG: false,
+      dark: [34, 39],
+      light: [94, 39]
+    },
+    magenta: {
+      isBG: false,
+      dark: [35, 39],
+      light: [95, 39]
+    },
+    cyan: {
+      isBG: false,
+      dark: [36, 39],
+      light: [96, 39]
+    },
+    white: {
+      isBG: false,
+      dark: [37, 39],
+      light: [97, 39]
+    },
+    redBg: {
+      isBG: true,
+      dark: [41, 49],
+      light: [101, 49]
+    },
+    greenBg: {
+      isBG: true,
+      dark: [42, 49],
+      light: [102, 49]
+    },
+    yellowBg: {
+      isBG: true,
+      dark: [43, 49],
+      light: [103, 49]
+    },
+    blueBg: {
+      isBG: true,
+      dark: [44, 49],
+      light: [104, 49]
+    },
+    magentaBg: {
+      isBG: true,
+      dark: [45, 49],
+      light: [105, 49]
+    },
+    cyanBg: {
+      isBG: true,
+      dark: [46, 49],
+      light: [106, 49]
+    },
+    whiteBg: {
+      isBG: true,
+      dark: [47, 49],
+      light: [107, 49]
+    }
+  };
+  const blackStyleConfigs = {
+    black: [30, 39],
+    darkBlack: [30, 39],
+    lightBlack: [90, 39],
+    blackBg: [40, 49],
+    darkBlackBg: [40, 49],
+    lightBlackBg: [100, 49]
+  };
+  const mergeEntries = (...entries) => [
+    entries.map((entry) => entry instanceof Array ? entry[0] : entry.light[0]).flat(),
+    entries.map((entry) => entry instanceof Array ? entry[1] : entry.light[1]).flat()
+  ];
+  const greyColourStyleConfigs = {
+    grey: blackStyleConfigs.lightBlack,
+    greyBg: blackStyleConfigs.lightBlackBg,
+    grey0: blackStyleConfigs.darkBlack,
+    grey1: mergeEntries(blackStyleConfigs.lightBlack, modifierStyleConfigs.dim),
+    grey2: mergeEntries(colourStyleConfigs.white.dark, modifierStyleConfigs.dim),
+    grey3: mergeEntries(colourStyleConfigs.white.light, modifierStyleConfigs.dim),
+    grey4: colourStyleConfigs.white.dark,
+    grey5: colourStyleConfigs.white.light
+  };
+  const otherColourStyleConfigs = {
+    primary: colourStyleConfigs.magenta.light,
+    secondary: colourStyleConfigs.yellow.light,
+    success: colourStyleConfigs.green.light,
+    danger: colourStyleConfigs.red.dark,
+    warning: colourStyleConfigs.yellow.dark,
+    info: colourStyleConfigs.blue.light,
+    primaryBg: mergeEntries(colourStyleConfigs.magentaBg.light, blackStyleConfigs.darkBlack),
+    secondaryBg: mergeEntries(colourStyleConfigs.yellowBg.light, blackStyleConfigs.darkBlack),
+    successBg: mergeEntries(colourStyleConfigs.greenBg.light, blackStyleConfigs.darkBlack),
+    dangerBg: mergeEntries(colourStyleConfigs.redBg.dark, blackStyleConfigs.darkBlack),
+    warningBg: mergeEntries(colourStyleConfigs.yellowBg.dark, blackStyleConfigs.darkBlack),
+    infoBg: mergeEntries(colourStyleConfigs.blueBg.light, blackStyleConfigs.darkBlack)
+  };
+  fullStyleConfigs = {
+    ...Object.fromEntries(
+      Object.entries(colourStyleConfigs).flatMap(([key, value]) => {
+        const colourName = value.isBG ? key.slice(0, -2) : key;
+        const bgSuffix = value.isBG ? "Bg" : "";
+        return [
+          [colourName + bgSuffix, value],
+          ["dark" + StringTools.capitalise(colourName, false) + bgSuffix, [...value.dark]],
+          ["light" + StringTools.capitalise(colourName, false) + bgSuffix, [...value.light]]
+        ];
+      })
+    ),
+    ...blackStyleConfigs,
+    ...Object.fromEntries(
+      Object.entries(greyColourStyleConfigs).flatMap(([key, value]) => [
+        [key, value],
+        [key.replace("grey", "gray"), value]
+      ])
+    ),
+    ...otherColourStyleConfigs,
+    ...modifierStyleConfigs
+  };
+};
+var debugReplacements = null;
+var populateDebugReplacements = () => {
+  debugReplacements = {
+    [wrapAnsi(fullStyleConfigs.darkRed[1])]: "(<)",
+    [wrapAnsi(fullStyleConfigs.darkRedBg[1])]: "{<}",
+    [wrapAnsi(fullStyleConfigs.darkRed[0])]: "(red>)",
+    [wrapAnsi(fullStyleConfigs.lightRed[0])]: "(RED>)",
+    [wrapAnsi(fullStyleConfigs.darkGreen[0])]: "(grn>)",
+    [wrapAnsi(fullStyleConfigs.lightGreen[0])]: "(GRN>)",
+    [wrapAnsi(fullStyleConfigs.darkYellow[0])]: "(ylw>)",
+    [wrapAnsi(fullStyleConfigs.lightYellow[0])]: "(YLW>)",
+    [wrapAnsi(fullStyleConfigs.darkBlue[0])]: "(blu>)",
+    [wrapAnsi(fullStyleConfigs.lightBlue[0])]: "(BLU>)",
+    [wrapAnsi(fullStyleConfigs.darkMagenta[0])]: "(mag>)",
+    [wrapAnsi(fullStyleConfigs.lightMagenta[0])]: "(MAG>)",
+    [wrapAnsi(fullStyleConfigs.darkCyan[0])]: "(cyn>)",
+    [wrapAnsi(fullStyleConfigs.lightCyan[0])]: "(CYN>)",
+    [wrapAnsi(fullStyleConfigs.darkBlack[0])]: "(blk>)",
+    [wrapAnsi(fullStyleConfigs.lightBlack[0])]: "(BLK>)",
+    [wrapAnsi(fullStyleConfigs.darkWhite[0])]: "(wht>)",
+    [wrapAnsi(fullStyleConfigs.lightWhite[0])]: "(WHT>)",
+    [wrapAnsi(fullStyleConfigs.darkRedBg[0])]: "{red>}",
+    [wrapAnsi(fullStyleConfigs.lightRedBg[0])]: "{RED>}",
+    [wrapAnsi(fullStyleConfigs.darkGreenBg[0])]: "{grn>}",
+    [wrapAnsi(fullStyleConfigs.lightGreenBg[0])]: "{GRN>}",
+    [wrapAnsi(fullStyleConfigs.darkYellowBg[0])]: "{ylw>}",
+    [wrapAnsi(fullStyleConfigs.lightYellowBg[0])]: "{YLW>}",
+    [wrapAnsi(fullStyleConfigs.darkBlueBg[0])]: "{blu>}",
+    [wrapAnsi(fullStyleConfigs.lightBlueBg[0])]: "{BLU>}",
+    [wrapAnsi(fullStyleConfigs.darkMagentaBg[0])]: "{mag>}",
+    [wrapAnsi(fullStyleConfigs.lightMagentaBg[0])]: "{MAG>}",
+    [wrapAnsi(fullStyleConfigs.darkCyanBg[0])]: "{cyn>}",
+    [wrapAnsi(fullStyleConfigs.lightCyanBg[0])]: "{CYN>}",
+    [wrapAnsi(fullStyleConfigs.darkBlackBg[0])]: "{blk>}",
+    [wrapAnsi(fullStyleConfigs.lightBlackBg[0])]: "{BLK>}",
+    [wrapAnsi(fullStyleConfigs.darkWhiteBg[0])]: "{wht>}",
+    [wrapAnsi(fullStyleConfigs.lightWhiteBg[0])]: "{WHT>}",
+    [wrapAnsi(fullStyleConfigs.reset[0])]: "[rst>]",
+    [wrapAnsi(fullStyleConfigs.reset[1])]: "[<rst]",
+    [wrapAnsi(fullStyleConfigs.bold[0])]: "[bld>]",
+    [wrapAnsi(fullStyleConfigs.bold[1])]: "[<bld]",
+    [wrapAnsi(fullStyleConfigs.dim[0])]: "[dim>]",
+    [wrapAnsi(fullStyleConfigs.dim[1])]: "[<dim]",
+    [wrapAnsi(fullStyleConfigs.italic[0])]: "[itl>]",
+    [wrapAnsi(fullStyleConfigs.italic[1])]: "[<itl]",
+    [wrapAnsi(fullStyleConfigs.overline[0])]: "[ovr>]",
+    [wrapAnsi(fullStyleConfigs.overline[1])]: "[<ovr]",
+    [wrapAnsi(fullStyleConfigs.underline[0])]: "[und>]",
+    [wrapAnsi(fullStyleConfigs.underline[1])]: "[<und]",
+    [wrapAnsi(fullStyleConfigs.strikethrough[0])]: "[str>]",
+    [wrapAnsi(fullStyleConfigs.strikethrough[1])]: "[<str]",
+    [wrapAnsi(fullStyleConfigs.inverse[0])]: "[inv>]",
+    [wrapAnsi(fullStyleConfigs.inverse[1])]: "[<inv]",
+    [wrapAnsi(fullStyleConfigs.hidden[0])]: "[hdn>]",
+    [wrapAnsi(fullStyleConfigs.hidden[1])]: "[<hdn]"
+  };
+};
+var setConfigs = {
+  red: ["red", "redBg"],
+  green: ["green", "greenBg"],
+  yellow: ["yellow", "yellowBg"],
+  blue: ["blue", "blueBg"],
+  magenta: ["magenta", "magentaBg"],
+  cyan: ["cyan", "cyanBg"],
+  white: ["white", "whiteBg"],
+  black: ["black", "blackBg"],
+  lightBlack: ["lightBlack", "lightBlackBg"],
+  grey: ["grey", "greyBg"],
+  gray: ["gray", "grayBg"],
+  primary: ["primary", "primaryBg"],
+  secondary: ["secondary", "secondaryBg"],
+  success: ["success", "successBg"],
+  danger: ["danger", "dangerBg"],
+  warning: ["warning", "warningBg"],
+  info: ["info", "infoBg"]
+};
+var clear = (text) => {
+  const args = {
+    text: safe.str(text)
+  };
+  return StringTools.replaceAll(args.text, /\u001B\[\d+m/g, "");
+};
+var getColrFn = (name, styles = [], options) => {
+  if (fullStyleConfigs === null) {
+    calculateFullStyleConfigs();
+  }
+  const result = (...text) => {
+    const args = {
+      text: text.map((item) => simpleStringify(item)).join(" ")
+    };
+    const entries = styles.map((value) => {
+      if (value instanceof Array) {
+        return value;
+      }
+      const config = value;
+      const isLight = config.isBG ? options.isLightBG : options.isLight;
+      return isLight ? config.light || config.dark : config.dark || config.light;
+    });
+    const prefix = entries.flatMap((entry) => entry[0]).map((value) => wrapAnsi(value)).join("");
+    const suffix = entries.flatMap((entry) => entry[1]).map((value) => wrapAnsi(value)).reverse().join("");
+    let output = args.text;
+    const flatStarts = entries.flatMap((entry) => entry[0]);
+    const flatEnds = entries.flatMap((entry) => entry[1]);
+    const pairs = ArrayTools.zipMax(flatStarts, flatEnds);
+    output = pairs.reduceRight((txt, pair) => {
+      const start = wrapAnsi(pair[0]);
+      const end = wrapAnsi(pair[1]);
+      return StringTools.replaceAll(txt, end, end + start);
+    }, output);
+    output = output.replace(/\r?\n/g, (match) => `${suffix}${match}${prefix}`);
+    output = prefix + output + suffix;
+    return output;
+  };
+  const colrFnCache = cachier.create();
+  Object.defineProperties(
+    result,
+    ObjectTools.mapValues(optionConfigs, (key, value) => ({
+      enumerable: false,
+      get: () => colrFnCache.getOrRun(
+        key,
+        () => getColrFn(name + "." + key, styles, {
+          ...options,
+          ...typeof value === "function" ? value(options) : value
+        })
+      ),
+      set(v) {
+      }
+    }))
+  );
+  Object.defineProperties(
+    result,
+    ObjectTools.mapValues(fullStyleConfigs, (key, value) => ({
+      enumerable: true,
+      get: () => colrFnCache.getOrRun(key, () => getColrFn(name + "." + key, [...styles, value], options)),
+      set(v) {
+      }
+    }))
+  );
+  const templateFn = (strings, ...exps) => {
+    const args = {
+      strings: safe.arrOf.str([...strings]),
+      exps: safe.arr(exps)
+    };
+    const styledExps = args.exps.map((v) => result(v));
+    const zipped = ArrayTools.zipMax(args.strings, styledExps);
+    return zipped.flat().join("");
+  };
+  Object.defineProperties(result, {
+    $: {
+      enumerable: false,
+      get: () => templateFn,
+      set(v) {
+      }
+    },
+    template: {
+      enumerable: false,
+      get: () => templateFn,
+      set(v) {
+      }
+    }
+  });
+  Object.defineProperties(result, {
+    clear: {
+      enumerable: false,
+      get: () => clear,
+      set(v) {
+      }
+    }
+  });
+  const debugFn = (text) => {
+    const args = {
+      text: safe.str(text)
+    };
+    if (debugReplacements === null) {
+      populateDebugReplacements();
+    }
+    return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools.replaceAll(txt, search, replace), args.text);
+  };
+  Object.defineProperties(result, {
+    debug: {
+      enumerable: false,
+      get: () => debugFn,
+      set(v) {
+      }
+    }
+  });
+  const setsCache = cachier.create();
+  Object.defineProperties(result, {
+    sets: {
+      enumerable: false,
+      get: () => setsCache.getOrRun("sets", () => {
+        const setCache = cachier.create();
+        return Object.defineProperties(
+          {},
+          ObjectTools.mapValues(setConfigs, (name2, [textKey, bgKey]) => ({
+            enumerable: true,
+            get: () => setCache.getOrRun(name2, () => {
+              const fnCache = cachier.create();
+              return Object.defineProperties({}, {
+                text: {
+                  enumerable: true,
+                  get: () => fnCache.getOrRun("text", () => result[textKey]),
+                  set(v) {
+                  }
+                },
+                bg: {
+                  enumerable: true,
+                  get: () => fnCache.getOrRun("bg", () => result[bgKey]),
+                  set(v) {
+                  }
+                }
+              });
+            }),
+            set(v) {
+            }
+          }))
+        );
+      }),
+      set(v) {
+      }
+    }
+  });
+  Object.defineProperties(result, {
+    name: {
+      enumerable: false,
+      value: name
+    }
+  });
+  return result;
+};
+var colr = getColrFn("colr", [], {
+  isLight: true,
+  isLightBG: true
+});
 
 // src/tools/out/breadcrumb.ts
-var seperatorChar = ` ${chlk.gray2(symbols.CHEV_RGT)} `;
+var seperatorChar = ` ${colr.gray2(symbols.CHEV_RGT)} `;
 var getBreadcrumb = (...baseNames) => {
   let current = [];
-  let colours = ["t1", "t2", "t3", "t4", "t5", "t6"];
+  let colours = [colr.primary, colr.secondary, colr.blue, colr.red, colr.green, colr.cyan];
   const setColours = (newColours) => {
     colours = newColours;
   };
   const add = (...names) => current.push(...names);
-  const getColouredName = (name, index, arr) => out.utils.hasColor(name) || index === arr.length - 1 ? name : clr[colours[index % colours.length]](name);
+  const getColouredName = (name, index, arr) => out.utils.hasColor(name) || index === arr.length - 1 ? name : colours[index % colours.length](name);
   const getColouredNames = (...tempNames) => getNames(...tempNames).map(getColouredName);
   const getNames = (...tempNames) => [...baseNames, ...current, ...tempNames];
   const sub = (...tempNames) => getBreadcrumb(...getNames(...tempNames));
   const otherChars = "?  > ";
   const spaceForInput = 25;
-  const get = (...tempNames) => chalk4.bold(
+  const get = (...tempNames) => chalk2.bold(
     out.truncate(
       getColouredNames(...tempNames).join(seperatorChar).trim(),
       out.utils.getTerminalWidth() - (otherChars.length - spaceForInput)
@@ -202,13 +553,13 @@ var getBreadcrumb = (...baseNames) => {
 };
 
 // src/tools/out.ts
-import chalk5 from "chalk";
+import chalk3 from "chalk";
 var out;
 ((out2) => {
   const NEW_LINE = "\n";
   out2.getWidth = (text) => {
     const args = {
-      text: safe.str(text)
+      text: safe2.str(text)
     };
     let result = args.text;
     result = out2.utils.stripAnsi(result);
@@ -234,7 +585,7 @@ var out;
     const currW = words.map((w) => w.length).reduce(fn2.reduces.combine);
     const perSpace = Math.floor((width - currW) / (words.length - 1));
     const remain = (width - currW) % (words.length - 1);
-    const spaces = ArrayTools.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
+    const spaces = ArrayTools2.range(words.length - 1).map((i) => perSpace + Number(words.length - 2 - i < remain)).map((num) => replaceChar.repeat(num));
     let result = "";
     for (let index in words) {
       result += words[index] + (spaces[index] || "");
@@ -301,7 +652,7 @@ var out;
       }
     }
   };
-  const loadingDefault = (s) => console.log(chalk5.dim(`${s}`));
+  const loadingDefault = (s) => console.log(chalk3.dim(`${s}`));
   const loadingWords = [
     "\u2113-o-\u{1D51E}-\u{1D4ED}-\u026A-\u057C-\u{1D5F4}",
     "\u{1D695}-\u03C3-a-\u{1D521}-\u{1D4F2}-\u0274-\u0262",
@@ -312,8 +663,8 @@ var out;
     "\u{1D529}-\u{1D4F8}-\u1D00-\u0256-\u{1D5F6}-\u{1D697}-g",
     "l-\u{1D52C}-\u{1D4EA}-\u1D05-\u0268-\u{1D5FB}-\u{1D690}"
   ].map((word) => word.split("-"));
-  const loadingChars = ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
-    (word, index) => chalk5.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
+  const loadingChars = ArrayTools2.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
+    (word, index) => chalk3.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
   out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
     let stopped = false;
@@ -365,10 +716,10 @@ var out;
       return specials + result;
     })
   );
-  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk5.dim("\u2026")) => utils.joinLines(
+  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk3.dim("\u2026")) => utils.joinLines(
     utils.getLines(text).map((line) => out2.getWidth(line) > maxLength ? out2.limitToLength(line, maxLength - out2.getWidth(suffix)) + suffix : line)
   );
-  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk5.dim("\u2026")) => utils.joinLines(
+  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = chalk3.dim("\u2026")) => utils.joinLines(
     utils.getLines(text).map((line) => out2.getWidth(line) > maxLength ? suffix + out2.limitToLengthStart(line, maxLength - out2.getWidth(suffix)) : line)
   );
   out2.concatLineGroups = (...groups) => {
@@ -404,7 +755,7 @@ var out;
     utils2.hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
     utils2.stripAnsi = (text) => {
       const args = {
-        text: safe.str(text)
+        text: safe2.str(text)
       };
       const pattern = [
         "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
@@ -415,7 +766,7 @@ var out;
     };
     utils2.getEmojiRegex = (flags = "g") => {
       const args = {
-        flags: safe.str(flags)
+        flags: safe2.str(flags)
       };
       return new RegExp(
         /[\u2139\u231A\u231B\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]|\uD83C[\uDFFB-\uDFFF]|[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD\uDEC3-\uDEC5\uDEF0-\uDEF8]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEDC-\uDEDF\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]/,
@@ -492,14 +843,14 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
 };
 
 // src/tools/ask/trim.ts
-import { getDeferred, hours, ObjectTools, seconds, symbols as symbols2 } from "swiss-ak";
+import { getDeferred, hours, ObjectTools as ObjectTools2, seconds, symbols as symbols2 } from "swiss-ak";
 
 // src/tools/table.ts
-import { fn as fn4, ArrayTools as ArrayTools4, StringTools } from "swiss-ak";
+import { fn as fn4, ArrayTools as ArrayTools5, StringTools as StringTools2 } from "swiss-ak";
 
 // src/utils/processTableInput.ts
-import { zip, fn as fn3, ArrayTools as ArrayTools2 } from "swiss-ak";
-var empty = (numCols, char = "") => ArrayTools2.create(numCols, char);
+import { zip, fn as fn3, ArrayTools as ArrayTools3 } from "swiss-ak";
+var empty = (numCols, char = "") => ArrayTools3.create(numCols, char);
 var showBlank = ["undefined", "null"];
 var showRaw = ["string", "number", "boolean"];
 var itemToString = (item) => {
@@ -550,7 +901,7 @@ var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => ou
 var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight, _mB, marginLeft], maxTotalWidth) => {
   const transposed = zip(...[...cells.header, ...cells.body]);
   const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => out.utils.getLinesWidth(cell))));
-  const currColWidths = preferredWidths.length ? ArrayTools2.repeat(numCols, ...preferredWidths) : actualColWidths;
+  const currColWidths = preferredWidths.length ? ArrayTools3.repeat(numCols, ...preferredWidths) : actualColWidths;
   const currTotalWidth = currColWidths.length ? currColWidths.reduce(fn3.reduces.combine) + (numCols + 1) * 3 : 0;
   const diff = currTotalWidth - (maxTotalWidth - (marginRight + marginLeft));
   const colWidths = [...currColWidths];
@@ -585,7 +936,7 @@ var processInput = (cells, opts) => {
 };
 
 // src/utils/tableCharacters.ts
-import { ArrayTools as ArrayTools3 } from "swiss-ak";
+import { ArrayTools as ArrayTools4 } from "swiss-ak";
 var tableCharactersBasic = () => ({
   hTop: ["\u2501", "\u250F", "\u2533", "\u2513"],
   hNor: [" ", "\u2503", "\u2503", "\u2503"],
@@ -597,7 +948,7 @@ var tableCharactersBasic = () => ({
   bSep: ["\u2500", "\u251C", "\u253C", "\u2524"],
   bBot: ["\u2500", "\u2514", "\u2534", "\u2518"]
 });
-var ovAllCharact = (orig, char) => ArrayTools3.repeat(4, char);
+var ovAllCharact = (orig, char) => ArrayTools4.repeat(4, char);
 var ovSeperators = (orig, char) => [orig[0], char, char, char];
 var ovOuterChars = (orig, char) => [orig[0], char, orig[2], char];
 var normalRows = ["hNor", "bNor"];
@@ -709,7 +1060,7 @@ var getTableCharacters = (opts) => {
 };
 
 // src/tools/table.ts
-import chalk6 from "chalk";
+import chalk4 from "chalk";
 var table;
 ((table2) => {
   const getFullOptions2 = (opts) => ({
@@ -729,7 +1080,7 @@ var table;
     ...opts,
     wrapperFn: typeof opts.wrapperFn !== "function" ? fn4.noact : opts.wrapperFn,
     wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn4.noact : opts.wrapLinesFn,
-    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk6.bold : opts.wrapHeaderLinesFn,
+    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? chalk4.bold : opts.wrapHeaderLinesFn,
     wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn4.noact : opts.wrapBodyLinesFn,
     drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
     drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
@@ -746,7 +1097,7 @@ var table;
       return [top, right, bottom, left];
     })(opts.margin)
   });
-  const empty2 = (numCols, char = "") => ArrayTools4.create(numCols, char);
+  const empty2 = (numCols, char = "") => ArrayTools5.create(numCols, char);
   table2.print = (body, header, options = {}) => {
     const lines = table2.getLines(body, header, options);
     if (lines.length) {
@@ -793,7 +1144,7 @@ var table;
       const sepLine = lines[sepIndex];
       const sepSections = sepLine.split("|").filter(fn4.isTruthy);
       const numCols = sepSections.length;
-      const alignColumns = ArrayTools4.repeat(numCols, ...options.alignCols);
+      const alignColumns = ArrayTools5.repeat(numCols, ...options.alignCols);
       const alignedSepSections = sepSections.map((section2, index) => {
         const algn = alignColumns[index];
         const width = section2.length;
@@ -821,20 +1172,20 @@ var table;
       numCols,
       colWidths
     } = processInput({ header, body }, opts);
-    const alignColumns = ArrayTools4.repeat(numCols, ...alignCols);
+    const alignColumns = ArrayTools5.repeat(numCols, ...alignCols);
     const tableChars = getTableCharacters(opts);
     const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
       const [norm, strt, sepr, endc] = chars;
-      const pad = StringTools.repeat(cellPadding, norm);
+      const pad = StringTools2.repeat(cellPadding, norm);
       let aligned = row.map((cell, col) => out.align(cell || "", alignColumns[col], colWidths[col], norm, true));
       if (textWrapperFn)
         aligned = aligned.map((x) => textWrapperFn(x));
       const inner = aligned.join(wrapLinesFn(`${pad}${sepr}${pad}`));
-      const str = wrapLinesFn(`${StringTools.repeat(marginLeft, " ")}${strt}${pad}`) + inner + wrapLinesFn(`${pad}${endc}${StringTools.repeat(marginRight, " ")}`);
+      const str = wrapLinesFn(`${StringTools2.repeat(marginLeft, " ")}${strt}${pad}`) + inner + wrapLinesFn(`${pad}${endc}${StringTools2.repeat(marginRight, " ")}`);
       result.push(out.align(wrapperFn(str), align, -1, " ", false));
     };
     if (marginTop)
-      result.push(StringTools.repeat(marginTop - 1, "\n"));
+      result.push(StringTools2.repeat(marginTop - 1, "\n"));
     if (pHeader.length) {
       if (drawOuter && drawRowLines)
         printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
@@ -862,7 +1213,7 @@ var table;
     if (drawOuter && drawRowLines)
       printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
     if (marginBottom)
-      result.push(StringTools.repeat(marginBottom - 1, "\n"));
+      result.push(StringTools2.repeat(marginBottom - 1, "\n"));
     return result;
   };
   const toFullFormatConfig = (config) => ({
@@ -882,14 +1233,14 @@ var table;
       };
     };
     utils2.transpose = (rows) => {
-      return ArrayTools4.zip(...rows);
+      return ArrayTools5.zip(...rows);
     };
     utils2.concatRows = (cells) => {
       return [...cells.header || [], ...cells.body];
     };
     utils2.getFormat = (format, row, col, isHeader, isBody) => {
       const result = {
-        formatFn: typeof format === "function" ? format : clr[format],
+        formatFn: format,
         row,
         col
       };
@@ -903,7 +1254,7 @@ var table;
 })(table || (table = {}));
 
 // src/tools/ask/trim.ts
-import chalk7 from "chalk";
+import chalk5 from "chalk";
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
   const frLength = out.getWidth(frameRate + "");
   const toSecs = seconds(Math.floor(frame / frameRate));
@@ -925,16 +1276,16 @@ var getFullOptions = (opts) => ({
   charTrack: " ",
   charHandle: "\u2503",
   charBar: "\u2588",
-  clrTrack: chalk7.bgGray,
-  clrHandle: chalk7.whiteBright,
-  clrBar: chalk7.white,
+  wrapTrack: chalk5.bgGray,
+  wrapHandle: chalk5.whiteBright,
+  wrapBar: chalk5.white,
   ...opts,
   charActiveHandle: opts.charActiveHandle ?? opts.charHandle ?? "\u2503",
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? "\u2588",
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? "\u2588",
-  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk7.yellowBright.bold,
-  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk7.whiteBright,
-  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk7.yellowBright.bold
+  wrapActiveHandle: opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk5.yellowBright.bold,
+  wrapHandleBase: opts.wrapHandleBase ?? opts.wrapHandle ?? chalk5.whiteBright,
+  wrapActiveHandleBase: opts.wrapActiveHandleBase ?? opts.wrapHandleBase ?? opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk5.yellowBright.bold
 });
 var getChars = (opts) => ({
   track: opts.charTrack,
@@ -945,12 +1296,12 @@ var getChars = (opts) => ({
   activeHandleBase: opts.charActiveHandleBase
 });
 var getColors = (opts) => ({
-  track: opts.clrTrack,
-  handle: opts.clrHandle,
-  bar: opts.clrBar,
-  activeHandle: opts.clrActiveHandle,
-  handleBase: opts.clrHandleBase,
-  activeHandleBase: opts.clrActiveHandleBase
+  track: opts.wrapTrack,
+  handle: opts.wrapHandle,
+  bar: opts.wrapBar,
+  activeHandle: opts.wrapActiveHandle,
+  handleBase: opts.wrapHandleBase,
+  activeHandleBase: opts.wrapActiveHandleBase
 });
 var trim = async (totalFrames, frameRate, options = {}) => {
   const opts = getFullOptions(options);
@@ -969,7 +1320,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
     lc.clear();
     const width = out.utils.getTerminalWidth();
     const totalSpace = width - 2;
-    const handlePositions = ObjectTools.mapValues(
+    const handlePositions = ObjectTools2.mapValues(
       handles,
       (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
     );
@@ -983,11 +1334,11 @@ var trim = async (totalFrames, frameRate, options = {}) => {
     const handStart = activeHandle == "start" ? actvHand : inactvHand;
     const handEnd = activeHandle == "end" ? actvHand : inactvHand;
     const drawHandleLabels = () => {
-      const handleLabelsRaw = ObjectTools.mapValues(handles, (_k, value) => [
+      const handleLabelsRaw = ObjectTools2.mapValues(handles, (_k, value) => [
         ` ${toTimeCode(value, frameRate, showHours)} `,
         ""
       ]);
-      const handleLabelWidths = ObjectTools.mapValues(
+      const handleLabelWidths = ObjectTools2.mapValues(
         handleLabelsRaw,
         (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
       );
@@ -995,7 +1346,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
         start: handleLabelWidths.start > befSpace ? "left" : "right",
         end: handleLabelWidths.end > aftSpace ? "right" : "left"
       };
-      const handleLabels = ObjectTools.mapValues(
+      const handleLabels = ObjectTools2.mapValues(
         handleLabelsRaw,
         (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
       );
@@ -1048,10 +1399,10 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       if (opts.showInstructions && displayCount < 5) {
         const body = [
           [
-            chalk7.gray.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            chalk7.gray.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
-            chalk7.gray.dim(`[TAB] switch handle`),
-            chalk7.gray.dim(`[ENTER] submit`)
+            chalk5.gray.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
+            chalk5.gray.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
+            chalk5.gray.dim(`[TAB] switch handle`),
+            chalk5.gray.dim(`[ENTER] submit`)
           ]
         ];
         lc.add(table.print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
@@ -1115,7 +1466,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
 // src/tools/ask/fileExplorer.ts
 import * as fsP2 from "fs/promises";
 import {
-  ArrayTools as ArrayTools5,
+  ArrayTools as ArrayTools6,
   fn as fn7,
   getDeferred as getDeferred2,
   MathsTools,
@@ -1123,13 +1474,13 @@ import {
   PromiseTools,
   seconds as seconds2,
   sortNumberedText,
-  StringTools as StringTools2,
+  StringTools as StringTools3,
   symbols as symbols3,
   TimeTools,
   tryOr as tryOr2,
   wait as wait2
 } from "swiss-ak";
-import chalk9 from "chalk";
+import chalk7 from "chalk";
 
 // src/tools/PathTools.ts
 var PathTools;
@@ -1149,7 +1500,7 @@ var PathTools;
 var explodePath = PathTools.explodePath;
 
 // src/utils/actionBar.ts
-import chalk8 from "chalk";
+import chalk6 from "chalk";
 import { fn as fn5 } from "swiss-ak";
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   const keyList = ids.filter(fn5.isTruthy).filter((key) => config[key]);
@@ -1159,10 +1510,10 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   });
   const format = [];
   if (pressedId) {
-    format.push({ formatFn: chalk8.bgWhite.black, col: keyList.indexOf(pressedId) });
+    format.push({ formatFn: chalk6.bgWhite.black, col: keyList.indexOf(pressedId) });
   }
   if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: chalk8.dim.strikethrough, col: keyList.indexOf(key) }));
+    disabledIds.forEach((key) => format.push({ formatFn: chalk6.dim.strikethrough, col: keyList.indexOf(key) }));
   }
   return out.utils.joinLines(
     table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
@@ -1331,8 +1682,8 @@ var getFileIcon = (ext) => {
   if (category === "image") {
     return out.left(
       `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551  ${chalk9.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk9.whiteBright("\u2600")}  \u2551
-\u2551 ${chalk9.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk9.whiteBright("\u2600")}\u2551
+\u2551  ${chalk7.whiteBright("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${chalk7.whiteBright("\u2600")}  \u2551
+\u2551 ${chalk7.whiteBright("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${chalk7.whiteBright("\u2600")}\u2551
 \u255F\u2500\u2500\u2524\u25AB\u25AA\u2502\u25AB\u25AB\u25AB\u25AB\u251C\u2500\u2500\u2500\u2562
 \u2551\u25AA\u25AB\u2502\u25AB\u25AB\u2502\u25AA\u25AB\u25AB\u25AB\u2502\u25AB\u25AA\u25AB\u2551
 \u255A\u2550\u2550\u2567\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u255D`,
@@ -1383,11 +1734,11 @@ var getFilePanel = (path, panelWidth, maxLines) => {
   result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(chalk9.dim(`${ext.toUpperCase()} ${category ? `${StringTools2.capitalise(category)} ` : ""}File`), panelWidth));
-  result.push(out.center(chlk.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
+  result.push(out.center(chalk7.dim(`${ext.toUpperCase()} ${category ? `${StringTools3.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(colr.gray1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
-    result.push(out.split(`${chalk9.bold.dim(title)}`, `${value}${extra ? chalk9.dim(` (${chalk9.dim(extra)})`) : ""}`, panelWidth));
+    result.push(out.split(`${chalk7.bold.dim(title)}`, `${value}${extra ? chalk7.dim(` (${chalk7.dim(extra)})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
     addItem(title, `${TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
@@ -1406,15 +1757,15 @@ var getFilePanel = (path, panelWidth, maxLines) => {
       addItem(`FPS`, `${probe.framerate}`);
   }
   const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
-  return chalk9.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
+  return chalk7.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
-  const primaryWrapFn = chalk9.yellowBright;
-  const cursorWrapFn = chalk9.bgYellow.black;
-  const ancestralCursorWrapFn = chalk9.bgGray.black;
-  const selectedIconWrapFn = chalk9.greenBright;
-  const selectedWrapFn = chalk9.greenBright;
-  const cursorOnSelectedWrapFn = chalk9.bgGreenBright.black;
+  const primaryWrapFn = chalk7.yellowBright;
+  const cursorWrapFn = chalk7.bgYellow.black;
+  const ancestralCursorWrapFn = chalk7.bgGray.black;
+  const selectedIconWrapFn = chalk7.greenBright;
+  const selectedWrapFn = chalk7.greenBright;
+  const cursorOnSelectedWrapFn = chalk7.bgGreenBright.black;
   const minWidth = 25;
   const maxWidth = 25;
   const maxItems = 15;
@@ -1513,35 +1864,35 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       } else {
         wrapFn = isSelected ? selectedWrapFn : regularWrapFn;
       }
-      return wrapFn(chlk.clear(stretched));
+      return wrapFn(colr.clear(stretched));
     };
     const { dir: formatDir, file: formatFile } = {
       single: {
         d: {
-          dir: formatter("\u203A", chlk.gray5),
-          file: formatter(" ", chalk9.dim)
+          dir: formatter("\u203A", colr.gray5),
+          file: formatter(" ", chalk7.dim)
         },
         f: {
-          dir: formatter("\u203A", chlk.gray3),
-          file: formatter(" ", chlk.gray5)
+          dir: formatter("\u203A", colr.gray3),
+          file: formatter(" ", colr.gray5)
         },
         df: {
-          dir: formatter("\u203A", chlk.gray5),
-          file: formatter(" ", chlk.gray5)
+          dir: formatter("\u203A", colr.gray5),
+          file: formatter(" ", colr.gray5)
         }
       },
       multi: {
         d: {
-          dir: formatter("\u203A", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `),
-          file: formatter(" ", chalk9.dim, "   ", "   ")
+          dir: formatter("\u203A", colr.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `),
+          file: formatter(" ", chalk7.dim, "   ", "   ")
         },
         f: {
-          dir: formatter("\u203A", chlk.gray3, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
+          dir: formatter("\u203A", colr.gray3, "   ", "   "),
+          file: formatter(" ", colr.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
         },
         df: {
-          dir: formatter("\u203A", chlk.gray5, "   ", "   "),
-          file: formatter(" ", chlk.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
+          dir: formatter("\u203A", colr.gray5, "   ", "   "),
+          file: formatter(" ", colr.gray5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
@@ -1567,9 +1918,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
         const fullWidth = out.getWidth(formatDir(width, "", false, "")(""));
         if (isScrollUp)
-          slicedLines[0] = chalk9.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
+          slicedLines[0] = chalk7.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
         if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = chalk9.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
+          slicedLines[slicedLines.length - 1] = chalk7.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
         return out.utils.joinLines(slicedLines);
       }
       return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
@@ -1577,10 +1928,10 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools5.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools6.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
     const termWidth = out.utils.getTerminalWidth();
     const tableLines = table.getLines([columns], void 0, {
-      wrapLinesFn: chlk.gray1,
+      wrapLinesFn: colr.gray1,
       drawOuter: true,
       cellPadding: 0,
       truncate: "",
@@ -1590,11 +1941,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
     const infoLine = (() => {
       if (loading) {
-        return chalk9.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
+        return chalk7.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
       }
-      const count = isMulti ? chalk9.dim(`${chlk.gray1("[")} ${multiSelected.size} selected ${chlk.gray1("]")} `) : "";
+      const count = isMulti ? chalk7.dim(`${colr.gray1("[")} ${multiSelected.size} selected ${colr.gray1("]")} `) : "";
       const curr = out.limitToLengthStart(
-        `${currentPath} ${chalk9.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
+        `${currentPath} ${chalk7.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
         tableWidth - (out.getWidth(count) + 3)
       );
       const split = out.split(curr, count, tableWidth - 2);
@@ -1693,10 +2044,10 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       await userActions.takeInput(
         () => {
-          const info2 = chlk.gray3("Enter nothing to cancel");
-          const info1Prefix = chlk.gray3("  Adding folder to ");
+          const info2 = colr.gray3("Enter nothing to cancel");
+          const info1Prefix = colr.gray3("  Adding folder to ");
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = colr.gray4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
           lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
@@ -1727,7 +2078,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(chlk.gray3("  Saving file to ") + chlk.gray4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          lc.log(colr.gray3("  Saving file to ") + colr.gray4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
         },
         () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn("name")} the file?`, initial)),
         () => true
@@ -1797,7 +2148,7 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/datetime.ts
-import chalk12 from "chalk";
+import chalk10 from "chalk";
 import { getDeferred as getDeferred3, getTimer } from "swiss-ak";
 
 // src/utils/dynDates.ts
@@ -1885,27 +2236,27 @@ var getNumberInputter = (timeout = seconds3(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-import chalk11 from "chalk";
+import chalk9 from "chalk";
 import { range } from "swiss-ak";
 
 // src/tools/ask/datetime/styles.ts
-import chalk10 from "chalk";
+import chalk8 from "chalk";
 var sectionStyles = {
   sectActive: {
-    dark: chlk.gray1,
-    mid: chlk.gray3,
-    normal: chalk10.white,
-    tertiary: chalk10.yellowBright,
-    secondary: chalk10.bgWhite.black,
-    primary: chalk10.bgYellow.black
+    dark: colr.gray1,
+    mid: colr.gray3,
+    normal: chalk8.white,
+    tertiary: chalk8.yellowBright,
+    secondary: chalk8.bgWhite.black,
+    primary: chalk8.bgYellow.black
   },
   sectInactive: {
-    dark: chlk.gray1,
-    mid: chlk.gray2,
-    normal: chlk.gray3,
-    tertiary: chalk10.yellow,
-    secondary: chalk10.bgGray.black,
-    primary: chalk10.bgWhite.black
+    dark: colr.gray1,
+    mid: colr.gray2,
+    normal: colr.gray3,
+    tertiary: chalk8.yellow,
+    secondary: chalk8.bgGray.black,
+    primary: chalk8.bgWhite.black
   }
 };
 var getStyles = (active) => active ? sectionStyles.sectActive : sectionStyles.sectInactive;
@@ -1936,13 +2287,13 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk11.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => chalk9.reset(styles.primary(s)), y, x)));
   }
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => chalk11.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat((s) => chalk9.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
     }
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
@@ -2138,7 +2489,7 @@ var timeHandler = (isActive, initial, displayCb) => {
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = getTimer("DEBUG", false, chalk12.red, chalk12);
+var DEBUG_TIMER = getTimer("DEBUG", false, chalk10.red, chalk10);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2312,7 +2663,7 @@ var dateRange = async (questionText, initialStart, initialEnd) => {
 };
 
 // src/tools/ask/section.ts
-import { ArrayTools as ArrayTools6 } from "swiss-ak";
+import { ArrayTools as ArrayTools7 } from "swiss-ak";
 var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2) => {
   const lineChar = "\u2504";
   const chars = {
@@ -2320,8 +2671,8 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
     none: "\u25E6",
     up: "\u25B5"
   };
-  const line = ArrayTools6.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(chlk.gray1(out.center(line, void 0, lineChar)));
+  const line = ArrayTools7.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  console.log(colr.gray1(out.center(line, void 0, lineChar)));
   return 1;
 };
 var section = async (question, sectionFn, ...questionFns) => {
@@ -2359,8 +2710,8 @@ var section = async (question, sectionFn, ...questionFns) => {
 
 // src/tools/ask/table.ts
 import { fn as fn9, getDeferred as getDeferred4, symbols as symbols4 } from "swiss-ak";
-import chalk13 from "chalk";
-var highlightFn = chalk13.cyan.underline;
+import chalk11 from "chalk";
+var highlightFn = chalk11.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
@@ -2395,9 +2746,9 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       if (isMulti) {
         const selectedSym = symbols4.RADIO_FULL;
         const unselectedSym = symbols4.RADIO_EMPTY;
-        firstCell = selectedIndexes.includes(index) ? chalk13.reset(chalk13.green(selectedSym)) : chalk13.reset(unselectedSym);
+        firstCell = selectedIndexes.includes(index) ? chalk11.reset(chalk11.green(selectedSym)) : chalk11.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? chalk13.reset(chalk13.cyan(symbols4.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? chalk11.reset(chalk11.cyan(symbols4.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
@@ -2581,7 +2932,7 @@ var ask;
       }));
     }
     if (canSelectAll) {
-      choiceObjs = [{ title: chlk.gray4("[Select all]"), value: "***SELECT_ALL***" }, ...choiceObjs];
+      choiceObjs = [{ title: colr.grey4("[Select all]"), value: "***SELECT_ALL***" }, ...choiceObjs];
     }
     const response = await prompts(
       {
@@ -2608,19 +2959,19 @@ var ask;
       canDeleteAll: true,
       ...options
     };
-    const opts = [{ title: chalk14.dim(`${clr.approve(symbols5.TICK)} [ Finished ]`), value: "none" }];
+    const opts = [{ title: chalk12.dim(`${colr.dark.success.bold(symbols5.TICK)} [ Finished ]`), value: "none" }];
     if (fullOptions.canCreate) {
-      opts.push({ title: `${clr.create(symbols5.PLUS)} Add another ${itemName}`, value: "create" });
+      opts.push({ title: `${colr.success.bold(symbols5.PLUS)} Add another ${itemName}`, value: "create" });
     }
     if (items.length > 0) {
       if (fullOptions.canUpdate) {
-        opts.push({ title: `${clr.update(symbols5.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
+        opts.push({ title: `${colr.dark.yellow.bold(symbols5.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
       }
       if (fullOptions.canDelete) {
-        opts.push({ title: `${clr.remove(symbols5.CROSS)} Remove ${itemName}`, value: "delete" });
+        opts.push({ title: `${colr.danger.bold(symbols5.CROSS)} Remove ${itemName}`, value: "delete" });
       }
       if (fullOptions.canDeleteAll) {
-        opts.push({ title: `${clr.removeAll(symbols5.TIMES)} Remove all`, value: "delete-all" });
+        opts.push({ title: `${colr.danger.bold(symbols5.TIMES)} Remove all`, value: "delete-all" });
       }
     }
     return await ask2.select(question, opts, "none");
@@ -2634,13 +2985,13 @@ var ask;
       } else {
         const message = validateResponse || "";
         out.moveUp(1 + extraLines);
-        console.log(chalk14.red(message));
+        console.log(chalk12.red(message));
         return runLoop(input, message.split("\n").length);
       }
     };
     return runLoop();
   };
-  const imitateHighlight = chalk14.cyanBright.bold.underline;
+  const imitateHighlight = chalk12.cyanBright.bold.underline;
   const getImitateResultText = (result, isChild = false) => {
     if (result instanceof Array) {
       if (result.length > 3)
@@ -2670,12 +3021,12 @@ var ask;
   ask2.imitate = (done, question, result) => {
     const message = typeof question === "string" ? question : question.get();
     const resultText = getImitateResultText(result);
-    const prefix = done ? chalk14.green("\u2714") : chalk14.cyan("?");
-    const questionText = chalk14.whiteBright.bold(message);
-    const joiner = resultText ? chalk14.gray(done ? "\u2026 " : "\u203A ") : "";
+    const prefix = done ? chalk12.green("\u2714") : chalk12.cyan("?");
+    const questionText = chalk12.whiteBright.bold(message);
+    const joiner = resultText ? chalk12.gray(done ? "\u2026 " : "\u203A ") : "";
     const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
     const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
-    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? chalk14.white : chalk14.gray;
+    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? chalk12.white : chalk12.gray;
     const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : "";
     console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
     return 1;
@@ -2691,7 +3042,7 @@ var ask;
   ask2.pause = async (text2 = "Press enter to continue...") => {
     return new Promise((resolve) => {
       const message = typeof text2 === "string" ? text2 : text2.get();
-      console.log(chalk14.gray(message));
+      console.log(chalk12.gray(message));
       const finish = () => {
         kl.stop();
         resolve();
@@ -2711,7 +3062,7 @@ var ask;
       const textValue = template(s);
       out.moveUp(lines);
       lines = textValue.split("\n").length;
-      console.log(chalk14.blackBright(textValue));
+      console.log(chalk12.blackBright(textValue));
       await wait3(seconds4(1));
     }
     out.moveUp(lines);
@@ -2762,407 +3113,9 @@ var ask;
   })(utils = ask2.utils || (ask2.utils = {}));
 })(ask || (ask = {}));
 
-// src/tools/colr.ts
-import { cachier } from "swiss-ak";
-import { ArrayTools as ArrayTools7, ObjectTools as ObjectTools2, StringTools as StringTools3, safe as safe2 } from "swiss-ak";
-var wrapAnsi = (codes) => [codes].flat().map((code) => `\x1B[${code}m`).join("");
-var simpleStringify = (item, depth = 0) => {
-  if (depth > 4)
-    return "";
-  try {
-    if (item === void 0 || item === null)
-      return "";
-    if (Array.isArray(item)) {
-      return "[" + item.map((v) => simpleStringify(v, depth + 1)).join(", ") + "]";
-    }
-    if (typeof item === "object") {
-      return JSON.stringify(item);
-    }
-    if (item.toString)
-      return item.toString();
-    return "" + item;
-  } catch (err) {
-    try {
-      return "" + item;
-    } catch (err2) {
-      return "";
-    }
-  }
-};
-var optionConfigs = {
-  light: { isLight: true },
-  dark: { isLight: false },
-  lightBg: { isLightBG: true },
-  darkBg: { isLightBG: false }
-};
-var fullStyleConfigs = null;
-var calculateFullStyleConfigs = () => {
-  const modifierStyleConfigs = {
-    reset: [0, 0],
-    bold: [1, 22],
-    dim: [2, 22],
-    italic: [3, 23],
-    overline: [53, 55],
-    underline: [4, 24],
-    strikethrough: [9, 29],
-    inverse: [7, 27],
-    hidden: [8, 28]
-  };
-  const colourStyleConfigs = {
-    red: {
-      isBG: false,
-      dark: [31, 39],
-      light: [91, 39]
-    },
-    green: {
-      isBG: false,
-      dark: [32, 39],
-      light: [92, 39]
-    },
-    yellow: {
-      isBG: false,
-      dark: [33, 39],
-      light: [93, 39]
-    },
-    blue: {
-      isBG: false,
-      dark: [34, 39],
-      light: [94, 39]
-    },
-    magenta: {
-      isBG: false,
-      dark: [35, 39],
-      light: [95, 39]
-    },
-    cyan: {
-      isBG: false,
-      dark: [36, 39],
-      light: [96, 39]
-    },
-    white: {
-      isBG: false,
-      dark: [37, 39],
-      light: [97, 39]
-    },
-    redBg: {
-      isBG: true,
-      dark: [41, 49],
-      light: [101, 49]
-    },
-    greenBg: {
-      isBG: true,
-      dark: [42, 49],
-      light: [102, 49]
-    },
-    yellowBg: {
-      isBG: true,
-      dark: [43, 49],
-      light: [103, 49]
-    },
-    blueBg: {
-      isBG: true,
-      dark: [44, 49],
-      light: [104, 49]
-    },
-    magentaBg: {
-      isBG: true,
-      dark: [45, 49],
-      light: [105, 49]
-    },
-    cyanBg: {
-      isBG: true,
-      dark: [46, 49],
-      light: [106, 49]
-    },
-    whiteBg: {
-      isBG: true,
-      dark: [47, 49],
-      light: [107, 49]
-    }
-  };
-  const blackStyleConfigs = {
-    black: [30, 39],
-    darkBlack: [30, 39],
-    lightBlack: [90, 39],
-    blackBg: [40, 49],
-    darkBlackBg: [40, 49],
-    lightBlackBg: [100, 49]
-  };
-  const mergeEntries = (...entries) => [
-    entries.map((entry) => entry instanceof Array ? entry[0] : entry.light[0]).flat(),
-    entries.map((entry) => entry instanceof Array ? entry[1] : entry.light[1]).flat()
-  ];
-  const greyColourStyleConfigs = {
-    grey: blackStyleConfigs.lightBlack,
-    greyBg: blackStyleConfigs.lightBlackBg,
-    grey0: blackStyleConfigs.darkBlack,
-    grey1: mergeEntries(blackStyleConfigs.lightBlack, modifierStyleConfigs.dim),
-    grey2: mergeEntries(colourStyleConfigs.white.dark, modifierStyleConfigs.dim),
-    grey3: mergeEntries(colourStyleConfigs.white.light, modifierStyleConfigs.dim),
-    grey4: colourStyleConfigs.white.dark,
-    grey5: colourStyleConfigs.white.light
-  };
-  const otherColourStyleConfigs = {
-    primary: colourStyleConfigs.magenta.light,
-    secondary: colourStyleConfigs.yellow.light,
-    success: colourStyleConfigs.green.light,
-    danger: colourStyleConfigs.red.dark,
-    warning: colourStyleConfigs.yellow.dark,
-    info: colourStyleConfigs.blue.light,
-    primaryBg: mergeEntries(colourStyleConfigs.magentaBg.light, blackStyleConfigs.darkBlack),
-    secondaryBg: mergeEntries(colourStyleConfigs.yellowBg.light, blackStyleConfigs.darkBlack),
-    successBg: mergeEntries(colourStyleConfigs.greenBg.light, blackStyleConfigs.darkBlack),
-    dangerBg: mergeEntries(colourStyleConfigs.redBg.dark, blackStyleConfigs.darkBlack),
-    warningBg: mergeEntries(colourStyleConfigs.yellowBg.dark, blackStyleConfigs.darkBlack),
-    infoBg: mergeEntries(colourStyleConfigs.blueBg.light, blackStyleConfigs.darkBlack)
-  };
-  fullStyleConfigs = {
-    ...Object.fromEntries(
-      Object.entries(colourStyleConfigs).flatMap(([key, value]) => {
-        const colourName = value.isBG ? key.slice(0, -2) : key;
-        const bgSuffix = value.isBG ? "Bg" : "";
-        return [
-          [colourName + bgSuffix, value],
-          ["dark" + StringTools3.capitalise(colourName, false) + bgSuffix, [...value.dark]],
-          ["light" + StringTools3.capitalise(colourName, false) + bgSuffix, [...value.light]]
-        ];
-      })
-    ),
-    ...blackStyleConfigs,
-    ...Object.fromEntries(
-      Object.entries(greyColourStyleConfigs).flatMap(([key, value]) => [
-        [key, value],
-        [key.replace("grey", "gray"), value]
-      ])
-    ),
-    ...otherColourStyleConfigs,
-    ...modifierStyleConfigs
-  };
-};
-var debugReplacements = null;
-var populateDebugReplacements = () => {
-  debugReplacements = {
-    [wrapAnsi(fullStyleConfigs.darkRed[1])]: "(<)",
-    [wrapAnsi(fullStyleConfigs.darkRedBg[1])]: "{<}",
-    [wrapAnsi(fullStyleConfigs.darkRed[0])]: "(red>)",
-    [wrapAnsi(fullStyleConfigs.lightRed[0])]: "(RED>)",
-    [wrapAnsi(fullStyleConfigs.darkGreen[0])]: "(grn>)",
-    [wrapAnsi(fullStyleConfigs.lightGreen[0])]: "(GRN>)",
-    [wrapAnsi(fullStyleConfigs.darkYellow[0])]: "(ylw>)",
-    [wrapAnsi(fullStyleConfigs.lightYellow[0])]: "(YLW>)",
-    [wrapAnsi(fullStyleConfigs.darkBlue[0])]: "(blu>)",
-    [wrapAnsi(fullStyleConfigs.lightBlue[0])]: "(BLU>)",
-    [wrapAnsi(fullStyleConfigs.darkMagenta[0])]: "(mag>)",
-    [wrapAnsi(fullStyleConfigs.lightMagenta[0])]: "(MAG>)",
-    [wrapAnsi(fullStyleConfigs.darkCyan[0])]: "(cyn>)",
-    [wrapAnsi(fullStyleConfigs.lightCyan[0])]: "(CYN>)",
-    [wrapAnsi(fullStyleConfigs.darkBlack[0])]: "(blk>)",
-    [wrapAnsi(fullStyleConfigs.lightBlack[0])]: "(BLK>)",
-    [wrapAnsi(fullStyleConfigs.darkWhite[0])]: "(wht>)",
-    [wrapAnsi(fullStyleConfigs.lightWhite[0])]: "(WHT>)",
-    [wrapAnsi(fullStyleConfigs.darkRedBg[0])]: "{red>}",
-    [wrapAnsi(fullStyleConfigs.lightRedBg[0])]: "{RED>}",
-    [wrapAnsi(fullStyleConfigs.darkGreenBg[0])]: "{grn>}",
-    [wrapAnsi(fullStyleConfigs.lightGreenBg[0])]: "{GRN>}",
-    [wrapAnsi(fullStyleConfigs.darkYellowBg[0])]: "{ylw>}",
-    [wrapAnsi(fullStyleConfigs.lightYellowBg[0])]: "{YLW>}",
-    [wrapAnsi(fullStyleConfigs.darkBlueBg[0])]: "{blu>}",
-    [wrapAnsi(fullStyleConfigs.lightBlueBg[0])]: "{BLU>}",
-    [wrapAnsi(fullStyleConfigs.darkMagentaBg[0])]: "{mag>}",
-    [wrapAnsi(fullStyleConfigs.lightMagentaBg[0])]: "{MAG>}",
-    [wrapAnsi(fullStyleConfigs.darkCyanBg[0])]: "{cyn>}",
-    [wrapAnsi(fullStyleConfigs.lightCyanBg[0])]: "{CYN>}",
-    [wrapAnsi(fullStyleConfigs.darkBlackBg[0])]: "{blk>}",
-    [wrapAnsi(fullStyleConfigs.lightBlackBg[0])]: "{BLK>}",
-    [wrapAnsi(fullStyleConfigs.darkWhiteBg[0])]: "{wht>}",
-    [wrapAnsi(fullStyleConfigs.lightWhiteBg[0])]: "{WHT>}",
-    [wrapAnsi(fullStyleConfigs.reset[0])]: "[rst>]",
-    [wrapAnsi(fullStyleConfigs.reset[1])]: "[<rst]",
-    [wrapAnsi(fullStyleConfigs.bold[0])]: "[bld>]",
-    [wrapAnsi(fullStyleConfigs.bold[1])]: "[<bld]",
-    [wrapAnsi(fullStyleConfigs.dim[0])]: "[dim>]",
-    [wrapAnsi(fullStyleConfigs.dim[1])]: "[<dim]",
-    [wrapAnsi(fullStyleConfigs.italic[0])]: "[itl>]",
-    [wrapAnsi(fullStyleConfigs.italic[1])]: "[<itl]",
-    [wrapAnsi(fullStyleConfigs.overline[0])]: "[ovr>]",
-    [wrapAnsi(fullStyleConfigs.overline[1])]: "[<ovr]",
-    [wrapAnsi(fullStyleConfigs.underline[0])]: "[und>]",
-    [wrapAnsi(fullStyleConfigs.underline[1])]: "[<und]",
-    [wrapAnsi(fullStyleConfigs.strikethrough[0])]: "[str>]",
-    [wrapAnsi(fullStyleConfigs.strikethrough[1])]: "[<str]",
-    [wrapAnsi(fullStyleConfigs.inverse[0])]: "[inv>]",
-    [wrapAnsi(fullStyleConfigs.inverse[1])]: "[<inv]",
-    [wrapAnsi(fullStyleConfigs.hidden[0])]: "[hdn>]",
-    [wrapAnsi(fullStyleConfigs.hidden[1])]: "[<hdn]"
-  };
-};
-var setConfigs = {
-  red: ["red", "redBg"],
-  green: ["green", "greenBg"],
-  yellow: ["yellow", "yellowBg"],
-  blue: ["blue", "blueBg"],
-  magenta: ["magenta", "magentaBg"],
-  cyan: ["cyan", "cyanBg"],
-  white: ["white", "whiteBg"],
-  black: ["black", "blackBg"],
-  lightBlack: ["lightBlack", "lightBlackBg"],
-  grey: ["grey", "greyBg"],
-  gray: ["gray", "grayBg"],
-  primary: ["primary", "primaryBg"],
-  secondary: ["secondary", "secondaryBg"],
-  success: ["success", "successBg"],
-  danger: ["danger", "dangerBg"],
-  warning: ["warning", "warningBg"],
-  info: ["info", "infoBg"]
-};
-var getColrFn = (name, styles = [], options) => {
-  if (fullStyleConfigs === null) {
-    calculateFullStyleConfigs();
-  }
-  const result = (...text) => {
-    const args = {
-      text: text.map((item) => simpleStringify(item)).join(" ")
-    };
-    const entries = styles.map((value) => {
-      if (value instanceof Array) {
-        return value;
-      }
-      const config = value;
-      const isLight = config.isBG ? options.isLightBG : options.isLight;
-      return isLight ? config.light || config.dark : config.dark || config.light;
-    });
-    const prefix = entries.flatMap((entry) => entry[0]).map((value) => wrapAnsi(value)).join("");
-    const suffix = entries.flatMap((entry) => entry[1]).map((value) => wrapAnsi(value)).reverse().join("");
-    let output = args.text;
-    const flatStarts = entries.flatMap((entry) => entry[0]);
-    const flatEnds = entries.flatMap((entry) => entry[1]);
-    const pairs = ArrayTools7.zipMax(flatStarts, flatEnds);
-    output = pairs.reduceRight((txt, pair) => {
-      const start = wrapAnsi(pair[0]);
-      const end = wrapAnsi(pair[1]);
-      return StringTools3.replaceAll(txt, end, end + start);
-    }, output);
-    output = output.replace(/\r?\n/g, (match) => `${suffix}${match}${prefix}`);
-    output = prefix + output + suffix;
-    return output;
-  };
-  const colrFnCache = cachier.create();
-  Object.defineProperties(
-    result,
-    ObjectTools2.mapValues(optionConfigs, (key, value) => ({
-      enumerable: false,
-      get: () => colrFnCache.getOrRun(
-        key,
-        () => getColrFn(name + "." + key, styles, {
-          ...options,
-          ...typeof value === "function" ? value(options) : value
-        })
-      ),
-      set(v) {
-      }
-    }))
-  );
-  Object.defineProperties(
-    result,
-    ObjectTools2.mapValues(fullStyleConfigs, (key, value) => ({
-      enumerable: true,
-      get: () => colrFnCache.getOrRun(key, () => getColrFn(name + "." + key, [...styles, value], options)),
-      set(v) {
-      }
-    }))
-  );
-  const templateFn = (strings, ...exps) => {
-    const args = {
-      strings: safe2.arrOf.str([...strings]),
-      exps: safe2.arr(exps)
-    };
-    const styledExps = args.exps.map((v) => result(v));
-    const zipped = ArrayTools7.zipMax(args.strings, styledExps);
-    return zipped.flat().join("");
-  };
-  Object.defineProperties(result, {
-    $: {
-      enumerable: false,
-      get: () => templateFn,
-      set(v) {
-      }
-    },
-    template: {
-      enumerable: false,
-      get: () => templateFn,
-      set(v) {
-      }
-    }
-  });
-  const debugFn = (text) => {
-    const args = {
-      text: safe2.str(text)
-    };
-    if (debugReplacements === null) {
-      populateDebugReplacements();
-    }
-    return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools3.replaceAll(txt, search, replace), args.text);
-  };
-  Object.defineProperties(result, {
-    debug: {
-      enumerable: false,
-      get: () => debugFn,
-      set(v) {
-      }
-    }
-  });
-  const setsCache = cachier.create();
-  Object.defineProperties(result, {
-    sets: {
-      enumerable: false,
-      get: () => setsCache.getOrRun("sets", () => {
-        const setCache = cachier.create();
-        return Object.defineProperties(
-          {},
-          ObjectTools2.mapValues(setConfigs, (name2, [textKey, bgKey]) => ({
-            enumerable: true,
-            get: () => setCache.getOrRun(name2, () => {
-              const fnCache = cachier.create();
-              return Object.defineProperties({}, {
-                text: {
-                  enumerable: true,
-                  get: () => fnCache.getOrRun("text", () => result[textKey]),
-                  set(v) {
-                  }
-                },
-                bg: {
-                  enumerable: true,
-                  get: () => fnCache.getOrRun("bg", () => result[bgKey]),
-                  set(v) {
-                  }
-                }
-              });
-            }),
-            set(v) {
-            }
-          }))
-        );
-      }),
-      set(v) {
-      }
-    }
-  });
-  Object.defineProperties(result, {
-    name: {
-      enumerable: false,
-      value: name
-    }
-  });
-  return result;
-};
-var colr = getColrFn("colr", [], {
-  isLight: true,
-  isLightBG: true
-});
-
 // src/tools/log.ts
 import util from "util";
-import chalk15 from "chalk";
+import chalk13 from "chalk";
 import { ObjectTools as ObjectTools3 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -3172,41 +3125,41 @@ var defaultOptions = {
 var defaultConfigs = {
   blank: {
     name: "",
-    nameColour: chalk15,
+    nameColour: chalk13,
     showDate: false,
     showTime: false
   },
   log: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk13.bgWhite.black
   },
   out: {
     name: "OUT",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk13.bgWhite.black
   },
   normal: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk13.bgWhite.black
   },
   verbose: {
     name: "LOG",
-    nameColour: chalk15.bgWhite.black
+    nameColour: chalk13.bgWhite.black
   },
   debug: {
     name: "DBUG",
-    nameColour: chalk15.bgMagenta.whiteBright
+    nameColour: chalk13.bgMagenta.whiteBright
   },
   info: {
     name: "INFO",
-    nameColour: chalk15.bgBlue.whiteBright
+    nameColour: chalk13.bgBlue.whiteBright
   },
   warn: {
     name: "WARN",
-    nameColour: chalk15.bgYellowBright.black
+    nameColour: chalk13.bgYellowBright.black
   },
   error: {
     name: "ERRR",
-    nameColour: chalk15.bgRed.whiteBright
+    nameColour: chalk13.bgRed.whiteBright
   }
 };
 var getStr = (enableColours) => (item) => {
@@ -3231,7 +3184,7 @@ var formatLog = (args, config, completeOptions, longestName = 1) => {
   const now = new Date();
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
   const { name, nameColour, contentColour, showDate, showTime } = config;
-  const dateWrapper = enableColours ? chalk15.dim : (str) => str;
+  const dateWrapper = enableColours ? chalk13.dim : (str) => str;
   const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
   const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
@@ -3255,12 +3208,12 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBarTools.ts
-import chalk16 from "chalk";
+import chalk14 from "chalk";
 import { ArrayTools as ArrayTools8 } from "swiss-ak";
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
-    let wrapperFns = [chalk16.yellowBright, chalk16.magenta, chalk16.blueBright, chalk16.cyanBright, chalk16.greenBright, chalk16.redBright];
+    let wrapperFns = [chalk14.yellowBright, chalk14.magenta, chalk14.blueBright, chalk14.cyanBright, chalk14.greenBright, chalk14.redBright];
     if (randomise) {
       wrapperFns = ArrayTools8.randomise(wrapperFns);
     }
@@ -3296,8 +3249,6 @@ export {
   LogTools,
   PathTools,
   ask,
-  chlk,
-  clr,
   colr,
   createLogger,
   explodePath,

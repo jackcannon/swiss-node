@@ -41,12 +41,12 @@ export interface AskTrimOptions {
   charHandleBase: string;
   charActiveHandleBase: string;
 
-  clrTrack: Function;
-  clrHandle: Function;
-  clrActiveHandle: Function;
-  clrBar: Function;
-  clrHandleBase: Function;
-  clrActiveHandleBase: Function;
+  wrapTrack: Function;
+  wrapHandle: Function;
+  wrapActiveHandle: Function;
+  wrapBar: Function;
+  wrapHandleBase: Function;
+  wrapActiveHandleBase: Function;
 }
 
 const getFullOptions = (opts: Partial<AskTrimOptions>): AskTrimOptions => ({
@@ -58,9 +58,9 @@ const getFullOptions = (opts: Partial<AskTrimOptions>): AskTrimOptions => ({
   charHandle: '┃',
   charBar: '█',
 
-  clrTrack: chalk.bgGray,
-  clrHandle: chalk.whiteBright,
-  clrBar: chalk.white,
+  wrapTrack: chalk.bgGray,
+  wrapHandle: chalk.whiteBright,
+  wrapBar: chalk.white,
 
   ...opts,
 
@@ -68,9 +68,9 @@ const getFullOptions = (opts: Partial<AskTrimOptions>): AskTrimOptions => ({
   charHandleBase: opts.charHandleBase ?? opts.charHandle ?? '█',
   charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? '█',
 
-  clrActiveHandle: opts.clrActiveHandle ?? opts.clrHandle ?? chalk.yellowBright.bold,
-  clrHandleBase: opts.clrHandleBase ?? opts.clrHandle ?? chalk.whiteBright,
-  clrActiveHandleBase: opts.clrActiveHandleBase ?? opts.clrHandleBase ?? opts.clrActiveHandle ?? opts.clrHandle ?? chalk.yellowBright.bold
+  wrapActiveHandle: opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk.yellowBright.bold,
+  wrapHandleBase: opts.wrapHandleBase ?? opts.wrapHandle ?? chalk.whiteBright,
+  wrapActiveHandleBase: opts.wrapActiveHandleBase ?? opts.wrapHandleBase ?? opts.wrapActiveHandle ?? opts.wrapHandle ?? chalk.yellowBright.bold
 });
 
 const getChars = (opts: AskTrimOptions) => ({
@@ -82,12 +82,12 @@ const getChars = (opts: AskTrimOptions) => ({
   activeHandleBase: opts.charActiveHandleBase
 });
 const getColors = (opts: AskTrimOptions) => ({
-  track: opts.clrTrack,
-  handle: opts.clrHandle,
-  bar: opts.clrBar,
-  activeHandle: opts.clrActiveHandle,
-  handleBase: opts.clrHandleBase,
-  activeHandleBase: opts.clrActiveHandleBase
+  track: opts.wrapTrack,
+  handle: opts.wrapHandle,
+  bar: opts.wrapBar,
+  activeHandle: opts.wrapActiveHandle,
+  handleBase: opts.wrapHandleBase,
+  activeHandleBase: opts.wrapActiveHandleBase
 });
 
 /**<!-- DOCS: ask.trim ### @ -->

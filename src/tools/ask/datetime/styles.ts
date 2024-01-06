@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { chlk } from '../../chlk';
+import { colr } from '../../colr';
 
 interface SectionStyle {
   dark: Function;
@@ -11,17 +11,17 @@ interface SectionStyle {
 }
 export const sectionStyles: { sectActive: SectionStyle; sectInactive: SectionStyle } = {
   sectActive: {
-    dark: chlk.gray1,
-    mid: chlk.gray3,
+    dark: colr.gray1,
+    mid: colr.gray3,
     normal: chalk.white,
     tertiary: chalk.yellowBright,
     secondary: chalk.bgWhite.black,
     primary: chalk.bgYellow.black
   },
   sectInactive: {
-    dark: chlk.gray1,
-    mid: chlk.gray2,
-    normal: chlk.gray3,
+    dark: colr.gray1,
+    mid: colr.gray2,
+    normal: colr.gray3,
     tertiary: chalk.yellow,
     secondary: chalk.bgGray.black,
     primary: chalk.bgWhite.black
