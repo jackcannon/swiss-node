@@ -151,14 +151,14 @@ var calculateFullStyleConfigs = () => {
     grey5: colourStyleConfigs.white.light
   };
   const otherColourStyleConfigs = {
-    primary: colourStyleConfigs.magenta.light,
-    secondary: colourStyleConfigs.yellow.light,
+    primary: colourStyleConfigs.yellow.light,
+    secondary: colourStyleConfigs.magenta.light,
     success: colourStyleConfigs.green.light,
     danger: colourStyleConfigs.red.dark,
     warning: colourStyleConfigs.yellow.dark,
     info: colourStyleConfigs.blue.light,
-    primaryBg: mergeEntries(colourStyleConfigs.magentaBg.light, blackStyleConfigs.darkBlack),
-    secondaryBg: mergeEntries(colourStyleConfigs.yellowBg.light, blackStyleConfigs.darkBlack),
+    primaryBg: mergeEntries(colourStyleConfigs.yellowBg.light, blackStyleConfigs.darkBlack),
+    secondaryBg: mergeEntries(colourStyleConfigs.magentaBg.light, blackStyleConfigs.darkBlack),
     successBg: mergeEntries(colourStyleConfigs.greenBg.light, blackStyleConfigs.darkBlack),
     dangerBg: mergeEntries(colourStyleConfigs.redBg.dark, blackStyleConfigs.darkBlack),
     warningBg: mergeEntries(colourStyleConfigs.yellowBg.dark, blackStyleConfigs.darkBlack),

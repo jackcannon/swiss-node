@@ -6311,7 +6311,7 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string`, () => {
-          expect(colr.primary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.primary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
         });
         it(should` wrap a complex string`, () => {
           const input = [
@@ -6321,80 +6321,80 @@ describe('colr', () => {
           ].join('\n');
 
           expect(colr.primary(input)).toEqual(
-            '\u001b[95mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[39m\u001b[95m in\u001b[39m\n\u001b[95ma multiline string\u001b[39m\n\u001b[95mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[39m\u001b[95m\u001b[39m'
+            '\u001b[93mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[39m\u001b[93m in\u001b[39m\n\u001b[93ma multiline string\u001b[39m\n\u001b[93mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[39m\u001b[93m\u001b[39m'
           );
         });
         it(should` wrap multiple args`, () => {
           const input = ['\u001b[31m\u001b[103mword\u001b[49m\u001b[39m', 'with', '\u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m'];
 
           expect(colr.primary(...input)).toEqual(
-            '\u001b[95m\u001b[31m\u001b[103mword\u001b[49m\u001b[39m\u001b[95m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m\u001b[95m\u001b[39m'
+            '\u001b[93m\u001b[31m\u001b[103mword\u001b[49m\u001b[39m\u001b[93m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m\u001b[93m\u001b[39m'
           );
         });
 
         // input types
         it(should` wrap a number`, () => {
-          expect(colr.primary(123)).toEqual('\u001b[95m123\u001b[39m');
+          expect(colr.primary(123)).toEqual('\u001b[93m123\u001b[39m');
         });
         it(should` wrap a boolean`, () => {
-          expect(colr.primary(true)).toEqual('\u001b[95mtrue\u001b[39m');
+          expect(colr.primary(true)).toEqual('\u001b[93mtrue\u001b[39m');
         });
         it(should` wrap a null`, () => {
-          expect(colr.primary(null)).toEqual('\u001b[95m\u001b[39m');
+          expect(colr.primary(null)).toEqual('\u001b[93m\u001b[39m');
         });
         it(should` wrap a undefined`, () => {
-          expect(colr.primary(undefined)).toEqual('\u001b[95m\u001b[39m');
+          expect(colr.primary(undefined)).toEqual('\u001b[93m\u001b[39m');
         });
         it(should` wrap an object`, () => {
-          expect(colr.primary({ name: 'foo' })).toEqual('\u001b[95m{"name":"foo"}\u001b[39m');
+          expect(colr.primary({ name: 'foo' })).toEqual('\u001b[93m{"name":"foo"}\u001b[39m');
         });
         it(should` wrap an array`, () => {
-          expect(colr.primary(['foo', 'bar'])).toEqual('\u001b[95m[foo, bar]\u001b[39m');
+          expect(colr.primary(['foo', 'bar'])).toEqual('\u001b[93m[foo, bar]\u001b[39m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.primary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
-          expect(colr.primary.light('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.light.primary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.primary.light('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.primary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
-          expect(colr.primary.dark('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.dark.primary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.primary.dark('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.primary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
-          expect(colr.primary.lightBg('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.lightBg.primary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.primary.lightBg('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.primary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
-          expect(colr.primary.darkBg('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.darkBg.primary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.primary.darkBg('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.primary('this is a test')).toEqual('\u001b[91m\u001b[95mthis is a test\u001b[39m\u001b[39m');
-          expect(colr.primary.red('this is a test')).toEqual('\u001b[95m\u001b[91mthis is a test\u001b[39m\u001b[39m');
+          expect(colr.red.primary('this is a test')).toEqual('\u001b[91m\u001b[93mthis is a test\u001b[39m\u001b[39m');
+          expect(colr.primary.red('this is a test')).toEqual('\u001b[93m\u001b[91mthis is a test\u001b[39m\u001b[39m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.primary('this is a test')).toEqual('\u001b[103m\u001b[95mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.primary.yellowBg('this is a test')).toEqual('\u001b[95m\u001b[103mthis is a test\u001b[49m\u001b[39m');
+          expect(colr.yellowBg.primary('this is a test')).toEqual('\u001b[103m\u001b[93mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primary.yellowBg('this is a test')).toEqual('\u001b[93m\u001b[103mthis is a test\u001b[49m\u001b[39m');
         });
         it(should` chain modifiers - red.yellowBg`, () => {
-          expect(colr.red.yellowBg.primary('this is a test')).toEqual('\u001b[91m\u001b[103m\u001b[95mthis is a test\u001b[39m\u001b[49m\u001b[39m');
-          expect(colr.primary.red.yellowBg('this is a test')).toEqual('\u001b[95m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m');
+          expect(colr.red.yellowBg.primary('this is a test')).toEqual('\u001b[91m\u001b[103m\u001b[93mthis is a test\u001b[39m\u001b[49m\u001b[39m');
+          expect(colr.primary.red.yellowBg('this is a test')).toEqual('\u001b[93m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m');
         });
         it(should` chain modifiers - darkBlue.lightGreenBg`, () => {
           expect(colr.darkBlue.lightGreenBg.primary('this is a test')).toEqual(
-            '\u001b[34m\u001b[102m\u001b[95mthis is a test\u001b[39m\u001b[49m\u001b[39m'
+            '\u001b[34m\u001b[102m\u001b[93mthis is a test\u001b[39m\u001b[49m\u001b[39m'
           );
           expect(colr.primary.darkBlue.lightGreenBg('this is a test')).toEqual(
-            '\u001b[95m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m'
+            '\u001b[93m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m'
           );
         });
 
         // template literals
         it(should` wrap a template literal`, () => {
-          expect(colr.primary.$`test with ${'word'} in middle`).toEqual('test with \u001b[95mword\u001b[39m in middle');
+          expect(colr.primary.$`test with ${'word'} in middle`).toEqual('test with \u001b[93mword\u001b[39m in middle');
         });
       });
     });
@@ -6414,7 +6414,7 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string`, () => {
-          expect(colr.secondary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.secondary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
         });
         it(should` wrap a complex string`, () => {
           const input = [
@@ -6424,84 +6424,84 @@ describe('colr', () => {
           ].join('\n');
 
           expect(colr.secondary(input)).toEqual(
-            '\u001b[93mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[39m\u001b[93m in\u001b[39m\n\u001b[93ma multiline string\u001b[39m\n\u001b[93mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[39m\u001b[93m\u001b[39m'
+            '\u001b[95mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[39m\u001b[95m in\u001b[39m\n\u001b[95ma multiline string\u001b[39m\n\u001b[95mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[39m\u001b[95m\u001b[39m'
           );
         });
         it(should` wrap multiple args`, () => {
           const input = ['\u001b[31m\u001b[103mword\u001b[49m\u001b[39m', 'with', '\u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m'];
 
           expect(colr.secondary(...input)).toEqual(
-            '\u001b[93m\u001b[31m\u001b[103mword\u001b[49m\u001b[39m\u001b[93m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m\u001b[93m\u001b[39m'
+            '\u001b[95m\u001b[31m\u001b[103mword\u001b[49m\u001b[39m\u001b[95m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m\u001b[95m\u001b[39m'
           );
         });
 
         // input types
         it(should` wrap a number`, () => {
-          expect(colr.secondary(123)).toEqual('\u001b[93m123\u001b[39m');
+          expect(colr.secondary(123)).toEqual('\u001b[95m123\u001b[39m');
         });
         it(should` wrap a boolean`, () => {
-          expect(colr.secondary(true)).toEqual('\u001b[93mtrue\u001b[39m');
+          expect(colr.secondary(true)).toEqual('\u001b[95mtrue\u001b[39m');
         });
         it(should` wrap a null`, () => {
-          expect(colr.secondary(null)).toEqual('\u001b[93m\u001b[39m');
+          expect(colr.secondary(null)).toEqual('\u001b[95m\u001b[39m');
         });
         it(should` wrap a undefined`, () => {
-          expect(colr.secondary(undefined)).toEqual('\u001b[93m\u001b[39m');
+          expect(colr.secondary(undefined)).toEqual('\u001b[95m\u001b[39m');
         });
         it(should` wrap an object`, () => {
-          expect(colr.secondary({ name: 'foo' })).toEqual('\u001b[93m{"name":"foo"}\u001b[39m');
+          expect(colr.secondary({ name: 'foo' })).toEqual('\u001b[95m{"name":"foo"}\u001b[39m');
         });
         it(should` wrap an array`, () => {
-          expect(colr.secondary(['foo', 'bar'])).toEqual('\u001b[93m[foo, bar]\u001b[39m');
+          expect(colr.secondary(['foo', 'bar'])).toEqual('\u001b[95m[foo, bar]\u001b[39m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.secondary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
-          expect(colr.secondary.light('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.light.secondary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.secondary.light('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.secondary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
-          expect(colr.secondary.dark('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.dark.secondary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.secondary.dark('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.secondary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
-          expect(colr.secondary.lightBg('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.lightBg.secondary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.secondary.lightBg('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.secondary('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
-          expect(colr.secondary.darkBg('this is a test')).toEqual('\u001b[93mthis is a test\u001b[39m');
+          expect(colr.darkBg.secondary('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
+          expect(colr.secondary.darkBg('this is a test')).toEqual('\u001b[95mthis is a test\u001b[39m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.secondary('this is a test')).toEqual('\u001b[91m\u001b[93mthis is a test\u001b[39m\u001b[39m');
-          expect(colr.secondary.red('this is a test')).toEqual('\u001b[93m\u001b[91mthis is a test\u001b[39m\u001b[39m');
+          expect(colr.red.secondary('this is a test')).toEqual('\u001b[91m\u001b[95mthis is a test\u001b[39m\u001b[39m');
+          expect(colr.secondary.red('this is a test')).toEqual('\u001b[95m\u001b[91mthis is a test\u001b[39m\u001b[39m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.secondary('this is a test')).toEqual('\u001b[103m\u001b[93mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.secondary.yellowBg('this is a test')).toEqual('\u001b[93m\u001b[103mthis is a test\u001b[49m\u001b[39m');
+          expect(colr.yellowBg.secondary('this is a test')).toEqual('\u001b[103m\u001b[95mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondary.yellowBg('this is a test')).toEqual('\u001b[95m\u001b[103mthis is a test\u001b[49m\u001b[39m');
         });
         it(should` chain modifiers - red.yellowBg`, () => {
           expect(colr.red.yellowBg.secondary('this is a test')).toEqual(
-            '\u001b[91m\u001b[103m\u001b[93mthis is a test\u001b[39m\u001b[49m\u001b[39m'
+            '\u001b[91m\u001b[103m\u001b[95mthis is a test\u001b[39m\u001b[49m\u001b[39m'
           );
           expect(colr.secondary.red.yellowBg('this is a test')).toEqual(
-            '\u001b[93m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m'
+            '\u001b[95m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m'
           );
         });
         it(should` chain modifiers - darkBlue.lightGreenBg`, () => {
           expect(colr.darkBlue.lightGreenBg.secondary('this is a test')).toEqual(
-            '\u001b[34m\u001b[102m\u001b[93mthis is a test\u001b[39m\u001b[49m\u001b[39m'
+            '\u001b[34m\u001b[102m\u001b[95mthis is a test\u001b[39m\u001b[49m\u001b[39m'
           );
           expect(colr.secondary.darkBlue.lightGreenBg('this is a test')).toEqual(
-            '\u001b[93m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m'
+            '\u001b[95m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m'
           );
         });
 
         // template literals
         it(should` wrap a template literal`, () => {
-          expect(colr.secondary.$`test with ${'word'} in middle`).toEqual('test with \u001b[93mword\u001b[39m in middle');
+          expect(colr.secondary.$`test with ${'word'} in middle`).toEqual('test with \u001b[95mword\u001b[39m in middle');
         });
       });
     });
@@ -6933,7 +6933,7 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string`, () => {
-          expect(colr.primaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a complex string`, () => {
           const input = [
@@ -6943,84 +6943,84 @@ describe('colr', () => {
           ].join('\n');
 
           expect(colr.primaryBg(input)).toEqual(
-            '\u001b[105m\u001b[30mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[105m\u001b[39m\u001b[30m in\u001b[39m\u001b[49m\n\u001b[105m\u001b[30ma multiline string\u001b[39m\u001b[49m\n\u001b[105m\u001b[30mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[105m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
+            '\u001b[103m\u001b[30mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[103m\u001b[39m\u001b[30m in\u001b[39m\u001b[49m\n\u001b[103m\u001b[30ma multiline string\u001b[39m\u001b[49m\n\u001b[103m\u001b[30mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[103m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
           );
         });
         it(should` wrap multiple args`, () => {
           const input = ['\u001b[31m\u001b[103mword\u001b[49m\u001b[39m', 'with', '\u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m'];
 
           expect(colr.primaryBg(...input)).toEqual(
-            '\u001b[105m\u001b[30m\u001b[31m\u001b[103mword\u001b[49m\u001b[105m\u001b[39m\u001b[30m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[105m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
+            '\u001b[103m\u001b[30m\u001b[31m\u001b[103mword\u001b[49m\u001b[103m\u001b[39m\u001b[30m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[103m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
           );
         });
 
         // input types
         it(should` wrap a number`, () => {
-          expect(colr.primaryBg(123)).toEqual('\u001b[105m\u001b[30m123\u001b[39m\u001b[49m');
+          expect(colr.primaryBg(123)).toEqual('\u001b[103m\u001b[30m123\u001b[39m\u001b[49m');
         });
         it(should` wrap a boolean`, () => {
-          expect(colr.primaryBg(true)).toEqual('\u001b[105m\u001b[30mtrue\u001b[39m\u001b[49m');
+          expect(colr.primaryBg(true)).toEqual('\u001b[103m\u001b[30mtrue\u001b[39m\u001b[49m');
         });
         it(should` wrap a null`, () => {
-          expect(colr.primaryBg(null)).toEqual('\u001b[105m\u001b[30m\u001b[39m\u001b[49m');
+          expect(colr.primaryBg(null)).toEqual('\u001b[103m\u001b[30m\u001b[39m\u001b[49m');
         });
         it(should` wrap a undefined`, () => {
-          expect(colr.primaryBg(undefined)).toEqual('\u001b[105m\u001b[30m\u001b[39m\u001b[49m');
+          expect(colr.primaryBg(undefined)).toEqual('\u001b[103m\u001b[30m\u001b[39m\u001b[49m');
         });
         it(should` wrap an object`, () => {
-          expect(colr.primaryBg({ name: 'foo' })).toEqual('\u001b[105m\u001b[30m{"name":"foo"}\u001b[39m\u001b[49m');
+          expect(colr.primaryBg({ name: 'foo' })).toEqual('\u001b[103m\u001b[30m{"name":"foo"}\u001b[39m\u001b[49m');
         });
         it(should` wrap an array`, () => {
-          expect(colr.primaryBg(['foo', 'bar'])).toEqual('\u001b[105m\u001b[30m[foo, bar]\u001b[39m\u001b[49m');
+          expect(colr.primaryBg(['foo', 'bar'])).toEqual('\u001b[103m\u001b[30m[foo, bar]\u001b[39m\u001b[49m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.primaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.primaryBg.light('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.light.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primaryBg.light('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.primaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.primaryBg.dark('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.dark.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primaryBg.dark('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.primaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.primaryBg.lightBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.lightBg.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primaryBg.lightBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.primaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.primaryBg.darkBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.darkBg.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.primaryBg.darkBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.primaryBg('this is a test')).toEqual('\u001b[91m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[39m');
-          expect(colr.primaryBg.red('this is a test')).toEqual('\u001b[105m\u001b[30m\u001b[91mthis is a test\u001b[39m\u001b[39m\u001b[49m');
+          expect(colr.red.primaryBg('this is a test')).toEqual('\u001b[91m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[39m');
+          expect(colr.primaryBg.red('this is a test')).toEqual('\u001b[103m\u001b[30m\u001b[91mthis is a test\u001b[39m\u001b[39m\u001b[49m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m');
-          expect(colr.primaryBg.yellowBg('this is a test')).toEqual('\u001b[105m\u001b[30m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[49m');
+          expect(colr.yellowBg.primaryBg('this is a test')).toEqual('\u001b[103m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m');
+          expect(colr.primaryBg.yellowBg('this is a test')).toEqual('\u001b[103m\u001b[30m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[49m');
         });
         it(should` chain modifiers - red.yellowBg`, () => {
           expect(colr.red.yellowBg.primaryBg('this is a test')).toEqual(
-            '\u001b[91m\u001b[103m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
+            '\u001b[91m\u001b[103m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
           );
           expect(colr.primaryBg.red.yellowBg('this is a test')).toEqual(
-            '\u001b[105m\u001b[30m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
+            '\u001b[103m\u001b[30m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
           );
         });
         it(should` chain modifiers - darkBlue.lightGreenBg`, () => {
           expect(colr.darkBlue.lightGreenBg.primaryBg('this is a test')).toEqual(
-            '\u001b[34m\u001b[102m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
+            '\u001b[34m\u001b[102m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
           );
           expect(colr.primaryBg.darkBlue.lightGreenBg('this is a test')).toEqual(
-            '\u001b[105m\u001b[30m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
+            '\u001b[103m\u001b[30m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
           );
         });
 
         // template literals
         it(should` wrap a template literal`, () => {
-          expect(colr.primaryBg.$`test with ${'word'} in middle`).toEqual('test with \u001b[105m\u001b[30mword\u001b[39m\u001b[49m in middle');
+          expect(colr.primaryBg.$`test with ${'word'} in middle`).toEqual('test with \u001b[103m\u001b[30mword\u001b[39m\u001b[49m in middle');
         });
       });
     });
@@ -7040,7 +7040,7 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string`, () => {
-          expect(colr.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a complex string`, () => {
           const input = [
@@ -7050,84 +7050,84 @@ describe('colr', () => {
           ].join('\n');
 
           expect(colr.secondaryBg(input)).toEqual(
-            '\u001b[103m\u001b[30mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[103m\u001b[39m\u001b[30m in\u001b[39m\u001b[49m\n\u001b[103m\u001b[30ma multiline string\u001b[39m\u001b[49m\n\u001b[103m\u001b[30mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[103m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
+            '\u001b[105m\u001b[30mthis is \u001b[31m\u001b[103ma word\u001b[49m\u001b[105m\u001b[39m\u001b[30m in\u001b[39m\u001b[49m\n\u001b[105m\u001b[30ma multiline string\u001b[39m\u001b[49m\n\u001b[105m\u001b[30mwith \u001b[34m\u001b[102mstyled sections\u001b[49m\u001b[105m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
           );
         });
         it(should` wrap multiple args`, () => {
           const input = ['\u001b[31m\u001b[103mword\u001b[49m\u001b[39m', 'with', '\u001b[34m\u001b[102mstyles\u001b[49m\u001b[39m'];
 
           expect(colr.secondaryBg(...input)).toEqual(
-            '\u001b[103m\u001b[30m\u001b[31m\u001b[103mword\u001b[49m\u001b[103m\u001b[39m\u001b[30m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[103m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
+            '\u001b[105m\u001b[30m\u001b[31m\u001b[103mword\u001b[49m\u001b[105m\u001b[39m\u001b[30m with \u001b[34m\u001b[102mstyles\u001b[49m\u001b[105m\u001b[39m\u001b[30m\u001b[39m\u001b[49m'
           );
         });
 
         // input types
         it(should` wrap a number`, () => {
-          expect(colr.secondaryBg(123)).toEqual('\u001b[103m\u001b[30m123\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg(123)).toEqual('\u001b[105m\u001b[30m123\u001b[39m\u001b[49m');
         });
         it(should` wrap a boolean`, () => {
-          expect(colr.secondaryBg(true)).toEqual('\u001b[103m\u001b[30mtrue\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg(true)).toEqual('\u001b[105m\u001b[30mtrue\u001b[39m\u001b[49m');
         });
         it(should` wrap a null`, () => {
-          expect(colr.secondaryBg(null)).toEqual('\u001b[103m\u001b[30m\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg(null)).toEqual('\u001b[105m\u001b[30m\u001b[39m\u001b[49m');
         });
         it(should` wrap a undefined`, () => {
-          expect(colr.secondaryBg(undefined)).toEqual('\u001b[103m\u001b[30m\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg(undefined)).toEqual('\u001b[105m\u001b[30m\u001b[39m\u001b[49m');
         });
         it(should` wrap an object`, () => {
-          expect(colr.secondaryBg({ name: 'foo' })).toEqual('\u001b[103m\u001b[30m{"name":"foo"}\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg({ name: 'foo' })).toEqual('\u001b[105m\u001b[30m{"name":"foo"}\u001b[39m\u001b[49m');
         });
         it(should` wrap an array`, () => {
-          expect(colr.secondaryBg(['foo', 'bar'])).toEqual('\u001b[103m\u001b[30m[foo, bar]\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg(['foo', 'bar'])).toEqual('\u001b[105m\u001b[30m[foo, bar]\u001b[39m\u001b[49m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.secondaryBg.light('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.light.secondaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg.light('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.secondaryBg.dark('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.dark.secondaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg.dark('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.secondaryBg.lightBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.lightBg.secondaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg.lightBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
-          expect(colr.secondaryBg.darkBg('this is a test')).toEqual('\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.darkBg.secondaryBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
+          expect(colr.secondaryBg.darkBg('this is a test')).toEqual('\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.secondaryBg('this is a test')).toEqual('\u001b[91m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[39m');
-          expect(colr.secondaryBg.red('this is a test')).toEqual('\u001b[103m\u001b[30m\u001b[91mthis is a test\u001b[39m\u001b[39m\u001b[49m');
+          expect(colr.red.secondaryBg('this is a test')).toEqual('\u001b[91m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[39m');
+          expect(colr.secondaryBg.red('this is a test')).toEqual('\u001b[105m\u001b[30m\u001b[91mthis is a test\u001b[39m\u001b[39m\u001b[49m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m');
-          expect(colr.secondaryBg.yellowBg('this is a test')).toEqual('\u001b[103m\u001b[30m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[49m');
+          expect(colr.yellowBg.secondaryBg('this is a test')).toEqual('\u001b[103m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m');
+          expect(colr.secondaryBg.yellowBg('this is a test')).toEqual('\u001b[105m\u001b[30m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[49m');
         });
         it(should` chain modifiers - red.yellowBg`, () => {
           expect(colr.red.yellowBg.secondaryBg('this is a test')).toEqual(
-            '\u001b[91m\u001b[103m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
+            '\u001b[91m\u001b[103m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
           );
           expect(colr.secondaryBg.red.yellowBg('this is a test')).toEqual(
-            '\u001b[103m\u001b[30m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
+            '\u001b[105m\u001b[30m\u001b[91m\u001b[103mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
           );
         });
         it(should` chain modifiers - darkBlue.lightGreenBg`, () => {
           expect(colr.darkBlue.lightGreenBg.secondaryBg('this is a test')).toEqual(
-            '\u001b[34m\u001b[102m\u001b[103m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
+            '\u001b[34m\u001b[102m\u001b[105m\u001b[30mthis is a test\u001b[39m\u001b[49m\u001b[49m\u001b[39m'
           );
           expect(colr.secondaryBg.darkBlue.lightGreenBg('this is a test')).toEqual(
-            '\u001b[103m\u001b[30m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
+            '\u001b[105m\u001b[30m\u001b[34m\u001b[102mthis is a test\u001b[49m\u001b[39m\u001b[39m\u001b[49m'
           );
         });
 
         // template literals
         it(should` wrap a template literal`, () => {
-          expect(colr.secondaryBg.$`test with ${'word'} in middle`).toEqual('test with \u001b[103m\u001b[30mword\u001b[39m\u001b[49m in middle');
+          expect(colr.secondaryBg.$`test with ${'word'} in middle`).toEqual('test with \u001b[105m\u001b[30mword\u001b[39m\u001b[49m in middle');
         });
       });
     });
@@ -9276,38 +9276,38 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string with text colour`, () => {
-          expect(colr.sets.primary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
+          expect(colr.sets.primary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
         });
         it(should` wrap a string with bg colour`, () => {
-          expect(colr.sets.primary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.primary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.sets.primary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
-          expect(colr.sets.primary.text.light('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
+          expect(colr.light.sets.primary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
+          expect(colr.sets.primary.text.light('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.sets.primary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
-          expect(colr.sets.primary.text.dark('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
+          expect(colr.dark.sets.primary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
+          expect(colr.sets.primary.text.dark('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.sets.primary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
-          expect(colr.sets.primary.bg.lightBg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.lightBg.sets.primary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.primary.bg.lightBg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.sets.primary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
-          expect(colr.sets.primary.bg.darkBg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.darkBg.sets.primary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.primary.bg.darkBg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.sets.primary.text('hello world')).toEqual('\u001b[91m\u001b[95mhello world\u001b[39m\u001b[39m');
-          expect(colr.red.sets.primary.bg('hello world')).toEqual('\u001b[91m\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[39m');
+          expect(colr.red.sets.primary.text('hello world')).toEqual('\u001b[91m\u001b[93mhello world\u001b[39m\u001b[39m');
+          expect(colr.red.sets.primary.bg('hello world')).toEqual('\u001b[91m\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[39m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.sets.primary.text('hello world')).toEqual('\u001b[103m\u001b[95mhello world\u001b[39m\u001b[49m');
-          expect(colr.yellowBg.sets.primary.bg('hello world')).toEqual('\u001b[103m\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[49m');
+          expect(colr.yellowBg.sets.primary.text('hello world')).toEqual('\u001b[103m\u001b[93mhello world\u001b[39m\u001b[49m');
+          expect(colr.yellowBg.sets.primary.bg('hello world')).toEqual('\u001b[103m\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[49m');
         });
       });
     });
@@ -9331,38 +9331,38 @@ describe('colr', () => {
 
         // basics
         it(should` wrap a string with text colour`, () => {
-          expect(colr.sets.secondary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
+          expect(colr.sets.secondary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
         });
         it(should` wrap a string with bg colour`, () => {
-          expect(colr.sets.secondary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.secondary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
 
         // modifiers
         it(should` wrap a string with 'light'`, () => {
-          expect(colr.light.sets.secondary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
-          expect(colr.sets.secondary.text.light('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
+          expect(colr.light.sets.secondary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
+          expect(colr.sets.secondary.text.light('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
         });
         it(should` wrap a string with 'dark'`, () => {
-          expect(colr.dark.sets.secondary.text('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
-          expect(colr.sets.secondary.text.dark('hello world')).toEqual('\u001b[93mhello world\u001b[39m');
+          expect(colr.dark.sets.secondary.text('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
+          expect(colr.sets.secondary.text.dark('hello world')).toEqual('\u001b[95mhello world\u001b[39m');
         });
         it(should` wrap a string with 'lightBg'`, () => {
-          expect(colr.lightBg.sets.secondary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
-          expect(colr.sets.secondary.bg.lightBg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.lightBg.sets.secondary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.secondary.bg.lightBg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
         it(should` wrap a string with 'darkBg'`, () => {
-          expect(colr.darkBg.sets.secondary.bg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
-          expect(colr.sets.secondary.bg.darkBg('hello world')).toEqual('\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.darkBg.sets.secondary.bg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
+          expect(colr.sets.secondary.bg.darkBg('hello world')).toEqual('\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m');
         });
 
         // chaining
         it(should` chain modifiers - red`, () => {
-          expect(colr.red.sets.secondary.text('hello world')).toEqual('\u001b[91m\u001b[93mhello world\u001b[39m\u001b[39m');
-          expect(colr.red.sets.secondary.bg('hello world')).toEqual('\u001b[91m\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[39m');
+          expect(colr.red.sets.secondary.text('hello world')).toEqual('\u001b[91m\u001b[95mhello world\u001b[39m\u001b[39m');
+          expect(colr.red.sets.secondary.bg('hello world')).toEqual('\u001b[91m\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[39m');
         });
         it(should` chain modifiers - yellowBg`, () => {
-          expect(colr.yellowBg.sets.secondary.text('hello world')).toEqual('\u001b[103m\u001b[93mhello world\u001b[39m\u001b[49m');
-          expect(colr.yellowBg.sets.secondary.bg('hello world')).toEqual('\u001b[103m\u001b[103m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[49m');
+          expect(colr.yellowBg.sets.secondary.text('hello world')).toEqual('\u001b[103m\u001b[95mhello world\u001b[39m\u001b[49m');
+          expect(colr.yellowBg.sets.secondary.bg('hello world')).toEqual('\u001b[103m\u001b[105m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[49m');
         });
       });
     });

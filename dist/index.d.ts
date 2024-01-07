@@ -270,14 +270,14 @@ declare type Text = string | string[];
  * | `grey3`          | Text       | 🩶 Grey    | Greys                   | `colr.grey3()`             |                         |
  * | `grey4`          | Text       | 🩶 Grey    | Greys                   | `colr.grey4()`             |                         |
  * | `grey5`          | Text       | ⬜ White   | Greys                   | `colr.grey5()`             |
- * | `primary`        | Text       | 🟪 Magenta | Theme                   | `colr.primary()`           |                         |
- * | `secondary`      | Text       | 🟨 Yellow  | Theme                   | `colr.secondary()`         |                         |
+ * | `primary`        | Text       | 🟨 Yellow  | Theme                   | `colr.primary()`           |                         |
+ * | `secondary`      | Text       | 🟪 Magenta | Theme                   | `colr.secondary()`         |                         |
  * | `success`        | Text       | 🟩 Green   | Theme                   | `colr.success()`           |                         |
  * | `danger`         | Text       | 🟥 Red     | Theme                   | `colr.danger()`            |                         |
  * | `warning`        | Text       | 🟨 Yellow  | Theme                   | `colr.warning()`           |                         |
  * | `info`           | Text       | 🟦 Blue    | Theme                   | `colr.info()`              |                         |
- * | `primaryBg`      | Background | 🟪 Magenta | Theme                   | `colr.primaryBg()`         |                         |
- * | `secondaryBg`    | Background | 🟨 Yellow  | Theme                   | `colr.secondaryBg()`       |                         |
+ * | `primaryBg`      | Background | 🟨 Yellow  | Theme                   | `colr.primaryBg()`         |                         |
+ * | `secondaryBg`    | Background | 🟪 Magenta | Theme                   | `colr.secondaryBg()`       |                         |
  * | `successBg`      | Background | 🟩 Green   | Theme                   | `colr.successBg()`         |                         |
  * | `dangerBg`       | Background | 🟥 Red     | Theme                   | `colr.dangerBg()`          |                         |
  * | `warningBg`      | Background | 🟨 Yellow  | Theme                   | `colr.warningBg()`         |                         |
@@ -1665,9 +1665,9 @@ interface ColrFn extends WrapFn {
      *
      * - `colr.primary`
      *
-     * Makes the given text __'primary'__ (magenta) themed.
+     * Makes the given text __'primary'__ (light yellow) themed.
      *
-     * Equivalent to `colr.light.magenta`.
+     * Equivalent to `colr.light.yellow`.
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1680,9 +1680,9 @@ interface ColrFn extends WrapFn {
      *
      * - `colr.secondary`
      *
-     * Makes the given text __'secondary'__ (light yellow) themed.
+     * Makes the given text __'secondary'__ (magenta) themed.
      *
-     * Equivalent to `colr.light.yellow`.
+     * Equivalent to `colr.light.magenta`.
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1755,9 +1755,9 @@ interface ColrFn extends WrapFn {
      *
      * - `colr.primaryBg`
      *
-     * Makes the __background__ of the given text __'primary'__ (magenta) themed and makes the text __black__.
+     * Makes the __background__ of the given text __'primary'__ (light yellow) themed and makes the text __black__.
      *
-     * Equivalent to `colr.lightBg.magentaBg.black`.
+     * Equivalent to `colr.lightBg.yellowBg.black`.
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1770,9 +1770,9 @@ interface ColrFn extends WrapFn {
      *
      * - `colr.secondaryBg`
      *
-     * Makes the __background__ of the given text __'secondary'__ (light yellow) themed and makes the text __black__.
+     * Makes the __background__ of the given text __'secondary'__ (magenta) themed and makes the text __black__.
      *
-     * Equivalent to `colr.lightBg.yellowBg.black`.
+     * Equivalent to `colr.lightBg.magentaBg.black`.
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -2205,14 +2205,14 @@ interface ColrFn extends WrapFn {
      * | `grey3`          | Text       | 🩶 Grey    | Greys                   | `colr.grey3()`             |                         |
      * | `grey4`          | Text       | 🩶 Grey    | Greys                   | `colr.grey4()`             |                         |
      * | `grey5`          | Text       | ⬜ White   | Greys                   | `colr.grey5()`             |
-     * | `primary`        | Text       | 🟪 Magenta | Theme                   | `colr.primary()`           |                         |
-     * | `secondary`      | Text       | 🟨 Yellow  | Theme                   | `colr.secondary()`         |                         |
+     * | `primary`        | Text       | 🟨 Yellow  | Theme                   | `colr.primary()`           |                         |
+     * | `secondary`      | Text       | 🟪 Magenta | Theme                   | `colr.secondary()`         |                         |
      * | `success`        | Text       | 🟩 Green   | Theme                   | `colr.success()`           |                         |
      * | `danger`         | Text       | 🟥 Red     | Theme                   | `colr.danger()`            |                         |
      * | `warning`        | Text       | 🟨 Yellow  | Theme                   | `colr.warning()`           |                         |
      * | `info`           | Text       | 🟦 Blue    | Theme                   | `colr.info()`              |                         |
-     * | `primaryBg`      | Background | 🟪 Magenta | Theme                   | `colr.primaryBg()`         |                         |
-     * | `secondaryBg`    | Background | 🟨 Yellow  | Theme                   | `colr.secondaryBg()`       |                         |
+     * | `primaryBg`      | Background | 🟨 Yellow  | Theme                   | `colr.primaryBg()`         |                         |
+     * | `secondaryBg`    | Background | 🟪 Magenta | Theme                   | `colr.secondaryBg()`       |                         |
      * | `successBg`      | Background | 🟩 Green   | Theme                   | `colr.successBg()`         |                         |
      * | `dangerBg`       | Background | 🟥 Red     | Theme                   | `colr.dangerBg()`          |                         |
      * | `warningBg`      | Background | 🟨 Yellow  | Theme                   | `colr.warningBg()`         |                         |
