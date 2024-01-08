@@ -1,4 +1,7 @@
 //<!-- DOCS: 700 -->
+
+import { safe } from 'swiss-ak';
+
 /**<!-- DOCS: PathTools ##! -->
  * PathTools
  *
@@ -36,15 +39,18 @@ export namespace PathTools {
    * @returns {ExplodedPath}
    */
   export const explodePath = (path: string): ExplodedPath => {
-    const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, ''); // everything up to last '/' or '\'
-    const filename = (path.match(/[^\\\/]*$/) || [])[0]; // from last '/' or '\' onwards
+    const args = {
+      path: safe.str(path)
+    };
+    const dir = (args.path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, ''); // everything up to last '/' or '\'
+    const filename = (args.path.match(/[^\\\/]*$/) || [])[0]; // from last '/' or '\' onwards
 
     const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || '').replace(/^\./, ''); // after last . in filename
     const name = filename.replace(ext, '').replace(/[\.]$/, ''); // until last . in filename
 
     const folders = dir.split(/[\\\/]/).filter((x) => x);
 
-    return { path, dir, folders, name, ext, filename };
+    return { path: args.path, dir, folders, name, ext, filename };
   };
 
   /**<!-- DOCS: PathTools.ExplodedPath ###! -->

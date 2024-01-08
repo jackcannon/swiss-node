@@ -1476,15 +1476,19 @@ import {
 } from "swiss-ak";
 
 // src/tools/PathTools.ts
+import { safe as safe3 } from "swiss-ak";
 var PathTools;
 ((PathTools2) => {
   PathTools2.explodePath = (path) => {
-    const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
-    const filename = (path.match(/[^\\\/]*$/) || [])[0];
+    const args = {
+      path: safe3.str(path)
+    };
+    const dir = (args.path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
+    const filename = (args.path.match(/[^\\\/]*$/) || [])[0];
     const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
     const name = filename.replace(ext, "").replace(/[\.]$/, "");
     const folders = dir.split(/[\\\/]/).filter((x) => x);
-    return { path, dir, folders, name, ext, filename };
+    return { path: args.path, dir, folders, name, ext, filename };
   };
   PathTools2.removeTrailSlash = (path) => path.replace(/\/$/, "");
   PathTools2.trailSlash = (path) => PathTools2.removeTrailSlash(path) + "/";

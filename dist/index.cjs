@@ -49,7 +49,7 @@ module.exports = __toCommonJS(src_exports);
 // src/tools/ask.ts
 var import_prompts = __toESM(require("prompts"), 1);
 var import_fuse = __toESM(require("fuse.js"), 1);
-var import_swiss_ak20 = require("swiss-ak");
+var import_swiss_ak21 = require("swiss-ak");
 
 // src/tools/out.ts
 var import_swiss_ak5 = require("swiss-ak");
@@ -1507,18 +1507,22 @@ var trim = async (totalFrames, frameRate, options = {}) => {
 
 // src/tools/ask/fileExplorer.ts
 var fsP2 = __toESM(require("fs/promises"), 1);
-var import_swiss_ak12 = require("swiss-ak");
+var import_swiss_ak13 = require("swiss-ak");
 
 // src/tools/PathTools.ts
+var import_swiss_ak10 = require("swiss-ak");
 var PathTools;
 ((PathTools2) => {
   PathTools2.explodePath = (path) => {
-    const dir = (path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
-    const filename = (path.match(/[^\\\/]*$/) || [])[0];
+    const args = {
+      path: import_swiss_ak10.safe.str(path)
+    };
+    const dir = (args.path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
+    const filename = (args.path.match(/[^\\\/]*$/) || [])[0];
     const ext = ((filename.match(/\.[^\.]*$/) || [])[0] || "").replace(/^\./, "");
     const name = filename.replace(ext, "").replace(/[\.]$/, "");
     const folders = dir.split(/[\\\/]/).filter((x) => x);
-    return { path, dir, folders, name, ext, filename };
+    return { path: args.path, dir, folders, name, ext, filename };
   };
   PathTools2.removeTrailSlash = (path) => path.replace(/\/$/, "");
   PathTools2.trailSlash = (path) => PathTools2.removeTrailSlash(path) + "/";
@@ -1527,9 +1531,9 @@ var PathTools;
 var explodePath = PathTools.explodePath;
 
 // src/utils/actionBar.ts
-var import_swiss_ak10 = require("swiss-ak");
+var import_swiss_ak11 = require("swiss-ak");
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
-  const keyList = ids.filter(import_swiss_ak10.fn.isTruthy).filter((key) => config[key]);
+  const keyList = ids.filter(import_swiss_ak11.fn.isTruthy).filter((key) => config[key]);
   const row = keyList.map((key) => {
     const { keys, label } = config[key];
     return ` [ ${keys} ] ${label} `;
@@ -1549,7 +1553,7 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
 // src/utils/fsUtils.ts
 var import_child_process = require("child_process");
 var fsP = __toESM(require("fs/promises"), 1);
-var import_swiss_ak11 = require("swiss-ak");
+var import_swiss_ak12 = require("swiss-ak");
 var execute = (command) => {
   return new Promise((resolve, reject) => {
     (0, import_child_process.exec)(command, (error, stdout, stderr) => {
@@ -1565,9 +1569,9 @@ var execute = (command) => {
     });
   });
 };
-var intoLines = (out2) => out2.toString().split("\n").filter(import_swiss_ak11.fn.isTruthy);
+var intoLines = (out2) => out2.toString().split("\n").filter(import_swiss_ak12.fn.isTruthy);
 var getProbe = async (file) => {
-  const stdout = await (0, import_swiss_ak11.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
+  const stdout = await (0, import_swiss_ak12.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
     stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
   );
@@ -1585,13 +1589,13 @@ var mkdir2 = (dir) => {
 };
 var findDirs = async (dir = ".") => {
   const newDir = PathTools.trailSlash(dir);
-  const stdout = await (0, import_swiss_ak11.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
+  const stdout = await (0, import_swiss_ak12.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;
 };
 var findFiles = async (dir = ".") => {
   const newDir = PathTools.trailSlash(dir);
-  const stdout = await (0, import_swiss_ak11.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
+  const stdout = await (0, import_swiss_ak12.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
   const lines = intoLines(stdout);
   return lines;
 };
@@ -1636,13 +1640,13 @@ var forceLoadPathContents = async (path) => {
         findDirs(path),
         findFiles(path)
       ]);
-      const [dirs, files] = lists.map((list) => (0, import_swiss_ak12.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
+      const [dirs, files] = lists.map((list) => (0, import_swiss_ak13.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
       contents = { ...contents, dirs, files };
     }
     if (pathType === "f") {
       const [stat2, probe] = await Promise.all([
-        (0, import_swiss_ak12.tryOr)(void 0, () => fsP2.stat(path)),
-        (0, import_swiss_ak12.tryOr)(void 0, () => getProbe(path))
+        (0, import_swiss_ak13.tryOr)(void 0, () => fsP2.stat(path)),
+        (0, import_swiss_ak13.tryOr)(void 0, () => getProbe(path))
       ]);
       contents = { ...contents, info: { stat: stat2, probe } };
     }
@@ -1750,7 +1754,7 @@ var getFileIcon = (ext) => {
 };
 var humanFileSize = (size) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return import_swiss_ak12.MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
+  return import_swiss_ak13.MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
@@ -1760,14 +1764,14 @@ var getFilePanel = (path, panelWidth, maxLines) => {
   result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${import_swiss_ak12.StringTools.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${import_swiss_ak13.StringTools.capitalise(category)} ` : ""}File`), panelWidth));
   result.push(out.center(colr.grey1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
     result.push(out.split(`${colr.bold.dim(title)}`, `${value}${extra ? colr.dim(` (${colr.dim(extra)})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
-    addItem(title, `${import_swiss_ak12.TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
+    addItem(title, `${import_swiss_ak13.TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
   };
   if (stat2) {
     addItem(`Size`, `${humanFileSize(stat2.size)}`);
@@ -1778,7 +1782,7 @@ var getFilePanel = (path, panelWidth, maxLines) => {
     if (["image", "video"].includes(category))
       addItem(`Dimensions`, `${probe.width}\xD7${probe.height}`);
     if (["video", "audio"].includes(category))
-      addItem(`Duration`, import_swiss_ak12.TimeTools.toReadableDuration((0, import_swiss_ak12.seconds)(probe.duration), false, 2));
+      addItem(`Duration`, import_swiss_ak13.TimeTools.toReadableDuration((0, import_swiss_ak13.seconds)(probe.duration), false, 2));
     if (["video"].includes(category))
       addItem(`FPS`, `${probe.framerate}`);
   }
@@ -1798,7 +1802,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak12.getDeferred)();
+  const deferred = (0, import_swiss_ak13.getDeferred)();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
@@ -1819,11 +1823,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   };
   const loadEssentials = async (executeFn = loadPathContents) => {
     await Promise.all([
-      import_swiss_ak12.PromiseTools.each(paths, executeFn),
+      import_swiss_ak13.PromiseTools.each(paths, executeFn),
       (async () => {
         const { dirs } = await executeFn(currentPath);
         const list = dirs;
-        return import_swiss_ak12.PromiseTools.each(
+        return import_swiss_ak13.PromiseTools.each(
           list.map((dir) => join(currentPath, dir)),
           executeFn
         );
@@ -1832,7 +1836,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const parent = PathTools.explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
-        return import_swiss_ak12.PromiseTools.each(
+        return import_swiss_ak13.PromiseTools.each(
           list.map((dir) => join(parent, dir)),
           executeFn
         );
@@ -1862,7 +1866,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     display();
     if (!key)
       return;
-    await (0, import_swiss_ak12.wait)((0, import_swiss_ak12.milliseconds)(100));
+    await (0, import_swiss_ak13.wait)((0, import_swiss_ak13.milliseconds)(100));
     if (!loading) {
       pressed = void 0;
       display();
@@ -1880,7 +1884,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const template = (text) => `${prefix}${text} ${symbol} `;
       const extraChars = out.getWidth(template(""));
       const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-      let wrapFn = import_swiss_ak12.fn.noact;
+      let wrapFn = import_swiss_ak13.fn.noact;
       if (isHighlighted) {
         if (isActiveColumn) {
           wrapFn = isSelected ? cursorOnSelectedWrapFn : cursorWrapFn;
@@ -1909,16 +1913,16 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       },
       multi: {
         d: {
-          dir: formatter("\u203A", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak12.symbols.RADIO_FULL)} `, ` ${import_swiss_ak12.symbols.RADIO_EMPTY} `),
+          dir: formatter("\u203A", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak13.symbols.RADIO_FULL)} `, ` ${import_swiss_ak13.symbols.RADIO_EMPTY} `),
           file: formatter(" ", colr.dim, "   ", "   ")
         },
         f: {
           dir: formatter("\u203A", colr.grey3, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak12.symbols.RADIO_FULL)} `, ` ${import_swiss_ak12.symbols.RADIO_EMPTY} `)
+          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak13.symbols.RADIO_FULL)} `, ` ${import_swiss_ak13.symbols.RADIO_EMPTY} `)
         },
         df: {
           dir: formatter("\u203A", colr.grey5, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak12.symbols.RADIO_FULL)} `, ` ${import_swiss_ak12.symbols.RADIO_EMPTY} `)
+          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak13.symbols.RADIO_FULL)} `, ` ${import_swiss_ak13.symbols.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
@@ -1954,7 +1958,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak12.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak13.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
     const termWidth = out.utils.getTerminalWidth();
     const tableLines = table.getLines([columns], void 0, {
       wrapLinesFn: colr.grey1,
@@ -2034,7 +2038,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       locked = false;
       if (pressed === "r")
         setPressed(void 0);
-      await import_swiss_ak12.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
+      await import_swiss_ak13.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
         return forceLoadPathContents;
@@ -2174,10 +2178,10 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/datetime.ts
-var import_swiss_ak17 = require("swiss-ak");
+var import_swiss_ak18 = require("swiss-ak");
 
 // src/utils/dynDates.ts
-var import_swiss_ak13 = require("swiss-ak");
+var import_swiss_ak14 = require("swiss-ak");
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -2189,10 +2193,10 @@ var dateToDynTime = (date2) => {
   const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
   return [dateObj.getHours(), dateObj.getMinutes()];
 };
-var sortDynDates = (dates) => (0, import_swiss_ak13.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
+var sortDynDates = (dates) => (0, import_swiss_ak14.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
 var isSameMonth = (aDate, bDate) => aDate[0] === bDate[0] && aDate[1] === bDate[1];
 var isEqualDynDate = (aDate, bDate) => isSameMonth(aDate, bDate) && aDate[2] === bDate[2];
-var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak13.DAY) + 3) % 7;
+var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak14.DAY) + 3) % 7;
 var getDaysInMonth = (year, month, _dy) => {
   if (month !== 2)
     return [0, 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
@@ -2200,9 +2204,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = import_swiss_ak13.MathsTools.clamp(notNaN(inMo), 1, 12);
+  const outMo = import_swiss_ak14.MathsTools.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = import_swiss_ak13.MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = import_swiss_ak14.MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {
@@ -2211,7 +2215,7 @@ var addMonths = ([yr, mo, dy], add = 1) => {
 };
 var addDays = ([yr, mo, dy], add = 1) => {
   const date2 = dynDateToDate([yr, mo, dy]);
-  const newDate = date2.getTime() + (0, import_swiss_ak13.days)(add);
+  const newDate = date2.getTime() + (0, import_swiss_ak14.days)(add);
   return dateToDynDate(newDate);
 };
 var getIntermediaryDates = (aDate, bDate) => {
@@ -2230,8 +2234,8 @@ var getIntermediaryDates = (aDate, bDate) => {
 };
 
 // src/utils/numberInputter.ts
-var import_swiss_ak14 = require("swiss-ak");
-var getNumberInputter = (timeout = (0, import_swiss_ak14.seconds)(1.5)) => {
+var import_swiss_ak15 = require("swiss-ak");
+var getNumberInputter = (timeout = (0, import_swiss_ak15.seconds)(1.5)) => {
   let lastKeyTimecode = 0;
   let logged = [];
   const get = () => Number(logged.join(""));
@@ -2261,7 +2265,7 @@ var getNumberInputter = (timeout = (0, import_swiss_ak14.seconds)(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-var import_swiss_ak15 = require("swiss-ak");
+var import_swiss_ak16 = require("swiss-ak");
 
 // src/tools/ask/datetime/styles.ts
 var sectionStyles = {
@@ -2292,11 +2296,11 @@ var getMonthCells = (year, month, _dy) => {
   const startWeekDay = getWeekday([year, month, 1]);
   const thisMonthMax = getDaysInMonth(year, month);
   const prevMonthMax = getDaysInMonth(...addMonths([year, month, 1], -1));
-  const thisMonth = (0, import_swiss_ak15.range)(thisMonthMax, 1, 1);
-  const prevMonth = (0, import_swiss_ak15.range)(prevMonthMax, -1, -1);
-  const nextMonth = (0, import_swiss_ak15.range)(28, -1, -1);
+  const thisMonth = (0, import_swiss_ak16.range)(thisMonthMax, 1, 1);
+  const prevMonth = (0, import_swiss_ak16.range)(prevMonthMax, -1, -1);
+  const nextMonth = (0, import_swiss_ak16.range)(28, -1, -1);
   const allCells = [...startWeekDay ? prevMonth.slice(-startWeekDay) : [], ...thisMonth, ...nextMonth];
-  const byRow = (0, import_swiss_ak15.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
+  const byRow = (0, import_swiss_ak16.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
   return byRow;
 };
 var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy) => {
@@ -2447,12 +2451,12 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
 };
 
 // src/tools/ask/datetime/time.ts
-var import_swiss_ak16 = require("swiss-ak");
+var import_swiss_ak17 = require("swiss-ak");
 var getSingleTimeDial = (value, sectionActive, dialActive, max, label) => {
   const wrappers = getStyles(sectionActive);
   const wrapFns = [wrappers.mid, wrappers.normal, dialActive ? wrappers.primary : wrappers.secondary];
   const showExtra = wrapFns.length - 1;
-  const dialNums = (0, import_swiss_ak16.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
+  const dialNums = (0, import_swiss_ak17.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
   const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
   const lines = out.centerLines([wrappers.normal(label), wrappers.dark("\u25E2\u25E3"), ...dial, wrappers.dark("\u25E5\u25E4")], 4);
   return lines;
@@ -2512,7 +2516,7 @@ var timeHandler = (isActive, initial, displayCb) => {
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = (0, import_swiss_ak17.getTimer)("DEBUG", false, colr.dark.red, colr);
+var DEBUG_TIMER = (0, import_swiss_ak18.getTimer)("DEBUG", false, colr.dark.red, colr);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2573,7 +2577,7 @@ var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange) => {
 };
 var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime()) => {
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak17.getDeferred)();
+  const deferred = (0, import_swiss_ak18.getDeferred)();
   const isSwitchable = isDateOn && isTimeOn;
   let activeHandler = isDateOn ? "date" : "time";
   const displayCache = { date: [], time: [] };
@@ -2686,7 +2690,7 @@ var dateRange = async (questionText, initialStart, initialEnd) => {
 };
 
 // src/tools/ask/section.ts
-var import_swiss_ak18 = require("swiss-ak");
+var import_swiss_ak19 = require("swiss-ak");
 var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2) => {
   const lineChar = "\u2504";
   const chars = {
@@ -2694,7 +2698,7 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
     none: "\u25E6",
     up: "\u25B5"
   };
-  const line = import_swiss_ak18.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  const line = import_swiss_ak19.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
   console.log(colr.grey1(out.center(line, void 0, lineChar)));
   return 1;
 };
@@ -2732,12 +2736,12 @@ var section = async (question, sectionFn, ...questionFns) => {
 };
 
 // src/tools/ask/table.ts
-var import_swiss_ak19 = require("swiss-ak");
+var import_swiss_ak20 = require("swiss-ak");
 var highlightFn = colr.dark.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak19.getDeferred)();
+  const deferred = (0, import_swiss_ak20.getDeferred)();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
   lc.add(ask.imitate(false, questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`));
@@ -2766,11 +2770,11 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     const finalBody = body.map((row, index) => {
       let firstCell;
       if (isMulti) {
-        const selectedSym = import_swiss_ak19.symbols.RADIO_FULL;
-        const unselectedSym = import_swiss_ak19.symbols.RADIO_EMPTY;
+        const selectedSym = import_swiss_ak20.symbols.RADIO_FULL;
+        const unselectedSym = import_swiss_ak20.symbols.RADIO_EMPTY;
         firstCell = selectedIndexes.includes(index) ? colr.reset(colr.dark.green(selectedSym)) : colr.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(import_swiss_ak19.symbols.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(import_swiss_ak20.symbols.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
@@ -2797,7 +2801,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   };
   const submit = () => {
     kl.stop();
-    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak19.fn.isTruthy);
+    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak20.fn.isTruthy);
     lc.clear();
     ask.imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
     deferred.resolve(results);
@@ -2981,19 +2985,19 @@ var ask;
       canDeleteAll: true,
       ...options
     };
-    const opts = [{ title: colr.dim(`${colr.dark.success.bold(import_swiss_ak20.symbols.TICK)} [ Finished ]`), value: "none" }];
+    const opts = [{ title: colr.dim(`${colr.dark.success.bold(import_swiss_ak21.symbols.TICK)} [ Finished ]`), value: "none" }];
     if (fullOptions.canCreate) {
-      opts.push({ title: `${colr.success.bold(import_swiss_ak20.symbols.PLUS)} Add another ${itemName}`, value: "create" });
+      opts.push({ title: `${colr.success.bold(import_swiss_ak21.symbols.PLUS)} Add another ${itemName}`, value: "create" });
     }
     if (items.length > 0) {
       if (fullOptions.canUpdate) {
-        opts.push({ title: `${colr.dark.yellow.bold(import_swiss_ak20.symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
+        opts.push({ title: `${colr.dark.yellow.bold(import_swiss_ak21.symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
       }
       if (fullOptions.canDelete) {
-        opts.push({ title: `${colr.danger.bold(import_swiss_ak20.symbols.CROSS)} Remove ${itemName}`, value: "delete" });
+        opts.push({ title: `${colr.danger.bold(import_swiss_ak21.symbols.CROSS)} Remove ${itemName}`, value: "delete" });
       }
       if (fullOptions.canDeleteAll) {
-        opts.push({ title: `${colr.danger.bold(import_swiss_ak20.symbols.TIMES)} Remove all`, value: "delete-all" });
+        opts.push({ title: `${colr.danger.bold(import_swiss_ak21.symbols.TIMES)} Remove all`, value: "delete-all" });
       }
     }
     return await ask2.select(question, opts, "none");
@@ -3048,7 +3052,7 @@ var ask;
     const joiner = resultText ? colr.grey(done ? "\u2026 " : "\u203A ") : "";
     const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
     const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
-    let resultWrapper = out.utils.hasColor(resultText) ? import_swiss_ak20.fn.noact : done ? colr.dark.white : colr.grey;
+    let resultWrapper = out.utils.hasColor(resultText) ? import_swiss_ak21.fn.noact : done ? colr.dark.white : colr.grey;
     const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : "";
     console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
     return 1;
@@ -3085,7 +3089,7 @@ var ask;
       out.moveUp(lines);
       lines = textValue.split("\n").length;
       console.log(colr.lightBlack(textValue));
-      await (0, import_swiss_ak20.wait)((0, import_swiss_ak20.seconds)(1));
+      await (0, import_swiss_ak21.wait)((0, import_swiss_ak21.seconds)(1));
     }
     out.moveUp(lines);
     if (complete) {
@@ -3137,7 +3141,7 @@ var ask;
 
 // src/tools/log.ts
 var import_util2 = __toESM(require("util"), 1);
-var import_swiss_ak21 = require("swiss-ak");
+var import_swiss_ak22 = require("swiss-ak");
 var defaultOptions = {
   showDate: false,
   showTime: true,
@@ -3218,7 +3222,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return import_swiss_ak21.ObjectTools.mapValues(allConfigs, (key, config) => {
+  return import_swiss_ak22.ObjectTools.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -3229,13 +3233,13 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBarTools.ts
-var import_swiss_ak22 = require("swiss-ak");
+var import_swiss_ak23 = require("swiss-ak");
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
-      wrapperFns = import_swiss_ak22.ArrayTools.randomise(wrapperFns);
+      wrapperFns = import_swiss_ak23.ArrayTools.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {
