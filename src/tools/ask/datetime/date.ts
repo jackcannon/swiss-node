@@ -12,9 +12,12 @@ import {
 } from '../../../utils/dynDates';
 import { out } from '../../out';
 import { table } from '../../table';
-import { getStyles } from './styles';
+import { getSpecialColours, getStyles } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
-import { colr } from '../../colr';
+import { colr, WrapFn } from '../../colr';
+import { ErrorInfo } from '../errorValidation';
+import { LOG } from '../../../DELETEME/LOG';
+import { getAskOptionsForState } from '../basicInput/customise';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -37,6 +40,11 @@ const getMonthCells = (year: number, month: number, _dy?: number): number[][] =>
   return byRow;
 };
 
+const combineWraps =
+  (...wraps: WrapFn[]): WrapFn =>
+  (s) =>
+    wraps.reduce((acc, wrap) => wrap(acc), s);
+
 interface MonthTableData {
   table: string[];
   coors: number[][];
@@ -47,11 +55,14 @@ const getMonthTable = (
   selected: number,
   isRange: boolean,
   slice: [number, number],
+  isError: boolean,
   year: number,
   month: number,
   _dy?: number
 ): MonthTableData => {
-  const styles = getStyles(active);
+  // const styles = getStyles(active);
+  const theme = getAskOptionsForState(false, isError);
+  const col = getSpecialColours(active, false, isError);
   const selCursor = cursors[selected];
 
   const monthCells = getMonthCells(year, month);
@@ -59,26 +70,26 @@ const getMonthTable = (
   const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
 
-  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(styles.mid, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(styles.normal, undefined, undefined, true)];
+  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
+  const formatDim = [...formatNonMonth, table.utils.getFormat(col.unselected, undefined, undefined, true)];
 
   const formatCursor: table.TableFormatConfig[] = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => colr.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat(combineWraps(col.hover, colr.reset), y, x)));
   }
 
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => colr.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat(combineWraps(col.selected, colr.reset), otherCursorCoor[1], otherCursorCoor[0]));
     }
 
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
     const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
-    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(styles.tertiary, y, x));
+    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(combineWraps(col.highlight, colr.reset), y, x));
     formatCursor.push(...formatInter);
   }
 
@@ -91,7 +102,7 @@ const getMonthTable = (
     drawRowLines: false,
     alignCols: ['right'],
     format: [...formatCursor, ...formatDim],
-    wrapLinesFn: styles.mid,
+    wrapLinesFn: theme.colours.decoration,
     overrideHorChar: '─',
     cellPadding: 0
   });
@@ -102,13 +113,14 @@ const getMonthTable = (
   const dispMonth = monthNames[month - 1].slice(0, out.getWidth(lines[0]) - 2);
 
   const getTitle = (text: string, prefix: string, suffix: string) => {
-    const resPrefix = active ? styles.dark(prefix) : '';
-    const resSuffix = active ? styles.dark(suffix) : '';
-    const resText = out.center(styles.normal(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
+    const resPrefix = active ? col.hint(prefix) : '';
+    const resSuffix = active ? col.hint(suffix) : '';
+    const resText = out.center(col.unselected(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
 
-  const titleYear = active ? getTitle(dispYear, '     ◀ Q', 'E ▶     ') : out.center(styles.dark(dispYear), monthWidth);
+  // const titleYear = active ? getTitle(dispYear, '     ◀ Q', 'E ▶     ') : out.center(col.hint(dispYear), monthWidth);
+  const titleYear = getTitle(dispYear, '     ◀ Q', 'E ▶     ');
   const titleMonth = getTitle(dispMonth, '  ◀ A', 'D ▶  ');
 
   return {
@@ -120,6 +132,8 @@ const getMonthTable = (
 export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
   isActive: boolean,
   initial: [DynDate, DynDate],
+  valueChangeCb: (value: [DynDate, DynDate]) => void,
+  getErrorInfo: () => ErrorInfo,
   displayCb: (lines: string[]) => any,
   isRange: boolean = false
 ): DateTimeHandlerObj<[DynDate, DynDate]> => {
@@ -154,15 +168,20 @@ export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
 
   const setCursor = (newCursor: DynDate, skipDisplay: boolean = false) => {
     cursors[selected] = newCursor;
+    valueChangeCb((isRange ? sortDynDates(cursors) : cursors) as [DynDate, DynDate]);
     recalc(skipDisplay);
   };
 
   const display = () => {
+    const { isError, errorMessage } = getErrorInfo();
+
+    LOG('dateHandler.display', { isError, errorMessage, cursors, selected, active });
+
     const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
 
-    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], ...cursors[selected]);
-    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], ...prevMonth);
-    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], ...nextMonth);
+    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
+    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
+    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
 
     displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
   };
@@ -208,6 +227,8 @@ export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
     inputKey: (key: string, num?: number) => {
       if (num !== undefined) return userActions.setDate(num);
       switch (key) {
+        case 'esc':
+          return process.exit(0);
         case 'tab':
           return userActions.switchSelected();
         case 'right':

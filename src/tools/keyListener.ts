@@ -26,7 +26,7 @@
  * @returns {KeyListener}
  */
 export const getKeyListener = (
-  callback: (keyName?: string, rawValue?: string) => void,
+  callback: (keyName: string, rawValue: string) => void,
   isStart: boolean = true,
   isDebugLog: boolean = false
 ): KeyListener => {
@@ -69,13 +69,12 @@ export const getKeyListener = (
 
     // ctrl-c
     if (key == '\u0003') {
+      callback('exit', key);
       return process.exit();
     }
 
     // fallback (any normal letter/number/symbol)
-    if (key.length === 1) {
-      return callback(key, key);
-    }
+    return callback(key, key);
   };
 
   const start = () => {
@@ -83,14 +82,14 @@ export const getKeyListener = (
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', listenFn);
-    process.stdout.write('\x1B[?25l'); // hide cursor
+    // process.stdout.write('\x1B[?25l'); // hide cursor
   };
 
   const stop = () => {
     process.stdin.setRawMode(false);
     process.stdin.pause();
     process.stdin.off('data', listenFn);
-    process.stdout.write('\x1B[?25h'); // show cursor
+    // process.stdout.write('\x1B[?25h'); // show cursor
   };
 
   if (isStart) start();

@@ -1,176 +1,5 @@
 import * as swiss_ak from 'swiss-ak';
-import { Partial as Partial$1, second, OfType, progressBar } from 'swiss-ak';
-
-/**<!-- DOCS: out.LineCounter #### 261 -->
- * LineCounter
- *
- * - `out.LineCounter`
- * - `LineCounter`
- *
- * Return type for getLineCounter
- *
- * ```typescript
- * const lc = getLineCounter();
- * lc.log('hello'); // 1
- * lc.wrap(1, () => console.log('a single line')); // 1
- * lc.add(1);
- * lc.get(); // 3
- * lc.clear();
- * ```
- */
-interface LineCounter$1 {
-    /**<!-- DOCS: out.LineCounter.log ##### 262 -->
-     * lc.log
-     *
-     * Same as console.log, but adds to the lc counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * ```
-     * @param {...any} args The arguments to log
-     * @returns {number} The number of lines added
-     */
-    log(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.move ##### 262 -->
-     * lc.move
-     *
-     * Moves the cursor up by a given number of lines
-     * @param {number} lines The number of lines to move
-     * @returns {void}
-     */
-    move(lines: number): void;
-    /**<!-- DOCS: out.LineCounter.wrap ##### 262 -->
-     * lc.wrap
-     *
-     * Wraps a function, and adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * ```
-     * @param {number} newLines The number of lines to add
-     * @param {(...args: A[]) => number | T} func The function to wrap
-     * @param {...A} args The arguments to pass to the function
-     * @returns {T} The result of the function
-     */
-    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-    /**<!-- DOCS: out.LineCounter.add ##### 262 -->
-     * lc.add
-     *
-     * Adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.add(1);
-     * ```
-     * @param {number} newLines The number of lines to add
-     * @returns {void}
-     */
-    add(newLines: number): void;
-    /**<!-- DOCS: out.LineCounter.get ##### 262 -->
-     * lc.get
-     *
-     * returns the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * ```
-     * @returns {number} The line counter
-     */
-    get(): number;
-    /**<!-- DOCS: out.LineCounter.getSince ##### 262 -->
-     * lc.getSince
-     *
-     * Returns the number of lines since a given checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     * @param {string} checkpointID The checkpoint to check
-     * @returns {number} The number of lines since the checkpoint
-     */
-    getSince(checkpointID: string): number;
-    /**<!-- DOCS: out.LineCounter.clear ##### 262 -->
-     * lc.clear
-     *
-     * clears the line counter, and moves the cursor up by the value of the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.clear();
-     * ```
-     * @returns {void}
-     */
-    clear(): void;
-    /**<!-- DOCS: out.LineCounter.clearBack ##### 262 -->
-     * lc.clearBack
-     *
-     * Clears a given number of lines, and updates the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
-     * ```
-     * @param {number} linesToMoveBack The number of lines to clear
-     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
-     * @returns {void}
-     */
-    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-    /**<!-- DOCS: out.LineCounter.checkpoint ##### 262 -->
-     * lc.checkpoint
-     *
-     * Records a 'checkpoint' that can be returned to later
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     * @param {string} [checkpointID] The checkpoint to record
-     * @returns {string} The checkpointID
-     */
-    checkpoint(checkpointID?: string): string;
-    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### 262 -->
-     * lc.clearToCheckpoint
-     *
-     * Clear lines up to a previously recorded checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.checkpoint('test');
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
-     * ```
-     * @param {string} checkpointID The checkpoint to clear to
-     * @returns {void}
-     */
-    clearToCheckpoint(checkpointID: string): void;
-}
+import { Partial as Partial$1, OfType, second, progressBar } from 'swiss-ak';
 
 interface Handles<T = any> {
     start: T;
@@ -194,7 +23,570 @@ interface AskTrimOptions {
     wrapActiveHandleBase: Function;
 }
 
+interface AnsiEscapeCodes {
+    /**<!-- DOCS: out.ansi.cursor #### -->
+     * cursor
+     *
+     * - `ansi.cursor`
+     * - `out.ansi.cursor`
+     *
+     * ANSI escape codes for controlling the cursor in the terminal
+     */
+    cursor: {
+        /**<!-- DOCS: out.ansi.cursor.to ##### -->
+         * to
+         *
+         * - `ansi.cursor.to`
+         * - `out.ansi.cursor.to`
+         *
+         * Move the cursor to a specific position
+         *
+         * @param {number} [x=0] The x position to move the cursor to
+         * @param {number} [y=0] The y position to move the cursor to
+         * @returns {string} ANSI escape codes
+         */
+        to: (x?: number, y?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.move ##### -->
+         * move
+         *
+         * - `ansi.cursor.move`
+         * - `out.ansi.cursor.move`
+         *
+         * Move the cursor a specific amount of spaces
+         *
+         * @param {number} [x=0] How many spaces to move the cursor horizontally (negative values move left)
+         * @param {number} [y=0] How many spaces to move the cursor vertically (negative values move up)
+         * @returns {string} ANSI escape codes
+         */
+        move: (x?: number, y?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.up ##### -->
+         * up
+         *
+         * - `ansi.cursor.up`
+         * - `out.ansi.cursor.up`
+         *
+         * Move the cursor up a specific amount of spaces
+         *
+         * @param {number} [count=1] How many spaces to move the cursor up
+         * @returns {string} ANSI escape codes
+         */
+        up: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.down ##### -->
+         * down
+         *
+         * - `ansi.cursor.down`
+         * - `out.ansi.cursor.down`
+         *
+         * Move the cursor down a specific amount of spaces
+         *
+         * @param {number} [count=1] How many spaces to move the cursor down
+         * @returns {string} ANSI escape codes
+         */
+        down: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.left ##### -->
+         * left
+         *
+         * - `ansi.cursor.left`
+         * - `out.ansi.cursor.left`
+         *
+         * Move the cursor left (backward) a specific amount of spaces
+         *
+         * @param {number} [count=1] How many spaces to move the cursor left
+         * @returns {string} ANSI escape codes
+         */
+        left: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.right ##### -->
+         * right
+         *
+         * - `ansi.cursor.right`
+         * - `out.ansi.cursor.right`
+         *
+         * Move the cursor right (forward) a specific amount of spaces
+         *
+         * @param {number} [count=1] How many spaces to move the cursor right
+         * @returns {string} ANSI escape codes
+         */
+        right: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.nextLine ##### -->
+         * nextLine
+         *
+         * - `ansi.cursor.nextLine`
+         * - `out.ansi.cursor.nextLine`
+         *
+         * Move the cursor to the beginning of the next line
+         *
+         * @param {number} [count=1] How many lines to move the cursor down
+         * @returns {string} ANSI escape codes
+         */
+        nextLine: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.prevLine ##### -->
+         * prevLine
+         *
+         * - `ansi.cursor.prevLine`
+         * - `out.ansi.cursor.prevLine`
+         *
+         * Move the cursor to the beginning of the previous line
+         *
+         * @param {number} [count=1] How many lines to move the cursor up
+         * @returns {string} ANSI escape codes
+         */
+        prevLine: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.cursor.lineStart ##### -->
+         * lineStart
+         *
+         * - `ansi.cursor.lineStart`
+         * - `out.ansi.cursor.lineStart`
+         *
+         * ANSI escape code to move the cursor to the beginning of the current line
+         */
+        lineStart: string;
+        /**<!-- DOCS: out.ansi.cursor.setShow ##### -->
+         * setShow
+         *
+         * - `ansi.cursor.setShow`
+         * - `out.ansi.cursor.setShow`
+         *
+         * Set whether or not the cursor is shown
+         *
+         * @param {boolean} isShow Whether or not the cursor should be shown
+         * @returns {string} ANSI escape code
+         */
+        setShow: (isShow: boolean) => string;
+        /**<!-- DOCS: out.ansi.cursor.show ##### -->
+         * show
+         *
+         * - `ansi.cursor.show`
+         * - `out.ansi.cursor.show`
+         *
+         * ANSI escape code to show the cursor
+         */
+        show: string;
+        /**<!-- DOCS: out.ansi.cursor.hide ##### -->
+         * hide
+         *
+         * - `ansi.cursor.hide`
+         * - `out.ansi.cursor.hide`
+         *
+         * ANSI escape code to hide the cursor
+         */
+        hide: string;
+        /**<!-- DOCS: out.ansi.cursor.save ##### -->
+         * save
+         *
+         * - `ansi.cursor.save`
+         * - `out.ansi.cursor.save`
+         *
+         * ANSI escape code to save the current cursor position (can be restored with `cursor.restore`)
+         */
+        save: string;
+        /**<!-- DOCS: out.ansi.cursor.restore ##### -->
+         * restore
+         *
+         * - `ansi.cursor.restore`
+         * - `out.ansi.cursor.restore`
+         *
+         * ANSI escape code to restore a previously saved cursor position (saved with `cursor.save`)
+         */
+        restore: string;
+    };
+    /**<!-- DOCS: out.ansi.scroll #### -->
+     * scroll
+     *
+     * - `ansi.scroll`
+     * - `out.ansi.scroll`
+     *
+     * ANSI escape codes for scrolling the terminal
+     */
+    scroll: {
+        /**<!-- DOCS: out.ansi.scroll.up ##### -->
+         * up
+         *
+         * - `ansi.scroll.up`
+         * - `out.ansi.scroll.up`
+         *
+         * Scroll the terminal up a specific amount
+         *
+         * @param {number} [count=1] How much to scroll the terminal up by
+         * @returns {string} ANSI escape codes
+         */
+        up: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.scroll.down ##### -->
+         * down
+         *
+         * - `ansi.scroll.down`
+         * - `out.ansi.scroll.down`
+         *
+         * Scroll the terminal down a specific amount
+         *
+         * @param {number} [count=1] How much to scroll the terminal down by
+         * @returns {string} ANSI escape codes
+         */
+        down: (count?: number) => string;
+    };
+    /**<!-- DOCS: out.ansi.erase #### -->
+     * erase
+     *
+     * - `ansi.erase`
+     * - `out.ansi.erase`
+     *
+     * ANSI escape codes for erasing parts of the terminal
+     */
+    erase: {
+        /**<!-- DOCS: out.ansi.erase.screen ##### -->
+         * screen
+         *
+         * - `ansi.erase.screen`
+         * - `out.ansi.erase.screen`
+         *
+         * ANSI escape code to erase the entire terminal screen
+         */
+        screen: string;
+        /**<!-- DOCS: out.ansi.erase.up ##### -->
+         * up
+         *
+         * - `ansi.erase.up`
+         * - `out.ansi.erase.up`
+         *
+         * Erase the terminal above the cursor
+         *
+         * @param {number} [count=1] How many lines to erase
+         * @returns {string} ANSI escape codes
+         */
+        up: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.erase.down ##### -->
+         * down
+         *
+         * - `ansi.erase.down`
+         * - `out.ansi.erase.down`
+         *
+         * Erase the terminal below the cursor
+         *
+         * @param {number} [count=1] How many lines to erase
+         * @returns {string} ANSI escape codes
+         */
+        down: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.erase.line ##### -->
+         * line
+         *
+         * - `ansi.erase.line`
+         * - `out.ansi.erase.line`
+         *
+         * ANSI escape code to erase the current line
+         */
+        line: string;
+        /**<!-- DOCS: out.ansi.erase.lineEnd ##### -->
+         * lineEnd
+         *
+         * - `ansi.erase.lineEnd`
+         * - `out.ansi.erase.lineEnd`
+         *
+         * ANSI escape code to erase the current line from the cursor to the end
+         */
+        lineEnd: string;
+        /**<!-- DOCS: out.ansi.erase.lineStart ##### -->
+         * lineStart
+         *
+         * - `ansi.erase.lineStart`
+         * - `out.ansi.erase.lineStart`
+         *
+         * ANSI escape code to erase the current line from the cursor to the start
+         */
+        lineStart: string;
+        /**<!-- DOCS: out.ansi.erase.lines ##### -->
+         * lines
+         *
+         * - `ansi.erase.lines`
+         * - `out.ansi.erase.lines`
+         *
+         * Erase a specific number of lines upwards from the cursor
+         *
+         * @param {number} [count=1] How many lines to erase
+         * @returns {string} ANSI escape codes
+         */
+        lines: (count?: number) => string;
+        /**<!-- DOCS: out.ansi.erase.reserve ##### -->
+         * reserve
+         *
+         * - `ansi.erase.reserve`
+         * - `out.ansi.erase.reserve`
+         *
+         * Make sure the next couple of lines are blank and on the screen
+         *
+         * > __Note:__ Erases the current line and returns to it afterwards
+         *
+         * @param {number} [count=1] How many lines to reserve
+         * @returns {string} ANSI escape codes
+         */
+        reserve: (count?: number) => string;
+    };
+    /**<!-- DOCS: out.ansi.clear #### -->
+     * clear
+     *
+     * - `ansi.clear`
+     * - `out.ansi.clear`
+     *
+     * ANSI escape code to clear the terminal screen
+     */
+    clear: string;
+    /**<!-- DOCS: out.ansi.beep #### -->
+     * beep
+     *
+     * - `ansi.beep`
+     * - `out.ansi.beep`
+     *
+     * ANSI escape code to make the terminal beep
+     */
+    beep: string;
+    /**<!-- DOCS: out.ansi.null #### -->
+     * null
+     *
+     * - `ansi.null`
+     * - `out.ansi.null`
+     *
+     * ANSI escape code for the NULL character. Can be used as a hidden marker.
+     */
+    null: string;
+}
+
 declare type Text = string | string[];
+
+/**<!-- DOCS: out.LineCounter #### -->
+ * LineCounter
+ *
+ * - `out.LineCounter`
+ * - `LineCounter`
+ *
+ * Return type for getLineCounter
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(1, () => console.log('a single line')); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
+ */
+interface LineCounter$1 {
+    /**<!-- DOCS: out.LineCounter.log ##### -->
+     * lc.log
+     *
+     * Same as console.log, but adds to the lc counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * ```
+     * @param {...any} args The arguments to log
+     * @returns {number} The number of lines added
+     */
+    log(...args: any[]): number;
+    /**<!-- DOCS: out.LineCounter.move ##### -->
+     * lc.move
+     *
+     * Moves the cursor down by a given number of lines
+     *
+     * Can be negative to move up
+     *
+     * @param {number} lines The number of lines to move
+     * @returns {void}
+     */
+    move(lines: number): void;
+    /**<!-- DOCS: out.LineCounter.wrap ##### -->
+     * lc.wrap
+     *
+     * Wraps a function, and adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * ```
+     * @param {number} newLines The number of lines to add
+     * @param {(...args: A[]) => number | T} func The function to wrap
+     * @param {...A} args The arguments to pass to the function
+     * @returns {T} The result of the function
+     */
+    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
+    /**<!-- DOCS: out.LineCounter.add ##### -->
+     * lc.add
+     *
+     * Adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.add(1);
+     * ```
+     * @param {number} newLines The number of lines to add
+     * @returns {void}
+     */
+    add(newLines: number): void;
+    /**<!-- DOCS: out.LineCounter.get ##### -->
+     * lc.get
+     *
+     * returns the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * ```
+     * @returns {number} The line counter
+     */
+    get(): number;
+    /**<!-- DOCS: out.LineCounter.getSince ##### -->
+     * lc.getSince
+     *
+     * Returns the number of lines since a given checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     * @param {string} checkpointID The checkpoint to check
+     * @returns {number} The number of lines since the checkpoint
+     */
+    getSince(checkpointID: string): number;
+    /**<!-- DOCS: out.LineCounter.clear ##### -->
+     * lc.clear
+     *
+     * clears the line counter, and moves the cursor up by the value of the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.clear();
+     * ```
+     * @returns {void}
+     */
+    clear(): void;
+    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
+     * lc.clearBack
+     *
+     * Clears a given number of lines, and updates the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+     * ```
+     * @param {number} linesToMoveBack The number of lines to clear
+     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+     * @returns {void}
+     */
+    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
+    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
+     * lc.checkpoint
+     *
+     * Records a 'checkpoint' that can be returned to later
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     * @param {string} [checkpointID] The checkpoint to record
+     * @returns {string} The checkpointID
+     */
+    checkpoint(checkpointID?: string): string;
+    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
+     * lc.clearToCheckpoint
+     *
+     * Clear lines up to a previously recorded checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.checkpoint('test');
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+     * ```
+     * @param {string} checkpointID The checkpoint to clear to
+     * @returns {void}
+     */
+    clearToCheckpoint(checkpointID: string): void;
+    /**<!-- DOCS: out.LineCounter.ansi ##### -->
+     * lc.ansi
+     *
+     * Get ansi codes for clear/erase functions, and update the line counter in the process.
+     */
+    ansi: {
+        /**<!-- DOCS: out.LineCounter.ansi.move ###### -->
+         * lc.move
+         *
+         * Moves the cursor up by a given number of lines
+         * @param {number} lines The number of lines to move
+         * @returns {string}
+         */
+        move(lines: number): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
+         * lc.clear
+         *
+         * clears the line counter, and moves the cursor up by the value of the line counter
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.clear());
+         * ```
+         * @returns {string}
+         */
+        clear(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
+         * lc.clearBack
+         *
+         * Clears a given number of lines, and updates the line counter
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('line 1'); // 1
+         * lc.log('line 2'); // 1
+         * lc.log('line 3'); // 1
+         * lc.log('line 4'); // 1
+         * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
+         * ```
+         * @param {number} linesToMoveBack The number of lines to clear
+         * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+         * @returns {string}
+         */
+        clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
+         * lc.clearToCheckpoint
+         *
+         * Clear lines up to a previously recorded checkpoint
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('line 1'); // 1
+         * lc.log('line 2'); // 1
+         * lc.checkpoint('test');
+         * lc.log('line 3'); // 1
+         * lc.log('line 4'); // 1
+         * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
+         * ```
+         * @param {string} checkpointID The checkpoint to clear to
+         * @returns {string}
+         */
+        clearToCheckpoint(checkpointID: string): string;
+    };
+}
 
 /**<!-- DOCS: colr ##! -->
  * colr
@@ -1459,6 +1851,8 @@ interface ColrFn extends WrapFn {
      *
      * Unaffected by `light`/`dark` modifiers
      *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey0.inverse` ≈ `colr.blackBg`
+     *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
      * @param {...string} text
@@ -1477,6 +1871,8 @@ interface ColrFn extends WrapFn {
      * 
      * Unaffected by `light`/`dark` modifiers
      * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey0.inverse` ≈ `colr.blackBg`
+     * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
      * @returns {string}
@@ -1493,6 +1889,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.light.black.dim`.
      *
      * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1512,6 +1910,8 @@ interface ColrFn extends WrapFn {
      * 
      * Unaffected by `light`/`dark` modifiers
      * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
+     * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
      * @returns {string}
@@ -1528,6 +1928,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.dark.white.dim`.
      *
      * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey2.inverse` ≈ `colr.darkWhiteBg`
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1547,6 +1949,8 @@ interface ColrFn extends WrapFn {
      * 
      * Unaffected by `light`/`dark` modifiers
      * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey2.inverse` ≈ `colr.darkWhiteBg`
+     * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
      * @returns {string}
@@ -1563,6 +1967,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.light.white.dim`.
      *
      * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey3.inverse` ≈ `colr.whiteBg`
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1582,6 +1988,8 @@ interface ColrFn extends WrapFn {
      * 
      * Unaffected by `light`/`dark` modifiers
      * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey3.inverse` ≈ `colr.whiteBg`
+     * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
      * @returns {string}
@@ -1598,6 +2006,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.dark.white`.
      *
      * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey4.inverse` ≈ `colr.darkWhiteBg`
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1617,6 +2027,8 @@ interface ColrFn extends WrapFn {
      * 
      * Unaffected by `light`/`dark` modifiers
      * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey4.inverse` ≈ `colr.darkWhiteBg`
+     * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
      * @returns {string}
@@ -1633,6 +2045,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.light.white`.
      *
      * Unaffected by `light`/`dark` modifiers
+     *
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey5.inverse` ≈ `colr.whiteBg`
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
@@ -1651,6 +2065,8 @@ interface ColrFn extends WrapFn {
      * Equivalent to `colr.light.white`.
      * 
      * Unaffected by `light`/`dark` modifiers
+     * 
+     * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey5.inverse` ≈ `colr.whiteBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
@@ -3014,6 +3430,19 @@ declare namespace out {
      * ```
      */
     export type LineCounter = LineCounter$1;
+    /**<!-- DOCS-ALIAS: out.ansi -->
+     * ansi
+     * 
+     * - `ansi`
+     * - `out.ansi`
+     * 
+     * ANSI escape codes for terminal manipulation
+     * 
+     * ```typescript
+     * process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
+     * ```
+     */
+    export const ansi: AnsiEscapeCodes;
     /**<!-- DOCS: out.utils 291 ### -->
      * utils
      */
@@ -3263,6 +3692,19 @@ declare const getLineCounter: () => LineCounter$1;
  * ```
  */
 declare type LineCounter = LineCounter$1;
+/**<!-- DOCS-ALIAS: out.ansi -->
+ * ansi
+ * 
+ * - `ansi`
+ * - `out.ansi`
+ * 
+ * ANSI escape codes for terminal manipulation
+ * 
+ * ```typescript
+ * process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
+ * ```
+ */
+declare const ansi: AnsiEscapeCodes;
 
 interface CharLookup<T> {
     hTop: T;
@@ -3793,19 +4235,482 @@ declare namespace table {
     }
 }
 
+interface PromptChoiceFull<T> {
+    title: string;
+    value: T;
+    preselected: boolean;
+    index: number;
+}
+
+interface ScrolledItems<T> {
+    items: PromptChoiceFull<T>[];
+    startingIndex: number;
+    hoveredIndex: number;
+    doesScrollUp: boolean;
+    doesScrollDown: boolean;
+}
+
+declare type FormatPromptFn = (question: string | Breadcrumb, value: string, items: string | undefined, errorMessage: string | undefined, theme: AskOptionsForState, isComplete: boolean, isExit: boolean) => string;
+declare type FormatItemsFn = <T extends unknown>(allItems: PromptChoiceFull<T>[], scrolledItems: ScrolledItems<T>, selected: number[] | undefined, type: 'single' | 'multi', theme: AskOptionsForState, isExit: boolean) => string;
+
+interface BoxSymbols {
+    horizontal: string;
+    vertical: string;
+    topLeft: string;
+    topRight: string;
+    bottomLeft: string;
+    bottomRight: string;
+    separatorLeft: string;
+    separatorHorizontal: string;
+    separatorRight: string;
+}
+declare type OptionsState = 'normal' | 'error' | 'done';
+declare type AskOptionsItemSet<T> = {
+    [key in OptionsState]: T;
+};
+declare namespace ask$1 {
+    /**<!-- DOCS: ask.AskOptions ### 198 -->
+     * AskOptions
+     *
+     * - `ask.AskOptions`
+     *
+     * Options to customise the behaviour/appearance of the `ask` prompts.
+     *
+     * TODO tables
+     */
+    interface AskOptions {
+        general?: {
+            lc?: LineCounter;
+            boxType?: 'thin' | 'thick';
+            boolTrueKeys?: string;
+            boolFalseKeys?: string;
+            maxItemsOnScreen?: number;
+            scrollMargin?: number;
+        };
+        text?: {
+            boolYes?: string;
+            boolNo?: string;
+            boolYesNoSeparator?: string;
+            boolYN?: string;
+            selectAll?: string;
+            done?: string;
+            items?: (count: number) => string;
+            countdown?: (secondsRemaining: number) => string;
+        };
+        formatters?: {
+            formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
+            formatItems?: 'block' | 'blockAlt' | 'simple' | 'simpleAlt' | FormatItemsFn;
+        };
+        colours?: {
+            decoration?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            questionText?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            openingIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            promptIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            result?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            resultText?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            resultNumber?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            resultBoolean?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            resultArray?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            errorMsg?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            item?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemHover?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemHoverIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemBlockHover?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemBlockHoverIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemSelected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemSelectedIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemUnselected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            itemUnselectedIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            scrollbarTrack?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            scrollbarBar?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            selectAllText?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            boolYNText?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            countdown?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            pause?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialHover?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialSelected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialHighlight?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialUnselected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialFaded?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialHint?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveHover?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveSelected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveHighlight?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveUnselected?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveFaded?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInactiveHint?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialInfo?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialErrorMsg?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            specialErrorIcon?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+        };
+        symbols?: {
+            specialIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            openingIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            promptIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            errorMsgPrefix?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            itemIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            itemHoverIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            itemSelectedIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            itemUnselectedIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollUpIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollDownIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollbarTrack?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollbarBar?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            separatorLine?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            separatorNodeDown?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            separatorNodeNone?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            separatorNodeUp?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            specialErrorIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+        };
+    }
+}
+interface AskOptionsStoredGeneral {
+    lc: LineCounter;
+    boxType: 'thin' | 'thick';
+    boolTrueKeys: string;
+    boolFalseKeys: string;
+    maxItemsOnScreen: number;
+    scrollMargin: number;
+}
+interface AskOptionsStoredText {
+    boolYes: string;
+    boolNo: string;
+    boolYesNoSeparator: string;
+    boolYN: string;
+    selectAll: string;
+    done: string;
+    items: (count: number) => string;
+    countdown: (secondsRemaining: number) => string;
+}
+interface AskOptionsStoredFormatters {
+    formatPrompt: FormatPromptFn;
+    formatItems: FormatItemsFn;
+}
+interface AskOptionsStoredColours {
+    decoration: AskOptionsItemSet<WrapFn>;
+    questionText: AskOptionsItemSet<WrapFn>;
+    specialIcon: AskOptionsItemSet<WrapFn>;
+    openingIcon: AskOptionsItemSet<WrapFn>;
+    promptIcon: AskOptionsItemSet<WrapFn>;
+    result: AskOptionsItemSet<WrapFn>;
+    resultText: AskOptionsItemSet<WrapFn>;
+    resultNumber: AskOptionsItemSet<WrapFn>;
+    resultBoolean: AskOptionsItemSet<WrapFn>;
+    resultArray: AskOptionsItemSet<WrapFn>;
+    errorMsg: AskOptionsItemSet<WrapFn>;
+    item: AskOptionsItemSet<WrapFn>;
+    itemIcon: AskOptionsItemSet<WrapFn>;
+    itemHover: AskOptionsItemSet<WrapFn>;
+    itemHoverIcon: AskOptionsItemSet<WrapFn>;
+    itemBlockHover: AskOptionsItemSet<WrapFn>;
+    itemBlockHoverIcon: AskOptionsItemSet<WrapFn>;
+    itemSelected: AskOptionsItemSet<WrapFn>;
+    itemSelectedIcon: AskOptionsItemSet<WrapFn>;
+    itemUnselected: AskOptionsItemSet<WrapFn>;
+    itemUnselectedIcon: AskOptionsItemSet<WrapFn>;
+    scrollbarTrack: AskOptionsItemSet<WrapFn>;
+    scrollbarBar: AskOptionsItemSet<WrapFn>;
+    selectAllText: AskOptionsItemSet<WrapFn>;
+    boolYNText: AskOptionsItemSet<WrapFn>;
+    countdown: AskOptionsItemSet<WrapFn>;
+    pause: AskOptionsItemSet<WrapFn>;
+    specialHover: AskOptionsItemSet<WrapFn>;
+    specialSelected: AskOptionsItemSet<WrapFn>;
+    specialHighlight: AskOptionsItemSet<WrapFn>;
+    specialUnselected: AskOptionsItemSet<WrapFn>;
+    specialFaded: AskOptionsItemSet<WrapFn>;
+    specialHint: AskOptionsItemSet<WrapFn>;
+    specialInactiveHover: AskOptionsItemSet<WrapFn>;
+    specialInactiveSelected: AskOptionsItemSet<WrapFn>;
+    specialInactiveHighlight: AskOptionsItemSet<WrapFn>;
+    specialInactiveUnselected: AskOptionsItemSet<WrapFn>;
+    specialInactiveFaded: AskOptionsItemSet<WrapFn>;
+    specialInactiveHint: AskOptionsItemSet<WrapFn>;
+    specialInfo: AskOptionsItemSet<WrapFn>;
+    specialErrorMsg: AskOptionsItemSet<WrapFn>;
+    specialErrorIcon: AskOptionsItemSet<WrapFn>;
+}
+interface AskOptionsStoredSymbols {
+    specialIcon: AskOptionsItemSet<string>;
+    openingIcon: AskOptionsItemSet<string>;
+    promptIcon: AskOptionsItemSet<string>;
+    errorMsgPrefix: AskOptionsItemSet<string>;
+    itemIcon: AskOptionsItemSet<string>;
+    itemHoverIcon: AskOptionsItemSet<string>;
+    itemSelectedIcon: AskOptionsItemSet<string>;
+    itemUnselectedIcon: AskOptionsItemSet<string>;
+    scrollUpIcon: AskOptionsItemSet<string>;
+    scrollDownIcon: AskOptionsItemSet<string>;
+    scrollbarTrack: AskOptionsItemSet<string>;
+    scrollbarBar: AskOptionsItemSet<string>;
+    separatorLine: AskOptionsItemSet<string>;
+    separatorNodeDown: AskOptionsItemSet<string>;
+    separatorNodeNone: AskOptionsItemSet<string>;
+    separatorNodeUp: AskOptionsItemSet<string>;
+    specialErrorIcon: AskOptionsItemSet<string>;
+}
+interface AskOptionsForState {
+    general: AskOptionsStoredGeneral;
+    text: AskOptionsStoredText;
+    formatters: AskOptionsStoredFormatters;
+    colours: OfType<AskOptionsStoredColours, WrapFn>;
+    symbols: OfType<AskOptionsStoredSymbols, string> & {
+        boxType: 'thin' | 'thick';
+    };
+    boxSymbols: BoxSymbols;
+}
+
 /**<!-- DOCS: ask ##! -->
  * ask
  *
  * A collection of functions to ask the user for input.
  */
 declare namespace ask {
-    /**<!-- DOCS: ask.text ### @ -->
+    /**<!-- DOCS-ALIAS: ask.text -->
      * text
-     *
+     * 
      * - `ask.text`
-     *
+     * 
      * Get a text input from the user.
-     *
+     * 
      * ```typescript
      * const name = await ask.text('What is your name?'); // 'Jack'
      * ```
@@ -3813,31 +4718,30 @@ declare namespace ask {
      * @param {string} [initial]
      * @returns {Promise<string>}
      */
-    const text: (question: string | Breadcrumb$1, initial?: string) => Promise<string>;
-    /**<!-- DOCS: ask.autotext ### @ -->
+    const text: (question: string | Breadcrumb$1, initial?: string, validate?: (value: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string>;
+    /**<!-- DOCS-ALIAS: ask.autotext -->
      * autotext
-     *
+     * 
      * - `ask.autotext`
-     *
+     * 
      * Get a text input from the user, with auto-completion.
-     *
+     * 
      * ```typescript
      * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
      * ```
      * @param {string | Breadcrumb} question
-     * @param {PromptChoice<T>[]} choices
+     * @param {ask.PromptChoice<T>[]} choices
      * @param {T | string} [initial]
-     * @param {number} [choiceLimit=10]
      * @returns {Promise<T>}
      */
-    const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, choiceLimit?: number) => Promise<T>;
-    /**<!-- DOCS: ask.number ### @ -->
+    const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, validate?: (item: T, index: number, typedValue: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
+    /**<!-- DOCS-ALIAS: ask.number -->
      * number
-     *
+     * 
      * - `ask.number`
-     *
+     * 
      * Get a number input from the user.
-     *
+     * 
      * ```typescript
      * const age = await ask.number('How old are you?'); // 30
      * ```
@@ -3845,244 +4749,70 @@ declare namespace ask {
      * @param {number} [initial=1]
      * @returns {Promise<number>}
      */
-    const number: (question: string | Breadcrumb$1, initial?: number) => Promise<number>;
-    /**<!-- DOCS: ask.boolean ### @ -->
+    const number: (question: string | Breadcrumb$1, initial?: number, validate?: (value: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<number>;
+    /**<!-- DOCS-ALIAS: ask.boolean -->
      * boolean
-     *
+     * 
      * - `ask.boolean`
-     *
+     * 
      * Get a boolean input from the user (yes or no)
-     *
+     * 
      * ```typescript
      * const isCool = await ask.boolean('Is this cool?'); // true
      * ```
      * @param {string | Breadcrumb} question
      * @param {boolean} [initial=true]
-     * @param {string} [yesTxt='yes']
-     * @param {string} [noTxt='no']
      * @returns {Promise<boolean>}
      */
-    const boolean: (question: string | Breadcrumb$1, initial?: boolean, yesTxt?: string, noTxt?: string) => Promise<boolean>;
-    /**<!-- DOCS: ask.booleanAlt ### @ -->
-     * booleanAlt
-     *
-     * - `ask.booleanAlt`
-     *
+    const boolean: (question: string | Breadcrumb$1, initial?: boolean, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
+    /**<!-- DOCS-ALIAS: ask.booleanYN -->
+     * booleanYN
+     * 
+     * - `ask.booleanYN`
+     * 
      * Get a boolean input from the user (yes or no)
-     *
+     * 
      * Alternative interface to ask.boolean
-     *
+     * 
      * ```typescript
-     * const isCool = await ask.boolean('Is this cool?'); // true
+     * const isCool = await ask.booleanYN('Is this cool?'); // true
      * ```
      * @param {string | Breadcrumb} question
-     * @param {boolean} [initial=true]
      * @returns {Promise<boolean>}
      */
-    const booleanAlt: (question: string | Breadcrumb$1, initial?: boolean) => Promise<boolean>;
-    /**<!-- DOCS: ask.select ### @ -->
+    const booleanYN: (question: string | Breadcrumb$1, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
+    /**<!-- DOCS-ALIAS: ask.select -->
      * select
-     *
+     * 
      * - `ask.select`
-     *
+     * 
      * Get the user to select an option from a list.
-     *
+     * 
      * ```typescript
      * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
      * ```
      * @param {string | Breadcrumb} question
-     * @param {PromptChoice<T>[]} choices
+     * @param {ask.PromptChoice<T>[]} choices
      * @param {T} [initial]
      * @returns {Promise<T>}
      */
-    const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: T) => Promise<T>;
-    /**<!-- DOCS: ask.multiselect ### @ -->
+    const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | PromptChoice<T>, validate?: (item: T, index: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
+    /**<!-- DOCS-ALIAS: ask.multiselect -->
      * multiselect
-     *
+     * 
      * - `ask.multiselect`
-     *
+     * 
      * Get the user to select multiple opts from a list.
-     *
+     * 
      * ```typescript
      * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
      * ```
      * @param {string | Breadcrumb} question
-     * @param {PromptChoice<T>[]} choices
-     * @param {PromptChoice<T> | PromptChoice<T>[]} [initial]
-     * @param {boolean} [canSelectAll=false]
+     * @param {ask.PromptChoice<T>[]} choices
+     * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[]} [initial]
      * @returns {Promise<T[]>}
      */
-    const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: PromptChoice<T> | PromptChoice<T>[], canSelectAll?: boolean) => Promise<T[]>;
-    interface CRUDOptions {
-        canCreate: boolean;
-        canUpdate: boolean;
-        canDelete: boolean;
-        canDeleteAll: boolean;
-    }
-    type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
-    /**<!-- DOCS: ask.crud ### @ -->
-     * crud
-     *
-     * - `ask.crud`
-     *
-     * Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
-     *
-     * Values returned are: 'none' | 'create' | 'update' | 'delete' | 'delete-all'
-     *
-     * ```typescript
-     * const action = await ask.crud('What do you want to do next?'); // 'none'
-     * ```
-     * @param {string | Breadcrumb} question
-     * @param {string} [itemName='item']
-     * @param {any[]} [items]
-     * @param {Partial<CRUDOptions>} [options={}]
-     * @returns {Promise<CRUD>}
-     */
-    const crud: (question: string | Breadcrumb$1, itemName?: string, items?: any[], options?: Partial<CRUDOptions>) => Promise<CRUD>;
-    /**<!-- DOCS: ask.validate ### @ -->
-     * validate
-     *
-     * - `ask.validate`
-     *
-     * Validate the result of an `ask` prompt
-     *
-     * ```typescript
-     * const name = await ask.validate(
-     *   () => ask.text('What is your name?'),
-     *   (name) => name.length > 0
-     * ); // 'Jack'
-     * ```
-     * @param {(initialValue?: T) => Promise<I> | I} askFunc
-     * @param {(input: Awaited<I>) => boolean | string} validateFn
-     * @returns {Promise<I>}
-     */
-    const validate: <T = string, I = string>(askFunc: (initialValue?: T) => I | Promise<I>, validateFn: (input: Awaited<I>) => boolean | string) => Promise<I>;
-    /**<!-- DOCS: ask.imitate ### @ -->
-     * imitate
-     *
-     * - `ask.imitate`
-     *
-     * Imitate the display of a prompt
-     *
-     * ```typescript
-     * imitate(true, 'What is your name?', 'Jack');
-     *
-     * ask.imitate(true, 'What is your name?', 'Jack');
-     * ```
-     * @param {boolean} done
-     * @param {string | Breadcrumb} question
-     * @param {any} [result]
-     * @returns {number}
-     */
-    const imitate: (done: boolean, question: string | Breadcrumb$1, result?: any) => number;
-    /**<!-- DOCS: ask.prefill ### @ -->
-     * prefill
-     *
-     * - `ask.prefill`
-     *
-     * Auto-fills an ask prompt with the provided value, if defined.
-     *
-     * Continues to display the 'prompt', but already 'submitted'
-     *
-     * Good for keeping skipping parts of forms, but providing context and keeping display consistent
-     *
-     * ```typescript
-     * let data = {};
-     * const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
-     *
-     * data = {name: 'Jack'}
-     * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
-     * ```
-     * @param {T | undefined} value
-     * @param {string | Breadcrumb} question
-     * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
-     * @returns {Promise<T>}
-     */
-    const prefill: <T extends unknown = string>(value: T, question: string | Breadcrumb$1, askFn: (question: string | Breadcrumb$1) => T | Promise<T>) => Promise<T>;
-    /**<!-- DOCS: ask.loading ### @ -->
-     * loading
-     *
-     * - `ask.loading`
-     *
-     * Display an animated loading indicator that imitates the display of a prompt
-     *
-     * ```typescript
-     * const loader = ask.loading('What is your name?');
-     * // ...
-     * loader.stop();
-     * ```
-     * @param {string | Breadcrumb} question
-     * @returns {any}
-     */
-    const loading: (question: string | Breadcrumb$1) => {
-        stop: () => void;
-    };
-    /**<!-- DOCS: ask.pause ### @ -->
-     * pause
-     *
-     * - `ask.pause`
-     *
-     * Pause the program until the user presses enter
-     *
-     * ```typescript
-     * await ask.pause();
-     * ```
-     * @param {string | Breadcrumb} [text='Press enter to continue...']
-     * @returns {Promise<void>}
-     */
-    const pause: (text?: string | Breadcrumb$1) => Promise<void>;
-    /**<!-- DOCS: ask.countdown ### @ -->
-     * countdown
-     *
-     * - `ask.countdown`
-     *
-     * Animated countdown for a given number of seconds
-     *
-     * ```typescript
-     * await ask.countdown(5);
-     * ```
-     * @param {number} totalSeconds
-     * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
-     * @param {string} [complete]
-     * @returns {Promise<void>}
-     */
-    const countdown: (totalSeconds: number, template?: (s: second) => string, complete?: string) => Promise<void>;
-    /**<!-- DOCS: ask.wizard ### @ -->
-     * wizard
-     *
-     * - `ask.wizard`
-     *
-     * Create a wizard object that can be used to build up a complex object
-     *
-     * ```typescript
-     * interface Example {
-     *   foo: string;
-     *   bar: number;
-     *   baz: string;
-     * }
-     *
-     * const base: Partial<Example> = {
-     *   baz: 'baz'
-     * };
-     *
-     * const wiz = ask.wizard<Example>(base);
-     *
-     * const foo = await ask.text('What is foo?'); // User input: foo
-     * wiz.add({ foo });
-     *
-     * const bar = await ask.number('What is bar?'); // User input: 123
-     * wiz.add({ bar });
-     *
-     * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
-     * ```
-     * @param {Partial<T>} [startObj={}]
-     * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
-     */
-    const wizard: <T extends unknown>(startObj?: Partial<T>) => {
-        add(partial: Partial<T>): void;
-        getPartial(): Partial<T>;
-        get(): T;
-    };
+    const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | number[] | PromptChoice<T> | PromptChoice<T>[], validate?: (items: T[], indexes: number[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
     /**<!-- DOCS-ALIAS: ask.date -->
      * date
      * 
@@ -4098,7 +4828,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    const date: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const date: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.time -->
      * time
      * 
@@ -4117,7 +4847,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    const time: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const time: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.datetime -->
      * datetime
      * 
@@ -4133,7 +4863,7 @@ declare namespace ask {
      * @param {Date} [initial]
      * @returns {Promise<Date>}
      */
-    const datetime: (questionText?: string | Breadcrumb$1, initial?: Date) => Promise<Date>;
+    const datetime: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.dateRange -->
      * dateRange
      * 
@@ -4153,7 +4883,7 @@ declare namespace ask {
      * @param {Date} [initialEnd]
      * @returns {Promise<[Date, Date]>}
      */
-    const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date) => Promise<[Date, Date]>;
+    const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date, validate?: (dates: [Date, Date]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<[Date, Date]>;
     /**<!-- DOCS-ALIAS: ask.fileExplorer -->
      * fileExplorer
      * 
@@ -4309,6 +5039,189 @@ declare namespace ask {
      * @returns {Promise<Handles<number>>}
      */
     const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
+    /**<!-- DOCS: ask.ExtraHeader ### @ -->
+     * Extra
+     *
+     * These are ask functions that don't prompt the user, but can help manage or organise how you use prompts
+     */
+    /**<!-- DOCS-ALIAS: ask.customise -->
+     * customise
+     * 
+     * - `ask.customise`
+     * 
+     * TODO docs
+     * 
+     * ```typescript
+     * TODO example
+     * ```
+     */
+    const customise: (options: Partial<ask$1.AskOptions>) => void;
+    /**<!-- DOCS: ask.loading #### @ -->
+     * loading
+     *
+     * - `ask.loading`
+     *
+     * Display an animated loading indicator that imitates the display of a prompt
+     *
+     * Intended to be indicate a question is coming, but something is loading first. For general 'loading' indicators, use `out.loading`.
+     *
+     * ```typescript
+     * const loader = ask.loading('What is your name?');
+     * // ...
+     * loader.stop();
+     * ```
+     * @param {string | Breadcrumb} question
+     * @returns {any}
+     */
+    const loading: (question: string | Breadcrumb$1, isComplete?: boolean, isError?: boolean, lc?: LineCounter) => {
+        stop: () => void;
+    };
+    /**<!-- DOCS: ask.countdown #### @ -->
+     * countdown
+     *
+     * - `ask.countdown`
+     *
+     * Animated countdown for a given number of seconds
+     *
+     * ```typescript
+     * await ask.countdown(5);
+     * ```
+     * @param {number} totalSeconds
+     * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
+     * @param {string} [complete]
+     * @returns {Promise<void>}
+     */
+    const countdown: (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean) => Promise<void>;
+    /**<!-- DOCS: ask.pause #### @ -->
+     * pause
+     *
+     * - `ask.pause`
+     *
+     * Pause the program until the user presses enter
+     *
+     * ```typescript
+     * await ask.pause();
+     * ```
+     * @param {string | Breadcrumb} [text='Press enter to continue...']
+     * @returns {Promise<void>}
+     */
+    const pause: (text?: string | Breadcrumb$1) => Promise<void>;
+    /**<!-- DOCS-ALIAS: ask.imitate -->
+     * imitate
+     * 
+     * - `ask.imitate`
+     * 
+     * Imitate the display of a prompt
+     * 
+     * ```typescript
+     * imitate('What is your name?', 'Jack', true);
+     * 
+     * ask.imitate('What is your name?', 'Jack', true);
+     * ```
+     * @param {boolean} isComplete
+     * @param {string | Breadcrumb} question
+     * @param {any} [result]
+     * @returns {number}
+     */
+    const imitate: (question: string | Breadcrumb$1, result?: any, isComplete?: boolean, isError?: boolean, lc?: LineCounter$1) => void;
+    /**<!-- DOCS: ask.prefill #### @ -->
+     * prefill
+     *
+     * - `ask.prefill`
+     *
+     * Auto-fills an ask prompt with the provided value, if defined.
+     *
+     * Continues to display the 'prompt', but already 'submitted'
+     *
+     * Good for keeping skipping parts of forms, but providing context and keeping display consistent
+     *
+     * ```typescript
+     * let data = {};
+     * const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
+     *
+     * data = {name: 'Jack'}
+     * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
+     * ```
+     * @param {T | undefined} value
+     * @param {string | Breadcrumb} question
+     * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
+     * @returns {Promise<T>}
+     */
+    const prefill: <T extends unknown = string>(question: string | Breadcrumb$1, value: T, askFn: (question: string | Breadcrumb$1, lc: LineCounter) => T | Promise<T>, lc?: LineCounter) => Promise<T>;
+    /**<!-- DOCS: ask.wizard #### @ -->
+     * wizard
+     *
+     * - `ask.wizard`
+     *
+     * Create a wizard object that can be used to build up a complex object
+     *
+     * ```typescript
+     * interface Example {
+     *   foo: string;
+     *   bar: number;
+     *   baz: string;
+     * }
+     *
+     * const base: Partial<Example> = {
+     *   baz: 'baz'
+     * };
+     *
+     * const wiz = ask.wizard<Example>(base);
+     *
+     * await wiz.add('foo', ask.text('What is foo?')); // User input: foo
+     *
+     * await wiz.add('bar', ask.number('What is bar?')); // User input: 123
+     *
+     * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
+     * ```
+     * @param {Partial<T>} [startObj={}]
+     * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
+     */
+    const wizard: <T extends unknown>(startObj?: Partial<T>) => {
+        add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
+        addPartial(partial: Partial<T>): void;
+        getPartial(): Partial<T>;
+        get(): T;
+    };
+    /**<!-- DOCS-ALIAS: ask.section -->
+     * section
+     * 
+     * - `ask.section`
+     * 
+     * Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
+     * 
+     * ```typescript
+     * const ans1 = await ask.text('Question 1:');
+     * const ans2 = await ask.section('Question 2:',
+     *   (lc: LineCounter) => {
+     *     lc.log('Some information');
+     *   },
+     *   (qst) => ask.text(qst),
+     *   () => ask.text('Question 2b:')
+     * );
+     * ```
+     * 
+     * During the section, it looks like this:
+     * ```
+     * Question 1: answer1
+     * ┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
+     * Some information
+     * ┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
+     * Question 2: answer2
+     * Question 2b: answer2b
+     * ```
+     * 
+     * After the last question in the section has been submitted, it looks like this:
+     * ```
+     * Question 1: answer1
+     * Question 2a: [ answer2, answer2b ]
+     * ```
+     * @param {string | Breadcrumb} question
+     * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionHeader]
+     * @param {...QuestionFuncs} [questionFns]
+     * @returns {Promise<UnwrapPromFuncs<QuestionFuncs>>}
+     */
+    const section: <T extends ((qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionHeader?: (lc: LineCounter$1) => void | Promise<any>, ...questionFns_0: T) => Promise<{ [K in keyof T]: T[K] extends (qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<infer U> ? U : never; }>;
     /**<!-- DOCS-ALIAS: ask.separator -->
      * separator
      * 
@@ -4332,47 +5245,7 @@ declare namespace ask {
      * @param {number} [width=out.utils.getTerminalWidth() - 2]
      * @returns {number}
      */
-    const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number) => number;
-    /**<!-- DOCS-ALIAS: ask.section -->
-     * section
-     * 
-     * - `ask.section`
-     * 
-     * Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
-     * 
-     * ```typescript
-     * const ans1 = await ask.text('Question 1:');
-     * const ans2 = await ask.section('Question 2:',
-     *   (lc: LineCounter) => {
-     *     lc.log('Some information');
-     *   },
-     *   (qst) => ask.text(qst),
-     *   () => ask.text('Question 2b:')
-     * );
-     * 
-     * ```
-     * 
-     * During the section, it looks like this:
-     * ```
-     * Question 1: answer1
-     * ┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
-     * Some information
-     * ┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
-     * Question 2: answer2
-     * Question 2b: answer2b
-     * ```
-     * 
-     * After the last question in the section has been submitted, it looks like this:
-     * ```
-     * Question 1: answer1
-     * Question 2a: [ answer2, answer2b ]
-     * ```
-     * @param {string | Breadcrumb} question
-     * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionFn]
-     * @param {...QuesT} [questionFns]
-     * @returns {Promise<UnwrapPromFuncs<QuesT>>}
-     */
-    const section: <QuesT extends ((qst?: string | Breadcrumb$1, results?: any[], lc?: LineCounter$1, separator?: () => void) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionFn?: (lc: LineCounter$1, separator: () => void) => void | Promise<any>, ...questionFns: QuesT) => Promise<QuesT extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...Tail extends [infer Head, ...infer Tail] ? [Head extends (...args: any[]) => Promise<infer U> ? U : Head, ...any] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []] : []>;
+    const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number, lc?: LineCounter$1) => void;
     /**<!-- DOCS: ask.utils 180 ### -->
      * utils
      */
@@ -4418,7 +5291,7 @@ declare namespace ask {
         }[];
         export {};
     }
-    /**<!-- DOCS: ask.PromptChoice ### 190 -->
+    /**<!-- DOCS: ask.PromptChoice ### 199 -->
      * PromptChoice
      *
      * - `ask.PromptChoice<T>`
@@ -4427,9 +5300,9 @@ declare namespace ask {
      *
      * Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
      */
-    type PromptChoice<T = string> = string | {
+    type PromptChoice<T = string> = T | {
         title?: string;
-        value?: T;
+        value: T;
         selected?: boolean;
     };
 }
@@ -4949,7 +5822,7 @@ declare const nextTick: () => Promise<unknown>;
  * @param {boolean} [isDebugLog=false]
  * @returns {KeyListener}
  */
-declare const getKeyListener: (callback: (keyName?: string, rawValue?: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
+declare const getKeyListener: (callback: (keyName: string, rawValue: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 /**<!-- DOCS: keyListener.KeyListener ### -->
  * KeyListener
  *
@@ -4978,4 +5851,4 @@ interface KeyListener {
     stop(): void;
 }
 
-export { Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };
+export { Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };

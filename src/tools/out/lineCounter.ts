@@ -1,10 +1,10 @@
+import { StringTools } from 'swiss-ak';
 import { getLogStr } from '../LogTools';
 import { out } from '../out';
+import { ansi } from './ansi';
 //<!-- DOCS: 260 -->
 
-const randomID = () => Math.random().toString(36).substring(2);
-
-/**<!-- DOCS: out.getLineCounter ### 260 -->
+/**<!-- DOCS: out.getLineCounter ### -->
  * getLineCounter
  *
  * - `out.getLineCounter`
@@ -27,9 +27,10 @@ export const getLineCounter = (): LineCounter => {
   const checkpoints: { [checkpointID: string]: number } = {};
 
   const log = (...args: any[]): number => {
-    const added = out.utils.getNumLines(args.map(getLogStr).join(' '));
+    const output = args.map(getLogStr).join(' ');
+    const added = out.utils.getNumLines(output);
     lineCount += added;
-    console.log(...args);
+    console.log(output);
     return added;
   };
 
@@ -63,7 +64,7 @@ export const getLineCounter = (): LineCounter => {
     return diff > 0 ? diff : 0;
   };
 
-  const checkpoint = (checkpointID: string = randomID()): string => {
+  const checkpoint = (checkpointID: string = StringTools.randomId()): string => {
     checkpoints[checkpointID] = lineCount;
     return checkpointID;
   };
@@ -88,6 +89,40 @@ export const getLineCounter = (): LineCounter => {
     lineCount = 0;
   };
 
+  const ansiFns = {
+    move: (lines: number): string => {
+      if (lines > 0) {
+        add(lines);
+        return '\n'.repeat(lines - 1);
+      }
+      if (lines < 0) {
+        return ansiFns.clearBack(-lines);
+      }
+    },
+    clearToCheckpoint: (checkpointID: string): string => {
+      const checkpointValue = checkpoints[checkpointID];
+      if (checkpointValue === undefined) return;
+      const diff = lineCount - checkpointValue;
+      if (diff > 0) {
+        return ansiFns.clearBack(diff);
+      }
+      return '';
+    },
+
+    clearBack: (linesToMoveBack: number, limitToRecordedLines: boolean = true): string => {
+      if (limitToRecordedLines) linesToMoveBack = Math.min(lineCount, linesToMoveBack);
+      const result = ansi.erase.lines(linesToMoveBack);
+      lineCount -= linesToMoveBack;
+      return result;
+    },
+
+    clear: (): string => {
+      const result = ansi.erase.lines(lineCount);
+      lineCount = 0;
+      return result;
+    }
+  };
+
   const lc: LineCounter = {
     log,
     move,
@@ -98,12 +133,13 @@ export const getLineCounter = (): LineCounter => {
     checkpoint,
     clearToCheckpoint,
     clear,
-    clearBack
+    clearBack,
+    ansi: ansiFns
   };
   return lc;
 };
 
-/**<!-- DOCS: out.LineCounter #### 261 -->
+/**<!-- DOCS: out.LineCounter #### -->
  * LineCounter
  *
  * - `out.LineCounter`
@@ -121,7 +157,7 @@ export const getLineCounter = (): LineCounter => {
  * ```
  */
 export interface LineCounter {
-  /**<!-- DOCS: out.LineCounter.log ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.log ##### -->
    * lc.log
    *
    * Same as console.log, but adds to the lc counter
@@ -135,16 +171,19 @@ export interface LineCounter {
    */
   log(...args: any[]): number;
 
-  /**<!-- DOCS: out.LineCounter.move ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.move ##### -->
    * lc.move
    *
-   * Moves the cursor up by a given number of lines
+   * Moves the cursor down by a given number of lines
+   *
+   * Can be negative to move up
+   *
    * @param {number} lines The number of lines to move
    * @returns {void}
    */
   move(lines: number): void;
 
-  /**<!-- DOCS: out.LineCounter.wrap ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.wrap ##### -->
    * lc.wrap
    *
    * Wraps a function, and adds a given number to the line counter
@@ -160,7 +199,7 @@ export interface LineCounter {
    */
   wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
 
-  /**<!-- DOCS: out.LineCounter.add ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.add ##### -->
    * lc.add
    *
    * Adds a given number to the line counter
@@ -174,7 +213,7 @@ export interface LineCounter {
    */
   add(newLines: number): void;
 
-  /**<!-- DOCS: out.LineCounter.get ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.get ##### -->
    * lc.get
    *
    * returns the line counter
@@ -190,7 +229,7 @@ export interface LineCounter {
    */
   get(): number;
 
-  /**<!-- DOCS: out.LineCounter.getSince ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.getSince ##### -->
    * lc.getSince
    *
    * Returns the number of lines since a given checkpoint
@@ -210,7 +249,7 @@ export interface LineCounter {
    */
   getSince(checkpointID: string): number;
 
-  /**<!-- DOCS: out.LineCounter.clear ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.clear ##### -->
    * lc.clear
    *
    * clears the line counter, and moves the cursor up by the value of the line counter
@@ -224,7 +263,7 @@ export interface LineCounter {
    */
   clear(): void;
 
-  /**<!-- DOCS: out.LineCounter.clearBack ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.clearBack ##### -->
    * lc.clearBack
    *
    * Clears a given number of lines, and updates the line counter
@@ -243,7 +282,7 @@ export interface LineCounter {
    */
   clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
 
-  /**<!-- DOCS: out.LineCounter.checkpoint ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
    * lc.checkpoint
    *
    * Records a 'checkpoint' that can be returned to later
@@ -263,7 +302,7 @@ export interface LineCounter {
    */
   checkpoint(checkpointID?: string): string;
 
-  /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### 262 -->
+  /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
    * lc.clearToCheckpoint
    *
    * Clear lines up to a previously recorded checkpoint
@@ -281,4 +320,72 @@ export interface LineCounter {
    * @returns {void}
    */
   clearToCheckpoint(checkpointID: string): void;
+
+  /**<!-- DOCS: out.LineCounter.ansi ##### -->
+   * lc.ansi
+   *
+   * Get ansi codes for clear/erase functions, and update the line counter in the process.
+   */
+  ansi: {
+    /**<!-- DOCS: out.LineCounter.ansi.move ###### -->
+     * lc.move
+     *
+     * Moves the cursor up by a given number of lines
+     * @param {number} lines The number of lines to move
+     * @returns {string}
+     */
+    move(lines: number): string;
+
+    /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
+     * lc.clear
+     *
+     * clears the line counter, and moves the cursor up by the value of the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * process.stdout.write(lc.ansi.clear());
+     * ```
+     * @returns {string}
+     */
+    clear(): string;
+
+    /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
+     * lc.clearBack
+     *
+     * Clears a given number of lines, and updates the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
+     * ```
+     * @param {number} linesToMoveBack The number of lines to clear
+     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+     * @returns {string}
+     */
+    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
+
+    /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
+     * lc.clearToCheckpoint
+     *
+     * Clear lines up to a previously recorded checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.checkpoint('test');
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
+     * ```
+     * @param {string} checkpointID The checkpoint to clear to
+     * @returns {string}
+     */
+    clearToCheckpoint(checkpointID: string): string;
+  };
 }

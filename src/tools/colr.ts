@@ -498,6 +498,19 @@ const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOp
     }
   });
 
+  // Set toString and inspect functions
+  const prettyPrint = () => (styles.length ? result : colr.darkCyan)(`[ColrFn: ${name}]`);
+  Object.defineProperties(result, {
+    toString: {
+      enumerable: false,
+      value: prettyPrint
+    },
+    [Symbol.for('nodejs.util.inspect.custom')]: {
+      enumerable: false,
+      value: prettyPrint
+    }
+  });
+
   return result as ColrFn;
 };
 
@@ -1800,6 +1813,8 @@ export interface ColrFn extends WrapFn {
    *
    * Unaffected by `light`/`dark` modifiers
    *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey0.inverse` ≈ `colr.blackBg`
+   *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
    * @param {...string} text
@@ -1821,6 +1836,8 @@ export interface ColrFn extends WrapFn {
    * Equivalent to `colr.light.black.dim`.
    *
    * Unaffected by `light`/`dark` modifiers
+   *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
@@ -1844,6 +1861,8 @@ export interface ColrFn extends WrapFn {
    *
    * Unaffected by `light`/`dark` modifiers
    *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey2.inverse` ≈ `colr.darkWhiteBg`
+   *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
    * @param {...string} text
@@ -1865,6 +1884,8 @@ export interface ColrFn extends WrapFn {
    * Equivalent to `colr.light.white.dim`.
    *
    * Unaffected by `light`/`dark` modifiers
+   *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey3.inverse` ≈ `colr.whiteBg`
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
@@ -1888,6 +1909,8 @@ export interface ColrFn extends WrapFn {
    *
    * Unaffected by `light`/`dark` modifiers
    *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey4.inverse` ≈ `colr.darkWhiteBg`
+   *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
    * @param {...string} text
@@ -1909,6 +1932,8 @@ export interface ColrFn extends WrapFn {
    * Equivalent to `colr.light.white`.
    *
    * Unaffected by `light`/`dark` modifiers
+   *
+   * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey5.inverse` ≈ `colr.whiteBg`
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *

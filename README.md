@@ -32,32 +32,34 @@ A collection of functions to ask the user for input.
     - [autotext](#autotext)
     - [number](#number)
     - [boolean](#boolean)
-    - [booleanAlt](#booleanalt)
+    - [booleanYN](#booleanyn)
     - [select](#ask_select)
     - [multiselect](#ask_multiselect)
-    - [crud](#crud)
-    - [validate](#validate)
-    - [imitate](#imitate)
-    - [prefill](#prefill)
-    - [loading](#ask_loading)
-    - [pause](#pause)
-    - [countdown](#countdown)
-    - [wizard](#wizard)
     - [date](#date)
     - [time](#time)
     - [datetime](#datetime)
     - [dateRange](#daterange)
-    - [fileExplorer](#fileexplorer)
-    - [multiFileExplorer](#multifileexplorer)
-    - [saveFileExplorer](#savefileexplorer)
+    - [**fileExplorer**](#ask_fileexplorerheader)
+      - [fileExplorer](#ask_fileexplorer)
+      - [multiFileExplorer](#multifileexplorer)
+      - [saveFileExplorer](#savefileexplorer)
     - [**table**](#ask_table)
       - [select](#ask_table_select)
       - [multiselect](#ask_table_multiselect)
     - [trim](#trim)
-    - [separator](#separator)
-    - [section](#section)
+    - [**Extra**](#extra)
+      - [customise](#customise)
+      - [loading](#ask_loading)
+      - [countdown](#countdown)
+      - [pause](#pause)
+      - [imitate](#imitate)
+      - [prefill](#prefill)
+      - [wizard](#wizard)
+      - [section](#section)
+      - [separator](#separator)
     - [**utils**](#ask_utils)
       - [itemsToPromptObjects](#itemstopromptobjects)
+    - [AskOptions](#askoptions)
     - [PromptChoice](#promptchoice)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
@@ -88,7 +90,7 @@ const name = await ask.text('What is your name?'); // 'Jack'
 ### autotext
 
 ```typescript
-ask.autotext(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: T | string, choiceLimit: number): Promise<T>
+ask.autotext(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: T | string): Promise<T>
 ```
 
 Get a text input from the user, with auto-completion.
@@ -97,12 +99,11 @@ Get a text input from the user, with auto-completion.
 const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
 ```
 
-|  #  | Parameter Name | Required | Type                   | Default |
-|:---:|:---------------|:---------|:-----------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
-| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`    |         |
-| *2* | `initial`      | *No*     | `T \| string`          |         |
-| *3* | `choiceLimit`  | *No*     | `number`               | `10`    |
+|  #  | Parameter Name | Required | Type                    |
+|:---:|:---------------|:---------|:------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`  |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]` |
+| *2* | `initial`      | *No*     | `T \| string`           |
 
 | Return Type  |
 |--------------|
@@ -136,7 +137,7 @@ const age = await ask.number('How old are you?'); // 30
 ### boolean
 
 ```typescript
-ask.boolean(question: string | Breadcrumb, initial: boolean, yesTxt: string, noTxt: string): Promise<boolean>
+ask.boolean(question: string | Breadcrumb, initial: boolean): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -149,8 +150,6 @@ const isCool = await ask.boolean('Is this cool?'); // true
 |:---:|:---------------|:---------|:-----------------------|:--------|
 | *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
 | *1* | `initial`      | *No*     | `boolean`              | `true`  |
-| *2* | `yesTxt`       | *No*     | `string`               | `'yes'` |
-| *3* | `noTxt`        | *No*     | `string`               | `'no'`  |
 
 | Return Type        |
 |--------------------|
@@ -158,10 +157,10 @@ const isCool = await ask.boolean('Is this cool?'); // true
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### booleanAlt
+### booleanYN
 
 ```typescript
-ask.booleanAlt(question: string | Breadcrumb, initial: boolean): Promise<boolean>
+ask.booleanYN(question: string | Breadcrumb): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -169,13 +168,12 @@ Get a boolean input from the user (yes or no)
 Alternative interface to ask.boolean
 
 ```typescript
-const isCool = await ask.boolean('Is this cool?'); // true
+const isCool = await ask.booleanYN('Is this cool?'); // true
 ```
 
-|  #  | Parameter Name | Required | Type                   | Default |
-|:---:|:---------------|:---------|:-----------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
-| *1* | `initial`      | *No*     | `boolean`              | `true`  |
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
 
 | Return Type        |
 |--------------------|
@@ -186,7 +184,7 @@ const isCool = await ask.boolean('Is this cool?'); // true
 ### <span id="ask_select">select</span>
 
 ```typescript
-ask.select(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: T): Promise<T>
+ask.select(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: T): Promise<T>
 ```
 
 Get the user to select an option from a list.
@@ -195,11 +193,11 @@ Get the user to select an option from a list.
 const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
 ```
 
-|  #  | Parameter Name | Required | Type                   |
-|:---:|:---------------|:---------|:-----------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
-| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`    |
-| *2* | `initial`      | *No*     | `T`                    |
+|  #  | Parameter Name | Required | Type                    |
+|:---:|:---------------|:---------|:------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`  |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]` |
+| *2* | `initial`      | *No*     | `T`                     |
 
 | Return Type  |
 |--------------|
@@ -210,7 +208,7 @@ const colour = await ask.select('Whats your favourite colour?', ['red', 'green',
 ### <span id="ask_multiselect">multiselect</span>
 
 ```typescript
-ask.multiselect(question: string | Breadcrumb, choices: PromptChoice<T>[], initial: PromptChoice<T> | PromptChoice<T>[], canSelectAll: boolean): Promise<T[]>
+ask.multiselect(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | ask.PromptChoice<T>[]): Promise<T[]>
 ```
 
 Get the user to select multiple opts from a list.
@@ -219,237 +217,15 @@ Get the user to select multiple opts from a list.
 const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
 ```
 
-|  #  | Parameter Name | Required | Type                                   | Default |
-|:---:|:---------------|:---------|:---------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                 |         |
-| *1* | `choices`      | **Yes**  | `PromptChoice<T>[]`                    |         |
-| *2* | `initial`      | *No*     | `PromptChoice<T> \| PromptChoice<T>[]` |         |
-| *3* | `canSelectAll` | *No*     | `boolean`                              | `false` |
+|  #  | Parameter Name | Required | Type                                           |
+|:---:|:---------------|:---------|:-----------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                         |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                        |
+| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| ask.PromptChoice<T>[]` |
 
 | Return Type    |
 |----------------|
 | `Promise<T[]>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### crud
-
-```typescript
-ask.crud(question: string | Breadcrumb, itemName: string, items: any[], options: Partial<CRUDOptions>): Promise<CRUD>
-```
-
-Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
-
-Values returned are: 'none' | 'create' | 'update' | 'delete' | 'delete-all'
-
-```typescript
-const action = await ask.crud('What do you want to do next?'); // 'none'
-```
-
-|  #  | Parameter Name | Required | Type                   | Default  |
-|:---:|:---------------|:---------|:-----------------------|:---------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |          |
-| *1* | `itemName`     | *No*     | `string`               | `'item'` |
-| *2* | `items`        | *No*     | `any[]`                |          |
-| *3* | `options`      | *No*     | `Partial<CRUDOptions>` | `{}`     |
-
-| Return Type     |
-|-----------------|
-| `Promise<CRUD>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### validate
-
-```typescript
-ask.validate(askFunc: (initialValue?: T) => Promise<I> | I, validateFn: (input: Awaited<I>) => boolean | string): Promise<I>
-```
-
-Validate the result of an `ask` prompt
-
-```typescript
-const name = await ask.validate(
-  () => ask.text('What is your name?'),
-  (name) => name.length > 0
-); // 'Jack'
-```
-
-|  #  | Parameter Name | Required | Type                                       |
-|:---:|:---------------|:---------|:-------------------------------------------|
-| *0* | `askFunc`      | **Yes**  | `(initialValue?: T) => Promise<I> \| I`    |
-| *1* | `validateFn`   | **Yes**  | `(input: Awaited<I>) => boolean \| string` |
-
-| Return Type  |
-|--------------|
-| `Promise<I>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### imitate
-
-```typescript
-ask.imitate(done: boolean, question: string | Breadcrumb, result: any): number
-```
-
-Imitate the display of a prompt
-
-```typescript
-imitate(true, 'What is your name?', 'Jack');
-
-ask.imitate(true, 'What is your name?', 'Jack');
-```
-
-|  #  | Parameter Name | Required | Type                   |
-|:---:|:---------------|:---------|:-----------------------|
-| *0* | `done`         | **Yes**  | `boolean`              |
-| *1* | `question`     | **Yes**  | `string \| Breadcrumb` |
-| *2* | `result`       | *No*     | `any`                  |
-
-| Return Type |
-|-------------|
-| `number`    |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### prefill
-
-```typescript
-ask.prefill(value: T | undefined, question: string | Breadcrumb, askFn: (question: string | Breadcrumb) => Promise<T> | T): Promise<T>
-```
-
-Auto-fills an ask prompt with the provided value, if defined.
-
-Continues to display the 'prompt', but already 'submitted'
-
-Good for keeping skipping parts of forms, but providing context and keeping display consistent
-
-```typescript
-let data = {};
-const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
-
-data = {name: 'Jack'}
-const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
-```
-
-|  #  | Parameter Name | Required | Type                                                  |
-|:---:|:---------------|:---------|:------------------------------------------------------|
-| *0* | `value`        | **Yes**  | `T \| undefined`                                      |
-| *1* | `question`     | **Yes**  | `string \| Breadcrumb`                                |
-| *2* | `askFn`        | **Yes**  | `(question: string \| Breadcrumb) => Promise<T> \| T` |
-
-| Return Type  |
-|--------------|
-| `Promise<T>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### <span id="ask_loading">loading</span>
-
-```typescript
-ask.loading(question: string | Breadcrumb): any
-```
-
-Display an animated loading indicator that imitates the display of a prompt
-
-```typescript
-const loader = ask.loading('What is your name?');
-// ...
-loader.stop();
-```
-
-|  #  | Parameter Name | Required | Type                   |
-|:---:|:---------------|:---------|:-----------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
-
-| Return Type |
-|-------------|
-| `any`       |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### pause
-
-```typescript
-ask.pause(text: string | Breadcrumb): Promise<void>
-```
-
-Pause the program until the user presses enter
-
-```typescript
-await ask.pause();
-```
-
-|  #  | Parameter Name | Required | Type                   | Default                        |
-|:---:|:---------------|:---------|:-----------------------|:-------------------------------|
-| *0* | `text`         | *No*     | `string \| Breadcrumb` | `'Press enter to continue...'` |
-
-| Return Type     |
-|-----------------|
-| `Promise<void>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### countdown
-
-```typescript
-ask.countdown(totalSeconds: number, template: (s: second) => string, complete: string): Promise<void>
-```
-
-Animated countdown for a given number of seconds
-
-```typescript
-await ask.countdown(5);
-```
-
-|  #  | Parameter Name | Required | Type                    | Default                            |
-|:---:|:---------------|:---------|:------------------------|:-----------------------------------|
-| *0* | `totalSeconds` | **Yes**  | `number`                |                                    |
-| *1* | `template`     | *No*     | `(s: second) => string` | ``(s) => `Starting in ${s}s...` `` |
-| *2* | `complete`     | *No*     | `string`                |                                    |
-
-| Return Type     |
-|-----------------|
-| `Promise<void>` |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### wizard
-
-```typescript
-ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
-```
-
-Create a wizard object that can be used to build up a complex object
-
-```typescript
-interface Example {
-  foo: string;
-  bar: number;
-  baz: string;
-}
-
-const base: Partial<Example> = {
-  baz: 'baz'
-};
-
-const wiz = ask.wizard<Example>(base);
-
-const foo = await ask.text('What is foo?'); // User input: foo
-wiz.add({ foo });
-
-const bar = await ask.number('What is bar?'); // User input: 123
-wiz.add({ bar });
-
-const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
-```
-
-|  #  | Parameter Name | Required | Type         | Default |
-|:---:|:---------------|:---------|:-------------|:--------|
-| *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    |
-
-| Return Type                                                               |
-|---------------------------------------------------------------------------|
-| `{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -556,7 +332,9 @@ const range = await ask.dateRange('When is the festival?');
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### fileExplorer
+### <span id="ask_fileexplorerheader">fileExplorer</span>
+
+#### <span id="ask_fileexplorer">fileExplorer</span>
 
 ```typescript
 ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string): Promise<string>
@@ -584,7 +362,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### multiFileExplorer
+#### multiFileExplorer
 
 ```typescript
 ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string): Promise<string[]>
@@ -613,7 +391,7 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### saveFileExplorer
+#### saveFileExplorer
 
 ```typescript
 ask.saveFileExplorer(questionText: string | Breadcrumb, startPath: string, suggestedFileName: string): Promise<string>
@@ -757,7 +535,241 @@ Get a start and end frame from the user
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### separator
+### Extra
+These are ask functions that don't prompt the user, but can help manage or organise how you use prompts
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### customise
+
+```typescript
+ask.customise;
+```
+
+TODO docs
+
+```typescript
+TODO example
+```
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### <span id="ask_loading">loading</span>
+
+```typescript
+ask.loading(question: string | Breadcrumb): any
+```
+
+Display an animated loading indicator that imitates the display of a prompt
+
+Intended to be indicate a question is coming, but something is loading first. For general 'loading' indicators, use `out.loading`.
+
+```typescript
+const loader = ask.loading('What is your name?');
+// ...
+loader.stop();
+```
+
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |
+
+| Return Type |
+|-------------|
+| `any`       |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### countdown
+
+```typescript
+ask.countdown(totalSeconds: number, template: (s: second) => string, complete: string): Promise<void>
+```
+
+Animated countdown for a given number of seconds
+
+```typescript
+await ask.countdown(5);
+```
+
+|  #  | Parameter Name | Required | Type                    | Default                            |
+|:---:|:---------------|:---------|:------------------------|:-----------------------------------|
+| *0* | `totalSeconds` | **Yes**  | `number`                |                                    |
+| *1* | `template`     | *No*     | `(s: second) => string` | ``(s) => `Starting in ${s}s...` `` |
+| *2* | `complete`     | *No*     | `string`                |                                    |
+
+| Return Type     |
+|-----------------|
+| `Promise<void>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### pause
+
+```typescript
+ask.pause(text: string | Breadcrumb): Promise<void>
+```
+
+Pause the program until the user presses enter
+
+```typescript
+await ask.pause();
+```
+
+|  #  | Parameter Name | Required | Type                   | Default                        |
+|:---:|:---------------|:---------|:-----------------------|:-------------------------------|
+| *0* | `text`         | *No*     | `string \| Breadcrumb` | `'Press enter to continue...'` |
+
+| Return Type     |
+|-----------------|
+| `Promise<void>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### imitate
+
+```typescript
+ask.imitate(isComplete: boolean, question: string | Breadcrumb, result: any): number
+```
+
+Imitate the display of a prompt
+
+```typescript
+imitate('What is your name?', 'Jack', true);
+
+ask.imitate('What is your name?', 'Jack', true);
+```
+
+|  #  | Parameter Name | Required | Type                   |
+|:---:|:---------------|:---------|:-----------------------|
+| *0* | `isComplete`   | **Yes**  | `boolean`              |
+| *1* | `question`     | **Yes**  | `string \| Breadcrumb` |
+| *2* | `result`       | *No*     | `any`                  |
+
+| Return Type |
+|-------------|
+| `number`    |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### prefill
+
+```typescript
+ask.prefill(value: T | undefined, question: string | Breadcrumb, askFn: (question: string | Breadcrumb) => Promise<T> | T): Promise<T>
+```
+
+Auto-fills an ask prompt with the provided value, if defined.
+
+Continues to display the 'prompt', but already 'submitted'
+
+Good for keeping skipping parts of forms, but providing context and keeping display consistent
+
+```typescript
+let data = {};
+const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
+
+data = {name: 'Jack'}
+const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
+```
+
+|  #  | Parameter Name | Required | Type                                                  |
+|:---:|:---------------|:---------|:------------------------------------------------------|
+| *0* | `value`        | **Yes**  | `T \| undefined`                                      |
+| *1* | `question`     | **Yes**  | `string \| Breadcrumb`                                |
+| *2* | `askFn`        | **Yes**  | `(question: string \| Breadcrumb) => Promise<T> \| T` |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### wizard
+
+```typescript
+ask.wizard(startObj: Partial<T>): { add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }
+```
+
+Create a wizard object that can be used to build up a complex object
+
+```typescript
+interface Example {
+  foo: string;
+  bar: number;
+  baz: string;
+}
+
+const base: Partial<Example> = {
+  baz: 'baz'
+};
+
+const wiz = ask.wizard<Example>(base);
+
+await wiz.add('foo', ask.text('What is foo?')); // User input: foo
+
+await wiz.add('bar', ask.number('What is bar?')); // User input: 123
+
+const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
+```
+
+|  #  | Parameter Name | Required | Type         | Default |
+|:---:|:---------------|:---------|:-------------|:--------|
+| *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    |
+
+| Return Type                                                               |
+|---------------------------------------------------------------------------|
+| `{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### section
+
+```typescript
+ask.section(question: string | Breadcrumb, sectionHeader: (lc: LineCounter, separator: () => void) => void | Promise<any>, ...questionFns: QuestionFuncs[]): Promise<UnwrapPromFuncs<QuestionFuncs>>
+```
+
+Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
+
+```typescript
+const ans1 = await ask.text('Question 1:');
+const ans2 = await ask.section('Question 2:',
+  (lc: LineCounter) => {
+    lc.log('Some information');
+  },
+  (qst) => ask.text(qst),
+  () => ask.text('Question 2b:')
+);
+```
+
+During the section, it looks like this:
+```
+Question 1: answer1
+┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
+Some information
+┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
+Question 2: answer2
+Question 2b: answer2b
+```
+
+After the last question in the section has been submitted, it looks like this:
+```
+Question 1: answer1
+Question 2a: [ answer2, answer2b ]
+```
+
+|  #   | Parameter Name  | Required | Type                                                               |
+|:----:|:----------------|:---------|:-------------------------------------------------------------------|
+| *0*  | `question`      | **Yes**  | `string \| Breadcrumb`                                             |
+| *1*  | `sectionHeader` | *No*     | `(lc: LineCounter, separator: () => void) => void \| Promise<any>` |
+| *2…* | `questionFns`   | *No*     | `QuestionFuncs[]`                                                  |
+
+| Return Type                               |
+|-------------------------------------------|
+| `Promise<UnwrapPromFuncs<QuestionFuncs>>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### separator
 
 ```typescript
 ask.separator(version: 'down' | 'none' | 'up', spacing: number, offset: number, width: number): number
@@ -786,54 +798,6 @@ ask.separator('up', 5, 2);
 | Return Type |
 |-------------|
 | `number`    |
-
-<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
-
-### section
-
-```typescript
-ask.section(question: string | Breadcrumb, sectionFn: (lc: LineCounter, separator: () => void) => void | Promise<any>, ...questionFns: QuesT[]): Promise<UnwrapPromFuncs<QuesT>>
-```
-
-Allows information to be displayed before a question, and follow up questions to be asked, while only leaving the 'footprint' of a single question afterwards.
-
-```typescript
-const ans1 = await ask.text('Question 1:');
-const ans2 = await ask.section('Question 2:',
-  (lc: LineCounter) => {
-    lc.log('Some information');
-  },
-  (qst) => ask.text(qst),
-  () => ask.text('Question 2b:')
-);
-
-```
-
-During the section, it looks like this:
-```
-Question 1: answer1
-┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
-Some information
-┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄┄◦┄┄┄┄┄┄
-Question 2: answer2
-Question 2b: answer2b
-```
-
-After the last question in the section has been submitted, it looks like this:
-```
-Question 1: answer1
-Question 2a: [ answer2, answer2b ]
-```
-
-|  #   | Parameter Name | Required | Type                                                               |
-|:----:|:---------------|:---------|:-------------------------------------------------------------------|
-| *0*  | `question`     | **Yes**  | `string \| Breadcrumb`                                             |
-| *1*  | `sectionFn`    | *No*     | `(lc: LineCounter, separator: () => void) => void \| Promise<any>` |
-| *2…* | `questionFns`  | *No*     | `QuesT[]`                                                          |
-
-| Return Type                       |
-|-----------------------------------|
-| `Promise<UnwrapPromFuncs<QuesT>>` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -882,6 +846,18 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
+### AskOptions
+
+```typescript
+ask.AskOptions;
+```
+
+Options to customise the behaviour/appearance of the `ask` prompts.
+
+TODO tables
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
 ### PromptChoice
 
 ```typescript
@@ -901,8 +877,8 @@ A collection of functions to print to the console
     - [getWidth](#getwidth)
     - [pad](#pad)
     - [center](#center)
-    - [left](#left)
-    - [right](#right)
+    - [left](#out_left)
+    - [right](#out_right)
     - [justify](#justify)
     - [leftLines](#leftlines)
     - [centerLines](#centerlines)
@@ -920,20 +896,26 @@ A collection of functions to print to the console
     - [concatLineGroups](#concatlinegroups)
     - [**getResponsiveValue**](#getresponsivevalue)
       - [ResponsiveOption<T>](#responsiveoptiont)
+    - [**ansi**](#ansi)
     - [**getBreadcrumb**](#getbreadcrumb)
       - [Breadcrumb](#breadcrumb)
     - [**getLineCounter**](#getlinecounter)
       - [**LineCounter**](#linecounter)
         - [lc.log](#lclog)
-        - [lc.move](#lcmove)
+        - [lc.move](#out_linecounter_move)
         - [lc.wrap](#lcwrap)
         - [lc.add](#lcadd)
         - [lc.get](#lcget)
         - [lc.getSince](#lcgetsince)
-        - [lc.clear](#lcclear)
-        - [lc.clearBack](#lcclearback)
+        - [lc.clear](#out_linecounter_clear)
+        - [lc.clearBack](#out_linecounter_clearback)
         - [lc.checkpoint](#lccheckpoint)
-        - [lc.clearToCheckpoint](#lccleartocheckpoint)
+        - [lc.clearToCheckpoint](#out_linecounter_cleartocheckpoint)
+        - [**lc.ansi**](#lcansi)
+          - [lc.move](#out_linecounter_ansi_move)
+          - [lc.clear](#out_linecounter_ansi_clear)
+          - [lc.clearBack](#out_linecounter_ansi_clearback)
+          - [lc.clearToCheckpoint](#out_linecounter_ansi_cleartocheckpoint)
     - [**utils**](#out_utils)
       - [getTerminalWidth](#getterminalwidth)
       - [getLines](#out_utils_getlines)
@@ -1029,7 +1011,7 @@ out.center('lines\n1\n2', 5);
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### left
+### <span id="out_left">left</span>
 
 ```typescript
 out.left(item: any, width: number, replaceChar: string, forceWidth: boolean): string
@@ -1061,7 +1043,7 @@ out.left('lines\n1\n2', 5);
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-### right
+### <span id="out_right">right</span>
 
 ```typescript
 out.right(item: any, width: number, replaceChar: string, forceWidth: boolean): string
@@ -1528,6 +1510,507 @@ See getResponsiveValue for an example
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
+### ansi
+
+```typescript
+ansi;
+out.ansi;
+```
+
+ANSI escape codes for terminal manipulation
+
+```typescript
+process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
+```
+
+  - [**ansi**](#ansi)
+    - [**cursor**](#cursor)
+      - [to](#to)
+      - [move](#move)
+      - [up](#out_ansi_cursor_up)
+      - [down](#out_ansi_cursor_down)
+      - [left](#out_ansi_cursor_left)
+      - [right](#out_ansi_cursor_right)
+      - [nextLine](#nextline)
+      - [prevLine](#prevline)
+      - [lineStart](#out_ansi_cursor_linestart)
+      - [setShow](#setshow)
+      - [show](#show)
+      - [hide](#hide)
+      - [save](#save)
+      - [restore](#restore)
+    - [**scroll**](#scroll)
+      - [up](#out_ansi_scroll_up)
+      - [down](#out_ansi_scroll_down)
+    - [**erase**](#erase)
+      - [screen](#screen)
+      - [up](#out_ansi_erase_up)
+      - [down](#out_ansi_erase_down)
+      - [line](#line)
+      - [lineEnd](#lineend)
+      - [lineStart](#out_ansi_erase_linestart)
+      - [lines](#lines)
+      - [reserve](#reserve)
+    - [clear](#out_ansi_clear)
+    - [beep](#beep)
+    - [null](#null)
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+#### cursor
+
+```typescript
+ansi.cursor;
+out.ansi.cursor;
+```
+
+ANSI escape codes for controlling the cursor in the terminal
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### to
+
+```typescript
+ansi.cursor.to(x: number, y: number): string
+out.ansi.cursor.to(x: number, y: number): string
+```
+
+Move the cursor to a specific position
+
+|  #  | Parameter Name | Required | Type     | Default | Description                          |
+|:---:|:---------------|:---------|:---------|:--------|:-------------------------------------|
+| *0* | `x`            | *No*     | `number` | `0`     | The x position to move the cursor to |
+| *1* | `y`            | *No*     | `number` | `0`     | The y position to move the cursor to |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### move
+
+```typescript
+ansi.cursor.move(x: number, y: number): string
+out.ansi.cursor.move(x: number, y: number): string
+```
+
+Move the cursor a specific amount of spaces
+
+|  #  | Parameter Name | Required | Type     | Default | Description                                                               |
+|:---:|:---------------|:---------|:---------|:--------|:--------------------------------------------------------------------------|
+| *0* | `x`            | *No*     | `number` | `0`     | How many spaces to move the cursor horizontally (negative values move left) |
+| *1* | `y`            | *No*     | `number` | `0`     | How many spaces to move the cursor vertically (negative values move up)   |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_cursor_up">up</span>
+
+```typescript
+ansi.cursor.up(count: number): string
+out.ansi.cursor.up(count: number): string
+```
+
+Move the cursor up a specific amount of spaces
+
+|  #  | Parameter Name | Required | Type     | Default | Description                           |
+|:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor up |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_cursor_down">down</span>
+
+```typescript
+ansi.cursor.down(count: number): string
+out.ansi.cursor.down(count: number): string
+```
+
+Move the cursor down a specific amount of spaces
+
+|  #  | Parameter Name | Required | Type     | Default | Description                             |
+|:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor down |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_cursor_left">left</span>
+
+```typescript
+ansi.cursor.left(count: number): string
+out.ansi.cursor.left(count: number): string
+```
+
+Move the cursor left (backward) a specific amount of spaces
+
+|  #  | Parameter Name | Required | Type     | Default | Description                             |
+|:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor left |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_cursor_right">right</span>
+
+```typescript
+ansi.cursor.right(count: number): string
+out.ansi.cursor.right(count: number): string
+```
+
+Move the cursor right (forward) a specific amount of spaces
+
+|  #  | Parameter Name | Required | Type     | Default | Description                              |
+|:---:|:---------------|:---------|:---------|:--------|:-----------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor right |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### nextLine
+
+```typescript
+ansi.cursor.nextLine(count: number): string
+out.ansi.cursor.nextLine(count: number): string
+```
+
+Move the cursor to the beginning of the next line
+
+|  #  | Parameter Name | Required | Type     | Default | Description                            |
+|:---:|:---------------|:---------|:---------|:--------|:---------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to move the cursor down |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### prevLine
+
+```typescript
+ansi.cursor.prevLine(count: number): string
+out.ansi.cursor.prevLine(count: number): string
+```
+
+Move the cursor to the beginning of the previous line
+
+|  #  | Parameter Name | Required | Type     | Default | Description                          |
+|:---:|:---------------|:---------|:---------|:--------|:-------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to move the cursor up |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_cursor_linestart">lineStart</span>
+
+```typescript
+ansi.cursor.lineStart;
+out.ansi.cursor.lineStart;
+```
+
+ANSI escape code to move the cursor to the beginning of the current line
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### setShow
+
+```typescript
+ansi.cursor.setShow(isShow: boolean): string
+out.ansi.cursor.setShow(isShow: boolean): string
+```
+
+Set whether or not the cursor is shown
+
+|  #  | Parameter Name | Required | Type      | Description                               |
+|:---:|:---------------|:---------|:----------|:------------------------------------------|
+| *0* | `isShow`       | **Yes**  | `boolean` | Whether or not the cursor should be shown |
+
+| Return Type |             |
+|-------------|-------------|
+| `string`    | escape code |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### show
+
+```typescript
+ansi.cursor.show;
+out.ansi.cursor.show;
+```
+
+ANSI escape code to show the cursor
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### hide
+
+```typescript
+ansi.cursor.hide;
+out.ansi.cursor.hide;
+```
+
+ANSI escape code to hide the cursor
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### save
+
+```typescript
+ansi.cursor.save;
+out.ansi.cursor.save;
+```
+
+ANSI escape code to save the current cursor position (can be restored with `cursor.restore`)
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### restore
+
+```typescript
+ansi.cursor.restore;
+out.ansi.cursor.restore;
+```
+
+ANSI escape code to restore a previously saved cursor position (saved with `cursor.save`)
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+#### scroll
+
+```typescript
+ansi.scroll;
+out.ansi.scroll;
+```
+
+ANSI escape codes for scrolling the terminal
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_scroll_up">up</span>
+
+```typescript
+ansi.scroll.up(count: number): string
+out.ansi.scroll.up(count: number): string
+```
+
+Scroll the terminal up a specific amount
+
+|  #  | Parameter Name | Required | Type     | Default | Description                           |
+|:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How much to scroll the terminal up by |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_scroll_down">down</span>
+
+```typescript
+ansi.scroll.down(count: number): string
+out.ansi.scroll.down(count: number): string
+```
+
+Scroll the terminal down a specific amount
+
+|  #  | Parameter Name | Required | Type     | Default | Description                             |
+|:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How much to scroll the terminal down by |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+#### erase
+
+```typescript
+ansi.erase;
+out.ansi.erase;
+```
+
+ANSI escape codes for erasing parts of the terminal
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### screen
+
+```typescript
+ansi.erase.screen;
+out.ansi.erase.screen;
+```
+
+ANSI escape code to erase the entire terminal screen
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_erase_up">up</span>
+
+```typescript
+ansi.erase.up(count: number): string
+out.ansi.erase.up(count: number): string
+```
+
+Erase the terminal above the cursor
+
+|  #  | Parameter Name | Required | Type     | Default | Description             |
+|:---:|:---------------|:---------|:---------|:--------|:------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_erase_down">down</span>
+
+```typescript
+ansi.erase.down(count: number): string
+out.ansi.erase.down(count: number): string
+```
+
+Erase the terminal below the cursor
+
+|  #  | Parameter Name | Required | Type     | Default | Description             |
+|:---:|:---------------|:---------|:---------|:--------|:------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### line
+
+```typescript
+ansi.erase.line;
+out.ansi.erase.line;
+```
+
+ANSI escape code to erase the current line
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### lineEnd
+
+```typescript
+ansi.erase.lineEnd;
+out.ansi.erase.lineEnd;
+```
+
+ANSI escape code to erase the current line from the cursor to the end
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### <span id="out_ansi_erase_linestart">lineStart</span>
+
+```typescript
+ansi.erase.lineStart;
+out.ansi.erase.lineStart;
+```
+
+ANSI escape code to erase the current line from the cursor to the start
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### lines
+
+```typescript
+ansi.erase.lines(count: number): string
+out.ansi.erase.lines(count: number): string
+```
+
+Erase a specific number of lines upwards from the cursor
+
+|  #  | Parameter Name | Required | Type     | Default | Description             |
+|:---:|:---------------|:---------|:---------|:--------|:------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+##### reserve
+
+```typescript
+ansi.erase.reserve(count: number): string
+out.ansi.erase.reserve(count: number): string
+```
+
+Make sure the next couple of lines are blank and on the screen
+
+> __Note:__ Erases the current line and returns to it afterwards
+
+|  #  | Parameter Name | Required | Type     | Default | Description               |
+|:---:|:---------------|:---------|:---------|:--------|:--------------------------|
+| *0* | `count`        | *No*     | `number` | `1`     | How many lines to reserve |
+
+| Return Type |              |
+|-------------|--------------|
+| `string`    | escape codes |
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+#### <span id="out_ansi_clear">clear</span>
+
+```typescript
+ansi.clear;
+out.ansi.clear;
+```
+
+ANSI escape code to clear the terminal screen
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+#### beep
+
+```typescript
+ansi.beep;
+out.ansi.beep;
+```
+
+ANSI escape code to make the terminal beep
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
+#### null
+
+```typescript
+ansi.null;
+out.ansi.null;
+```
+
+ANSI escape code for the NULL character. Can be used as a hidden marker.
+
+<p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
+
 ### getBreadcrumb
 
 ```typescript
@@ -1637,8 +2120,10 @@ lc.log('hello'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### lc.move
-Moves the cursor up by a given number of lines
+##### <span id="out_linecounter_move">lc.move</span>
+Moves the cursor down by a given number of lines
+
+Can be negative to move up
 
 |  #  | Parameter Name | Required | Type     | Description                 |
 |:---:|:---------------|:---------|:---------|:----------------------------|
@@ -1729,7 +2214,7 @@ lc.getSince('test-b'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### lc.clear
+##### <span id="out_linecounter_clear">lc.clear</span>
 clears the line counter, and moves the cursor up by the value of the line counter
 
 ```typescript
@@ -1744,7 +2229,7 @@ lc.clear();
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### lc.clearBack
+##### <span id="out_linecounter_clearback">lc.clearBack</span>
 Clears a given number of lines, and updates the line counter
 
 ```typescript
@@ -1756,9 +2241,9 @@ lc.log('line 4'); // 1
 lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name         | Required | Type      | Description                                                                   |
-|:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
-| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
+|  #  | Parameter Name         | Required | Type      | Description                                                               |
+|:---:|:-----------------------|:---------|:----------|:--------------------------------------------------------------------------|
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                              |
 | *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
 
 | Return Type |
@@ -1791,7 +2276,7 @@ lc.getSince('test-b'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### lc.clearToCheckpoint
+##### <span id="out_linecounter_cleartocheckpoint">lc.clearToCheckpoint</span>
 Clear lines up to a previously recorded checkpoint
 
 ```typescript
@@ -1811,6 +2296,85 @@ lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 | Return Type |
 |-------------|
 | `void`      |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+##### lc.ansi
+Get ansi codes for clear/erase functions, and update the line counter in the process.
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### <span id="out_linecounter_ansi_move">lc.move</span>
+Moves the cursor up by a given number of lines
+
+|  #  | Parameter Name | Required | Type     | Description                 |
+|:---:|:---------------|:---------|:---------|:----------------------------|
+| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### <span id="out_linecounter_ansi_clear">lc.clear</span>
+clears the line counter, and moves the cursor up by the value of the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+process.stdout.write(lc.ansi.clear());
+```
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### <span id="out_linecounter_ansi_clearback">lc.clearBack</span>
+Clears a given number of lines, and updates the line counter
+
+```typescript
+const lc = getLineCounter();
+lc.log('line 1'); // 1
+lc.log('line 2'); // 1
+lc.log('line 3'); // 1
+lc.log('line 4'); // 1
+process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
+```
+
+|  #  | Parameter Name         | Required | Type      | Description                                                               |
+|:---:|:-----------------------|:---------|:----------|:--------------------------------------------------------------------------|
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                              |
+| *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### <span id="out_linecounter_ansi_cleartocheckpoint">lc.clearToCheckpoint</span>
+Clear lines up to a previously recorded checkpoint
+
+```typescript
+const lc = getLineCounter();
+lc.log('line 1'); // 1
+lc.log('line 2'); // 1
+lc.checkpoint('test');
+lc.log('line 3'); // 1
+lc.log('line 4'); // 1
+process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
+```
+
+|  #  | Parameter Name | Required | Type     | Description                |
+|:---:|:---------------|:---------|:---------|:---------------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to clear to |
+
+| Return Type |
+|-------------|
+| `string`    |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -2282,7 +2846,7 @@ colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A 
       - [hidden](#hidden)
     - [**Helper Functions**](#helper-functions)
       - [$ / template](#--template)
-      - [clear](#clear)
+      - [clear](#colr_clear)
       - [debug](#debug)
     - [**sets**](#sets)
       - [red](#colr_sets_red)
@@ -3774,6 +4338,8 @@ Equivalent to `colr.black`.
 
 Unaffected by `light`/`dark` modifiers
 
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey0.inverse` ≈ `colr.blackBg`
+
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
 |  #   | Parameter Name | Required | Type       |
@@ -3798,6 +4364,8 @@ Makes the given text __grey__. 1 out of 5 _(where 0 is black and 5 is white)_.
 Equivalent to `colr.light.black.dim`.
 
 Unaffected by `light`/`dark` modifiers
+
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
@@ -3824,6 +4392,8 @@ Equivalent to `colr.dark.white.dim`.
 
 Unaffected by `light`/`dark` modifiers
 
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey2.inverse` ≈ `colr.darkWhiteBg`
+
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
 |  #   | Parameter Name | Required | Type       |
@@ -3848,6 +4418,8 @@ Makes the given text __grey__. 3 out of 5 _(where 0 is black and 5 is white)_.
 Equivalent to `colr.light.white.dim`.
 
 Unaffected by `light`/`dark` modifiers
+
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey3.inverse` ≈ `colr.whiteBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
@@ -3874,6 +4446,8 @@ Equivalent to `colr.dark.white`.
 
 Unaffected by `light`/`dark` modifiers
 
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey4.inverse` ≈ `colr.darkWhiteBg`
+
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
 |  #   | Parameter Name | Required | Type       |
@@ -3898,6 +4472,8 @@ Makes the given text __grey__. 5 out of 5 _(where 0 is black and 5 is white)_.
 Equivalent to `colr.light.white`.
 
 Unaffected by `light`/`dark` modifiers
+
+> __Warning:__ Numbered greys may not inverse as expected. `colr.grey5.inverse` ≈ `colr.whiteBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
@@ -4409,7 +4985,7 @@ colr.blueBg(colr.red.$`A ${'red'} word in a blue world`); // 'A red word in a bl
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
-#### clear
+#### <span id="colr_clear">clear</span>
 
 ```typescript
 colr.clear;

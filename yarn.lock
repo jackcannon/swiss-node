@@ -2537,10 +2537,15 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-swiss-ak@^2.11.0, swiss-ak@^2.11.1:
+swiss-ak@^2.11.0:
   version "2.11.1"
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.11.1.tgz#ea4579a671a7cc83708ddabc338c77eb942e6b01"
   integrity sha512-PIWkWLE9r0FURucrBrLI1st/UQnQwGdu3nQriZRd6aKsPmbbvG+eIXM3PoIyo/F6FtJSygN2w73zWkLZNcwDmA==
+
+swiss-ak@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.13.0.tgz#1f33c3222bc8ee136dfef99f2ac267343e9a7a4a"
+  integrity sha512-tX22fguFo5+ceywZXuHtRqGbTL2+h0L/p07eAgf1i34zbJLoIEsQEEQekVFQZMOojnfZV2DmNAOv1JxOUcIfQQ==
 
 swiss-ak@^2.6.0:
   version "2.6.0"

@@ -3,6 +3,7 @@ import { getLogStr } from './LogTools';
 import { Text } from '../utils/processTableInput';
 import { getLineCounter as getLineCounterOut, LineCounter as LineCounterOut } from './out/lineCounter';
 import { getBreadcrumb as getBreadcrumbOut, Breadcrumb as BreadcrumbOut } from './out/breadcrumb';
+import { ansi as ansiOut } from './out/ansi';
 import { colr } from './colr';
 
 //<!-- DOCS: 200 -->
@@ -395,22 +396,35 @@ export namespace out {
    * @param {boolean} [forceWidth=false]
    * @returns {string}
    */
-  export const wrap = (item: any, width: number = out.utils.getTerminalWidth(), alignment?: AlignType, forceWidth: boolean = false): string =>
-    utils
-      .getLogLines(item)
+  export const wrap = (item: any, width: number = out.utils.getTerminalWidth(), alignment?: AlignType, forceWidth: boolean = false): string => {
+    const args = {
+      item,
+      width: safe.num(width, true, 0),
+      alignment: safe.str(alignment, false, null) as AlignType,
+      forceWidth: safe.bool(forceWidth, false)
+    };
+
+    const lines = utils.getLogLines(args.item);
+
+    if (args.width === 0) return '\n'.repeat(lines.length - 1);
+
+    return lines
       .map((line) => {
-        if (out.getWidth(line) > width) {
+        if (out.getWidth(line) > args.width) {
           let words: string[] = line.split(/(?<=#?[ -]+)/g);
           const rows: string[][] = [];
 
           words = words
             .map((orig: string) => {
-              if (out.getWidth(orig.replace(/\s$/, '')) > width) {
+              if (out.getWidth(orig.replace(/\s$/, '')) > args.width) {
                 let remaining = orig;
                 let result = [];
-                while (out.getWidth(remaining) > width - 1) {
-                  result.push(remaining.slice(0, width - 1) + '-');
-                  remaining = remaining.slice(width - 1);
+
+                if (args.width <= 1) return remaining.slice(0, args.width);
+
+                while (out.getWidth(remaining) > args.width - 1) {
+                  result.push(remaining.slice(0, args.width - 1) + '-');
+                  remaining = remaining.slice(args.width - 1);
                 }
                 result.push(remaining);
                 return result;
@@ -427,7 +441,7 @@ export namespace out {
             const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
             const candText = candidateRow.join('');
 
-            if (out.getWidth(candText) + out.getWidth(word) > width) {
+            if (out.getWidth(candText) + out.getWidth(word) > args.width) {
               rows.push(candidateRow);
               rowStartIndex = Number(wIndex);
             }
@@ -439,13 +453,14 @@ export namespace out {
           return rows
             .map((row) => row.join(''))
             .map((row) => row.replace(/\s$/, ''))
-            .map((row) => (alignment ? align(row, alignment, width, undefined, forceWidth) : row));
+            .map((row) => (args.alignment || args.forceWidth ? align(row, args.alignment || 'left', args.width, undefined, args.forceWidth) : row));
         }
 
         return line;
       })
       .flat()
       .join(NEW_LINE);
+  };
 
   /**<!-- DOCS: out.moveUp ### @ -->
    * moveUp
@@ -707,6 +722,9 @@ export namespace out {
   /**<!-- DOCS-ALIAS: out.LineCounter -->*/
   export type LineCounter = LineCounterOut;
 
+  /**<!-- DOCS-ALIAS: out.ansi -->*/
+  export const ansi = ansiOut;
+
   /**<!-- DOCS: out.utils 291 ### -->
    * utils
    */
@@ -882,11 +900,12 @@ export namespace out {
       const args = {
         text: safe.str(text)
       };
-      const pattern = [
-        '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
-        '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
-      ].join('|');
-      const regex = new RegExp(pattern, 'g');
+
+      const prefix = '[\\u001B\\u009B][[\\]()#;?]*';
+      const pattern1 = '(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)';
+      const pattern2 = '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntpqry=><~])';
+
+      const regex = new RegExp(`${prefix}(?:${pattern1}|${pattern2})`, 'g');
       return args.text.replace(regex, '');
     };
 
@@ -926,3 +945,6 @@ export const getLineCounter = getLineCounterOut;
 
 /**<!-- DOCS-ALIAS: out.LineCounter -->*/
 export type LineCounter = LineCounterOut;
+
+/**<!-- DOCS-ALIAS: out.ansi -->*/
+export const ansi = out.ansi;

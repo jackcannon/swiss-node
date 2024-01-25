@@ -1,10 +1,8 @@
 // src/tools/ask.ts
-import prompts from "prompts";
-import Fuse from "fuse.js";
-import { seconds as seconds4, wait as wait3, fn as fn10, symbols as symbols5 } from "swiss-ak";
+import { seconds as seconds4, wait as wait4 } from "swiss-ak";
 
 // src/tools/out.ts
-import { wait, fn as fn2, ArrayTools as ArrayTools2, zipMax, sortByMapped, safe as safe2 } from "swiss-ak";
+import { wait, fn as fn2, ArrayTools as ArrayTools2, zipMax, sortByMapped, safe as safe3 } from "swiss-ak";
 
 // src/tools/LogTools.ts
 import { inspect } from "util";
@@ -263,9 +261,9 @@ var setConfigs = {
   warning: ["warning", "warningBg"],
   info: ["info", "infoBg"]
 };
-var clear = (text) => {
+var clear = (text2) => {
   const args = {
-    text: safe.str(text)
+    text: safe.str(text2)
   };
   return StringTools.replaceAll(args.text, /\u001B\[\d+m/g, "");
 };
@@ -273,9 +271,9 @@ var getColrFn = (name, styles = [], options) => {
   if (fullStyleConfigs === null) {
     calculateFullStyleConfigs();
   }
-  const result = (...text) => {
+  const result = (...text2) => {
     const args = {
-      text: text.map((item) => simpleStringify(item)).join(" ")
+      text: text2.map((item) => simpleStringify(item)).join(" ")
     };
     const entries = styles.map((value) => {
       if (value instanceof Array) {
@@ -356,9 +354,9 @@ var getColrFn = (name, styles = [], options) => {
       }
     }
   });
-  const debugFn = (text) => {
+  const debugFn = (text2) => {
     const args = {
-      text: safe.str(text)
+      text: safe.str(text2)
     };
     if (debugReplacements === null) {
       populateDebugReplacements();
@@ -415,6 +413,17 @@ var getColrFn = (name, styles = [], options) => {
       value: name
     }
   });
+  const prettyPrint = () => (styles.length ? result : colr.darkCyan)(`[ColrFn: ${name}]`);
+  Object.defineProperties(result, {
+    toString: {
+      enumerable: false,
+      value: prettyPrint
+    },
+    [Symbol.for("nodejs.util.inspect.custom")]: {
+      enumerable: false,
+      value: prettyPrint
+    }
+  });
   return result;
 };
 var colr = getColrFn("colr", [], {
@@ -428,7 +437,7 @@ var LogTools;
   LogTools2.getLogStr = (item) => {
     const inspectList = ["object", "boolean", "number"];
     if (inspectList.includes(typeof item) && !(item instanceof Date)) {
-      return inspect(item, { colors: false, depth: null });
+      return inspect(item, { colors: true, depth: 3, compact: false });
     } else {
       return item + "";
     }
@@ -443,14 +452,167 @@ var processLogContents = LogTools.processLogContents;
 var getLog = LogTools.getLog;
 
 // src/tools/out/lineCounter.ts
-var randomID = () => Math.random().toString(36).substring(2);
+import { StringTools as StringTools2 } from "swiss-ak";
+
+// src/tools/out/ansi.ts
+import { safe as safe2 } from "swiss-ak";
+var ansi = {
+  cursor: {
+    to: (x = 0, y = 0) => {
+      const args = {
+        x: safe2.num(x, true, 0),
+        y: safe2.num(y, true, 0)
+      };
+      if (args.y === 0)
+        return `\x1B[${args.x + 1}G`;
+      return `\x1B[${args.y + 1};${args.x + 1}H`;
+    },
+    move: (x = 0, y = 0) => {
+      const args = {
+        x: safe2.num(x, true, void 0, void 0, 0),
+        y: safe2.num(y, true, void 0, void 0, 0)
+      };
+      let result = "";
+      result += ansi.cursor.right(args.x);
+      result += ansi.cursor.down(args.y);
+      return result;
+    },
+    up: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.down(-args.count);
+      return `\x1B[${args.count}A`;
+    },
+    down: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.up(-args.count);
+      return `\x1B[${args.count}B`;
+    },
+    left: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.right(-args.count);
+      return `\x1B[${args.count}D`;
+    },
+    right: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.left(-args.count);
+      return `\x1B[${args.count}C`;
+    },
+    nextLine: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.prevLine(-args.count);
+      return `\x1B[E`.repeat(args.count);
+    },
+    prevLine: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true)
+      };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.cursor.nextLine(-args.count);
+      return `\x1B[F`.repeat(args.count);
+    },
+    lineStart: `\x1B[G`,
+    setShow: (isShow) => {
+      const args = {
+        isShow: safe2.bool(isShow, true)
+      };
+      return args.isShow ? ansi.cursor.show : ansi.cursor.hide;
+    },
+    show: `\x1B[?25h`,
+    hide: `\x1B[?25l`,
+    save: `\x1B7`,
+    restore: `\x1B8`
+  },
+  scroll: {
+    up: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      return `\x1B[S`.repeat(args.count);
+    },
+    down: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      return `\x1B[T`.repeat(args.count);
+    }
+  },
+  erase: {
+    screen: `\x1B[2J`,
+    up: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      return `\x1B[1J`.repeat(args.count);
+    },
+    down: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      return `\x1B[J`.repeat(args.count);
+    },
+    line: `\x1B[2K`,
+    lineEnd: `\x1B[K`,
+    lineStart: `\x1B[1K`,
+    lines: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      let result = ansi.erase.line;
+      for (let i = 0; i < args.count; i++) {
+        result += ansi.cursor.up() + ansi.erase.line;
+      }
+      if (args.count)
+        result += ansi.cursor.lineStart;
+      return result;
+    },
+    reserve: (count = 1) => {
+      const args = {
+        count: safe2.num(count, true, 0)
+      };
+      return "\n".repeat(Math.max(0, args.count - 1)) + ansi.erase.lines(args.count - 1);
+    }
+  },
+  clear: `\x1Bc`,
+  beep: "\x07",
+  null: "\x1B[0;3p"
+};
+
+// src/tools/out/lineCounter.ts
 var getLineCounter = () => {
   let lineCount = 0;
   const checkpoints = {};
   const log2 = (...args) => {
-    const added = out.utils.getNumLines(args.map(getLogStr).join(" "));
+    const output = args.map(getLogStr).join(" ");
+    const added = out.utils.getNumLines(output);
     lineCount += added;
-    console.log(...args);
+    console.log(output);
     return added;
   };
   const move = (lines) => {
@@ -479,7 +641,7 @@ var getLineCounter = () => {
     const diff = lineCount - checkpointValue;
     return diff > 0 ? diff : 0;
   };
-  const checkpoint = (checkpointID = randomID()) => {
+  const checkpoint = (checkpointID = StringTools2.randomId()) => {
     checkpoints[checkpointID] = lineCount;
     return checkpointID;
   };
@@ -502,6 +664,39 @@ var getLineCounter = () => {
     out.moveUp(lineCount);
     lineCount = 0;
   };
+  const ansiFns = {
+    move: (lines) => {
+      if (lines > 0) {
+        add(lines);
+        return "\n".repeat(lines - 1);
+      }
+      if (lines < 0) {
+        return ansiFns.clearBack(-lines);
+      }
+    },
+    clearToCheckpoint: (checkpointID) => {
+      const checkpointValue = checkpoints[checkpointID];
+      if (checkpointValue === void 0)
+        return;
+      const diff = lineCount - checkpointValue;
+      if (diff > 0) {
+        return ansiFns.clearBack(diff);
+      }
+      return "";
+    },
+    clearBack: (linesToMoveBack, limitToRecordedLines = true) => {
+      if (limitToRecordedLines)
+        linesToMoveBack = Math.min(lineCount, linesToMoveBack);
+      const result = ansi.erase.lines(linesToMoveBack);
+      lineCount -= linesToMoveBack;
+      return result;
+    },
+    clear: () => {
+      const result = ansi.erase.lines(lineCount);
+      lineCount = 0;
+      return result;
+    }
+  };
   const lc = {
     log: log2,
     move,
@@ -512,7 +707,8 @@ var getLineCounter = () => {
     checkpoint,
     clearToCheckpoint,
     clear: clear2,
-    clearBack
+    clearBack,
+    ansi: ansiFns
   };
   return lc;
 };
@@ -553,9 +749,9 @@ var getBreadcrumb = (...baseNames) => {
 var out;
 ((out2) => {
   const NEW_LINE = "\n";
-  out2.getWidth = (text) => {
+  out2.getWidth = (text2) => {
     const args = {
-      text: safe2.str(text)
+      text: safe3.str(text2)
     };
     let result = args.text;
     result = out2.utils.stripAnsi(result);
@@ -604,39 +800,52 @@ var out;
     return func(item, width, replaceChar, forceWidth);
   };
   out2.split = (leftItem, rightItem, width = out2.utils.getTerminalWidth(), replaceChar = " ") => `${leftItem + ""}${replaceChar.repeat(Math.max(0, width - (out2.getWidth(leftItem + "") + out2.getWidth(rightItem + ""))))}${rightItem + ""}`;
-  out2.wrap = (item, width = out2.utils.getTerminalWidth(), alignment, forceWidth = false) => utils.getLogLines(item).map((line) => {
-    if (out2.getWidth(line) > width) {
-      let words = line.split(/(?<=#?[ -]+)/g);
-      const rows = [];
-      words = words.map((orig) => {
-        if (out2.getWidth(orig.replace(/\s$/, "")) > width) {
-          let remaining2 = orig;
-          let result = [];
-          while (out2.getWidth(remaining2) > width - 1) {
-            result.push(remaining2.slice(0, width - 1) + "-");
-            remaining2 = remaining2.slice(width - 1);
+  out2.wrap = (item, width = out2.utils.getTerminalWidth(), alignment, forceWidth = false) => {
+    const args = {
+      item,
+      width: safe3.num(width, true, 0),
+      alignment: safe3.str(alignment, false, null),
+      forceWidth: safe3.bool(forceWidth, false)
+    };
+    const lines = utils.getLogLines(args.item);
+    if (args.width === 0)
+      return "\n".repeat(lines.length - 1);
+    return lines.map((line) => {
+      if (out2.getWidth(line) > args.width) {
+        let words = line.split(/(?<=#?[ -]+)/g);
+        const rows = [];
+        words = words.map((orig) => {
+          if (out2.getWidth(orig.replace(/\s$/, "")) > args.width) {
+            let remaining2 = orig;
+            let result = [];
+            if (args.width <= 1)
+              return remaining2.slice(0, args.width);
+            while (out2.getWidth(remaining2) > args.width - 1) {
+              result.push(remaining2.slice(0, args.width - 1) + "-");
+              remaining2 = remaining2.slice(args.width - 1);
+            }
+            result.push(remaining2);
+            return result;
           }
-          result.push(remaining2);
-          return result;
+          return orig;
+        }).flat();
+        let rowStartIndex = 0;
+        for (let wIndex in words) {
+          let word = words[wIndex].replace(/\s$/, "");
+          const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
+          const candText = candidateRow.join("");
+          if (out2.getWidth(candText) + out2.getWidth(word) > args.width) {
+            rows.push(candidateRow);
+            rowStartIndex = Number(wIndex);
+          }
         }
-        return orig;
-      }).flat();
-      let rowStartIndex = 0;
-      for (let wIndex in words) {
-        let word = words[wIndex].replace(/\s$/, "");
-        const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
-        const candText = candidateRow.join("");
-        if (out2.getWidth(candText) + out2.getWidth(word) > width) {
-          rows.push(candidateRow);
-          rowStartIndex = Number(wIndex);
-        }
+        const remaining = words.slice(rowStartIndex);
+        rows.push(remaining);
+        return rows.map((row) => row.join("")).map((row) => row.replace(/\s$/, "")).map((row) => args.alignment || args.forceWidth ? out2.align(row, args.alignment || "left", args.width, void 0, args.forceWidth) : row);
       }
-      const remaining = words.slice(rowStartIndex);
-      rows.push(remaining);
-      return rows.map((row) => row.join("")).map((row) => row.replace(/\s$/, "")).map((row) => alignment ? out2.align(row, alignment, width, void 0, forceWidth) : row);
-    }
-    return line;
-  }).flat().join(NEW_LINE);
+      return line;
+    }).flat().join(NEW_LINE);
+  };
   out2.moveUp = (lines = 1) => {
     var _a;
     if ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) {
@@ -662,7 +871,7 @@ var out;
   const loadingChars = ArrayTools2.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) => colr.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
-  out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
+  out2.loading = (action = loadingDefault, lines = 1, symbols8 = loadingChars) => {
     let stopped = false;
     let count = 0;
     const runLoop = async () => {
@@ -670,7 +879,7 @@ var out;
         return;
       if (count)
         out2.moveUp(lines);
-      action(symbols6[count++ % symbols6.length]);
+      action(symbols8[count++ % symbols8.length]);
       await wait(150);
       return runLoop();
     };
@@ -682,8 +891,8 @@ var out;
       }
     };
   };
-  out2.limitToLength = (text, maxLength) => utils.joinLines(
-    utils.getLines(text).map((line) => {
+  out2.limitToLength = (text2, maxLength) => utils.joinLines(
+    utils.getLines(text2).map((line) => {
       let specials = "";
       let result = line;
       while (out2.getWidth(result) > maxLength) {
@@ -697,8 +906,8 @@ var out;
       return result + specials;
     })
   );
-  out2.limitToLengthStart = (text, maxLength) => utils.joinLines(
-    utils.getLines(text).map((line) => {
+  out2.limitToLengthStart = (text2, maxLength) => utils.joinLines(
+    utils.getLines(text2).map((line) => {
       let specials = "";
       let result = line;
       while (out2.getWidth(result) > maxLength) {
@@ -712,11 +921,11 @@ var out;
       return specials + result;
     })
   );
-  out2.truncate = (text, maxLength = out2.utils.getTerminalWidth(), suffix = colr.dim("\u2026")) => utils.joinLines(
-    utils.getLines(text).map((line) => out2.getWidth(line) > maxLength ? out2.limitToLength(line, maxLength - out2.getWidth(suffix)) + suffix : line)
+  out2.truncate = (text2, maxLength = out2.utils.getTerminalWidth(), suffix = colr.dim("\u2026")) => utils.joinLines(
+    utils.getLines(text2).map((line) => out2.getWidth(line) > maxLength ? out2.limitToLength(line, maxLength - out2.getWidth(suffix)) + suffix : line)
   );
-  out2.truncateStart = (text, maxLength = out2.utils.getTerminalWidth(), suffix = colr.dim("\u2026")) => utils.joinLines(
-    utils.getLines(text).map((line) => out2.getWidth(line) > maxLength ? suffix + out2.limitToLengthStart(line, maxLength - out2.getWidth(suffix)) : line)
+  out2.truncateStart = (text2, maxLength = out2.utils.getTerminalWidth(), suffix = colr.dim("\u2026")) => utils.joinLines(
+    utils.getLines(text2).map((line) => out2.getWidth(line) > maxLength ? suffix + out2.limitToLengthStart(line, maxLength - out2.getWidth(suffix)) : line)
   );
   out2.concatLineGroups = (...groups) => {
     const maxLen = Math.max(...groups.map((group) => group.length));
@@ -734,35 +943,35 @@ var out;
   };
   out2.getBreadcrumb = getBreadcrumb;
   out2.getLineCounter = getLineCounter;
+  out2.ansi = ansi;
   let utils;
   ((utils2) => {
     utils2.getTerminalWidth = () => {
       var _a;
       return ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) ? process.stdout.columns : 100;
     };
-    const textToString = (text) => text instanceof Array ? utils2.joinLines(text) : text;
-    utils2.getLines = (text) => textToString(text).split(NEW_LINE);
-    utils2.getNumLines = (text) => utils2.getLines(text).length;
-    utils2.getLinesWidth = (text) => Math.max(...utils2.getLines(text).map((line) => out2.getWidth(line)));
+    const textToString = (text2) => text2 instanceof Array ? utils2.joinLines(text2) : text2;
+    utils2.getLines = (text2) => textToString(text2).split(NEW_LINE);
+    utils2.getNumLines = (text2) => utils2.getLines(text2).length;
+    utils2.getLinesWidth = (text2) => Math.max(...utils2.getLines(text2).map((line) => out2.getWidth(line)));
     utils2.getLogLines = (item) => utils2.getLines(getLogStr(item));
     utils2.getNumLogLines = (item) => utils2.getNumLines(getLogStr(item));
     utils2.getLogLinesWidth = (item) => utils2.getLinesWidth(getLogStr(item));
     utils2.joinLines = (lines) => lines.map(fn2.maps.toString).join(NEW_LINE);
     utils2.hasColor = (str) => Boolean(str.match(new RegExp(`\\u001b[[0-9]+m`, "g")));
-    utils2.stripAnsi = (text) => {
+    utils2.stripAnsi = (text2) => {
       const args = {
-        text: safe2.str(text)
+        text: safe3.str(text2)
       };
-      const pattern = [
-        "[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)",
-        "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))"
-      ].join("|");
-      const regex = new RegExp(pattern, "g");
+      const prefix = "[\\u001B\\u009B][[\\]()#;?]*";
+      const pattern1 = "(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)";
+      const pattern2 = "(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntpqry=><~])";
+      const regex = new RegExp(`${prefix}(?:${pattern1}|${pattern2})`, "g");
       return args.text.replace(regex, "");
     };
     utils2.getEmojiRegex = (flags = "g") => {
       const args = {
-        flags: safe2.str(flags)
+        flags: safe3.str(flags)
       };
       return new RegExp(
         /[\u2139\u231A\u231B\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]|\uD83C[\uDFFB-\uDFFF]|[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD\uDEC3-\uDEC5\uDEF0-\uDEF8]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEDC-\uDEDF\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]/,
@@ -773,6 +982,7 @@ var out;
 })(out || (out = {}));
 var getBreadcrumb2 = getBreadcrumb;
 var getLineCounter2 = getLineCounter;
+var ansi2 = out.ansi;
 
 // src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
@@ -811,24 +1021,21 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
       return callback("esc", key);
     }
     if (key == "") {
+      callback("exit", key);
       return process.exit();
     }
-    if (key.length === 1) {
-      return callback(key, key);
-    }
+    return callback(key, key);
   };
   const start = () => {
     process.stdin.setRawMode(true);
     process.stdin.resume();
     process.stdin.setEncoding("utf8");
     process.stdin.on("data", listenFn);
-    process.stdout.write("\x1B[?25l");
   };
   const stop = () => {
     process.stdin.setRawMode(false);
     process.stdin.pause();
     process.stdin.off("data", listenFn);
-    process.stdout.write("\x1B[?25h");
   };
   if (isStart)
     start();
@@ -838,15 +1045,1375 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
   };
 };
 
+// src/tools/ask/basicInput.ts
+import { fn as fn5 } from "swiss-ak";
+
+// src/tools/ask/basicInput/getFullChoices.ts
+var getFullChoices = (choices) => choices.map((choice) => typeof choice === "string" ? { value: choice } : choice).map((choice, index) => ({
+  title: choice.title || "" + choice.value,
+  value: choice.value,
+  preselected: choice.selected || false,
+  index
+}));
+
+// src/tools/ask/basicInput/getScrolledItems.ts
+var getScrolledItems = (items, hovered, lastStartingIndex, maxShow = 10, margin = 2) => {
+  if (items.length <= maxShow) {
+    return {
+      items,
+      startingIndex: 0,
+      hoveredIndex: hovered,
+      doesScrollUp: false,
+      doesScrollDown: false
+    };
+  }
+  const BUFFER = Math.max(0, Math.min(Math.ceil((maxShow - 1) / 2), margin));
+  let startingIndex = lastStartingIndex ?? Math.max(0, hovered - Math.floor(maxShow / 2));
+  startingIndex = Math.max(0, Math.min(hovered - BUFFER, startingIndex));
+  startingIndex = Math.min(items.length - maxShow, Math.max(hovered + (BUFFER + 1) - maxShow, startingIndex));
+  return {
+    items: items.slice(startingIndex, startingIndex + maxShow),
+    startingIndex,
+    hoveredIndex: hovered - startingIndex,
+    doesScrollUp: startingIndex > 0,
+    doesScrollDown: startingIndex + maxShow < items.length
+  };
+};
+
+// src/tools/ask/basicInput/customise.ts
+import { ObjectTools as ObjectTools2, symbols as symbols3 } from "swiss-ak";
+
+// src/tools/ask/basicInput/formatters.ts
+import { ArrayTools as ArrayTools3 } from "swiss-ak";
+
+// src/DELETEME/LOG.ts
+import fsP from "fs/promises";
+import { queue } from "swiss-ak";
+import util from "util";
+var logItems = [];
+var logFile = "./debug/LOG.txt";
+var LOG = async (...args) => {
+  logItems.push(args.map((arg) => util.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
+  await queue.add("log", () => fsP.writeFile(logFile, logItems.join("\n")));
+};
+
+// src/tools/ask/basicInput/formatters.ts
+var SELECT_ALL = Symbol.for("SWISS.NODE.ASK.SELECT.ALL");
+var promptFormatters = {
+  oneLine: (question, value, items, errorMessage, theme, isComplete, isExit) => {
+    const { colours: col, symbols: sym, boxSymbols: box } = theme;
+    const maxWidth = process.stdout.columns - 4;
+    const message = typeof question === "string" ? question : question.get();
+    const specialIcon = col.specialIcon(sym.specialIcon);
+    const questionText = col.questionText(message);
+    const promptIcon = col.promptIcon(out.center(sym.promptIcon, 3));
+    const joinerWidth = out.getWidth(promptIcon);
+    let mainPrompt = out.wrap(`${specialIcon} ${questionText}`, maxWidth);
+    let mainPromptWidth = out.getWidth(mainPrompt.split("\n").at(-1));
+    let valueOut = "";
+    let forceNewLine = false;
+    if (value !== void 0) {
+      let maxWidthValue = maxWidth - mainPromptWidth;
+      forceNewLine = maxWidthValue < maxWidth * 0.333;
+      if (forceNewLine)
+        maxWidthValue = maxWidth - 3;
+      const paddingWidth = (forceNewLine ? 0 : mainPromptWidth) + joinerWidth;
+      const resultLines = out.wrap(value, maxWidthValue).split("\n").map((line, i) => (i === 0 ? "" : " ".repeat(paddingWidth)) + line);
+      valueOut = col.result(resultLines.join("\n"));
+    }
+    let itemsOut = "";
+    if (items !== void 0 && !isExit) {
+      const itemLines = items.split("\n");
+      itemsOut = "\n" + itemLines.map((line) => out.truncate(line, maxWidth)).join("\n");
+    }
+    let errorOut = "";
+    if (errorMessage == null ? void 0 : errorMessage.length) {
+      const errorIcon = sym.errorMsgPrefix;
+      errorOut = (errorMessage == null ? void 0 : errorMessage.length) ? "\n" + col.errorMsg(errorIcon + " " + out.truncate(errorMessage, maxWidth - (2 + out.getWidth(errorIcon)))) : "";
+    }
+    return `${mainPrompt}${forceNewLine ? "\n" : ""}${promptIcon}${valueOut}${itemsOut}${errorOut}`;
+  },
+  halfBox: (question, value, items, errorMessage, theme, isComplete, isExit) => {
+    const { colours: col, symbols: sym, boxSymbols: box } = theme;
+    let hasValue = !value.startsWith(ansi2.null);
+    let hasItems = items !== void 0;
+    if (hasValue && hasItems && isExit)
+      hasValue = false;
+    const maxWidth = process.stdout.columns - 4;
+    const HORI_LINE_LENGTH = 2;
+    const openingIcon = col.openingIcon(sym.openingIcon);
+    const promptIcon = col.promptIcon(sym.promptIcon);
+    const vertLine = col.decoration(box.vertical);
+    const questionLines = out.wrap(question, maxWidth).split("\n");
+    const questionLinesOut = questionLines.map((line, i) => `${i === 0 ? openingIcon : vertLine} ${col.questionText(line)}`).join("\n");
+    let resultLinesOut = "";
+    if (hasValue) {
+      const resultLines = out.wrap(value, maxWidth).split("\n");
+      resultLinesOut = "\n" + resultLines.map((line, i) => `${vertLine} ${promptIcon} ${col.result(line)}`).join("\n");
+    }
+    let itemsOut = "";
+    if (hasItems) {
+      const itemLines = items.split("\n");
+      itemsOut = "\n" + itemLines.map((line) => `${vertLine} ${out.truncate(line, maxWidth)}`).join("\n");
+    }
+    let bothSeparator = "";
+    if (hasValue && hasItems) {
+      const sepLine = box.separatorLeft + box.separatorHorizontal.repeat(HORI_LINE_LENGTH - 1);
+      bothSeparator = "\n" + col.decoration(sepLine);
+    }
+    const endLine = "\n" + col.decoration(box.bottomLeft + box.horizontal.repeat(HORI_LINE_LENGTH - 1));
+    const errorMsgOut = (errorMessage == null ? void 0 : errorMessage.length) ? col.errorMsg(" " + out.truncate(errorMessage, maxWidth - 3)) : "";
+    return `${questionLinesOut}${resultLinesOut}${bothSeparator}${itemsOut}${endLine}${errorMsgOut}`;
+  },
+  halfBoxClosed: (question, value, items, errorMessage, theme, isComplete, isExit) => {
+    if (isComplete || isExit)
+      return promptFormatters.oneLine(question, value, items, errorMessage, theme, isComplete, isExit);
+    return promptFormatters.halfBox(question, value, items, errorMessage, theme, isComplete, isExit);
+  },
+  fullBox: (question, value, items, errorMessage, theme, isComplete, isExit) => {
+    const { colours: col, symbols: sym, boxSymbols: box } = theme;
+    let hasValue = !value.startsWith(ansi2.null);
+    let hasItems = items !== void 0;
+    if (hasValue && hasItems && isExit)
+      hasValue = false;
+    const maxWidth = process.stdout.columns - 4;
+    const maxQuestionWidth = maxWidth - 4;
+    const vertLine = col.decoration(box.vertical);
+    const topLeftCorner = col.decoration(box.topLeft);
+    const bottomLeftCorner = col.decoration(box.bottomLeft);
+    const wrapBoxLine = (line, wrapFn) => {
+      const lineOut = out.left(line, maxWidth - 4, " ", true);
+      return `${vertLine} ${wrapFn(lineOut)} ${vertLine}`;
+    };
+    const questionLines = out.wrap(question, maxQuestionWidth).split("\n");
+    const questionLinesOut = questionLines.map((line, i) => {
+      if (i === 0) {
+        const padChars = box.horizontal.repeat(maxQuestionWidth - out.getWidth(line));
+        return `${topLeftCorner} ${col.questionText(line)} ${col.decoration(padChars + box.topRight)}`;
+      }
+      return wrapBoxLine(line, col.questionText);
+    }).join("\n");
+    let resultLinesOut = "";
+    if (hasValue) {
+      const resultLines = out.wrap(value, maxWidth - 4).split("\n");
+      resultLinesOut = "\n" + resultLines.map((line, i) => wrapBoxLine(line, col.result)).join("\n");
+    }
+    let itemsOut = "";
+    if (hasItems) {
+      const itemLines = items.split("\n");
+      itemsOut = "\n" + itemLines.map((line) => wrapBoxLine(out.truncate(line, maxWidth), colr)).join("\n");
+    }
+    let bothSeparator = "";
+    if (hasValue && hasItems) {
+      bothSeparator = "\n" + col.decoration(`${box.separatorLeft}${box.separatorHorizontal.repeat(maxWidth - 2)}${box.separatorRight}`);
+    }
+    const bottomLineText = (errorMessage == null ? void 0 : errorMessage.length) && !isComplete ? col.errorMsg(out.truncate(" " + errorMessage + " ", maxWidth - 4)) : "";
+    const bottomLineBars = box.horizontal.repeat(maxWidth - 2 - out.getWidth(bottomLineText));
+    const bottomLine = `${bottomLeftCorner}${bottomLineText}${col.decoration(bottomLineBars + box.bottomRight)}`;
+    return `${questionLinesOut}${resultLinesOut}${bothSeparator}${itemsOut}
+${bottomLine}`;
+  },
+  fullBoxClosed: (question, value, items, errorMessage, theme, isComplete, isExit) => {
+    if (isComplete || isExit)
+      return promptFormatters.oneLine(question, value, items, errorMessage, theme, isComplete, isExit);
+    return promptFormatters.fullBox(question, value, items, errorMessage, theme, isComplete, isExit);
+  }
+};
+var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isExit, isBlock, itemOutputTemplate) => {
+  const { colours: col, symbols: sym, boxSymbols: box } = theme;
+  const askOptions2 = getAskOptions();
+  LOG("theme", { theme, itemHover: askOptions2.colours.itemHover, itemHoverIcon: askOptions2.colours.itemHoverIcon });
+  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
+  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+  const colItemHover = isBlock ? col.itemBlockHover : col.itemHover;
+  const colItemHoverIcon = isBlock ? col.itemBlockHoverIcon : col.itemHoverIcon;
+  const itemSelectedIcon = col.itemSelectedIcon(out.left(sym.itemSelectedIcon, 2));
+  const itemHoveredSelectedIcon = isBlock ? colItemHoverIcon(out.left(sym.itemSelectedIcon, 2)) : itemSelectedIcon;
+  const itemUnselectedIcon = col.itemUnselectedIcon(out.left(sym.itemUnselectedIcon, 2));
+  const itemHoverIcon = colItemHoverIcon(sym.itemHoverIcon);
+  const itemHoverIconWidth = out.getWidth(sym.itemHoverIcon);
+  let displayItems = scrolledItems.items;
+  let hoveredIndex = scrolledItems.hoveredIndex;
+  if (isExit) {
+    displayItems = [scrolledItems.items[scrolledItems.hoveredIndex]];
+    hoveredIndex = 0;
+  }
+  const hasScrollbar = !isExit && allItems.length > displayItems.length;
+  let scrollbar = [];
+  if (hasScrollbar) {
+    const totalTrackHeight = displayItems.length;
+    const amountShown = displayItems.length / allItems.length;
+    const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
+    const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+    const barProgress = scrolledItems.startingIndex / (allItems.length - displayItems.length);
+    const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
+    const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
+    const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+    const scrollbarBar = ArrayTools3.repeat(barHeight, scrollBarIcon);
+    if (scrolledItems.doesScrollUp && barHeight >= 2)
+      scrollbarBar[0] = scrollUpIcon;
+    if (scrolledItems.doesScrollDown && barHeight >= 2)
+      scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+    scrollbar = [...ArrayTools3.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools3.repeat(trackEndHeight, scrollTrackIcon)];
+  }
+  return displayItems.map((item, index) => {
+    let scrollIcon = " ";
+    let selectIcon = "";
+    scrollIcon = hasScrollbar ? scrollbar[index] || " " : " ";
+    const isHovered = hoveredIndex === index;
+    const isSelected = type === "multi" && selected !== void 0 && selected.includes(item.index);
+    if (type === "multi" && selected !== void 0) {
+      const selectedIcon = isHovered ? itemHoveredSelectedIcon : itemSelectedIcon;
+      selectIcon = selected.includes(item.index) ? selectedIcon : itemUnselectedIcon;
+    }
+    const hoverIcon = isHovered ? itemHoverIcon : " ".repeat(itemHoverIconWidth);
+    const normalWrapFn = type === "single" ? col.itemUnselected : (selected == null ? void 0 : selected.includes(item.index)) ? col.itemSelected : col.itemUnselected;
+    const wrapFn = isHovered ? colItemHover : item.value === SELECT_ALL ? col.selectAllText : normalWrapFn;
+    return itemOutputTemplate(item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected);
+  }).join("\n");
+};
+var itemsFormatters = {
+  simple: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
+    const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
+      const mainSection = ` ${hoverIcon} ${selectIcon}${out.left(item.title, maxTitle + 1)}`;
+      return `${scrollIcon} ${wrapFn(mainSection)}`;
+    };
+    return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, false, templateFn);
+  },
+  alt: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
+    const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
+      const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
+      return `${scrollIcon} ${wrapFn(mainSection)}`;
+    };
+    return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, false, templateFn);
+  },
+  block: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
+    const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
+      const mainSection = ` ${hoverIcon} ${selectIcon}${out.left(item.title, maxTitle + 1)}`;
+      return `${scrollIcon} ${wrapFn(mainSection)}`;
+    };
+    return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, true, templateFn);
+  },
+  blockAlt: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
+    const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
+      const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
+      return `${scrollIcon} ${wrapFn(mainSection)}`;
+    };
+    return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, true, templateFn);
+  }
+};
+
+// src/tools/ask/basicInput/customise.ts
+var boxSymbols = {
+  thin: {
+    horizontal: "\u2500",
+    vertical: "\u2502",
+    topLeft: "\u250C",
+    topRight: "\u2510",
+    bottomLeft: "\u2514",
+    bottomRight: "\u2518",
+    separatorLeft: "\u251C",
+    separatorHorizontal: "\u2500",
+    separatorRight: "\u2524"
+  },
+  thick: {
+    horizontal: "\u2501",
+    vertical: "\u2503",
+    topLeft: "\u250F",
+    topRight: "\u2513",
+    bottomLeft: "\u2517",
+    bottomRight: "\u251B",
+    separatorLeft: "\u2520",
+    separatorHorizontal: "\u2500",
+    separatorRight: "\u2528"
+  }
+};
+var askOptions = null;
+var populateAskOptions = () => {
+  if (askOptions)
+    return askOptions;
+  askOptions = {
+    general: {
+      lc: getLineCounter2(),
+      boxType: "thick",
+      boolTrueKeys: "Yy",
+      boolFalseKeys: "Nn",
+      maxItemsOnScreen: 10,
+      scrollMargin: 2
+    },
+    text: {
+      boolYes: "yes",
+      boolNo: "no",
+      boolYesNoSeparator: "/",
+      boolYN: "(Y/n)",
+      selectAll: "[Select All]",
+      done: "done",
+      items: (count) => `[${count} items]`,
+      countdown: (s) => `Starting in ${s}s...`
+    },
+    formatters: {
+      formatPrompt: promptFormatters.oneLine,
+      formatItems: itemsFormatters.block
+    },
+    colours: {
+      decoration: {
+        normal: colr.grey1,
+        error: colr.dark.red,
+        done: colr.grey1
+      },
+      questionText: {
+        normal: colr.white.bold,
+        error: colr.white.bold,
+        done: colr.white.bold
+      },
+      specialIcon: {
+        normal: colr.dark.cyan,
+        error: colr.dark.red,
+        done: colr.dark.green
+      },
+      openingIcon: {
+        normal: colr.grey1,
+        error: colr.dark.red,
+        done: colr.grey1
+      },
+      promptIcon: getSetFromSingle(colr.dark.primary.dim),
+      result: getSetFromSingle(colr.dark.yellow),
+      resultText: getSetFromSingle(colr.dark.yellow),
+      resultNumber: getSetFromSingle(colr.dark.cyan),
+      resultBoolean: getSetFromSingle(colr.dark.green),
+      resultArray: getSetFromSingle(colr.lightBlack),
+      errorMsg: getSetFromSingle(colr.red),
+      item: getSetFromSingle(colr.grey4),
+      itemIcon: getSetFromSingle(colr),
+      itemHover: {
+        normal: colr.primary,
+        error: colr.danger,
+        done: colr.primary
+      },
+      itemHoverIcon: getSetFromSingle(colr),
+      itemBlockHover: {
+        normal: colr.primaryBg,
+        error: colr.dangerBg,
+        done: colr.primaryBg
+      },
+      itemBlockHoverIcon: getSetFromSingle(colr.black),
+      itemSelected: getSetFromSingle(colr.grey4),
+      itemSelectedIcon: {
+        normal: colr.primary,
+        error: colr.danger,
+        done: colr.primary
+      },
+      itemUnselected: getSetFromSingle(colr.grey4),
+      itemUnselectedIcon: getSetFromSingle(colr),
+      scrollbarTrack: getSetFromSingle(colr.lightBlack),
+      scrollbarBar: getSetFromSingle(colr.lightBlackBg.black),
+      selectAllText: getSetFromSingle(colr.grey3),
+      boolYNText: getSetFromSingle(colr.grey),
+      countdown: {
+        normal: colr.lightBlack,
+        error: colr.dark.red.dim,
+        done: colr.dark.green.dim
+      },
+      pause: getSetFromSingle(colr.grey4),
+      specialHover: {
+        normal: colr.darkBg.yellowBg.black,
+        error: colr.redBg.black,
+        done: colr.darkBg.yellowBg.black
+      },
+      specialSelected: getSetFromSingle(colr.darkBg.whiteBg.black),
+      specialHighlight: getSetFromSingle(colr.yellow),
+      specialUnselected: getSetFromSingle(colr.dark.white),
+      specialFaded: getSetFromSingle(colr.grey3),
+      specialHint: getSetFromSingle(colr.grey1),
+      specialInactiveHover: getSetFromSingle(colr.darkBg.whiteBg.black),
+      specialInactiveSelected: getSetFromSingle(colr.greyBg.black),
+      specialInactiveHighlight: getSetFromSingle(colr.grey4),
+      specialInactiveUnselected: getSetFromSingle(colr.grey3),
+      specialInactiveFaded: getSetFromSingle(colr.grey2),
+      specialInactiveHint: getSetFromSingle(colr.black),
+      specialInfo: getSetFromSingle(colr),
+      specialErrorMsg: getSetFromSingle(colr.red),
+      specialErrorIcon: getSetFromSingle(colr)
+    },
+    symbols: {
+      specialIcon: {
+        normal: "?",
+        error: symbols3.CROSS,
+        done: symbols3.TICK
+      },
+      openingIcon: {
+        normal: symbols3.TRI_DWN,
+        error: symbols3.TRI_DWN,
+        done: symbols3.TRI_RGT
+      },
+      promptIcon: {
+        normal: symbols3.CHEV_RGT,
+        error: symbols3.CHEV_RGT,
+        done: "\u2023"
+      },
+      errorMsgPrefix: getSetFromSingle("!"),
+      itemIcon: getSetFromSingle(" "),
+      itemHoverIcon: getSetFromSingle(symbols3.CURSOR),
+      itemSelectedIcon: getSetFromSingle(symbols3.RADIO_FULL),
+      itemUnselectedIcon: getSetFromSingle(symbols3.RADIO_EMPTY),
+      scrollUpIcon: getSetFromSingle(symbols3.ARROW_UPP),
+      scrollDownIcon: getSetFromSingle(symbols3.ARROW_DWN),
+      scrollbarTrack: getSetFromSingle("\u2507"),
+      scrollbarBar: getSetFromSingle(" "),
+      separatorLine: getSetFromSingle("\u2504"),
+      separatorNodeDown: getSetFromSingle("\u25BF"),
+      separatorNodeNone: getSetFromSingle("\u25E6"),
+      separatorNodeUp: getSetFromSingle("\u25B5"),
+      specialErrorIcon: getSetFromSingle(" ! ")
+    }
+  };
+  return askOptions;
+};
+var cachedOptionsForStates = {
+  normal: void 0,
+  error: void 0,
+  done: void 0
+};
+var getAskOptions = () => {
+  if (!askOptions)
+    populateAskOptions();
+  return askOptions;
+};
+var getOptionsStateName = (isDone, isError) => isDone ? "done" : isError ? "error" : "normal";
+var getAskOptionsForState2 = (isDone, isError) => {
+  if (!askOptions)
+    populateAskOptions();
+  const state = getOptionsStateName(isDone, isError);
+  if (cachedOptionsForStates[state])
+    return cachedOptionsForStates[state];
+  const getPropertiesForState = (obj) => ObjectTools2.mapValues(obj, (key, value) => {
+    if (typeof value !== "object")
+      return value;
+    const valueSet = value;
+    return valueSet[state];
+  });
+  const optsForState = {
+    general: askOptions.general,
+    text: askOptions.text,
+    formatters: askOptions.formatters,
+    colours: getPropertiesForState(askOptions.colours),
+    symbols: getPropertiesForState(askOptions.symbols),
+    boxSymbols: boxSymbols[askOptions.general.boxType]
+  };
+  cachedOptionsForStates[state] = optsForState;
+  return optsForState;
+};
+var getSetFromSingle = (item) => ({
+  normal: item,
+  error: item,
+  done: item
+});
+var processThemeItem = (item, defaultItem) => {
+  if (item === void 0 || item === null)
+    return defaultItem;
+  if (typeof item !== "object") {
+    return getSetFromSingle(item);
+  }
+  const itemSet = item;
+  if (item && (itemSet.normal !== void 0 || itemSet.error !== void 0 || itemSet.done !== void 0)) {
+    return {
+      normal: itemSet.normal ?? defaultItem.normal,
+      error: itemSet.error ?? defaultItem.error,
+      done: itemSet.done ?? defaultItem.done
+    };
+  }
+  return defaultItem;
+};
+var customise = (options) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa;
+  if (!askOptions)
+    populateAskOptions();
+  askOptions.general = {
+    lc: ((_a = options == null ? void 0 : options.general) == null ? void 0 : _a.lc) ?? askOptions.general.lc,
+    boxType: ((_b = options == null ? void 0 : options.general) == null ? void 0 : _b.boxType) ?? askOptions.general.boxType,
+    boolTrueKeys: ((_c = options == null ? void 0 : options.general) == null ? void 0 : _c.boolTrueKeys) ?? askOptions.general.boolTrueKeys,
+    boolFalseKeys: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.boolFalseKeys) ?? askOptions.general.boolFalseKeys,
+    maxItemsOnScreen: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
+    scrollMargin: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.scrollMargin) ?? askOptions.general.scrollMargin
+  };
+  askOptions.text = {
+    boolYes: ((_g = options == null ? void 0 : options.text) == null ? void 0 : _g.boolYes) ?? askOptions.text.boolYes,
+    boolNo: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolNo) ?? askOptions.text.boolNo,
+    boolYesNoSeparator: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
+    boolYN: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYN) ?? askOptions.text.boolYN,
+    selectAll: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.selectAll) ?? askOptions.text.selectAll,
+    done: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.done) ?? askOptions.text.done,
+    items: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.items) ?? askOptions.text.items,
+    countdown: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.countdown) ?? askOptions.text.countdown
+  };
+  askOptions.formatters = {
+    formatPrompt: (() => {
+      var _a2;
+      if (!((_a2 = options == null ? void 0 : options.formatters) == null ? void 0 : _a2.formatPrompt))
+        return askOptions.formatters.formatPrompt;
+      if (typeof options.formatters.formatPrompt === "string" && promptFormatters[options.formatters.formatPrompt]) {
+        return promptFormatters[options.formatters.formatPrompt];
+      }
+      if (typeof options.formatters.formatPrompt === "function") {
+        return options.formatters.formatPrompt;
+      }
+      return askOptions.formatters.formatPrompt;
+    })(),
+    formatItems: (() => {
+      var _a2;
+      if (!((_a2 = options == null ? void 0 : options.formatters) == null ? void 0 : _a2.formatItems))
+        return askOptions.formatters.formatItems;
+      if (typeof options.formatters.formatItems === "string" && itemsFormatters[options.formatters.formatItems]) {
+        return itemsFormatters[options.formatters.formatItems];
+      }
+      if (typeof options.formatters.formatItems === "function") {
+        return options.formatters.formatItems;
+      }
+      return askOptions.formatters.formatItems;
+    })()
+  };
+  askOptions.colours = {
+    decoration: processThemeItem((_o = options == null ? void 0 : options.colours) == null ? void 0 : _o.decoration, askOptions.colours.decoration),
+    questionText: processThemeItem((_p = options == null ? void 0 : options.colours) == null ? void 0 : _p.questionText, askOptions.colours.questionText),
+    specialIcon: processThemeItem((_q = options == null ? void 0 : options.colours) == null ? void 0 : _q.specialIcon, askOptions.colours.specialIcon),
+    openingIcon: processThemeItem((_r = options == null ? void 0 : options.colours) == null ? void 0 : _r.openingIcon, askOptions.colours.openingIcon),
+    promptIcon: processThemeItem((_s = options == null ? void 0 : options.colours) == null ? void 0 : _s.promptIcon, askOptions.colours.promptIcon),
+    result: processThemeItem((_t = options == null ? void 0 : options.colours) == null ? void 0 : _t.result, askOptions.colours.result),
+    resultText: processThemeItem((_u = options == null ? void 0 : options.colours) == null ? void 0 : _u.resultText, askOptions.colours.resultText),
+    resultNumber: processThemeItem((_v = options == null ? void 0 : options.colours) == null ? void 0 : _v.resultNumber, askOptions.colours.resultNumber),
+    resultBoolean: processThemeItem((_w = options == null ? void 0 : options.colours) == null ? void 0 : _w.resultBoolean, askOptions.colours.resultBoolean),
+    resultArray: processThemeItem((_x = options == null ? void 0 : options.colours) == null ? void 0 : _x.resultArray, askOptions.colours.resultArray),
+    errorMsg: processThemeItem((_y = options == null ? void 0 : options.colours) == null ? void 0 : _y.errorMsg, askOptions.colours.errorMsg),
+    item: processThemeItem((_z = options == null ? void 0 : options.colours) == null ? void 0 : _z.item, askOptions.colours.item),
+    itemIcon: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.itemIcon, askOptions.colours.itemIcon),
+    itemHover: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.itemHover, askOptions.colours.itemHover),
+    itemHoverIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.itemHoverIcon, askOptions.colours.itemHoverIcon),
+    itemBlockHover: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.itemBlockHover, askOptions.colours.itemBlockHover),
+    itemBlockHoverIcon: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
+    itemSelected: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.itemSelected, askOptions.colours.itemSelected),
+    itemSelectedIcon: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
+    itemUnselected: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.itemUnselected, askOptions.colours.itemUnselected),
+    itemUnselectedIcon: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
+    scrollbarTrack: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.scrollbarTrack, askOptions.colours.scrollbarTrack),
+    scrollbarBar: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.scrollbarBar, askOptions.colours.scrollbarBar),
+    selectAllText: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.selectAllText, askOptions.colours.selectAllText),
+    boolYNText: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.boolYNText, askOptions.colours.boolYNText),
+    countdown: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.countdown, askOptions.colours.countdown),
+    pause: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.pause, askOptions.colours.pause),
+    specialHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.specialHover, askOptions.colours.specialHover),
+    specialSelected: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.specialSelected, askOptions.colours.specialSelected),
+    specialHighlight: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.specialHighlight, askOptions.colours.specialHighlight),
+    specialUnselected: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.specialUnselected, askOptions.colours.specialUnselected),
+    specialFaded: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.specialFaded, askOptions.colours.specialFaded),
+    specialHint: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.specialHint, askOptions.colours.specialHint),
+    specialInactiveHover: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.specialInactiveHover, askOptions.colours.specialInactiveHover),
+    specialInactiveSelected: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
+    specialInactiveHighlight: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
+    specialInactiveUnselected: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.specialInactiveUnselected, askOptions.colours.specialInactiveUnselected),
+    specialInactiveFaded: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
+    specialInactiveHint: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.specialInactiveHint, askOptions.colours.specialInactiveHint),
+    specialInfo: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.specialInfo, askOptions.colours.specialInfo),
+    specialErrorMsg: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.specialErrorMsg, askOptions.colours.specialErrorMsg),
+    specialErrorIcon: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialErrorIcon, askOptions.colours.specialErrorIcon)
+  };
+  askOptions.symbols = {
+    specialIcon: processThemeItem((_ca = options == null ? void 0 : options.symbols) == null ? void 0 : _ca.specialIcon, askOptions.symbols.specialIcon),
+    openingIcon: processThemeItem((_da = options == null ? void 0 : options.symbols) == null ? void 0 : _da.openingIcon, askOptions.symbols.openingIcon),
+    promptIcon: processThemeItem((_ea = options == null ? void 0 : options.symbols) == null ? void 0 : _ea.promptIcon, askOptions.symbols.promptIcon),
+    errorMsgPrefix: processThemeItem((_fa = options == null ? void 0 : options.symbols) == null ? void 0 : _fa.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
+    itemIcon: processThemeItem((_ga = options == null ? void 0 : options.symbols) == null ? void 0 : _ga.itemIcon, askOptions.symbols.itemIcon),
+    itemHoverIcon: processThemeItem((_ha = options == null ? void 0 : options.symbols) == null ? void 0 : _ha.itemHoverIcon, askOptions.symbols.itemHoverIcon),
+    itemSelectedIcon: processThemeItem((_ia = options == null ? void 0 : options.symbols) == null ? void 0 : _ia.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
+    itemUnselectedIcon: processThemeItem((_ja = options == null ? void 0 : options.symbols) == null ? void 0 : _ja.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
+    scrollUpIcon: processThemeItem((_ka = options == null ? void 0 : options.symbols) == null ? void 0 : _ka.scrollUpIcon, askOptions.symbols.scrollUpIcon),
+    scrollDownIcon: processThemeItem((_la = options == null ? void 0 : options.symbols) == null ? void 0 : _la.scrollDownIcon, askOptions.symbols.scrollDownIcon),
+    scrollbarTrack: processThemeItem((_ma = options == null ? void 0 : options.symbols) == null ? void 0 : _ma.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarBar: processThemeItem((_na = options == null ? void 0 : options.symbols) == null ? void 0 : _na.scrollbarBar, askOptions.symbols.scrollbarBar),
+    separatorLine: processThemeItem((_oa = options == null ? void 0 : options.symbols) == null ? void 0 : _oa.separatorLine, askOptions.symbols.separatorLine),
+    separatorNodeDown: processThemeItem((_pa = options == null ? void 0 : options.symbols) == null ? void 0 : _pa.separatorNodeDown, askOptions.symbols.separatorNodeDown),
+    separatorNodeNone: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.separatorNodeNone, askOptions.symbols.separatorNodeNone),
+    separatorNodeUp: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.separatorNodeUp, askOptions.symbols.separatorNodeUp),
+    specialErrorIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.specialErrorIcon, askOptions.symbols.specialErrorIcon)
+  };
+  cachedOptionsForStates.normal = void 0;
+  cachedOptionsForStates.error = void 0;
+  cachedOptionsForStates.done = void 0;
+  getAskOptionsForState2(false, false);
+  getAskOptionsForState2(false, true);
+  getAskOptionsForState2(true, false);
+};
+
+// src/tools/ask/errorValidation.ts
+var getErrorInfoFromValidationResult = (validateResult) => {
+  const isError = validateResult instanceof Error || (validateResult == null ? void 0 : validateResult.message) !== void 0 || typeof validateResult === "string" || validateResult === false;
+  const errorMessage = (() => {
+    if (validateResult instanceof Error || (validateResult == null ? void 0 : validateResult.message) !== void 0) {
+      return validateResult.message;
+    }
+    if (typeof validateResult === "string")
+      return validateResult;
+    if (validateResult === false)
+      return "";
+    return void 0;
+  })();
+  return {
+    isError,
+    errorMessage
+  };
+};
+
+// src/tools/ask/basicInput/getAskInput.ts
+var getPrinter = (question, baseOptions, valueOptions, itemsOptions) => {
+  let lastPrint = "";
+  let lastScrollIndex = void 0;
+  const askOptions2 = getAskOptions();
+  const themes = {
+    normal: getAskOptionsForState2(false, false),
+    error: getAskOptionsForState2(false, true),
+    done: getAskOptionsForState2(true, false)
+  };
+  process.stdout.write(ansi2.cursor.save + ansi2.cursor.restore + ansi2.cursor.setShow(baseOptions.showCursor));
+  const getOutputString = (isComplete, value, itemsData, errorMessage, isExit) => {
+    const theme = isComplete ? themes.done : errorMessage !== void 0 ? themes.error : themes.normal;
+    let itemsText = void 0;
+    if (itemsOptions && itemsData) {
+      let { items, hovered, selected } = itemsData;
+      const scrolledItems = getScrolledItems(items, hovered, lastScrollIndex, askOptions2.general.maxItemsOnScreen, askOptions2.general.scrollMargin);
+      itemsText = askOptions2.formatters.formatItems(items, scrolledItems, selected, itemsOptions.selectType, theme, isExit);
+      lastScrollIndex = scrolledItems.startingIndex;
+    }
+    return out.wrap(
+      askOptions2.formatters.formatPrompt(question, (value ?? ansi2.null) + ansi2.cursor.save, itemsText, errorMessage, theme, isComplete, isExit)
+    );
+  };
+  const print = async (value, itemsData, cursorOffset, errorMessage, isComplete, isExit = false) => {
+    const lastPrintLines = lastPrint.split("\n");
+    const numLinesLastPrint = lastPrintLines.length;
+    const lastPrintHasSave = lastPrint.includes(ansi2.cursor.save);
+    const numLinesAfter = lastPrintHasSave ? (lastPrint.split(ansi2.cursor.save)[1] || "").split("\n").length : 1;
+    const output = getOutputString(isComplete, value, itemsData, errorMessage, isExit);
+    const outputLines = output.split("\n");
+    const numLinesOutput = outputLines.length;
+    const outputHasSave = output.includes(ansi2.cursor.save);
+    let writeOutput = "";
+    writeOutput += ansi2.cursor.down(numLinesAfter - 1);
+    writeOutput += ansi2.erase.lines(numLinesLastPrint - 1) + ansi2.cursor.lineStart + ansi2.erase.line;
+    writeOutput += ansi2.erase.reserve(numLinesOutput);
+    writeOutput += output;
+    if (!isComplete && !isExit) {
+      writeOutput += ansi2.cursor.setShow(baseOptions.showCursor);
+      if (outputHasSave)
+        writeOutput += ansi2.cursor.restore + ansi2.cursor.move(-cursorOffset);
+    }
+    process.stdout.write(writeOutput);
+    lastPrint = output;
+    if (isComplete || isExit) {
+      askOptions2.general.lc.add(outputLines.length);
+      if (baseOptions.lc && baseOptions.lc !== askOptions2.general.lc)
+        baseOptions.lc.add(outputLines.length);
+    }
+  };
+  return print;
+};
+var getAskInput = (baseOptions, valueOptions, itemsOptions) => new Promise((resolve, reject) => {
+  const valueData = {
+    value: valueOptions ? valueOptions.initialValue : void 0,
+    cursorOffset: 0
+  };
+  const fullChoices = itemsOptions ? getFullChoices(itemsOptions.items) : [];
+  const itemsData = {
+    items: fullChoices,
+    originalItems: [...fullChoices],
+    hovered: itemsOptions ? itemsOptions.initialHoveredIndex ?? 0 : 0,
+    selected: itemsOptions ? itemsOptions.initialSelectedIndexes ?? [] : []
+  };
+  const questionText = typeof baseOptions.question === "string" ? baseOptions.question : baseOptions.question.get();
+  const validate = (newValue) => {
+    const testValueData = {
+      ...valueData,
+      value: newValue ?? valueData.value
+    };
+    const validateResult = baseOptions.validate(testValueData, itemsData);
+    return getErrorInfoFromValidationResult(validateResult);
+  };
+  const submit = (output, newValue = output) => {
+    valueData.value = newValue;
+    if (!validate().isError) {
+      print(true);
+      process.stdout.write("\n");
+      kl.stop();
+      const transformedValue = (valueOptions == null ? void 0 : valueOptions.submitTransformer(newValue)) ?? output;
+      return resolve(transformedValue);
+    } else {
+      print(false);
+    }
+  };
+  const exit = async (forceNewValue) => {
+    if (forceNewValue) {
+      valueData.value = forceNewValue;
+    }
+    print(false, true);
+    process.stdout.write("\n" + ansi2.cursor.show);
+    kl.stop();
+    process.exit();
+  };
+  const printer = getPrinter(questionText, baseOptions, valueOptions, itemsOptions);
+  const print = (isComplete, isExit = false) => {
+    let valueText;
+    let itemsOut;
+    let { isError, errorMessage } = validate();
+    if (!errorMessage && isExit)
+      errorMessage = "";
+    if (valueOptions) {
+      valueText = valueOptions.displayTransformer(valueData.value, isError, errorMessage, isComplete, isExit);
+    }
+    if (itemsOptions) {
+      if (isComplete || isExit) {
+        valueText = valueData.value;
+      }
+      if (!isComplete || isExit) {
+        itemsOut = itemsData;
+      }
+    }
+    printer(valueText, itemsOut, valueData.cursorOffset, errorMessage, isComplete, isExit);
+  };
+  const kl = getKeyListener((keyName, rawValue) => {
+    if (keyName === rawValue)
+      keyName = "key";
+    if (baseOptions.actions[keyName]) {
+      const actionFn = baseOptions.actions[keyName];
+      actionFn(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
+    }
+  });
+  if (baseOptions.actions.initial) {
+    baseOptions.actions.initial("", "", valueData, itemsData, kl, validate, print, submit, exit);
+  }
+  print(false);
+});
+
+// src/tools/ask/basicInput/getSearchSuggestions.ts
+import { ArrayTools as ArrayTools4, MathsTools, fn as fn4 } from "swiss-ak";
+var WEIGHTS = {
+  MATCH_PER_LETTER: 100,
+  MATCH_CASE_PER_LETTER: 5,
+  NEAR_START_TEXT: 50,
+  NEAR_START_WORD: 50,
+  SHORTER_TEXT: 1
+};
+var getSearchSuggestions = (searchText, items, itemStringify, minScore = 0) => {
+  if (searchText.length === 0)
+    return items;
+  const processed = items.map((value) => ({ value, text: out.utils.stripAnsi(itemStringify(value)) }));
+  const longestText = processed.reduce((acc, item) => item.text.length > acc.length ? item.text : acc, "");
+  const withScores = processed.map(({ value, text: text2 }) => {
+    let score = 0;
+    const reasons = {};
+    if (text2.toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
+      reasons.MATCH_PER_LETTER = searchText.length * WEIGHTS.MATCH_PER_LETTER;
+      score = reasons.MATCH_PER_LETTER;
+      const startIndex = text2.toLowerCase().indexOf(searchText.toLowerCase());
+      const foundSegment = text2.substring(startIndex, startIndex + searchText.length);
+      const searchTextLetters = searchText.split("");
+      const foundLetters = foundSegment.split("");
+      const matchedCasesLetters = searchTextLetters.filter((l, i) => l === foundLetters[i]);
+      const textBefore = text2.substring(0, startIndex);
+      const textAfter = text2.substring(startIndex + searchText.length);
+      const lastSpaceIndex = textBefore.lastIndexOf(" ");
+      reasons.MATCH_CASE_PER_LETTER = Math.round(WEIGHTS.MATCH_CASE_PER_LETTER * matchedCasesLetters.length);
+      reasons.NEAR_START_TEXT = Math.round(WEIGHTS.NEAR_START_TEXT * ((longestText.length - startIndex) / longestText.length));
+      reasons.NEAR_START_WORD = Math.round(WEIGHTS.NEAR_START_WORD * MathsTools.clamp(0, (10 - (startIndex - lastSpaceIndex - 1)) / 10, 1));
+      reasons.SHORTER_TEXT = -Math.round(WEIGHTS.SHORTER_TEXT * text2.length);
+      score += reasons.MATCH_CASE_PER_LETTER;
+      score += reasons.NEAR_START_TEXT;
+      score += reasons.NEAR_START_WORD;
+      score += reasons.SHORTER_TEXT;
+    }
+    return {
+      value,
+      text: text2,
+      score,
+      reasons
+    };
+  });
+  const filtered = withScores.filter((item) => item.score >= minScore);
+  const sorted = ArrayTools4.sortByMapped(filtered, (item) => item.score, fn4.desc);
+  const values = sorted.map((item) => item.value);
+  return values;
+};
+
+// src/tools/ask/basicInput/valueDisplays.ts
+var valueDisplays = {
+  multiselect: (itemsData, isComplete, isError) => {
+    return valueDisplays.array(
+      itemsData.selected.map((index) => itemsData.items[index].title),
+      isComplete,
+      isError
+    );
+  },
+  array: (arr, isComplete, isError) => {
+    const theme = getAskOptionsForState2(isComplete, isError);
+    let display = "";
+    if (arr.length <= 2)
+      display = arr.map((v) => valueDisplays.anyByType((v == null ? void 0 : v.title) ?? (v == null ? void 0 : v.value) ?? v, isComplete, isError)).join(", ");
+    if (arr.length > 2)
+      display = theme.text.items(arr.length);
+    return theme.colours.resultArray(display);
+  },
+  object: (obj, isComplete, isError) => {
+    const usableProps = ["title", "name", "display", "value"];
+    for (let prop of usableProps) {
+      if (obj[prop] !== void 0)
+        return valueDisplays.anyByType(obj[prop], isComplete, isError);
+    }
+    return "";
+  },
+  boolean: (bool, isComplete, isError) => {
+    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState2(isComplete, isError);
+    if (isComplete) {
+      return col.resultBoolean(bool ? txt.boolYes : txt.boolNo);
+    }
+    const withCursor = sym.itemHoverIcon;
+    const withoutCursor = " ".repeat(out.getWidth(sym.itemHoverIcon));
+    const yesCursor = bool ? withCursor : withoutCursor;
+    const noCursor = !bool ? withCursor : withoutCursor;
+    const yes = (bool ? col.itemHover : col.itemUnselected)(yesCursor + " " + txt.boolYes);
+    const no = (!bool ? col.itemHover : col.itemUnselected)(noCursor + " " + txt.boolNo);
+    return `${yes} ${col.decoration(txt.boolYesNoSeparator)} ${no}`;
+  },
+  booleanYN: (bool, isComplete, isError) => {
+    const theme = getAskOptionsForState2(isComplete, isError);
+    if (isComplete) {
+      return bool === "" ? "" : bool ? theme.text.boolYes : theme.text.boolNo;
+    }
+    return theme.colours.boolYNText(`${theme.text.boolYN} `);
+  },
+  number: (num, isComplete, isError) => {
+    const theme = getAskOptionsForState2(isComplete, isError);
+    return theme.colours.resultNumber("" + num);
+  },
+  text: (text2, isComplete, isError) => {
+    const theme = getAskOptionsForState2(isComplete, isError);
+    return theme.colours.resultText(text2);
+  },
+  anyByType: (value, isComplete, isError) => {
+    if (Array.isArray(value)) {
+      const mappedArr = value.map((v) => valueDisplays.anyByType(v, isComplete, isError));
+      return valueDisplays.array(mappedArr, isComplete, isError);
+    }
+    if (typeof value === "object")
+      return valueDisplays.object(value, isComplete, isError);
+    if (typeof value === "boolean")
+      return valueDisplays.boolean(value, isComplete, isError);
+    if (typeof value === "number")
+      return valueDisplays.number(value, isComplete, isError);
+    if (typeof value === "string")
+      return valueDisplays.text(value, isComplete, isError);
+    return value + "";
+  }
+};
+
+// src/tools/ask/basicInput.ts
+var text = async (question, initial, validate, lc) => {
+  const textActions = {
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset) + rawValue + valueData.value.slice(valueData.value.length - valueData.cursorOffset);
+      print(false);
+    },
+    space(...args) {
+      this.key(...args);
+    },
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      submit(valueData.value, valueData.value);
+    },
+    backspace(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset - 1) + valueData.value.slice(valueData.value.length - valueData.cursorOffset);
+      print(false);
+    },
+    delete(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset) + valueData.value.slice(valueData.value.length - valueData.cursorOffset + 1);
+      print(false);
+    },
+    left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.min(valueData.value.length, valueData.cursorOffset + 1);
+      print(false);
+    },
+    right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.max(0, valueData.cursorOffset - 1);
+      print(false);
+    },
+    up(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+    },
+    down(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+    }
+  };
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: true,
+      actions: textActions,
+      validate: (valueData) => {
+        if (!validate)
+          return true;
+        return validate(valueData.value);
+      }
+    },
+    {
+      initialValue: initial || "",
+      displayTransformer: (v) => v,
+      submitTransformer: (v) => v
+    }
+  );
+};
+var autotext = async (question, choices, initial, validate, lc) => {
+  const computeItems = (valueData, itemsData) => {
+    const value = valueData.value;
+    const items = itemsData.originalItems;
+    const searchResults = getSearchSuggestions(value, items, (i) => i.title, 1);
+    itemsData.items = searchResults;
+    itemsData.hovered = 0;
+  };
+  const autotextActions = {
+    initial(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      computeItems(valueData, itemsData);
+      print(false);
+    },
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset) + rawValue + valueData.value.slice(valueData.value.length - valueData.cursorOffset);
+      computeItems(valueData, itemsData);
+      print(false);
+    },
+    space(...args) {
+      this.key(...args);
+    },
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    backspace(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset - 1) + valueData.value.slice(valueData.value.length - valueData.cursorOffset);
+      computeItems(valueData, itemsData);
+      print(false);
+    },
+    delete(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset) + valueData.value.slice(valueData.value.length - valueData.cursorOffset + 1);
+      computeItems(valueData, itemsData);
+      print(false);
+    },
+    left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.min(valueData.value.length, valueData.cursorOffset + 1);
+      print(false);
+    },
+    right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.max(0, valueData.cursorOffset - 1);
+      print(false);
+    },
+    down(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.hovered + 1) % itemsData.items.length;
+      print(false);
+    },
+    up(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.items.length + itemsData.hovered - 1) % itemsData.items.length;
+      print(false);
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      submit(itemsData.items[itemsData.hovered].value, itemsData.items[itemsData.hovered].title);
+    }
+  };
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: true,
+      actions: autotextActions,
+      validate: (valueData, itemsData) => {
+        if (!validate)
+          return true;
+        return validate(itemsData.items[itemsData.hovered].value, itemsData.hovered, valueData.value);
+      }
+    },
+    {
+      initialValue: typeof initial === "string" ? initial : "",
+      displayTransformer: (v) => v,
+      submitTransformer: (v) => v
+    },
+    {
+      selectType: "single",
+      items: choices,
+      initialHoveredIndex: 0,
+      initialSelectedIndexes: []
+    }
+  );
+};
+var number = async (question, initial, validate, lc) => {
+  const numberActions = {
+    space(...args) {
+      this.key(...args);
+    },
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      submit(Number(valueData.value), valueData.value);
+    },
+    backspace(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset - 1) + valueData.value.slice(valueData.value.length - valueData.cursorOffset);
+      print(false);
+    },
+    delete(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = valueData.value.slice(0, valueData.value.length - valueData.cursorOffset) + valueData.value.slice(valueData.value.length - valueData.cursorOffset + 1);
+      print(false);
+    },
+    left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.min(valueData.value.length, valueData.cursorOffset + 1);
+      print(false);
+    },
+    right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.cursorOffset = Math.max(0, valueData.cursorOffset - 1);
+      print(false);
+    },
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const value = valueData.value;
+      const doesntRepeatDecPoint = !value.includes(".") || !/[.]/.test(rawValue);
+      const firstChar = value === "" && /^[\-+]?[0-9.]*?$/.test(rawValue);
+      const normalChar = value !== "" && /^[0-9.]+?$/.test(rawValue);
+      if (doesntRepeatDecPoint && (firstChar || normalChar)) {
+        valueData.value = value.slice(0, value.length - valueData.cursorOffset) + rawValue + value.slice(value.length - valueData.cursorOffset);
+        print(false);
+      }
+    },
+    down(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const numberValue = Number(valueData.value);
+      if (!Number.isNaN(numberValue)) {
+        const increment = Math.pow(10, valueData.cursorOffset);
+        valueData.value = "" + (numberValue - 1);
+        print(false);
+      }
+    },
+    up(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const numberValue = Number(valueData.value);
+      if (!Number.isNaN(numberValue)) {
+        valueData.value = "" + (numberValue + 1);
+        print(false);
+      }
+    }
+  };
+  const normaliseNumber = (value) => {
+    const num = Number(value);
+    if (value === "" || Number.isNaN(num))
+      return 0;
+    return num;
+  };
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: true,
+      actions: numberActions,
+      validate: (valueData) => {
+        if (!validate)
+          return true;
+        return validate(normaliseNumber(valueData.value));
+      }
+    },
+    {
+      initialValue: initial !== void 0 ? "" + initial : "",
+      displayTransformer: (v, isError, errMsg, isComplete) => valueDisplays.number(v, isComplete, isError),
+      submitTransformer: (v) => normaliseNumber(v)
+    }
+  );
+};
+var boolean = async (question, initial = true, validate, lc) => {
+  const options = getAskOptions();
+  const booleanActions = {
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      if (options.general.boolTrueKeys.includes(rawValue)) {
+        valueData.value = true;
+        print(false);
+      }
+      if (options.general.boolFalseKeys.includes(rawValue)) {
+        valueData.value = false;
+        print(false);
+      }
+    },
+    left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = true;
+      print(false);
+    },
+    right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      valueData.value = false;
+      print(false);
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      submit(valueData.value, valueData.value);
+    },
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    }
+  };
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: false,
+      actions: booleanActions,
+      validate: (valueData) => {
+        if (!validate)
+          return true;
+        return validate(valueData.value);
+      }
+    },
+    {
+      initialValue: initial,
+      displayTransformer: (v, isError, errorMessage, isComplete) => {
+        return valueDisplays.boolean(v, isComplete, isError);
+      },
+      submitTransformer: (v) => !!v
+    }
+  );
+};
+var booleanYN = async (question, validate, lc) => {
+  const options = getAskOptions();
+  const booleanYNActions = {
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      if (options.general.boolTrueKeys.includes(rawValue)) {
+        submit(true, true);
+      }
+      if (options.general.boolFalseKeys.includes(rawValue)) {
+        submit(false, false);
+      }
+    },
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit();
+    }
+  };
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: true,
+      actions: booleanYNActions,
+      validate: (valueData) => {
+        if (!validate)
+          return true;
+        if (typeof valueData.value !== "boolean")
+          return true;
+        return validate(valueData.value);
+      }
+    },
+    {
+      initialValue: "",
+      displayTransformer: (v, isError, errorMsg, isComplete, isExit) => {
+        return valueDisplays.booleanYN(v, isComplete, isError);
+      },
+      submitTransformer: (v) => !!v
+    }
+  );
+};
+var select = async (question, choices, initial, validate, lc) => {
+  const selectActions = {
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit(itemsData.items[itemsData.hovered].title);
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      exit(itemsData.items[itemsData.hovered].title);
+    },
+    down(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.hovered + 1) % itemsData.items.length;
+      print(false);
+    },
+    up(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.items.length + itemsData.hovered - 1) % itemsData.items.length;
+      print(false);
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      submit(itemsData.items[itemsData.hovered].value, itemsData.items[itemsData.hovered].title);
+    }
+  };
+  let initialHoveredIndex = 0;
+  if (initial !== void 0) {
+    initialHoveredIndex = choices.indexOf(initial);
+    if (initialHoveredIndex === -1)
+      initialHoveredIndex = choices.map((item) => typeof item === "object" && item.value !== void 0 ? item.value : item).indexOf(initial);
+    if (initialHoveredIndex === -1 && typeof initial === "number" && initial >= 0 && initial < choices.length)
+      initialHoveredIndex = initial;
+    if (initialHoveredIndex === -1)
+      initialHoveredIndex = 0;
+  }
+  return getAskInput(
+    {
+      lc,
+      question,
+      showCursor: false,
+      actions: selectActions,
+      validate: (valueData, itemsData) => {
+        if (!validate)
+          return true;
+        return validate(itemsData.items[itemsData.hovered].value, itemsData.hovered);
+      }
+    },
+    void 0,
+    {
+      selectType: "single",
+      items: choices,
+      initialHoveredIndex,
+      initialSelectedIndexes: []
+    }
+  );
+};
+var multiselect = async (question, choices, initial, validate, lc) => {
+  const SELECT_ALL2 = Symbol.for("SWISS.NODE.ASK.SELECT.ALL");
+  const getIsAllSelected = (itemsData) => itemsData.items.filter((item) => item.value !== SELECT_ALL2).every((item, index) => itemsData.selected.includes(index + 1));
+  const computeItems = (itemsData) => {
+    const isAllSelected = getIsAllSelected(itemsData);
+    LOG("computeItems", { isAllSelected, itemsData });
+    if (isAllSelected && !itemsData.selected.includes(0))
+      itemsData.selected.unshift(0);
+    if (!isAllSelected && itemsData.selected.includes(0))
+      itemsData.selected = itemsData.selected.filter((i) => i !== 0);
+  };
+  const toggleAll = (value, itemsData) => {
+    if (value) {
+      itemsData.selected = itemsData.items.map((v, i) => i);
+    } else {
+      itemsData.selected = [];
+    }
+  };
+  const multiselectActions = {
+    exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const { isError } = validate2();
+      exit(valueDisplays.multiselect(itemsData, false, isError));
+    },
+    esc(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      multiselectActions.exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
+    },
+    key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      LOG("key", rawValue);
+      if ("Aa".includes(rawValue)) {
+        toggleAll(!getIsAllSelected(itemsData), itemsData);
+        print(false);
+      }
+    },
+    space(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const hoveredItem = itemsData.items[itemsData.hovered];
+      if (hoveredItem.value === SELECT_ALL2) {
+        toggleAll(!itemsData.selected.includes(itemsData.hovered), itemsData);
+      } else {
+        if (itemsData.selected.includes(itemsData.hovered)) {
+          itemsData.selected = itemsData.selected.filter((i) => i !== itemsData.hovered);
+        } else {
+          itemsData.selected.push(itemsData.hovered);
+        }
+        computeItems(itemsData);
+      }
+      print(false);
+    },
+    down(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.hovered + 1) % itemsData.items.length;
+      print(false);
+    },
+    up(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      itemsData.hovered = (itemsData.items.length + itemsData.hovered - 1) % itemsData.items.length;
+      print(false);
+    },
+    left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      LOG("left", itemsData);
+      multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
+    },
+    right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      LOG("right", itemsData);
+      multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
+    },
+    return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
+      const { isError } = validate2();
+      const display = valueDisplays.multiselect(itemsData, !isError, isError);
+      submit(
+        itemsData.selected.map((i) => itemsData.items[i].value),
+        display
+      );
+    }
+  };
+  const options = getAskOptions();
+  const allChoices = [{ title: options.text.selectAll, value: SELECT_ALL2 }, ...choices];
+  let initialSelectedIndexes = [];
+  allChoices.forEach((item, index) => {
+    if (typeof item === "object" && item.selected)
+      initialSelectedIndexes.push(index);
+  });
+  const initialArray = [initial].flat();
+  const extractValue = (item) => typeof item === "object" && item.value !== void 0 ? item.value : item;
+  const searchChoices = allChoices.map(extractValue);
+  const initialItems = initialArray.map(extractValue);
+  initialItems.forEach((item) => {
+    const index = searchChoices.indexOf(item);
+    if (index !== -1)
+      initialSelectedIndexes.push(index);
+  });
+  if (initialSelectedIndexes.length === 0 && initialArray.length && typeof initialArray[0] === "number") {
+    initialSelectedIndexes = initialArray;
+  }
+  initialSelectedIndexes = initialSelectedIndexes.filter(fn5.dedupe);
+  const initialHoveredIndex = initialSelectedIndexes[0] ?? 0;
+  LOG("initial", { initialSelectedIndexes });
+  let result = await getAskInput(
+    {
+      lc,
+      question,
+      showCursor: false,
+      actions: multiselectActions,
+      validate: (valueData, itemsData) => {
+        if (!validate)
+          return true;
+        return validate(
+          itemsData.selected.map((i) => itemsData.items[i].value),
+          itemsData.selected
+        );
+      }
+    },
+    void 0,
+    {
+      selectType: "multi",
+      items: allChoices,
+      initialHoveredIndex,
+      initialSelectedIndexes
+    }
+  );
+  result = result.filter((v) => v !== SELECT_ALL2);
+  return result;
+};
+
 // src/tools/ask/trim.ts
-import { getDeferred, hours, ObjectTools as ObjectTools2, seconds, symbols as symbols2 } from "swiss-ak";
+import { getDeferred, hours, ObjectTools as ObjectTools3, seconds, symbols as symbols4 } from "swiss-ak";
 
 // src/tools/table.ts
-import { fn as fn4, ArrayTools as ArrayTools5, StringTools as StringTools2 } from "swiss-ak";
+import { fn as fn7, ArrayTools as ArrayTools7, StringTools as StringTools3 } from "swiss-ak";
 
 // src/utils/processTableInput.ts
-import { zip, fn as fn3, ArrayTools as ArrayTools3 } from "swiss-ak";
-var empty = (numCols, char = "") => ArrayTools3.create(numCols, char);
+import { zip, fn as fn6, ArrayTools as ArrayTools5 } from "swiss-ak";
+var empty = (numCols, char = "") => ArrayTools5.create(numCols, char);
 var showBlank = ["undefined", "null"];
 var showRaw = ["string", "number", "boolean"];
 var itemToString = (item) => {
@@ -897,8 +2464,8 @@ var splitCellsIntoLines = (rows, type) => rows.map((row) => row.map((cell) => ou
 var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight, _mB, marginLeft], maxTotalWidth) => {
   const transposed = zip(...[...cells.header, ...cells.body]);
   const actualColWidths = transposed.map((col) => Math.max(...col.map((cell) => out.utils.getLinesWidth(cell))));
-  const currColWidths = preferredWidths.length ? ArrayTools3.repeat(numCols, ...preferredWidths) : actualColWidths;
-  const currTotalWidth = currColWidths.length ? currColWidths.reduce(fn3.reduces.combine) + (numCols + 1) * 3 : 0;
+  const currColWidths = preferredWidths.length ? ArrayTools5.repeat(numCols, ...preferredWidths) : actualColWidths;
+  const currTotalWidth = currColWidths.length ? currColWidths.reduce(fn6.reduces.combine) + (numCols + 1) * 3 : 0;
   const diff = currTotalWidth - (maxTotalWidth - (marginRight + marginLeft));
   const colWidths = [...currColWidths];
   for (let i = 0; i < diff; i++) {
@@ -907,13 +2474,13 @@ var getDesiredColumnWidths = (cells, numCols, preferredWidths, [_mT, marginRight
   return colWidths;
 };
 var wrapCells = (rows, type, colWidths, truncate) => rows.map((row) => {
-  const wrapped = row.map((cell) => out.utils.joinLines(cell)).map((text, colIndex) => {
+  const wrapped = row.map((cell) => out.utils.joinLines(cell)).map((text2, colIndex) => {
     if (truncate !== false) {
-      return out.truncate(text, colWidths[colIndex], truncate);
+      return out.truncate(text2, colWidths[colIndex], truncate);
     } else {
-      return out.wrap(text, colWidths[colIndex]);
+      return out.wrap(text2, colWidths[colIndex]);
     }
-  }).map((text) => out.utils.getLines(text));
+  }).map((text2) => out.utils.getLines(text2));
   const maxHeight = Math.max(...wrapped.map((cell) => cell.length));
   return wrapped.map((cell) => [...cell, ...empty(maxHeight)].slice(0, maxHeight));
 });
@@ -932,7 +2499,7 @@ var processInput = (cells, opts) => {
 };
 
 // src/utils/tableCharacters.ts
-import { ArrayTools as ArrayTools4 } from "swiss-ak";
+import { ArrayTools as ArrayTools6 } from "swiss-ak";
 var tableCharactersBasic = () => ({
   hTop: ["\u2501", "\u250F", "\u2533", "\u2513"],
   hNor: [" ", "\u2503", "\u2503", "\u2503"],
@@ -944,7 +2511,7 @@ var tableCharactersBasic = () => ({
   bSep: ["\u2500", "\u251C", "\u253C", "\u2524"],
   bBot: ["\u2500", "\u2514", "\u2534", "\u2518"]
 });
-var ovAllCharact = (orig, char) => ArrayTools4.repeat(4, char);
+var ovAllCharact = (orig, char) => ArrayTools6.repeat(4, char);
 var ovSeperators = (orig, char) => [orig[0], char, char, char];
 var ovOuterChars = (orig, char) => [orig[0], char, orig[2], char];
 var normalRows = ["hNor", "bNor"];
@@ -1073,10 +2640,10 @@ var table;
     truncate: false,
     maxWidth: out.utils.getTerminalWidth(),
     ...opts,
-    wrapperFn: typeof opts.wrapperFn !== "function" ? fn4.noact : opts.wrapperFn,
-    wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn4.noact : opts.wrapLinesFn,
+    wrapperFn: typeof opts.wrapperFn !== "function" ? fn7.noact : opts.wrapperFn,
+    wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn7.noact : opts.wrapLinesFn,
     wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? colr.bold : opts.wrapHeaderLinesFn,
-    wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn4.noact : opts.wrapBodyLinesFn,
+    wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn7.noact : opts.wrapBodyLinesFn,
     drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
     drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
     drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
@@ -1092,7 +2659,7 @@ var table;
       return [top, right, bottom, left];
     })(opts.margin)
   });
-  const empty2 = (numCols, char = "") => ArrayTools5.create(numCols, char);
+  const empty2 = (numCols, char = "") => ArrayTools7.create(numCols, char);
   table2.print = (body, header, options = {}) => {
     const lines = table2.getLines(body, header, options);
     if (lines.length) {
@@ -1128,7 +2695,7 @@ var table;
       },
       drawRowLines: false,
       margin: 0,
-      wrapHeaderLinesFn: fn4.noact
+      wrapHeaderLinesFn: fn7.noact
     };
     const lines = table2.getLines(body, header, {
       ...defaultMarkdownOptions,
@@ -1137,9 +2704,9 @@ var table;
     if (options.alignCols) {
       const sepIndex = lines[1].startsWith("|--") ? 1 : lines.findIndex((line) => line.startsWith("|--"));
       const sepLine = lines[sepIndex];
-      const sepSections = sepLine.split("|").filter(fn4.isTruthy);
+      const sepSections = sepLine.split("|").filter(fn7.isTruthy);
       const numCols = sepSections.length;
-      const alignColumns = ArrayTools5.repeat(numCols, ...options.alignCols);
+      const alignColumns = ArrayTools7.repeat(numCols, ...options.alignCols);
       const alignedSepSections = sepSections.map((section2, index) => {
         const algn = alignColumns[index];
         const width = section2.length;
@@ -1167,20 +2734,20 @@ var table;
       numCols,
       colWidths
     } = processInput({ header, body }, opts);
-    const alignColumns = ArrayTools5.repeat(numCols, ...alignCols);
+    const alignColumns = ArrayTools7.repeat(numCols, ...alignCols);
     const tableChars = getTableCharacters(opts);
     const printLine = (row = empty2(numCols), chars = tableChars.bNor, textWrapperFn) => {
       const [norm, strt, sepr, endc] = chars;
-      const pad = StringTools2.repeat(cellPadding, norm);
+      const pad = StringTools3.repeat(cellPadding, norm);
       let aligned = row.map((cell, col) => out.align(cell || "", alignColumns[col], colWidths[col], norm, true));
       if (textWrapperFn)
         aligned = aligned.map((x) => textWrapperFn(x));
       const inner = aligned.join(wrapLinesFn(`${pad}${sepr}${pad}`));
-      const str = wrapLinesFn(`${StringTools2.repeat(marginLeft, " ")}${strt}${pad}`) + inner + wrapLinesFn(`${pad}${endc}${StringTools2.repeat(marginRight, " ")}`);
+      const str = wrapLinesFn(`${StringTools3.repeat(marginLeft, " ")}${strt}${pad}`) + inner + wrapLinesFn(`${pad}${endc}${StringTools3.repeat(marginRight, " ")}`);
       result.push(out.align(wrapperFn(str), align, -1, " ", false));
     };
     if (marginTop)
-      result.push(StringTools2.repeat(marginTop - 1, "\n"));
+      result.push(StringTools3.repeat(marginTop - 1, "\n"));
     if (pHeader.length) {
       if (drawOuter && drawRowLines)
         printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
@@ -1208,7 +2775,7 @@ var table;
     if (drawOuter && drawRowLines)
       printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
     if (marginBottom)
-      result.push(StringTools2.repeat(marginBottom - 1, "\n"));
+      result.push(StringTools3.repeat(marginBottom - 1, "\n"));
     return result;
   };
   const toFullFormatConfig = (config) => ({
@@ -1228,7 +2795,7 @@ var table;
       };
     };
     utils2.transpose = (rows) => {
-      return ArrayTools5.zip(...rows);
+      return ArrayTools7.zip(...rows);
     };
     utils2.concatRows = (cells) => {
       return [...cells.header || [], ...cells.body];
@@ -1314,7 +2881,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
     lc.clear();
     const width = out.utils.getTerminalWidth();
     const totalSpace = width - 2;
-    const handlePositions = ObjectTools2.mapValues(
+    const handlePositions = ObjectTools3.mapValues(
       handles,
       (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
     );
@@ -1328,11 +2895,11 @@ var trim = async (totalFrames, frameRate, options = {}) => {
     const handStart = activeHandle == "start" ? actvHand : inactvHand;
     const handEnd = activeHandle == "end" ? actvHand : inactvHand;
     const drawHandleLabels = () => {
-      const handleLabelsRaw = ObjectTools2.mapValues(handles, (_k, value) => [
+      const handleLabelsRaw = ObjectTools3.mapValues(handles, (_k, value) => [
         ` ${toTimeCode(value, frameRate, showHours)} `,
         ""
       ]);
-      const handleLabelWidths = ObjectTools2.mapValues(
+      const handleLabelWidths = ObjectTools3.mapValues(
         handleLabelsRaw,
         (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
       );
@@ -1340,7 +2907,7 @@ var trim = async (totalFrames, frameRate, options = {}) => {
         start: handleLabelWidths.start > befSpace ? "left" : "right",
         end: handleLabelWidths.end > aftSpace ? "right" : "left"
       };
-      const handleLabels = ObjectTools2.mapValues(
+      const handleLabels = ObjectTools3.mapValues(
         handleLabelsRaw,
         (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
       );
@@ -1393,8 +2960,8 @@ var trim = async (totalFrames, frameRate, options = {}) => {
       if (opts.showInstructions && displayCount < 5) {
         const body = [
           [
-            colr.grey.dim(`[${symbols2.TRI_LFT}/${symbols2.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            colr.grey.dim(`[${symbols2.TRI_UPP}/${symbols2.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
+            colr.grey.dim(`[${symbols4.TRI_LFT}/${symbols4.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
+            colr.grey.dim(`[${symbols4.TRI_UPP}/${symbols4.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
             colr.grey.dim(`[TAB] switch handle`),
             colr.grey.dim(`[ENTER] submit`)
           ]
@@ -1458,30 +3025,30 @@ var trim = async (totalFrames, frameRate, options = {}) => {
 };
 
 // src/tools/ask/fileExplorer.ts
-import * as fsP2 from "fs/promises";
+import * as fsP3 from "fs/promises";
 import {
-  ArrayTools as ArrayTools6,
-  fn as fn7,
+  ArrayTools as ArrayTools8,
+  fn as fn10,
   getDeferred as getDeferred2,
-  MathsTools,
+  MathsTools as MathsTools2,
   milliseconds,
   PromiseTools,
   seconds as seconds2,
   sortNumberedText,
-  StringTools as StringTools3,
-  symbols as symbols3,
+  StringTools as StringTools4,
+  symbols as symbols5,
   TimeTools,
   tryOr as tryOr2,
-  wait as wait2
+  wait as wait3
 } from "swiss-ak";
 
 // src/tools/PathTools.ts
-import { safe as safe3 } from "swiss-ak";
+import { safe as safe4 } from "swiss-ak";
 var PathTools;
 ((PathTools2) => {
   PathTools2.explodePath = (path) => {
     const args = {
-      path: safe3.str(path)
+      path: safe4.str(path)
     };
     const dir = (args.path.match(/(.*[\\\/])*/) || [])[0].replace(/[\\\/]$/, "");
     const filename = (args.path.match(/[^\\\/]*$/) || [])[0];
@@ -1497,9 +3064,9 @@ var PathTools;
 var explodePath = PathTools.explodePath;
 
 // src/utils/actionBar.ts
-import { fn as fn5 } from "swiss-ak";
+import { fn as fn8 } from "swiss-ak";
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
-  const keyList = ids.filter(fn5.isTruthy).filter((key) => config[key]);
+  const keyList = ids.filter(fn8.isTruthy).filter((key) => config[key]);
   const row = keyList.map((key) => {
     const { keys, label } = config[key];
     return ` [ ${keys} ] ${label} `;
@@ -1518,8 +3085,8 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
 
 // src/utils/fsUtils.ts
 import { exec } from "child_process";
-import * as fsP from "fs/promises";
-import { fn as fn6, tryOr } from "swiss-ak";
+import * as fsP2 from "fs/promises";
+import { fn as fn9, tryOr } from "swiss-ak";
 var execute = (command) => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -1535,7 +3102,7 @@ var execute = (command) => {
     });
   });
 };
-var intoLines = (out2) => out2.toString().split("\n").filter(fn6.isTruthy);
+var intoLines = (out2) => out2.toString().split("\n").filter(fn9.isTruthy);
 var getProbe = async (file) => {
   const stdout = await tryOr("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
@@ -1551,7 +3118,7 @@ var getProbe = async (file) => {
   };
 };
 var mkdir2 = (dir) => {
-  return fsP.mkdir(dir, { recursive: true });
+  return fsP2.mkdir(dir, { recursive: true });
 };
 var findDirs = async (dir = ".") => {
   const newDir = PathTools.trailSlash(dir);
@@ -1611,7 +3178,7 @@ var forceLoadPathContents = async (path) => {
     }
     if (pathType === "f") {
       const [stat2, probe] = await Promise.all([
-        tryOr2(void 0, () => fsP2.stat(path)),
+        tryOr2(void 0, () => fsP3.stat(path)),
         tryOr2(void 0, () => getProbe(path))
       ]);
       contents = { ...contents, info: { stat: stat2, probe } };
@@ -1720,7 +3287,7 @@ var getFileIcon = (ext) => {
 };
 var humanFileSize = (size) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
+  return MathsTools2.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
@@ -1730,7 +3297,7 @@ var getFilePanel = (path, panelWidth, maxLines) => {
   result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${StringTools3.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${StringTools4.capitalise(category)} ` : ""}File`), panelWidth));
   result.push(out.center(colr.grey1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
@@ -1832,7 +3399,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     display();
     if (!key)
       return;
-    await wait2(milliseconds(100));
+    await wait3(milliseconds(100));
     if (!loading) {
       pressed = void 0;
       display();
@@ -1847,10 +3414,10 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const fullPath = join(columnPath, name);
       const isSelected = isMulti && multiSelected.has(fullPath);
       const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-      const template = (text) => `${prefix}${text} ${symbol} `;
+      const template = (text2) => `${prefix}${text2} ${symbol} `;
       const extraChars = out.getWidth(template(""));
       const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-      let wrapFn = fn7.noact;
+      let wrapFn = fn10.noact;
       if (isHighlighted) {
         if (isActiveColumn) {
           wrapFn = isSelected ? cursorOnSelectedWrapFn : cursorWrapFn;
@@ -1879,16 +3446,16 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       },
       multi: {
         d: {
-          dir: formatter("\u203A", colr.grey5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `),
+          dir: formatter("\u203A", colr.grey5, ` ${selectedIconWrapFn(symbols5.RADIO_FULL)} `, ` ${symbols5.RADIO_EMPTY} `),
           file: formatter(" ", colr.dim, "   ", "   ")
         },
         f: {
           dir: formatter("\u203A", colr.grey3, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
+          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(symbols5.RADIO_FULL)} `, ` ${symbols5.RADIO_EMPTY} `)
         },
         df: {
           dir: formatter("\u203A", colr.grey5, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(symbols3.RADIO_FULL)} `, ` ${symbols3.RADIO_EMPTY} `)
+          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(symbols5.RADIO_FULL)} `, ` ${symbols5.RADIO_EMPTY} `)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
@@ -1924,7 +3491,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools6.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools8.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
     const termWidth = out.utils.getTerminalWidth();
     const tableLines = table.getLines([columns], void 0, {
       wrapLinesFn: colr.grey1,
@@ -1949,7 +3516,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     })();
     const actionBar = getFEActionBar(isMulti, pressed);
     lc.clear();
-    lc.wrap(1, () => ask.imitate(false, question, " "));
+    lc.wrap(1, () => ask.imitate(question, " ", false));
     lc.log();
     lc.log(infoLine);
     lc.log(tableOut);
@@ -2083,7 +3650,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       kl.stop();
       lc.clear();
       const result = join(basePath, newFileName);
-      ask.imitate(true, question, result);
+      ask.imitate(question, result, true);
       return deferred.resolve([result]);
     },
     submitSelect: () => {
@@ -2095,11 +3662,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       lc.clear();
       if (isMulti) {
         const result = Array.from(multiSelected);
-        ask.imitate(true, question, result);
+        ask.imitate(question, result, true);
         return deferred.resolve(result);
       } else {
         const result = currentPath;
-        ask.imitate(true, question, result);
+        ask.imitate(question, result, true);
         return deferred.resolve([currentPath]);
       }
     }
@@ -2147,7 +3714,7 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 import { getDeferred as getDeferred3, getTimer } from "swiss-ak";
 
 // src/utils/dynDates.ts
-import { DAY, MathsTools as MathsTools2, days, sortByMapped as sortByMapped2 } from "swiss-ak";
+import { DAY, MathsTools as MathsTools3, days, sortByMapped as sortByMapped2 } from "swiss-ak";
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -2170,9 +3737,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = MathsTools2.clamp(notNaN(inMo), 1, 12);
+  const outMo = MathsTools3.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = MathsTools2.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = MathsTools3.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {
@@ -2252,7 +3819,18 @@ var sectionStyles = {
     primary: colr.darkBg.whiteBg.black
   }
 };
-var getStyles = (active) => active ? sectionStyles.sectActive : sectionStyles.sectInactive;
+var getSpecialColours = (isActive, isComplete, isError) => {
+  const { colours: col } = getAskOptionsForState2(isComplete, isError);
+  return {
+    hover: isActive ? col.specialHover : col.specialInactiveHover,
+    selected: isActive ? col.specialSelected : col.specialInactiveSelected,
+    highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
+    unselected: isActive ? col.specialUnselected : col.specialInactiveUnselected,
+    faded: isActive ? col.specialFaded : col.specialInactiveFaded,
+    hint: isActive ? col.specialHint : col.specialInactiveHint,
+    info: col.specialInfo
+  };
+};
 
 // src/tools/ask/datetime/date.ts
 var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -2269,29 +3847,31 @@ var getMonthCells = (year, month, _dy) => {
   const byRow = range(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
   return byRow;
 };
-var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy) => {
-  const styles = getStyles(active);
+var combineWraps = (...wraps) => (s) => wraps.reduce((acc, wrap) => wrap(acc), s);
+var getMonthTable = (active, cursors, selected, isRange, slice, isError, year, month, _dy) => {
+  const theme = getAskOptionsForState2(false, isError);
+  const col = getSpecialColours(active, false, isError);
   const selCursor = cursors[selected];
   const monthCells = getMonthCells(year, month);
   const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
-  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(styles.mid, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(styles.normal, void 0, void 0, true)];
+  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
+  const formatDim = [...formatNonMonth, table.utils.getFormat(col.unselected, void 0, void 0, true)];
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat((s) => colr.reset(styles.primary(s)), y, x)));
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat(combineWraps(col.hover, colr.reset), y, x)));
   }
   if (isRange) {
     const otherCursor = cursors[selected === 0 ? 1 : 0];
     if (isSameMonth([year, month, 1], otherCursor)) {
       const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat((s) => colr.reset(styles.secondary(s)), otherCursorCoor[1], otherCursorCoor[0]));
+      formatCursor.push(table.utils.getFormat(combineWraps(col.selected, colr.reset), otherCursorCoor[1], otherCursorCoor[0]));
     }
     const inter = getIntermediaryDates(cursors[0], cursors[1]);
     const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
     const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
-    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(styles.tertiary, y, x));
+    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(combineWraps(col.highlight, colr.reset), y, x));
     formatCursor.push(...formatInter);
   }
   const body = monthCells.map((row) => row.map((val) => ` ${(Math.abs(val) + "").padStart(2)} `)).map((row) => row.slice(...slice));
@@ -2302,27 +3882,27 @@ var getMonthTable = (active, cursors, selected, isRange, slice, year, month, _dy
     drawRowLines: false,
     alignCols: ["right"],
     format: [...formatCursor, ...formatDim],
-    wrapLinesFn: styles.mid,
+    wrapLinesFn: theme.colours.decoration,
     overrideHorChar: "\u2500",
     cellPadding: 0
   });
   const monthWidth = out.getWidth(lines[0]);
   const dispYear = out.getWidth(lines[0]) > 20 ? ` ${year}` : "";
   const dispMonth = monthNames[month - 1].slice(0, out.getWidth(lines[0]) - 2);
-  const getTitle = (text, prefix, suffix) => {
-    const resPrefix = active ? styles.dark(prefix) : "";
-    const resSuffix = active ? styles.dark(suffix) : "";
-    const resText = out.center(styles.normal(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
+  const getTitle = (text2, prefix, suffix) => {
+    const resPrefix = active ? col.hint(prefix) : "";
+    const resSuffix = active ? col.hint(suffix) : "";
+    const resText = out.center(col.unselected(text2), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
-  const titleYear = active ? getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ") : out.center(styles.dark(dispYear), monthWidth);
+  const titleYear = getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ");
   const titleMonth = getTitle(dispMonth, "  \u25C0 A", "D \u25B6  ");
   return {
     table: [titleYear, titleMonth, ...lines],
     coors
   };
 };
-var dateHandler = (isActive, initial, displayCb, isRange = false) => {
+var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, isRange = false) => {
   const MAX_SELECTED = isRange ? 2 : 1;
   let selected = 0;
   let cursors = [...initial];
@@ -2345,13 +3925,16 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
   };
   const setCursor = (newCursor, skipDisplay = false) => {
     cursors[selected] = newCursor;
+    valueChangeCb(isRange ? sortDynDates(cursors) : cursors);
     recalc(skipDisplay);
   };
   const display = () => {
+    const { isError, errorMessage } = getErrorInfo();
+    LOG("dateHandler.display", { isError, errorMessage, cursors, selected, active });
     const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
-    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], ...cursors[selected]);
-    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], ...prevMonth);
-    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], ...nextMonth);
+    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
+    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
+    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
     displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
   };
   const userActions = {
@@ -2392,6 +3975,8 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
       if (num !== void 0)
         return userActions.setDate(num);
       switch (key) {
+        case "esc":
+          return process.exit(0);
         case "tab":
           return userActions.switchSelected();
         case "right":
@@ -2418,16 +4003,17 @@ var dateHandler = (isActive, initial, displayCb, isRange = false) => {
 
 // src/tools/ask/datetime/time.ts
 import { range as range2 } from "swiss-ak";
-var getSingleTimeDial = (value, sectionActive, dialActive, max, label) => {
-  const wrappers = getStyles(sectionActive);
-  const wrapFns = [wrappers.mid, wrappers.normal, dialActive ? wrappers.primary : wrappers.secondary];
+var getSingleTimeDial = (value, sectionActive, dialActive, max, label, isError) => {
+  const theme = getAskOptionsForState2(false, isError);
+  const col = getSpecialColours(sectionActive, false, isError);
+  const wrapFns = [col.faded, col.unselected, dialActive ? col.hover : col.selected];
   const showExtra = wrapFns.length - 1;
   const dialNums = range2(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
   const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
-  const lines = out.centerLines([wrappers.normal(label), wrappers.dark("\u25E2\u25E3"), ...dial, wrappers.dark("\u25E5\u25E4")], 4);
+  const lines = out.centerLines([col.unselected(label), theme.colours.decoration("\u25E2\u25E3"), ...dial, theme.colours.decoration("\u25E5\u25E4")], 4);
   return lines;
 };
-var timeHandler = (isActive, initial, displayCb) => {
+var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) => {
   const MAX_COL = 2;
   const MAX_VALUES = [24, 60, 60];
   const labels = ["hh", "mm", "ss"];
@@ -2435,7 +4021,9 @@ var timeHandler = (isActive, initial, displayCb) => {
   let cursor = 0;
   let active = isActive;
   const display = () => {
-    const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i]));
+    const { isError, errorMessage } = getErrorInfo();
+    LOG("timeHandler.display", { isError, errorMessage, current, cursor, active });
+    const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
     const lines = out.concatLineGroups(...dials);
     const padded = out.centerLines(lines);
     displayCb(padded);
@@ -2444,15 +4032,18 @@ var timeHandler = (isActive, initial, displayCb) => {
     set: (val) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + val) % max;
+      valueChangeCb(current);
       display();
     },
     moveHor: (dir) => {
       cursor = (MAX_COL + cursor + dir) % MAX_COL;
+      valueChangeCb(current);
       display();
     },
     moveVer: (dir) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + current[cursor] + dir) % max;
+      valueChangeCb(current);
       display();
     }
   };
@@ -2467,6 +4058,8 @@ var timeHandler = (isActive, initial, displayCb) => {
       if (num !== void 0)
         return userActions.set(num);
       switch (key) {
+        case "esc":
+          return process.exit(0);
         case "right":
           return userActions.moveHor(1);
         case "left":
@@ -2481,8 +4074,30 @@ var timeHandler = (isActive, initial, displayCb) => {
   return result;
 };
 
+// src/tools/ask/imitate.ts
+var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
+  const theme = getAskOptionsForState2(isComplete, isError);
+  const resultText = valueDisplays.anyByType(result, isComplete, isError);
+  const output = theme.formatters.formatPrompt(question, resultText, void 0, errorMsg, theme, isComplete, false);
+  if (lc) {
+    const lines = output.split("\n");
+    lc.add(lines.length);
+  }
+  return output;
+};
+var imitate = (question, result, isComplete = true, isError = false, lc) => {
+  const options = getAskOptions();
+  const output = getImitateOutput(question, result, isComplete, isError);
+  console.log(output);
+  const lines = output.split("\n");
+  if (options.general.lc)
+    options.general.lc.add(lines.length);
+  if (lc && lc !== options.general.lc)
+    lc.add(lines.length);
+};
+
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = getTimer("DEBUG", false, colr.dark.red, colr);
+var DEBUG_TIMER = getTimer("DEBUG", false, colr.dark.red);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -2518,14 +4133,25 @@ var actionConfig = {
     label: "change year/month"
   }
 };
-var getDTActionBar = (isDateOn, isTimeOn, isRange, active) => {
+var getDTActionBar = (isDateOn, isTimeOn, isRange, active, isError) => {
+  const theme = getAskOptionsForState2(false, isError);
   const keys = [
     isDateOn && !isTimeOn && isRange ? "tab-range" : void 0,
     isDateOn && isTimeOn && !isRange ? "tab-section" : void 0,
     ...active === "date" ? ["nums-date", "move-date", "qead-date"] : [],
     ...active === "time" ? ["nums-time", "move-time-ver", "move-time-hor"] : []
   ].filter((id) => id && actionConfig[id]);
-  return getActionBar(keys, actionConfig);
+  return theme.colours.specialInfo(getActionBar(keys, actionConfig));
+};
+var getDTErrorLine = ({ isError, errorMessage }) => {
+  if (!isError)
+    return "";
+  const theme = getAskOptionsForState2(false, isError);
+  const maxWidth = out.utils.getTerminalWidth() - (out.getWidth(theme.symbols.specialErrorIcon) + 2) * 2;
+  const icon = theme.colours.specialErrorIcon(theme.symbols.specialErrorIcon);
+  const msg = out.truncate(errorMessage, maxWidth);
+  const text2 = `${icon} ${msg} ${icon}`;
+  return out.center(theme.colours.specialErrorMsg(text2));
 };
 var getCurrDynDate = () => dateToDynDate(new Date());
 var getCurrDynTime = () => {
@@ -2541,16 +4167,34 @@ var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange) => {
   const timeStr = isTimeOn ? displayTime(time2) : void 0;
   return [dateStr, timeStr].filter((v) => v).join(" @ ");
 };
-var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime()) => {
-  const lc = getLineCounter();
+var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime(), convertFn, validateFn, lc) => {
+  const opts = getAskOptions();
+  const tempLC = getLineCounter();
   const deferred = getDeferred3();
   const isSwitchable = isDateOn && isTimeOn;
   let activeHandler = isDateOn ? "date" : "time";
+  let errorInfo = { isError: false, errorMessage: void 0 };
+  const getErrorInfo = () => errorInfo;
+  const valueCache = {
+    date: initialDate,
+    time: initialTime
+  };
+  const onValueChange = (key) => (newValue) => {
+    valueCache[key] = newValue;
+    errorInfo = runValidation();
+  };
+  const getResult = (dateData = valueCache.date, timeData = valueCache.time) => convertFn([dateData, timeData]);
+  const runValidation = (dateData = valueCache.date, timeData = valueCache.time) => {
+    const validateResult = validateFn == null ? void 0 : validateFn(getResult(dateData, timeData));
+    const info = getErrorInfoFromValidationResult(validateResult);
+    return info;
+  };
   const displayCache = { date: [], time: [] };
   const onDisplay = (key) => (lines) => {
     DEBUG_TIMER.start("overall display");
     displayCache[key] = lines;
     const { date: date2, time: time2 } = displayCache;
+    const { isError, errorMessage } = errorInfo;
     const sections = [];
     if (date2.length)
       sections.push(date2);
@@ -2560,21 +4204,23 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
       sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
-    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler);
-    lc.clear();
-    lc.wrap(1, () => ask.imitate(false, questionText, outState));
-    lc.log();
-    lc.log(outMain);
-    lc.log();
-    lc.log(outAction);
+    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
+    const outError = getDTErrorLine(errorInfo);
+    let output = "";
+    output += getImitateOutput(questionText, outState, false, isError, void 0);
+    output += "\n";
+    output += "\n" + outMain;
+    output += "\n" + outError;
+    output += "\n" + outAction;
+    tempLC.log(tempLC.ansi.clear() + output);
     if (IS_DEBUG) {
-      lc.add(DEBUG_TIMER.log());
+      tempLC.add(DEBUG_TIMER.log());
     }
     DEBUG_TIMER.reset();
   };
   const handlers = {
-    date: isDateOn && dateHandler(activeHandler === "date", initialDate, onDisplay("date"), isRange) || void 0,
-    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, onDisplay("time")) || void 0
+    date: isDateOn && dateHandler(activeHandler === "date", initialDate, onValueChange("date"), getErrorInfo, onDisplay("date"), isRange) || void 0,
+    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, onValueChange("time"), getErrorInfo, onDisplay("time")) || void 0
   };
   const eachHandler = (cb) => Object.entries(handlers).filter(([key, handler]) => handler).forEach(([key, handler]) => cb(key, handler));
   const switchActive = () => {
@@ -2587,11 +4233,14 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
     var _a, _b;
     const dates = (_a = handlers.date) == null ? void 0 : _a.getValue();
     const time2 = (_b = handlers.time) == null ? void 0 : _b.getValue();
+    const { isError } = runValidation(dates, time2);
+    if (isError)
+      return;
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     kl.stop();
-    lc.clear();
-    ask.imitate(false, questionText, outState);
-    deferred.resolve([dates, time2]);
+    tempLC.clear();
+    ask.imitate(questionText, outState, true, false, lc);
+    deferred.resolve(convertFn([dates, time2]));
   };
   const numberInputter = getNumberInputter();
   const kl = getKeyListener((key) => {
@@ -2627,66 +4276,58 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
   eachHandler((key, handler) => handler.triggerDisplay());
   return deferred.promise;
 };
-var date = async (questionText, initial) => {
+var date = async (questionText, initial, validate, lc) => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
-  const [[ddate]] = await overallHandler(questionText, true, false, false, [initDate, initDate]);
-  return dynDateToDate(ddate);
+  const convertToDateObj = ([[ddate]]) => dynDateToDate(ddate);
+  return overallHandler(questionText, true, false, false, [initDate, initDate], void 0, convertToDateObj, validate, lc);
 };
-var time = async (questionText, initial) => {
-  const initDateObj = initial || new Date();
-  const initDate = dateToDynDate(initDateObj);
-  const initTime = dateToDynTime(initDateObj);
-  const [_d, dtime] = await overallHandler(questionText, false, true, false, [initDate, initDate], initTime);
-  return dynDateToDate(dateToDynDate(initDateObj), dtime);
-};
-var datetime = async (questionText, initial) => {
+var time = async (questionText, initial, validate, lc) => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
-  const [[ddate], dtime] = await overallHandler(questionText, true, true, false, [initDate, initDate], initTime);
-  return dynDateToDate(ddate, dtime);
+  const convertToDateObj = ([_d, dtime]) => dynDateToDate(dateToDynDate(initDateObj), dtime);
+  return overallHandler(questionText, false, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
 };
-var dateRange = async (questionText, initialStart, initialEnd) => {
+var datetime = async (questionText, initial, validate, lc) => {
+  const initDateObj = initial || new Date();
+  const initDate = dateToDynDate(initDateObj);
+  const initTime = dateToDynTime(initDateObj);
+  const convertToDateObj = ([[ddate], dtime]) => dynDateToDate(ddate, dtime);
+  return overallHandler(questionText, true, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
+};
+var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => {
   const initDateObj1 = initialStart || new Date();
   const initDateObj2 = initialEnd || new Date();
   const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)];
-  const [[ddate1, ddate2]] = await overallHandler(questionText, true, false, true, initDate);
-  return [dynDateToDate(ddate1), dynDateToDate(ddate2)];
+  const convertToDateObjs = ([[ddate1, ddate2]]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)];
+  return overallHandler(questionText, true, false, true, initDate, void 0, convertToDateObjs, validate, lc);
 };
 
 // src/tools/ask/section.ts
-import { ArrayTools as ArrayTools7 } from "swiss-ak";
-var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2) => {
-  const lineChar = "\u2504";
-  const chars = {
-    down: "\u25BF",
-    none: "\u25E6",
-    up: "\u25B5"
-  };
-  const line = ArrayTools7.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
-  console.log(colr.grey1(out.center(line, void 0, lineChar)));
-  return 1;
-};
-var section = async (question, sectionFn, ...questionFns) => {
-  const lc = getLineCounter();
-  const sep = () => lc.add(separator("none", void 0, 1));
-  if (sectionFn) {
-    lc.add(separator("down"));
-    await sectionFn(lc, sep);
-    lc.add(separator("up"));
+import { ArrayTools as ArrayTools9 } from "swiss-ak";
+var section = async (question, sectionHeader, ...questionFns) => {
+  const theme = getAskOptionsForState2(false, false);
+  const originalLC = theme.general.lc;
+  const tempLC = getLineCounter();
+  theme.general.lc = tempLC;
+  if (sectionHeader) {
+    separator("down");
+    await sectionHeader(tempLC);
+    separator("up");
   }
   const results = [];
   if (questionFns.length) {
     for (let questionFn of questionFns) {
-      const checkpoint = lc.checkpoint();
-      results.push(await lc.wrap(1, () => questionFn(question, results, lc, sep)));
-      lc.clearToCheckpoint(checkpoint);
+      const checkpoint = tempLC.checkpoint();
+      results.push(await questionFn(question, results, tempLC));
+      tempLC.clearToCheckpoint(checkpoint);
     }
   }
-  lc.clear();
+  tempLC.clear();
+  theme.general.lc = originalLC;
   if (question) {
-    let resultOut = "done";
+    let resultOut = theme.text.done;
     if (results.length === 1) {
       resultOut = results[0];
     }
@@ -2696,13 +4337,30 @@ var section = async (question, sectionFn, ...questionFns) => {
       }
       resultOut = results;
     }
-    ask.imitate(true, question, resultOut);
+    ask.imitate(question, resultOut, true);
   }
   return results;
 };
+var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2, lc) => {
+  const theme = getAskOptionsForState2(false, false);
+  const lineChar = theme.symbols.separatorLine;
+  const chars = {
+    down: theme.symbols.separatorNodeDown,
+    none: theme.symbols.separatorNodeNone,
+    up: theme.symbols.separatorNodeUp
+  };
+  const line = ArrayTools9.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  const output = out.center(line, void 0, lineChar);
+  console.log(theme.colours.decoration(output));
+  const numLines = out.utils.getNumLines(output);
+  if (theme.general.lc)
+    theme.general.lc.add(numLines);
+  if (lc && lc !== theme.general.lc)
+    lc.add(numLines);
+};
 
 // src/tools/ask/table.ts
-import { fn as fn9, getDeferred as getDeferred4, symbols as symbols4 } from "swiss-ak";
+import { fn as fn12, getDeferred as getDeferred4, symbols as symbols6 } from "swiss-ak";
 var highlightFn = colr.dark.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
@@ -2710,7 +4368,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   const deferred = getDeferred4();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
-  lc.add(ask.imitate(false, questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`));
+  ask.imitate(questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`, false);
   lc.checkpoint("AFTER_Q");
   let lastDrawnRows = [];
   const drawTable = () => {
@@ -2736,11 +4394,11 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     const finalBody = body.map((row, index) => {
       let firstCell;
       if (isMulti) {
-        const selectedSym = symbols4.RADIO_FULL;
-        const unselectedSym = symbols4.RADIO_EMPTY;
+        const selectedSym = symbols6.RADIO_FULL;
+        const unselectedSym = symbols6.RADIO_EMPTY;
         firstCell = selectedIndexes.includes(index) ? colr.reset(colr.dark.green(selectedSym)) : colr.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(symbols4.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(symbols6.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
@@ -2767,9 +4425,9 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   };
   const submit = () => {
     kl.stop();
-    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn9.isTruthy);
+    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn12.isTruthy);
     lc.clear();
-    ask.imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
+    ask.imitate(questionText, isMulti ? `${results.length} selected` : results[0], true);
     deferred.resolve(results);
   };
   const listenCallback = (key) => {
@@ -2787,256 +4445,68 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   const kl = getKeyListener(listenCallback, true);
   return deferred.promise;
 };
-var select = async (question, items, initial, rows, headers, tableOptions) => {
+var select2 = async (question, items, initial, rows, headers, tableOptions) => {
   const results = await askTableHandler(false, question, items, [initial], rows, headers, tableOptions);
   return results[0];
 };
-var multiselect = (question, items, initial, rows, headers, tableOptions) => askTableHandler(true, question, items, initial, rows, headers, tableOptions);
+var multiselect2 = (question, items, initial, rows, headers, tableOptions) => askTableHandler(true, question, items, initial, rows, headers, tableOptions);
 
 // src/tools/ask.ts
-var PROMPT_VALUE_PROPERTY = "SWISS_NODE_PROMPT_VALUE";
 var ask;
 ((ask2) => {
-  const promptsOptions = {
-    onCancel() {
-      process.exit(0);
-    }
+  ask2.text = text;
+  ask2.autotext = autotext;
+  ask2.number = number;
+  ask2.boolean = boolean;
+  ask2.booleanYN = booleanYN;
+  ask2.select = select;
+  ask2.multiselect = multiselect;
+  ask2.date = date;
+  ask2.time = time;
+  ask2.datetime = datetime;
+  ask2.dateRange = dateRange;
+  ask2.fileExplorer = fileExplorer;
+  ask2.multiFileExplorer = multiFileExplorer;
+  ask2.saveFileExplorer = saveFileExplorer;
+  let table2;
+  ((table3) => {
+    table3.select = select2;
+    table3.multiselect = multiselect2;
+  })(table2 = ask2.table || (ask2.table = {}));
+  ask2.trim = trim;
+  ask2.customise = customise;
+  ask2.loading = (question, isComplete = false, isError = false, lc) => {
+    const imitated = getImitateOutput(question, `[Loading...]`, isComplete, isError);
+    const numLines = imitated.split("\n").length;
+    const loader = out.loading((s) => {
+      process.stdout.write(ansi2.cursor.hide);
+      console.log(imitated.replace("Loading...", s));
+    }, numLines);
+    process.stdout.write(ansi2.cursor.show);
+    return loader;
   };
-  ask2.text = async (question, initial) => {
-    const message = typeof question === "string" ? question : question.get();
-    const response = await prompts(
-      {
-        type: "text",
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
-    return "" + response[PROMPT_VALUE_PROPERTY];
+  ask2.countdown = async (totalSeconds, template, isComplete, isError) => {
+    const theme = getAskOptionsForState2(isComplete, isError);
+    console.log();
+    const textTemplate = template || theme.text.countdown;
+    let lines = textTemplate(totalSeconds).split("\n").length;
+    for (let s = totalSeconds; s > 0; s--) {
+      const textValue = textTemplate(s);
+      process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.hide);
+      lines = textValue.split("\n").length;
+      console.log(theme.colours.countdown(textValue));
+      await wait4(seconds4(1));
+    }
+    process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.show);
   };
-  ask2.autotext = async (question, choices, initial, choiceLimit = 10) => {
-    const message = typeof question === "string" ? question : question.get();
-    let response = {};
-    const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-    let initialId = 0;
-    if (initial) {
-      initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
-      if (initialId < 0)
-        initialId = typeof initial === "string" ? initial : 0;
-    }
-    const fuzzy = new Fuse(choiceObjs, {
-      includeScore: false,
-      keys: ["title", "value"]
-    });
-    response = await prompts(
-      {
-        type: "autocomplete",
-        name: PROMPT_VALUE_PROPERTY,
-        choices: choiceObjs,
-        message,
-        limit: choiceLimit,
-        initial: initialId,
-        suggest: async (text2, ch) => {
-          const filtered = fuzzy.search(text2);
-          const list = text2 ? filtered.map(({ item }) => item) : choiceObjs;
-          return list;
-        }
-      },
-      promptsOptions
-    );
-    return response[PROMPT_VALUE_PROPERTY];
-  };
-  ask2.number = async (question, initial = 1) => {
-    const message = typeof question === "string" ? question : question.get();
-    const response = await prompts(
-      {
-        type: "number",
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
-    return Number(response[PROMPT_VALUE_PROPERTY]);
-  };
-  ask2.boolean = async (question, initial = true, yesTxt = "yes", noTxt = "no") => {
-    const message = typeof question === "string" ? question : question.get();
-    const response = await prompts(
-      {
-        type: "toggle",
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial: !initial,
-        active: noTxt,
-        inactive: yesTxt
-      },
-      promptsOptions
-    );
-    return !Boolean(response[PROMPT_VALUE_PROPERTY]);
-  };
-  ask2.booleanAlt = async (question, initial = true) => {
-    const message = typeof question === "string" ? question : question.get();
-    const response = await prompts(
-      {
-        type: "confirm",
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
-    return Boolean(response[PROMPT_VALUE_PROPERTY]);
-  };
-  ask2.select = async (question, choices, initial) => {
-    const message = typeof question === "string" ? question : question.get();
-    const choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-    let initialId = 0;
-    if (initial) {
-      initialId = (choiceObjs || []).map((x) => x && x.value ? x.value : x).indexOf(initial);
-      if (initialId < 0)
-        initialId = 0;
-    }
-    const response = await prompts(
-      {
-        type: "select",
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        choices: choiceObjs,
-        initial: initialId
-      },
-      promptsOptions
-    );
-    const value = response[PROMPT_VALUE_PROPERTY];
-    return typeof value === "number" ? choiceObjs[value] : value;
-  };
-  ask2.multiselect = async (question, choices, initial, canSelectAll = false) => {
-    const message = typeof question === "string" ? question : question.get();
-    if (!choices || choices.length === 0) {
-      return [];
-    }
-    let choiceObjs = choices.map((choice) => typeof choice === "object" ? choice : { title: choice, value: choice });
-    if (initial) {
-      const initialSelected = [initial].flat();
-      choiceObjs = choiceObjs.map((choice) => ({
-        selected: Boolean(initialSelected.find((x) => x === choice || x === choice.value)),
-        ...choice
-      }));
-    }
-    if (canSelectAll) {
-      choiceObjs = [{ title: colr.grey4("[Select all]"), value: "***SELECT_ALL***" }, ...choiceObjs];
-    }
-    const response = await prompts(
-      {
-        type: "multiselect",
-        name: PROMPT_VALUE_PROPERTY,
-        instructions: false,
-        message,
-        choices: choiceObjs
-      },
-      promptsOptions
-    );
-    const result = response[PROMPT_VALUE_PROPERTY] ? response[PROMPT_VALUE_PROPERTY] : [];
-    let selected = result.map((value) => typeof value === "number" ? choiceObjs[value] : value);
-    if (selected.includes("***SELECT_ALL***")) {
-      selected = choiceObjs.map((choice) => choice.value).filter((value) => !(value + "").startsWith("***") && !(value + "").endsWith("***"));
-    }
-    return selected;
-  };
-  ask2.crud = async (question, itemName = "item", items, options = {}) => {
-    const fullOptions = {
-      canCreate: true,
-      canUpdate: true,
-      canDelete: true,
-      canDeleteAll: true,
-      ...options
-    };
-    const opts = [{ title: colr.dim(`${colr.dark.success.bold(symbols5.TICK)} [ Finished ]`), value: "none" }];
-    if (fullOptions.canCreate) {
-      opts.push({ title: `${colr.success.bold(symbols5.PLUS)} Add another ${itemName}`, value: "create" });
-    }
-    if (items.length > 0) {
-      if (fullOptions.canUpdate) {
-        opts.push({ title: `${colr.dark.yellow.bold(symbols5.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: "update" });
-      }
-      if (fullOptions.canDelete) {
-        opts.push({ title: `${colr.danger.bold(symbols5.CROSS)} Remove ${itemName}`, value: "delete" });
-      }
-      if (fullOptions.canDeleteAll) {
-        opts.push({ title: `${colr.danger.bold(symbols5.TIMES)} Remove all`, value: "delete-all" });
-      }
-    }
-    return await ask2.select(question, opts, "none");
-  };
-  ask2.validate = async (askFunc, validateFn) => {
-    const runLoop = async (initial, extraLines = 0) => {
-      const input = await askFunc(initial);
-      const validateResponse = await validateFn(input);
-      if (validateResponse === true) {
-        return input;
-      } else {
-        const message = validateResponse || "";
-        out.moveUp(1 + extraLines);
-        console.log(colr.dark.red(message));
-        return runLoop(input, message.split("\n").length);
-      }
-    };
-    return runLoop();
-  };
-  const imitateHighlight = colr.cyan.bold.underline;
-  const getImitateResultText = (result, isChild = false) => {
-    if (result instanceof Array) {
-      if (result.length > 3)
-        return `${result.length} selected`;
-      return result.map((item) => getImitateResultText(item, true)).join(", ");
-    }
-    if (typeof result === "object") {
-      const usableProps = ["name", "title", "display", "value"];
-      for (let prop in usableProps) {
-        if (result[prop])
-          return result[prop];
-      }
-    }
-    if (typeof result === "boolean") {
-      if (isChild)
-        return result + "";
-      return result ? `${imitateHighlight("yes")} / no` : `yes / ${imitateHighlight("no")}`;
-    }
-    if (typeof result === "number") {
-      return result + "";
-    }
-    if (typeof result === "string") {
-      return result;
-    }
-    return "done";
-  };
-  ask2.imitate = (done, question, result) => {
-    const message = typeof question === "string" ? question : question.get();
-    const resultText = getImitateResultText(result);
-    const prefix = done ? colr.dark.green("\u2714") : colr.dark.cyan("?");
-    const questionText = colr.white.bold(message);
-    const joiner = resultText ? colr.grey(done ? "\u2026 " : "\u203A ") : "";
-    const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
-    const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
-    let resultWrapper = out.utils.hasColor(resultText) ? fn10.noact : done ? colr.dark.white : colr.grey;
-    const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : "";
-    console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
-    return 1;
-  };
-  ask2.prefill = async (value, question, askFn) => {
-    if (value !== void 0) {
-      ask2.imitate(true, question, value);
-      return value;
-    }
-    return askFn(question);
-  };
-  ask2.loading = (question) => out.loading((s) => ask2.imitate(false, question, `[${s}]`));
-  ask2.pause = async (text2 = "Press enter to continue...") => {
+  ask2.pause = async (text3 = "Press enter to continue...") => {
+    const theme = getAskOptionsForState2(false, false);
     return new Promise((resolve) => {
-      const message = typeof text2 === "string" ? text2 : text2.get();
-      console.log(colr.grey(message));
+      const message = typeof text3 === "object" && text3.get ? text3.get() : text3 + "";
+      console.log(ansi2.cursor.hide + theme.colours.pause(message));
       const finish = () => {
         kl.stop();
+        process.stdout.write(ansi2.erase.lines(message.split("\n").length) + ansi2.cursor.show);
         resolve();
       };
       const kl = getKeyListener((key) => {
@@ -3047,27 +4517,25 @@ var ask;
       });
     });
   };
-  ask2.countdown = async (totalSeconds, template = (s) => `Starting in ${s}s...`, complete) => {
-    console.log();
-    let lines = 1;
-    for (let s = totalSeconds; s > 0; s--) {
-      const textValue = template(s);
-      out.moveUp(lines);
-      lines = textValue.split("\n").length;
-      console.log(colr.lightBlack(textValue));
-      await wait3(seconds4(1));
+  ask2.imitate = imitate;
+  ask2.prefill = async (question, value, askFn, lc) => {
+    if (value !== void 0) {
+      ask2.imitate(question, value, true, false, lc);
+      return value;
     }
-    out.moveUp(lines);
-    if (complete) {
-      console.log(complete);
-    }
+    return askFn(question, lc);
   };
   ask2.wizard = (startObj = {}) => {
     let obj = { ...startObj };
     const history = [];
     history.push(obj);
     return {
-      add(partial) {
+      async add(propName, value) {
+        const resolvedValue = await value;
+        this.addPartial({ [propName]: resolvedValue });
+        return resolvedValue;
+      },
+      addPartial(partial) {
         obj = {
           ...obj,
           ...partial
@@ -3082,21 +4550,8 @@ var ask;
       }
     };
   };
-  ask2.date = date;
-  ask2.time = time;
-  ask2.datetime = datetime;
-  ask2.dateRange = dateRange;
-  ask2.fileExplorer = fileExplorer;
-  ask2.multiFileExplorer = multiFileExplorer;
-  ask2.saveFileExplorer = saveFileExplorer;
-  let table2;
-  ((table3) => {
-    table3.select = select;
-    table3.multiselect = multiselect;
-  })(table2 = ask2.table || (ask2.table = {}));
-  ask2.trim = trim;
-  ask2.separator = separator;
   ask2.section = section;
+  ask2.separator = separator;
   let utils;
   ((utils2) => {
     utils2.itemsToPromptObjects = (items, titles = [], titleFn) => {
@@ -3106,8 +4561,8 @@ var ask;
 })(ask || (ask = {}));
 
 // src/tools/log.ts
-import util from "util";
-import { ObjectTools as ObjectTools3 } from "swiss-ak";
+import util2 from "util";
+import { ObjectTools as ObjectTools4 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
   showTime: true,
@@ -3156,7 +4611,7 @@ var defaultConfigs = {
 var getStr = (enableColours) => (item) => {
   const inspect2 = ["object", "boolean", "number"];
   if (inspect2.includes(typeof item) && !(item instanceof Date)) {
-    return util.inspect(item, { colors: enableColours, depth: null });
+    return util2.inspect(item, { colors: enableColours, depth: null });
   } else {
     return item + "";
   }
@@ -3188,7 +4643,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return ObjectTools3.mapValues(allConfigs, (key, config) => {
+  return ObjectTools4.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -3199,13 +4654,13 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBarTools.ts
-import { ArrayTools as ArrayTools8 } from "swiss-ak";
+import { ArrayTools as ArrayTools10 } from "swiss-ak";
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
-      wrapperFns = ArrayTools8.randomise(wrapperFns);
+      wrapperFns = ArrayTools10.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {
@@ -3238,6 +4693,7 @@ var nextTick = waiters.nextTick;
 export {
   LogTools,
   PathTools,
+  ansi2 as ansi,
   ask,
   colr,
   createLogger,

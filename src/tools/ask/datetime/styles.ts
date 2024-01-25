@@ -1,4 +1,5 @@
 import { WrapFn, colr } from '../../colr';
+import { getAskOptionsForState } from '../basicInput/customise';
 
 interface SectionStyle {
   dark: WrapFn;
@@ -27,3 +28,17 @@ export const sectionStyles: { sectActive: SectionStyle; sectInactive: SectionSty
   }
 };
 export const getStyles = (active: boolean): SectionStyle => (active ? sectionStyles.sectActive : sectionStyles.sectInactive);
+
+export const getSpecialColours = (isActive: boolean, isComplete: boolean, isError: boolean) => {
+  const { colours: col } = getAskOptionsForState(isComplete, isError);
+
+  return {
+    hover: isActive ? col.specialHover : col.specialInactiveHover,
+    selected: isActive ? col.specialSelected : col.specialInactiveSelected,
+    highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
+    unselected: isActive ? col.specialUnselected : col.specialInactiveUnselected,
+    faded: isActive ? col.specialFaded : col.specialInactiveFaded,
+    hint: isActive ? col.specialHint : col.specialInactiveHint,
+    info: col.specialInfo
+  };
+};

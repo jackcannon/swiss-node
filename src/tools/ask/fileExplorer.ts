@@ -29,7 +29,7 @@ import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { findDirs, findFiles, getProbe, isDirExist, isFileExist, MiniProbeResult, mkdir, open } from '../../utils/fsUtils';
 import { colr } from '../colr';
 
-//<!-- DOCS: 120 -->
+//<!-- DOCS: 115 -->
 
 // TODO configurable styles
 interface PathContents {
@@ -496,7 +496,7 @@ const fileExplorerHandler = async (
 
     // Actual draw
     lc.clear();
-    lc.wrap(1, () => ask.imitate(false, question, ' '));
+    lc.wrap(1, () => ask.imitate(question, ' ', false));
     lc.log();
     lc.log(infoLine);
     lc.log(tableOut);
@@ -650,7 +650,7 @@ const fileExplorerHandler = async (
       lc.clear();
 
       const result = join(basePath, newFileName);
-      ask.imitate(true, question, result);
+      ask.imitate(question, result, true);
       return deferred.resolve([result]);
     },
     submitSelect: () => {
@@ -662,11 +662,11 @@ const fileExplorerHandler = async (
       lc.clear();
       if (isMulti) {
         const result = Array.from(multiSelected);
-        ask.imitate(true, question, result);
+        ask.imitate(question, result, true);
         return deferred.resolve(result);
       } else {
         const result = currentPath;
-        ask.imitate(true, question, result);
+        ask.imitate(question, result, true);
         return deferred.resolve([currentPath]);
       }
     }
@@ -703,7 +703,11 @@ const fileExplorerHandler = async (
   return deferred.promise;
 };
 
-/**<!-- DOCS: ask.fileExplorer ### @ -->
+/**<!-- DOCS: ask.fileExplorerHeader ### -->
+ * fileExplorer
+ */
+
+/**<!-- DOCS: ask.fileExplorer #### @ -->
  * fileExplorer
  *
  * - `ask.fileExplorer`
@@ -731,7 +735,7 @@ export const fileExplorer = async (
   return arr[0];
 };
 
-/**<!-- DOCS: ask.multiFileExplorer ### @ -->
+/**<!-- DOCS: ask.multiFileExplorer #### @ -->
  * multiFileExplorer
  *
  * - `ask.multiFileExplorer`
@@ -757,7 +761,7 @@ export const multiFileExplorer = (
   startPath: string = process.cwd()
 ): Promise<string[]> => fileExplorerHandler(true, false, questionText, selectType, startPath);
 
-/**<!-- DOCS: ask.saveFileExplorer ### @ -->
+/**<!-- DOCS: ask.saveFileExplorer #### @ -->
  * saveFileExplorer
  *
  * - `ask.saveFileExplorer`

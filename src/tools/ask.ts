@@ -1,19 +1,17 @@
-import prompts from 'prompts';
-import Fuse from 'fuse.js'; // fuzzy-search
-import { second, seconds, wait, fn, symbols } from 'swiss-ak';
+import { second, seconds, wait, fn, symbols, StringTools } from 'swiss-ak';
 
-import { out } from './out';
+import { LineCounter, ansi, out } from './out';
 import { Breadcrumb } from './out/breadcrumb';
 import { getKeyListener } from './keyListener';
 
+import * as basicInput from './ask/basicInput';
+import * as customiseOptions from './ask/basicInput/customise';
 import { trim as trimAsk } from './ask/trim';
 import * as fileExplorerAsk from './ask/fileExplorer';
 import * as dateAsk from './ask/datetime';
 import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
-import { colr } from './colr';
-
-const PROMPT_VALUE_PROPERTY = 'SWISS_NODE_PROMPT_VALUE';
+import * as imitateAsk from './ask/imitate';
 
 //<!-- DOCS: 100 -->
 /**<!-- DOCS: ask ##! -->
@@ -24,450 +22,198 @@ const PROMPT_VALUE_PROPERTY = 'SWISS_NODE_PROMPT_VALUE';
 export namespace ask {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  const promptsOptions = {
-    onCancel() {
-      process.exit(0);
-    }
-  };
+  /**<!-- DOCS-ALIAS: ask.text --> */
+  export const text = basicInput.text;
 
-  /**<!-- DOCS: ask.text ### @ -->
-   * text
-   *
-   * - `ask.text`
-   *
-   * Get a text input from the user.
-   *
-   * ```typescript
-   * const name = await ask.text('What is your name?'); // 'Jack'
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {string} [initial]
-   * @returns {Promise<string>}
-   */
-  export const text = async (question: string | Breadcrumb, initial?: string): Promise<string> => {
-    const message = typeof question === 'string' ? question : question.get();
-    const response = await prompts(
-      {
-        type: 'text',
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
+  /**<!-- DOCS-ALIAS: ask.autotext --> */
+  export const autotext = basicInput.autotext;
 
-    return '' + response[PROMPT_VALUE_PROPERTY];
-  };
+  /**<!-- DOCS-ALIAS: ask.number --> */
+  export const number = basicInput.number;
 
-  /**<!-- DOCS: ask.autotext ### @ -->
-   * autotext
-   *
-   * - `ask.autotext`
-   *
-   * Get a text input from the user, with auto-completion.
-   *
-   * ```typescript
-   * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {PromptChoice<T>[]} choices
-   * @param {T | string} [initial]
-   * @param {number} [choiceLimit=10]
-   * @returns {Promise<T>}
-   */
-  export const autotext = async <T = string>(
-    question: string | Breadcrumb,
-    choices: PromptChoice<T>[],
-    initial?: T | string,
-    choiceLimit: number = 10
-  ): Promise<T> => {
-    const message = typeof question === 'string' ? question : question.get();
-    let response = {} as { [key: string]: T };
-    const choiceObjs = choices.map((choice) => (typeof choice === 'object' ? choice : { title: choice, value: choice }));
+  /**<!-- DOCS-ALIAS: ask.boolean --> */
+  export const boolean = basicInput.boolean;
 
-    let initialId: number | string = 0;
-    if (initial) {
-      initialId = (choiceObjs || []).map((x) => (x && x.value ? x.value : x)).indexOf(initial);
-      if (initialId < 0) initialId = typeof initial === 'string' ? initial : 0;
-    }
+  /**<!-- DOCS-ALIAS: ask.booleanYN --> */
+  export const booleanYN = basicInput.booleanYN;
 
-    const fuzzy = new Fuse(choiceObjs, {
-      includeScore: false,
-      keys: ['title', 'value']
-    });
-    response = await prompts(
-      {
-        type: 'autocomplete',
-        name: PROMPT_VALUE_PROPERTY,
-        choices: choiceObjs,
-        message,
-        limit: choiceLimit,
-        initial: initialId,
-        suggest: async (text, ch) => {
-          const filtered = fuzzy.search(text);
-          const list = text ? filtered.map(({ item }) => item) : choiceObjs;
-          return list;
-        }
-      },
-      promptsOptions
-    );
+  /**<!-- DOCS-ALIAS: ask.select --> */
+  export const select = basicInput.select;
 
-    return response[PROMPT_VALUE_PROPERTY];
-  };
+  /**<!-- DOCS-ALIAS: ask.multiselect --> */
+  export const multiselect = basicInput.multiselect;
 
-  /**<!-- DOCS: ask.number ### @ -->
-   * number
-   *
-   * - `ask.number`
-   *
-   * Get a number input from the user.
-   *
-   * ```typescript
-   * const age = await ask.number('How old are you?'); // 30
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {number} [initial=1]
-   * @returns {Promise<number>}
-   */
-  export const number = async (question: string | Breadcrumb, initial: number = 1): Promise<number> => {
-    const message = typeof question === 'string' ? question : question.get();
-    const response = await prompts(
-      {
-        type: 'number',
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
-    return Number(response[PROMPT_VALUE_PROPERTY]);
-  };
+  // -----------------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------------
 
-  /**<!-- DOCS: ask.boolean ### @ -->
-   * boolean
-   *
-   * - `ask.boolean`
-   *
-   * Get a boolean input from the user (yes or no)
-   *
-   * ```typescript
-   * const isCool = await ask.boolean('Is this cool?'); // true
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {boolean} [initial=true]
-   * @param {string} [yesTxt='yes']
-   * @param {string} [noTxt='no']
-   * @returns {Promise<boolean>}
-   */
-  export const boolean = async (
-    question: string | Breadcrumb,
-    initial: boolean = true,
-    yesTxt: string = 'yes',
-    noTxt: string = 'no'
-  ): Promise<boolean> => {
-    const message = typeof question === 'string' ? question : question.get();
-    const response = await prompts(
-      {
-        type: 'toggle',
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial: !initial,
-        active: noTxt,
-        inactive: yesTxt
-      },
-      promptsOptions
-    );
-    return !Boolean(response[PROMPT_VALUE_PROPERTY]);
-  };
+  //<!-- DOCS: 110 -->
 
-  /**<!-- DOCS: ask.booleanAlt ### @ -->
-   * booleanAlt
-   *
-   * - `ask.booleanAlt`
-   *
-   * Get a boolean input from the user (yes or no)
-   *
-   * Alternative interface to ask.boolean
-   *
-   * ```typescript
-   * const isCool = await ask.boolean('Is this cool?'); // true
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {boolean} [initial=true]
-   * @returns {Promise<boolean>}
-   */
-  export const booleanAlt = async (question: string | Breadcrumb, initial: boolean = true): Promise<boolean> => {
-    const message = typeof question === 'string' ? question : question.get();
-    const response = await prompts(
-      {
-        type: 'confirm',
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        initial
-      },
-      promptsOptions
-    );
-    return Boolean(response[PROMPT_VALUE_PROPERTY]);
-  };
+  /**<!-- DOCS-ALIAS: ask.date -->*/
+  export const date = dateAsk.date;
+  /**<!-- DOCS-ALIAS: ask.time -->*/
+  export const time = dateAsk.time;
+  /**<!-- DOCS-ALIAS: ask.datetime -->*/
+  export const datetime = dateAsk.datetime;
+  /**<!-- DOCS-ALIAS: ask.dateRange -->*/
+  export const dateRange = dateAsk.dateRange;
 
-  /**<!-- DOCS: ask.select ### @ -->
-   * select
-   *
-   * - `ask.select`
-   *
-   * Get the user to select an option from a list.
-   *
-   * ```typescript
-   * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {PromptChoice<T>[]} choices
-   * @param {T} [initial]
-   * @returns {Promise<T>}
-   */
-  export const select = async <T = string>(question: string | Breadcrumb, choices: PromptChoice<T>[], initial?: T): Promise<T> => {
-    const message = typeof question === 'string' ? question : question.get();
-    const choiceObjs = choices.map((choice) => (typeof choice === 'object' ? choice : { title: choice, value: choice }));
-    let initialId = 0;
-    if (initial) {
-      initialId = (choiceObjs || []).map((x) => (x && x.value ? x.value : x)).indexOf(initial);
-      if (initialId < 0) initialId = 0;
-    }
+  //<!-- DOCS: 115 -->
 
-    const response = await prompts(
-      {
-        type: 'select',
-        name: PROMPT_VALUE_PROPERTY,
-        message,
-        choices: choiceObjs,
-        initial: initialId
-      },
-      promptsOptions
-    );
-    const value = response[PROMPT_VALUE_PROPERTY];
-    return typeof value === 'number' ? choiceObjs[value] : value;
-  };
+  /**<!-- DOCS-ALIAS: ask.fileExplorer -->*/
+  export const fileExplorer = fileExplorerAsk.fileExplorer;
+  /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->*/
+  export const multiFileExplorer = fileExplorerAsk.multiFileExplorer;
+  /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->*/
+  export const saveFileExplorer = fileExplorerAsk.saveFileExplorer;
 
-  /**<!-- DOCS: ask.multiselect ### @ -->
-   * multiselect
-   *
-   * - `ask.multiselect`
-   *
-   * Get the user to select multiple opts from a list.
-   *
-   * ```typescript
-   * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
-   * ```
-   * @param {string | Breadcrumb} question
-   * @param {PromptChoice<T>[]} choices
-   * @param {PromptChoice<T> | PromptChoice<T>[]} [initial]
-   * @param {boolean} [canSelectAll=false]
-   * @returns {Promise<T[]>}
-   */
-  export const multiselect = async <T = string>(
-    question: string | Breadcrumb,
-    choices: PromptChoice<T>[],
-    initial?: PromptChoice<T> | PromptChoice<T>[],
-    canSelectAll: boolean = false
-  ): Promise<T[]> => {
-    const message = typeof question === 'string' ? question : question.get();
-    if (!choices || choices.length === 0) {
-      return [];
-    }
+  //<!-- DOCS: 120 -->
 
-    let choiceObjs = choices.map((choice) => (typeof choice === 'object' ? choice : { title: choice, value: choice }));
-    if (initial) {
-      const initialSelected = [initial].flat();
-      choiceObjs = choiceObjs.map((choice) => ({
-        selected: Boolean(initialSelected.find((x) => x === choice || x === choice.value)),
-        ...choice
-      }));
-    }
-    if (canSelectAll) {
-      choiceObjs = [{ title: colr.grey4('[Select all]'), value: '***SELECT_ALL***' }, ...choiceObjs];
-    }
+  /**<!-- DOCS-ALIAS: ask.table -->*/
+  export namespace table {
+    /**<!-- DOCS-ALIAS: ask.table.select -->*/
+    export const select = tableAsk.select;
 
-    const response = await prompts(
-      {
-        type: 'multiselect',
-        name: PROMPT_VALUE_PROPERTY,
-        instructions: false,
-        message,
-        choices: choiceObjs
-      },
-      promptsOptions
-    );
-    const result = response[PROMPT_VALUE_PROPERTY] ? response[PROMPT_VALUE_PROPERTY] : [];
-
-    let selected = result.map((value) => (typeof value === 'number' ? choiceObjs[value] : value));
-    if (selected.includes('***SELECT_ALL***')) {
-      selected = choiceObjs.map((choice) => choice.value).filter((value) => !(value + '').startsWith('***') && !(value + '').endsWith('***'));
-    }
-
-    return selected;
-  };
-
-  export interface CRUDOptions {
-    canCreate: boolean;
-    canUpdate: boolean;
-    canDelete: boolean;
-    canDeleteAll: boolean;
+    /**<!-- DOCS-ALIAS: ask.table.multiselect -->*/
+    export const multiselect = tableAsk.multiselect;
   }
-  export type CRUD = 'none' | 'create' | 'update' | 'delete' | 'delete-all';
 
-  /**<!-- DOCS: ask.crud ### @ -->
-   * crud
+  //<!-- DOCS: 125 -->
+
+  /**<!-- DOCS-ALIAS: ask.trim -->*/
+  export const trim = trimAsk;
+
+  //<!-- DOCS: 130 -->
+
+  /**<!-- DOCS: ask.ExtraHeader ### @ -->
+   * Extra
    *
-   * - `ask.crud`
+   * These are ask functions that don't prompt the user, but can help manage or organise how you use prompts
+   */
+
+  //<!-- DOCS: 131 -->
+
+  /**<!-- DOCS-ALIAS: ask.customise --> */
+  export const customise = customiseOptions.customise;
+
+  //<!-- DOCS: 135 -->
+
+  /**<!-- DOCS: ask.loading #### @ -->
+   * loading
    *
-   * Get the user to select a CRUD (**C**reate, **R**ead, **U**pdate and **D**elete) action
+   * - `ask.loading`
    *
-   * Values returned are: 'none' | 'create' | 'update' | 'delete' | 'delete-all'
+   * Display an animated loading indicator that imitates the display of a prompt
+   *
+   * Intended to be indicate a question is coming, but something is loading first. For general 'loading' indicators, use `out.loading`.
    *
    * ```typescript
-   * const action = await ask.crud('What do you want to do next?'); // 'none'
+   * const loader = ask.loading('What is your name?');
+   * // ...
+   * loader.stop();
    * ```
    * @param {string | Breadcrumb} question
-   * @param {string} [itemName='item']
-   * @param {any[]} [items]
-   * @param {Partial<CRUDOptions>} [options={}]
-   * @returns {Promise<CRUD>}
+   * @returns {any}
    */
-  export const crud = async (
+  export const loading = (
     question: string | Breadcrumb,
-    itemName: string = 'item',
-    items?: any[],
-    options: Partial<CRUDOptions> = {}
-  ): Promise<CRUD> => {
-    const fullOptions: CRUDOptions = {
-      canCreate: true,
-      canUpdate: true,
-      canDelete: true,
-      canDeleteAll: true,
-      ...options
-    };
+    isComplete: boolean = false,
+    isError: boolean = false,
+    lc?: LineCounter
+  ): { stop: () => void } => {
+    // Generate the formatted output once, and just update the loading text later
+    const imitated = imitateAsk.getImitateOutput(question, `[Loading...]`, isComplete, isError);
+    const numLines = imitated.split('\n').length;
 
-    const opts = [{ title: colr.dim(`${colr.dark.success.bold(symbols.TICK)} [ Finished ]`), value: 'none' as CRUD }];
-    if (fullOptions.canCreate) {
-      opts.push({ title: `${colr.success.bold(symbols.PLUS)} Add another ${itemName}`, value: 'create' as CRUD });
-    }
-    if (items.length > 0) {
-      if (fullOptions.canUpdate) {
-        opts.push({ title: `${colr.dark.yellow.bold(symbols.ARROW_ROTATE_CLOCK)} Change a ${itemName} value`, value: 'update' as CRUD });
-      }
-      if (fullOptions.canDelete) {
-        opts.push({ title: `${colr.danger.bold(symbols.CROSS)} Remove ${itemName}`, value: 'delete' as CRUD });
-      }
-      if (fullOptions.canDeleteAll) {
-        opts.push({ title: `${colr.danger.bold(symbols.TIMES)} Remove all`, value: 'delete-all' as CRUD });
-      }
-    }
+    const loader = out.loading((s) => {
+      process.stdout.write(ansi.cursor.hide);
+      console.log(imitated.replace('Loading...', s));
+    }, numLines);
 
-    return await select(question, opts, 'none');
+    process.stdout.write(ansi.cursor.show);
+    return loader;
   };
 
-  /**<!-- DOCS: ask.validate ### @ -->
-   * validate
+  /**<!-- DOCS: ask.countdown #### @ -->
+   * countdown
    *
-   * - `ask.validate`
+   * - `ask.countdown`
    *
-   * Validate the result of an `ask` prompt
+   * Animated countdown for a given number of seconds
    *
    * ```typescript
-   * const name = await ask.validate(
-   *   () => ask.text('What is your name?'),
-   *   (name) => name.length > 0
-   * ); // 'Jack'
+   * await ask.countdown(5);
    * ```
-   * @param {(initialValue?: T) => Promise<I> | I} askFunc
-   * @param {(input: Awaited<I>) => boolean | string} validateFn
-   * @returns {Promise<I>}
+   * @param {number} totalSeconds
+   * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
+   * @param {string} [complete]
+   * @returns {Promise<void>}
    */
-  export const validate = async <T = string, I = string>(
-    askFunc: (initialValue?: T) => Promise<I> | I,
-    validateFn: (input: Awaited<I>) => boolean | string
-  ): Promise<I> => {
-    const runLoop = async (initial?: any, extraLines: number = 0) => {
-      const input = await askFunc(initial);
-      const validateResponse = await validateFn(input);
-      if (validateResponse === true) {
-        return input;
-      } else {
-        const message = validateResponse || '';
-        out.moveUp(1 + extraLines);
-        console.log(colr.dark.red(message));
-        return runLoop(input, message.split('\n').length);
-      }
-    };
-    return runLoop();
+  export const countdown = async (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
+    const theme = customiseOptions.getAskOptionsForState(isComplete, isError);
+    console.log();
+
+    const textTemplate = template || theme.text.countdown;
+
+    let lines = textTemplate(totalSeconds).split('\n').length;
+    for (let s = totalSeconds; s > 0; s--) {
+      const textValue = textTemplate(s);
+
+      process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.hide);
+
+      lines = textValue.split('\n').length;
+      console.log(theme.colours.countdown(textValue));
+      await wait(seconds(1));
+    }
+    process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.show);
   };
 
-  const imitateHighlight = colr.cyan.bold.underline;
-  const getImitateResultText = (result: any, isChild: boolean = false): string => {
-    if (result instanceof Array) {
-      if (result.length > 3) return `${result.length} selected`;
-      return result.map((item) => getImitateResultText(item, true)).join(', ');
-    }
-
-    if (typeof result === 'object') {
-      const usableProps = ['name', 'title', 'display', 'value'];
-      for (let prop in usableProps) {
-        if (result[prop]) return result[prop];
-      }
-    }
-
-    if (typeof result === 'boolean') {
-      if (isChild) return result + '';
-      return result ? `${imitateHighlight('yes')} / no` : `yes / ${imitateHighlight('no')}`;
-    }
-
-    if (typeof result === 'number') {
-      return result + '';
-    }
-
-    if (typeof result === 'string') {
-      return result;
-    }
-
-    return 'done';
-  };
-
-  /**<!-- DOCS: ask.imitate ### @ -->
-   * imitate
+  /**<!-- DOCS: ask.pause #### @ -->
+   * pause
    *
-   * - `ask.imitate`
+   * - `ask.pause`
    *
-   * Imitate the display of a prompt
+   * Pause the program until the user presses enter
    *
    * ```typescript
-   * imitate(true, 'What is your name?', 'Jack');
-   *
-   * ask.imitate(true, 'What is your name?', 'Jack');
+   * await ask.pause();
    * ```
-   * @param {boolean} done
-   * @param {string | Breadcrumb} question
-   * @param {any} [result]
-   * @returns {number}
+   * @param {string | Breadcrumb} [text='Press enter to continue...']
+   * @returns {Promise<void>}
    */
-  export const imitate = (done: boolean, question: string | Breadcrumb, result?: any): number => {
-    const message = typeof question === 'string' ? question : question.get();
-    const resultText = getImitateResultText(result);
-    const prefix = done ? colr.dark.green('✔') : colr.dark.cyan('?');
-    const questionText = colr.white.bold(message);
-    const joiner = resultText ? colr.grey(done ? '… ' : '› ') : '';
+  export const pause = async (text: string | Breadcrumb = 'Press enter to continue...'): Promise<void> => {
+    const theme = customiseOptions.getAskOptionsForState(false, false);
 
-    const mainLength = out.getWidth(`${prefix} ${questionText} ${joiner}`);
-    const maxLength = out.utils.getTerminalWidth() - mainLength - 1;
+    return new Promise((resolve) => {
+      const message = typeof text === 'object' && (text as Breadcrumb).get ? (text as Breadcrumb).get() : text + '';
+      console.log(ansi.cursor.hide + theme.colours.pause(message));
 
-    let resultWrapper = out.utils.hasColor(resultText) ? fn.noact : done ? colr.dark.white : colr.grey;
+      const finish = () => {
+        kl.stop();
+        process.stdout.write(ansi.erase.lines(message.split('\n').length) + ansi.cursor.show);
+        resolve();
+      };
 
-    const resultOut = resultText ? out.truncate(`${resultWrapper(resultText)}`, maxLength) : '';
-
-    console.log(`${prefix} ${questionText} ${joiner}${resultOut}`);
-    return 1;
+      const kl = getKeyListener((key) => {
+        switch (key) {
+          case 'return':
+            return finish();
+        }
+      });
+    });
   };
 
-  /**<!-- DOCS: ask.prefill ### @ -->
+  //<!-- DOCS: 140 -->
+
+  /**<!-- DOCS-ALIAS: ask.imitate -->*/
+  export const imitate = imitateAsk.imitate;
+
+  //<!-- DOCS: 145 -->
+
+  /**<!-- DOCS: ask.prefill #### @ -->
    * prefill
    *
    * - `ask.prefill`
@@ -491,103 +237,19 @@ export namespace ask {
    * @returns {Promise<T>}
    */
   export const prefill = async <T extends unknown = string>(
-    value: T | undefined,
     question: string | Breadcrumb,
-    askFn: (question: string | Breadcrumb) => Promise<T> | T
+    value: T | undefined,
+    askFn: (question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T,
+    lc?: LineCounter
   ): Promise<T> => {
     if (value !== undefined) {
-      imitate(true, question, value);
+      imitate(question, value, true, false, lc);
       return value;
     }
-    return askFn(question);
+    return askFn(question, lc);
   };
 
-  /**<!-- DOCS: ask.loading ### @ -->
-   * loading
-   *
-   * - `ask.loading`
-   *
-   * Display an animated loading indicator that imitates the display of a prompt
-   *
-   * ```typescript
-   * const loader = ask.loading('What is your name?');
-   * // ...
-   * loader.stop();
-   * ```
-   * @param {string | Breadcrumb} question
-   * @returns {any}
-   */
-  export const loading = (question: string | Breadcrumb) => out.loading((s) => imitate(false, question, `[${s}]`));
-
-  /**<!-- DOCS: ask.pause ### @ -->
-   * pause
-   *
-   * - `ask.pause`
-   *
-   * Pause the program until the user presses enter
-   *
-   * ```typescript
-   * await ask.pause();
-   * ```
-   * @param {string | Breadcrumb} [text='Press enter to continue...']
-   * @returns {Promise<void>}
-   */
-  export const pause = async (text: string | Breadcrumb = 'Press enter to continue...'): Promise<void> => {
-    return new Promise((resolve) => {
-      const message = typeof text === 'string' ? text : text.get();
-      console.log(colr.grey(message));
-
-      const finish = () => {
-        kl.stop();
-        resolve();
-      };
-
-      const kl = getKeyListener((key) => {
-        switch (key) {
-          case 'return':
-            return finish();
-        }
-      });
-    });
-  };
-
-  /**<!-- DOCS: ask.countdown ### @ -->
-   * countdown
-   *
-   * - `ask.countdown`
-   *
-   * Animated countdown for a given number of seconds
-   *
-   * ```typescript
-   * await ask.countdown(5);
-   * ```
-   * @param {number} totalSeconds
-   * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
-   * @param {string} [complete]
-   * @returns {Promise<void>}
-   */
-  export const countdown = async (
-    totalSeconds: number,
-    template: (s: second) => string = (s) => `Starting in ${s}s...`,
-    complete?: string
-  ): Promise<void> => {
-    console.log();
-
-    let lines = 1;
-    for (let s = totalSeconds; s > 0; s--) {
-      const textValue = template(s);
-      out.moveUp(lines);
-      lines = textValue.split('\n').length;
-      console.log(colr.lightBlack(textValue));
-      await wait(seconds(1));
-    }
-    out.moveUp(lines);
-    if (complete) {
-      console.log(complete);
-    }
-  };
-
-  /**<!-- DOCS: ask.wizard ### @ -->
+  /**<!-- DOCS: ask.wizard #### @ -->
    * wizard
    *
    * - `ask.wizard`
@@ -607,11 +269,9 @@ export namespace ask {
    *
    * const wiz = ask.wizard<Example>(base);
    *
-   * const foo = await ask.text('What is foo?'); // User input: foo
-   * wiz.add({ foo });
+   * await wiz.add('foo', ask.text('What is foo?')); // User input: foo
    *
-   * const bar = await ask.number('What is bar?'); // User input: 123
-   * wiz.add({ bar });
+   * await wiz.add('bar', ask.number('What is bar?')); // User input: 123
    *
    * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
    * ```
@@ -624,7 +284,12 @@ export namespace ask {
     history.push(obj);
 
     return {
-      add(partial: Partial<T>) {
+      async add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>) {
+        const resolvedValue = await value;
+        this.addPartial({ [propName]: resolvedValue });
+        return resolvedValue;
+      },
+      addPartial(partial: Partial<T>) {
         obj = {
           ...obj,
           ...partial
@@ -640,38 +305,15 @@ export namespace ask {
     };
   };
 
-  /**<!-- DOCS-ALIAS: ask.date -->*/
-  export const date = dateAsk.date;
-  /**<!-- DOCS-ALIAS: ask.time -->*/
-  export const time = dateAsk.time;
-  /**<!-- DOCS-ALIAS: ask.datetime -->*/
-  export const datetime = dateAsk.datetime;
-  /**<!-- DOCS-ALIAS: ask.dateRange -->*/
-  export const dateRange = dateAsk.dateRange;
+  //<!-- DOCS: 150 -->
 
-  /**<!-- DOCS-ALIAS: ask.fileExplorer -->*/
-  export const fileExplorer = fileExplorerAsk.fileExplorer;
-  /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->*/
-  export const multiFileExplorer = fileExplorerAsk.multiFileExplorer;
-  /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->*/
-  export const saveFileExplorer = fileExplorerAsk.saveFileExplorer;
-
-  /**<!-- DOCS-ALIAS: ask.table -->*/
-  export namespace table {
-    /**<!-- DOCS-ALIAS: ask.table.select -->*/
-    export const select = tableAsk.select;
-
-    /**<!-- DOCS-ALIAS: ask.table.multiselect -->*/
-    export const multiselect = tableAsk.multiselect;
-  }
-
-  /**<!-- DOCS-ALIAS: ask.trim -->*/
-  export const trim = trimAsk;
+  /**<!-- DOCS-ALIAS: ask.section -->*/
+  export const section = sectionAsk.section;
 
   /**<!-- DOCS-ALIAS: ask.separator -->*/
   export const separator = sectionAsk.separator;
-  /**<!-- DOCS-ALIAS: ask.section -->*/
-  export const section = sectionAsk.section;
+
+  //<!-- DOCS: 155 -->
 
   /**<!-- DOCS: ask.utils 180 ### -->
    * utils
@@ -719,7 +361,7 @@ export namespace ask {
     };
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 
-  /**<!-- DOCS: ask.PromptChoice ### 190 -->
+  /**<!-- DOCS: ask.PromptChoice ### 199 -->
    * PromptChoice
    *
    * - `ask.PromptChoice<T>`
@@ -728,5 +370,5 @@ export namespace ask {
    *
    * Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
    */
-  export type PromptChoice<T = string> = string | { title?: string; value?: T; selected?: boolean };
+  export type PromptChoice<T = string> = T | { title?: string; value: T; selected?: boolean };
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

@@ -8,7 +8,7 @@ import { Breadcrumb } from '../out/breadcrumb';
 import { ask } from '../ask';
 import { colr } from '../colr';
 
-//<!-- DOCS: 130 -->
+//<!-- DOCS: 120 -->
 
 type ItemToRowMapFunction<T extends unknown> = (item?: T, index?: number, items?: T[]) => any[];
 
@@ -33,7 +33,7 @@ const askTableHandler = <T extends unknown>(
 
   let selectedIndexes: number[] = initial.map((i) => (typeof i === 'number' ? i : items.indexOf(i as T))).filter((i) => i !== -1);
 
-  lc.add(ask.imitate(false, questionText, `- Use arrow-keys. ${isMulti ? 'Space to select. ' : ''}Enter to ${isMulti ? 'confirm' : 'select'}.`));
+  ask.imitate(questionText, `- Use arrow-keys. ${isMulti ? 'Space to select. ' : ''}Enter to ${isMulti ? 'confirm' : 'select'}.`, false); // lc.add(X)
   lc.checkpoint('AFTER_Q');
 
   let lastDrawnRows = [];
@@ -101,7 +101,7 @@ const askTableHandler = <T extends unknown>(
     kl.stop();
     const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn.isTruthy);
     lc.clear();
-    ask.imitate(true, questionText, isMulti ? `${results.length} selected` : results[0]);
+    ask.imitate(questionText, isMulti ? `${results.length} selected` : results[0], true);
     deferred.resolve(results);
   };
 

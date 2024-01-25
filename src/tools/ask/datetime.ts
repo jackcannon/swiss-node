@@ -4,19 +4,23 @@ import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '.
 import { getKeyListener } from '../keyListener';
 import { getNumberInputter } from '../../utils/numberInputter';
 import { ask } from '../ask';
-import { out } from '../out';
+import { LineCounter, out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { getLineCounter } from '../out/lineCounter';
 import { dateHandler } from './datetime/date';
 import { timeHandler } from './datetime/time';
 import { DateTimeHandlerObj } from './datetime/types';
 import { colr } from '../colr';
+import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
+import { getImitateOutput, untrackedImitate } from './imitate';
+import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
+import { LOG } from '../../DELETEME/LOG';
 
 //<!-- DOCS: 110 -->
 
 type DateTimeSection = 'date' | 'time';
 
-const DEBUG_TIMER = getTimer('DEBUG', false, colr.dark.red, colr);
+const DEBUG_TIMER = getTimer('DEBUG', false, colr.dark.red);
 const IS_DEBUG = false;
 
 const actionConfig: ActionBarConfig = {
@@ -53,14 +57,25 @@ const actionConfig: ActionBarConfig = {
     label: 'change year/month'
   }
 };
-const getDTActionBar = (isDateOn: boolean, isTimeOn: boolean, isRange: boolean, active: DateTimeSection) => {
+const getDTActionBar = (isDateOn: boolean, isTimeOn: boolean, isRange: boolean, active: DateTimeSection, isError: boolean) => {
+  const theme = getAskOptionsForState(false, isError);
   const keys = [
     isDateOn && !isTimeOn && isRange ? 'tab-range' : undefined,
     isDateOn && isTimeOn && !isRange ? 'tab-section' : undefined,
     ...(active === 'date' ? ['nums-date', 'move-date', 'qead-date'] : []),
     ...(active === 'time' ? ['nums-time', 'move-time-ver', 'move-time-hor'] : [])
   ].filter((id) => id && actionConfig[id]) as string[];
-  return getActionBar(keys, actionConfig);
+  return theme.colours.specialInfo(getActionBar(keys, actionConfig));
+};
+
+const getDTErrorLine = ({ isError, errorMessage }: ErrorInfo): string => {
+  if (!isError) return '';
+  const theme = getAskOptionsForState(false, isError);
+  const maxWidth = out.utils.getTerminalWidth() - (out.getWidth(theme.symbols.specialErrorIcon) + 2) * 2;
+  const icon = theme.colours.specialErrorIcon(theme.symbols.specialErrorIcon);
+  const msg = out.truncate(errorMessage, maxWidth);
+  const text = `${icon} ${msg} ${icon}`;
+  return out.center(theme.colours.specialErrorMsg(text));
 };
 
 const getCurrDynDate = (): DynDate => dateToDynDate(new Date());
@@ -78,6 +93,7 @@ const displayDate = (ddate: DynDate) => dynDateToDate(ddate).toDateString();
 const displayTime = (dtime: DynTime) => dtime.map((v) => (v + '').padStart(2, '0')).join(':');
 
 const getStateDisplay = (handlers: HandlersObj, isDateOn: boolean, isTimeOn: boolean, isRange: boolean): string => {
+  // TODO add resultDate/resultTime to colours and use here
   const [start, end] = isDateOn ? handlers.date.getValue() : [];
   const time = isTimeOn ? handlers.time.getValue() : undefined;
 
@@ -88,27 +104,64 @@ const getStateDisplay = (handlers: HandlersObj, isDateOn: boolean, isTimeOn: boo
   return [dateStr, timeStr].filter((v) => v).join(' @ ');
 };
 
-const overallHandler = (
+interface ValueSet {
+  date: [DynDate, DynDate];
+  time: DynTime;
+}
+
+const overallHandler = <T extends unknown>(
   questionText: string | Breadcrumb = 'Please pick a date:',
   isDateOn: boolean,
   isTimeOn: boolean,
   isRange: boolean,
   initialDate: [DynDate, DynDate] = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()],
-  initialTime: DynTime = getCurrDynTime()
-): Promise<[[DynDate, DynDate], DynTime]> => {
-  const lc = getLineCounter();
-  const deferred = getDeferred<[[DynDate, DynDate], DynTime]>();
+  initialTime: DynTime = getCurrDynTime(),
+  convertFn: (current: [[DynDate, DynDate], DynTime]) => T,
+  validateFn?: (result: T) => Error | string | boolean | void,
+  lc?: LineCounter
+): Promise<T> => {
+  const opts = getAskOptions();
+
+  // const originalLC = opts.general.lc;
+  const tempLC = getLineCounter();
+  // opts.general.lc = tempLC;
+
+  const deferred = getDeferred<T>();
 
   const isSwitchable = isDateOn && isTimeOn;
-
   let activeHandler: DateTimeSection = isDateOn ? 'date' : 'time';
 
+  // Set on value change only (to avoid spamming validation functions)
+  let errorInfo: ErrorInfo = { isError: false, errorMessage: undefined };
+  const getErrorInfo = () => errorInfo;
+
+  const valueCache: ValueSet = {
+    date: initialDate,
+    time: initialTime
+  };
+  const onValueChange =
+    <P extends 'date' | 'time'>(key: P) =>
+    (newValue: ValueSet[P]) => {
+      valueCache[key] = newValue;
+      errorInfo = runValidation();
+    };
+
+  const getResult = (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => convertFn([dateData, timeData]);
+
+  const runValidation = (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => {
+    const validateResult = validateFn?.(getResult(dateData, timeData));
+    const info = getErrorInfoFromValidationResult(validateResult);
+    return info;
+  };
+
   const displayCache: { date: string[]; time: string[] } = { date: [], time: [] };
-  const onDisplay = (key: string) => (lines: string[]) => {
+  const onDisplay = (key: 'date' | 'time') => (lines: string[]) => {
     DEBUG_TIMER.start('overall display');
     displayCache[key] = lines;
 
     const { date, time } = displayCache;
+
+    const { isError, errorMessage } = errorInfo;
 
     const sections = [];
     if (date.length) sections.push(date);
@@ -117,24 +170,28 @@ const overallHandler = (
 
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), undefined, undefined, false);
-    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler);
+    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
+    const outError = getDTErrorLine(errorInfo);
 
-    lc.clear();
-    lc.wrap(1, () => ask.imitate(false, questionText, outState));
-    lc.log();
-    lc.log(outMain);
-    lc.log();
-    lc.log(outAction);
+    let output = '';
+    output += getImitateOutput(questionText, outState, false, isError, undefined);
+    output += '\n';
+    output += '\n' + outMain;
+    output += '\n' + outError;
+    output += '\n' + outAction;
+
+    tempLC.log(tempLC.ansi.clear() + output);
 
     if (IS_DEBUG) {
-      lc.add(DEBUG_TIMER.log());
+      tempLC.add(DEBUG_TIMER.log());
     }
     DEBUG_TIMER.reset();
   };
 
   const handlers: HandlersObj = {
-    date: (isDateOn && dateHandler(activeHandler === 'date', initialDate, onDisplay('date'), isRange)) || undefined,
-    time: (isTimeOn && timeHandler(activeHandler === 'time', initialTime, onDisplay('time'))) || undefined
+    date:
+      (isDateOn && dateHandler(activeHandler === 'date', initialDate, onValueChange('date'), getErrorInfo, onDisplay('date'), isRange)) || undefined,
+    time: (isTimeOn && timeHandler(activeHandler === 'time', initialTime, onValueChange('time'), getErrorInfo, onDisplay('time'))) || undefined
   };
   const eachHandler = (cb: (key: string, handler: DateTimeHandlerObj<any>) => any) =>
     Object.entries(handlers)
@@ -151,11 +208,16 @@ const overallHandler = (
   const submit = () => {
     const dates = handlers.date?.getValue();
     const time = handlers.time?.getValue();
+
+    const { isError } = runValidation(dates, time);
+    if (isError) return;
+
     const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
     kl.stop();
-    lc.clear();
-    ask.imitate(false, questionText, outState);
-    deferred.resolve([dates, time]);
+    tempLC.clear();
+    // opts.general.lc = originalLC;
+    ask.imitate(questionText, outState, true, false, lc);
+    deferred.resolve(convertFn([dates, time]));
   };
 
   const numberInputter = getNumberInputter();
@@ -211,11 +273,18 @@ const overallHandler = (
  * @param {Date} [initial]
  * @returns {Promise<Date>}
  */
-export const date = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
+export const date = async (
+  questionText?: string | Breadcrumb,
+  initial?: Date,
+  validate?: (date: Date) => Error | string | boolean | void,
+  lc?: LineCounter
+): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
-  const [[ddate]] = await overallHandler(questionText, true, false, false, [initDate, initDate]);
-  return dynDateToDate(ddate);
+
+  const convertToDateObj = ([[ddate]]: [[DynDate, DynDate], DynTime]) => dynDateToDate(ddate);
+
+  return overallHandler(questionText, true, false, false, [initDate, initDate], undefined, convertToDateObj, validate, lc);
 };
 
 /**<!-- DOCS: ask.time ### @ -->
@@ -236,12 +305,19 @@ export const date = async (questionText?: string | Breadcrumb, initial?: Date): 
  * @param {Date} [initial]
  * @returns {Promise<Date>}
  */
-export const time = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
+export const time = async (
+  questionText?: string | Breadcrumb,
+  initial?: Date,
+  validate?: (date: Date) => Error | string | boolean | void,
+  lc?: LineCounter
+): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
-  const [_d, dtime] = await overallHandler(questionText, false, true, false, [initDate, initDate], initTime);
-  return dynDateToDate(dateToDynDate(initDateObj), dtime);
+
+  const convertToDateObj = ([_d, dtime]: [[DynDate, DynDate], DynTime]) => dynDateToDate(dateToDynDate(initDateObj), dtime);
+
+  return overallHandler(questionText, false, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
 };
 
 /**<!-- DOCS: ask.datetime ### @ -->
@@ -259,12 +335,19 @@ export const time = async (questionText?: string | Breadcrumb, initial?: Date): 
  * @param {Date} [initial]
  * @returns {Promise<Date>}
  */
-export const datetime = async (questionText?: string | Breadcrumb, initial?: Date): Promise<Date> => {
+export const datetime = async (
+  questionText?: string | Breadcrumb,
+  initial?: Date,
+  validate?: (date: Date) => Error | string | boolean | void,
+  lc?: LineCounter
+): Promise<Date> => {
   const initDateObj = initial || new Date();
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
-  const [[ddate], dtime] = await overallHandler(questionText, true, true, false, [initDate, initDate], initTime);
-  return dynDateToDate(ddate, dtime);
+
+  const convertToDateObj = ([[ddate], dtime]: [[DynDate, DynDate], DynTime]) => dynDateToDate(ddate, dtime);
+
+  return overallHandler(questionText, true, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
 };
 
 /**<!-- DOCS: ask.dateRange ### @ -->
@@ -286,10 +369,18 @@ const range = await ask.dateRange('When is the festival?');
  * @param {Date} [initialEnd]
  * @returns {Promise<[Date, Date]>}
  */
-export const dateRange = async (questionText?: string | Breadcrumb, initialStart?: Date, initialEnd?: Date): Promise<[Date, Date]> => {
+export const dateRange = async (
+  questionText?: string | Breadcrumb,
+  initialStart?: Date,
+  initialEnd?: Date,
+  validate?: (dates: [Date, Date]) => Error | string | boolean | void,
+  lc?: LineCounter
+): Promise<[Date, Date]> => {
   const initDateObj1 = initialStart || new Date();
   const initDateObj2 = initialEnd || new Date();
   const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)] as [DynDate, DynDate];
-  const [[ddate1, ddate2]] = await overallHandler(questionText, true, false, true, initDate);
-  return [dynDateToDate(ddate1), dynDateToDate(ddate2)];
+
+  const convertToDateObjs = ([[ddate1, ddate2]]: [[DynDate, DynDate], DynTime]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)] as [Date, Date];
+
+  return overallHandler(questionText, true, false, true, initDate, undefined, convertToDateObjs, validate, lc);
 };

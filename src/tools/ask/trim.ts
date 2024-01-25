@@ -6,7 +6,7 @@ import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 import { colr } from '../colr';
 
-//<!-- DOCS: 140 -->
+//<!-- DOCS: 125 -->
 
 const toTimeCode = (frame: number, frameRate: number = 60, includeHours: boolean = false, includeMinutes: boolean = true) => {
   const frLength = out.getWidth(frameRate + '');
