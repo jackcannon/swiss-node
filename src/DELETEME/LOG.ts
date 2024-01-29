@@ -4,7 +4,7 @@ import util from 'util';
 
 const logItems: string[] = [];
 
-const logFile = './debug/LOG.txt';
+const logFile = '/Users/jackcannon/Projects/swiss-node/debug/LOG.txt';
 
 export const LOG = async (...args) => {
   logItems.push(args.map((arg) => util.inspect(arg, { showHidden: false, depth: null, colors: true })).join(' '));

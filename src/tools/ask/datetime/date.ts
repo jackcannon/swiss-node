@@ -12,7 +12,7 @@ import {
 } from '../../../utils/dynDates';
 import { out } from '../../out';
 import { table } from '../../table';
-import { getSpecialColours, getStyles } from './styles';
+import { getSpecialColours } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 import { colr, WrapFn } from '../../colr';
 import { ErrorInfo } from '../errorValidation';
@@ -71,7 +71,7 @@ const getMonthTable = (
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
 
   const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(col.unselected, undefined, undefined, true)];
+  const formatDim = [...formatNonMonth, table.utils.getFormat(col.normal, undefined, undefined, true)];
 
   const formatCursor: table.TableFormatConfig[] = [];
   if (isSameMonth([year, month, 1], selCursor)) {
@@ -115,7 +115,7 @@ const getMonthTable = (
   const getTitle = (text: string, prefix: string, suffix: string) => {
     const resPrefix = active ? col.hint(prefix) : '';
     const resSuffix = active ? col.hint(suffix) : '';
-    const resText = out.center(col.unselected(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
+    const resText = out.center(col.normal(text), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
 

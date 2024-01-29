@@ -125,13 +125,18 @@ export namespace ask {
     lc?: LineCounter
   ): { stop: () => void } => {
     // Generate the formatted output once, and just update the loading text later
-    const imitated = imitateAsk.getImitateOutput(question, `[Loading...]`, isComplete, isError);
+    const theme = customiseOptions.getAskOptionsForState(isComplete, isError);
+    const imitated = imitateAsk.getImitateOutput(question, `◐`, isComplete, isError);
     const numLines = imitated.split('\n').length;
 
-    const loader = out.loading((s) => {
-      process.stdout.write(ansi.cursor.hide);
-      console.log(imitated.replace('Loading...', s));
-    }, numLines);
+    const loader = out.loading(
+      (s) => {
+        process.stdout.write(ansi.cursor.hide);
+        return imitated.replace('◐', theme.colours.loadingIcon(s));
+      },
+      numLines,
+      ['◐', '◓', '◑', '◒']
+    );
 
     process.stdout.write(ansi.cursor.show);
     return loader;

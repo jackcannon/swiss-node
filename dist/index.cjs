@@ -25,6 +25,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
+  LOG: () => LOG,
   LogTools: () => LogTools,
   PathTools: () => PathTools,
   ansi: () => ansi2,
@@ -48,7 +49,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 
 // src/tools/ask.ts
-var import_swiss_ak28 = require("swiss-ak");
+var import_swiss_ak29 = require("swiss-ak");
 
 // src/tools/out.ts
 var import_swiss_ak7 = require("swiss-ak");
@@ -664,13 +665,12 @@ var getLineCounter = () => {
     console.log(output);
     return added;
   };
-  const move = (lines) => {
-    if (lines > 0) {
-      log2("\n".repeat(lines - 1));
-    }
-    if (lines < 0) {
-      clearBack(-lines);
-    }
+  const overwrite = (...args) => {
+    const output = args.map(getLogStr).join(" ").replace(/\n/g, ansi.erase.lineEnd + "\n") + ansi.erase.lineEnd;
+    const added = out.utils.getNumLines(output);
+    lineCount += added;
+    console.log(output);
+    return added;
   };
   const wrap = (newLines = 1, func, ...args) => {
     const result = func(...args);
@@ -689,6 +689,25 @@ var getLineCounter = () => {
       return 0;
     const diff = lineCount - checkpointValue;
     return diff > 0 ? diff : 0;
+  };
+  const moveCursor = (y) => {
+    process.stdout.moveCursor(0, y);
+    lineCount += y;
+    return void 0;
+  };
+  const moveHome = () => {
+    process.stdout.moveCursor(0, -lineCount);
+    lineCount = 0;
+    return void 0;
+  };
+  const moveToCheckpoint = (checkpointID) => {
+    const checkpointValue = checkpoints[checkpointID];
+    if (checkpointValue === void 0)
+      return;
+    const diff = lineCount - checkpointValue;
+    if (diff > 0) {
+      moveCursor(-diff);
+    }
   };
   const checkpoint = (checkpointID = import_swiss_ak5.StringTools.randomId()) => {
     checkpoints[checkpointID] = lineCount;
@@ -709,19 +728,38 @@ var getLineCounter = () => {
     out.moveUp(linesToMoveBack);
     lineCount -= linesToMoveBack;
   };
+  const clearDown = (lines) => {
+    if (lines > 0) {
+      log2("\n".repeat(lines - 1));
+    }
+    if (lines < 0) {
+      clearBack(-lines);
+    }
+  };
   const clear2 = () => {
     out.moveUp(lineCount);
     lineCount = 0;
   };
   const ansiFns = {
-    move: (lines) => {
-      if (lines > 0) {
-        add(lines);
-        return "\n".repeat(lines - 1);
+    moveCursor: (y) => {
+      const result = ansi.cursor.down(y);
+      lineCount += y;
+      return result;
+    },
+    moveHome: () => {
+      const result = ansi.cursor.up(lineCount);
+      lineCount = 0;
+      return result;
+    },
+    moveToCheckpoint: (checkpointID) => {
+      const checkpointValue = checkpoints[checkpointID];
+      if (checkpointValue === void 0)
+        return;
+      const diff = lineCount - checkpointValue;
+      if (diff > 0) {
+        return ansiFns.moveCursor(-diff);
       }
-      if (lines < 0) {
-        return ansiFns.clearBack(-lines);
-      }
+      return "";
     },
     clearToCheckpoint: (checkpointID) => {
       const checkpointValue = checkpoints[checkpointID];
@@ -740,23 +778,46 @@ var getLineCounter = () => {
       lineCount -= linesToMoveBack;
       return result;
     },
+    clearDown: (lines) => {
+      if (lines > 0) {
+        add(lines);
+        return "\n".repeat(lines - 1);
+      }
+      if (lines < 0) {
+        return ansiFns.clearBack(-lines);
+      }
+    },
     clear: () => {
       const result = ansi.erase.lines(lineCount);
       lineCount = 0;
+      return result;
+    },
+    save: () => {
+      const result = ansi.cursor.save;
+      checkpoint("SWISS_NODE_LINE_COUNTER_SAVE");
+      return result;
+    },
+    restore: () => {
+      const result = ansi.cursor.restore;
+      lineCount = checkpoints["SWISS_NODE_LINE_COUNTER_SAVE"];
       return result;
     }
   };
   const lc = {
     log: log2,
-    move,
+    overwrite,
     wrap,
     add,
     get,
-    getSince,
+    moveCursor,
+    moveHome,
+    moveToCheckpoint,
     checkpoint,
     clearToCheckpoint,
     clear: clear2,
     clearBack,
+    clearDown,
+    getSince,
     ansi: ansiFns
   };
   return lc;
@@ -805,6 +866,7 @@ var out;
     let result = args.text;
     result = out2.utils.stripAnsi(result);
     result = result.replace(out2.utils.getEmojiRegex("gu"), "  ");
+    result = result.replace(/\uD83C[\uDFFB-\uDFFF]|[\uD800-\uDBFF]/g, "");
     return result.length;
   };
   out2.pad = (line, start, end, replaceChar = " ") => `${replaceChar.repeat(Math.max(0, start))}${line}${replaceChar.repeat(Math.max(0, end))}`;
@@ -920,15 +982,21 @@ var out;
   const loadingChars = import_swiss_ak7.ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) => colr.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
-  out2.loading = (action = loadingDefault, lines = 1, symbols8 = loadingChars) => {
+  out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
     let stopped = false;
     let count = 0;
+    let previousLinesDrawn = 0;
     const runLoop = async () => {
       if (stopped)
         return;
       if (count)
-        out2.moveUp(lines);
-      action(symbols8[count++ % symbols8.length]);
+        process.stdout.write(out2.ansi.cursor.up(previousLinesDrawn));
+      const output = action(symbols6[count++ % symbols6.length]);
+      previousLinesDrawn = lines;
+      if (output !== void 0) {
+        console.log(output);
+        previousLinesDrawn = utils.getNumLines(output + "");
+      }
       await (0, import_swiss_ak7.wait)(150);
       return runLoop();
     };
@@ -1023,7 +1091,7 @@ var out;
         flags: import_swiss_ak7.safe.str(flags)
       };
       return new RegExp(
-        /[\u2139\u231A\u231B\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]|\uD83C[\uDFFB-\uDFFF]|[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD\uDEC3-\uDEC5\uDEF0-\uDEF8]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEDC-\uDEDF\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]/,
+        /[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FB-\u25FE\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]/,
         args.flags
       );
     };
@@ -1140,7 +1208,7 @@ var import_promises = __toESM(require("fs/promises"), 1);
 var import_swiss_ak8 = require("swiss-ak");
 var import_util2 = __toESM(require("util"), 1);
 var logItems = [];
-var logFile = "./debug/LOG.txt";
+var logFile = "/Users/jackcannon/Projects/swiss-node/debug/LOG.txt";
 var LOG = async (...args) => {
   logItems.push(args.map((arg) => import_util2.default.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
   await import_swiss_ak8.queue.add("log", () => import_promises.default.writeFile(logFile, logItems.join("\n")));
@@ -1268,14 +1336,31 @@ ${bottomLine}`;
     return promptFormatters.fullBox(question, value, items, errorMessage, theme, isComplete, isExit);
   }
 };
-var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isExit, isBlock, itemOutputTemplate) => {
+var getScrollbar = (allItems, scrolledItems, theme) => {
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
-  const askOptions2 = getAskOptions();
-  LOG("theme", { theme, itemHover: askOptions2.colours.itemHover, itemHoverIcon: askOptions2.colours.itemHoverIcon });
   const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
   const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
   const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
   const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+  const totalTrackHeight = scrolledItems.items.length;
+  const amountShown = scrolledItems.items.length / allItems.length;
+  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
+  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
+  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
+  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
+  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+  const scrollbarBar = import_swiss_ak9.ArrayTools.repeat(barHeight, scrollBarIcon);
+  if (scrolledItems.doesScrollUp && barHeight >= 2)
+    scrollbarBar[0] = scrollUpIcon;
+  if (scrolledItems.doesScrollDown && barHeight >= 2)
+    scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+  return [...import_swiss_ak9.ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...import_swiss_ak9.ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
+};
+var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isExit, isBlock, itemOutputTemplate) => {
+  const { colours: col, symbols: sym, boxSymbols: box } = theme;
+  const askOptions2 = getAskOptions();
+  LOG("theme", { theme, itemHover: askOptions2.colours.itemHover, itemHoverIcon: askOptions2.colours.itemHoverIcon });
   const colItemHover = isBlock ? col.itemBlockHover : col.itemHover;
   const colItemHoverIcon = isBlock ? col.itemBlockHoverIcon : col.itemHoverIcon;
   const itemSelectedIcon = col.itemSelectedIcon(out.left(sym.itemSelectedIcon, 2));
@@ -1290,23 +1375,7 @@ var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isE
     hoveredIndex = 0;
   }
   const hasScrollbar = !isExit && allItems.length > displayItems.length;
-  let scrollbar = [];
-  if (hasScrollbar) {
-    const totalTrackHeight = displayItems.length;
-    const amountShown = displayItems.length / allItems.length;
-    const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-    const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
-    const barProgress = scrolledItems.startingIndex / (allItems.length - displayItems.length);
-    const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
-    const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-    const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
-    const scrollbarBar = import_swiss_ak9.ArrayTools.repeat(barHeight, scrollBarIcon);
-    if (scrolledItems.doesScrollUp && barHeight >= 2)
-      scrollbarBar[0] = scrollUpIcon;
-    if (scrolledItems.doesScrollDown && barHeight >= 2)
-      scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
-    scrollbar = [...import_swiss_ak9.ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...import_swiss_ak9.ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
-  }
+  let scrollbar = hasScrollbar ? getScrollbar(allItems, scrolledItems, theme) : [];
   return displayItems.map((item, index) => {
     let scrollIcon = " ";
     let selectIcon = "";
@@ -1332,7 +1401,7 @@ var itemsFormatters = {
     };
     return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, false, templateFn);
   },
-  alt: (allItems, scrolledItems, selected, type, theme, isExit) => {
+  simpleAlt: (allItems, scrolledItems, selected, type, theme, isExit) => {
     const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
     const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
       const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
@@ -1341,6 +1410,8 @@ var itemsFormatters = {
     return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, false, templateFn);
   },
   block: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    if (isExit)
+      return itemsFormatters.simple(allItems, scrolledItems, selected, type, theme, isExit);
     const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
     const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
       const mainSection = ` ${hoverIcon} ${selectIcon}${out.left(item.title, maxTitle + 1)}`;
@@ -1349,6 +1420,8 @@ var itemsFormatters = {
     return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, true, templateFn);
   },
   blockAlt: (allItems, scrolledItems, selected, type, theme, isExit) => {
+    if (isExit)
+      return itemsFormatters.simpleAlt(allItems, scrolledItems, selected, type, theme, isExit);
     const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
     const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
       const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
@@ -1389,14 +1462,15 @@ var populateAskOptions = () => {
     return askOptions;
   askOptions = {
     general: {
+      themeColour: "yellow",
       lc: getLineCounter2(),
       boxType: "thick",
-      boolTrueKeys: "Yy",
-      boolFalseKeys: "Nn",
       maxItemsOnScreen: 10,
       scrollMargin: 2
     },
     text: {
+      boolTrueKeys: "Yy",
+      boolFalseKeys: "Nn",
       boolYes: "yes",
       boolNo: "no",
       boolYesNoSeparator: "/",
@@ -1404,7 +1478,16 @@ var populateAskOptions = () => {
       selectAll: "[Select All]",
       done: "done",
       items: (count) => `[${count} items]`,
-      countdown: (s) => `Starting in ${s}s...`
+      countdown: (s) => `Starting in ${s}s...`,
+      file: "File",
+      directory: "Directory",
+      loading: "Loading...",
+      selected: (count) => `${count} selected`,
+      specialNewFolderEnterNothingCancel: "Enter nothing to cancel",
+      specialNewFolderAddingFolderTo: "Adding folder to ",
+      specialNewFolderQuestion: (hl) => `What do you want to ${hl("name")} the new folder?`,
+      specialSaveFileSavingFileTo: "Saving file to ",
+      specialSaveFileQuestion: (hl) => `What do you want to ${hl("name")} the file?`
     },
     formatters: {
       formatPrompt: promptFormatters.oneLine,
@@ -1413,7 +1496,7 @@ var populateAskOptions = () => {
     colours: {
       decoration: {
         normal: colr.grey1,
-        error: colr.dark.red,
+        error: colr.dark.red.dim,
         done: colr.grey1
       },
       questionText: {
@@ -1431,32 +1514,34 @@ var populateAskOptions = () => {
         error: colr.dark.red,
         done: colr.grey1
       },
-      promptIcon: getSetFromSingle(colr.dark.primary.dim),
+      promptIcon: getSetFromSingle(colr.yellow.dim),
       result: getSetFromSingle(colr.dark.yellow),
       resultText: getSetFromSingle(colr.dark.yellow),
       resultNumber: getSetFromSingle(colr.dark.cyan),
       resultBoolean: getSetFromSingle(colr.dark.green),
       resultArray: getSetFromSingle(colr.lightBlack),
+      resultDate: getSetFromSingle(colr.light.blue),
+      loadingIcon: getSetFromSingle(colr.grey2),
       errorMsg: getSetFromSingle(colr.red),
       item: getSetFromSingle(colr.grey4),
       itemIcon: getSetFromSingle(colr),
       itemHover: {
-        normal: colr.primary,
+        normal: colr.yellow,
         error: colr.danger,
-        done: colr.primary
+        done: colr.yellow
       },
       itemHoverIcon: getSetFromSingle(colr),
       itemBlockHover: {
-        normal: colr.primaryBg,
+        normal: colr.yellowBg.black,
         error: colr.dangerBg,
-        done: colr.primaryBg
+        done: colr.yellowBg.black
       },
       itemBlockHoverIcon: getSetFromSingle(colr.black),
       itemSelected: getSetFromSingle(colr.grey4),
       itemSelectedIcon: {
-        normal: colr.primary,
+        normal: colr.yellow,
         error: colr.danger,
-        done: colr.primary
+        done: colr.yellow
       },
       itemUnselected: getSetFromSingle(colr.grey4),
       itemUnselectedIcon: getSetFromSingle(colr),
@@ -1477,13 +1562,13 @@ var populateAskOptions = () => {
       },
       specialSelected: getSetFromSingle(colr.darkBg.whiteBg.black),
       specialHighlight: getSetFromSingle(colr.yellow),
-      specialUnselected: getSetFromSingle(colr.dark.white),
+      specialNormal: getSetFromSingle(colr.white),
       specialFaded: getSetFromSingle(colr.grey3),
       specialHint: getSetFromSingle(colr.grey1),
-      specialInactiveHover: getSetFromSingle(colr.darkBg.whiteBg.black),
-      specialInactiveSelected: getSetFromSingle(colr.greyBg.black),
+      specialInactiveHover: getSetFromSingle(colr.lightBlackBg.black),
+      specialInactiveSelected: getSetFromSingle(colr.lightBlackBg.black),
       specialInactiveHighlight: getSetFromSingle(colr.grey4),
-      specialInactiveUnselected: getSetFromSingle(colr.grey3),
+      specialInactiveNormal: getSetFromSingle(colr.grey3),
       specialInactiveFaded: getSetFromSingle(colr.grey2),
       specialInactiveHint: getSetFromSingle(colr.black),
       specialInfo: getSetFromSingle(colr),
@@ -1519,7 +1604,9 @@ var populateAskOptions = () => {
       separatorNodeDown: getSetFromSingle("\u25BF"),
       separatorNodeNone: getSetFromSingle("\u25E6"),
       separatorNodeUp: getSetFromSingle("\u25B5"),
-      specialErrorIcon: getSetFromSingle(" ! ")
+      specialErrorIcon: getSetFromSingle(" ! "),
+      folderOpenableIcon: getSetFromSingle("\u203A"),
+      fileOpenableIcon: getSetFromSingle(" ")
     }
   };
   return askOptions;
@@ -1535,7 +1622,7 @@ var getAskOptions = () => {
   return askOptions;
 };
 var getOptionsStateName = (isDone, isError) => isDone ? "done" : isError ? "error" : "normal";
-var getAskOptionsForState2 = (isDone, isError) => {
+var getAskOptionsForState = (isDone, isError) => {
   if (!askOptions)
     populateAskOptions();
   const state = getOptionsStateName(isDone, isError);
@@ -1579,27 +1666,37 @@ var processThemeItem = (item, defaultItem) => {
   }
   return defaultItem;
 };
-var customise = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa;
+var applyPartialOptionsToAskOptions = (options) => {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
-    lc: ((_a = options == null ? void 0 : options.general) == null ? void 0 : _a.lc) ?? askOptions.general.lc,
-    boxType: ((_b = options == null ? void 0 : options.general) == null ? void 0 : _b.boxType) ?? askOptions.general.boxType,
-    boolTrueKeys: ((_c = options == null ? void 0 : options.general) == null ? void 0 : _c.boolTrueKeys) ?? askOptions.general.boolTrueKeys,
-    boolFalseKeys: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.boolFalseKeys) ?? askOptions.general.boolFalseKeys,
-    maxItemsOnScreen: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
-    scrollMargin: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.scrollMargin) ?? askOptions.general.scrollMargin
+    themeColour: ((_a = options == null ? void 0 : options.general) == null ? void 0 : _a.themeColour) ?? askOptions.general.themeColour,
+    lc: ((_b = options == null ? void 0 : options.general) == null ? void 0 : _b.lc) ?? askOptions.general.lc,
+    boxType: ((_c = options == null ? void 0 : options.general) == null ? void 0 : _c.boxType) ?? askOptions.general.boxType,
+    maxItemsOnScreen: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
+    scrollMargin: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.scrollMargin) ?? askOptions.general.scrollMargin
   };
   askOptions.text = {
-    boolYes: ((_g = options == null ? void 0 : options.text) == null ? void 0 : _g.boolYes) ?? askOptions.text.boolYes,
-    boolNo: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolNo) ?? askOptions.text.boolNo,
-    boolYesNoSeparator: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
-    boolYN: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYN) ?? askOptions.text.boolYN,
-    selectAll: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.selectAll) ?? askOptions.text.selectAll,
-    done: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.done) ?? askOptions.text.done,
-    items: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.items) ?? askOptions.text.items,
-    countdown: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.countdown) ?? askOptions.text.countdown
+    boolTrueKeys: ((_f = options == null ? void 0 : options.text) == null ? void 0 : _f.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
+    boolFalseKeys: ((_g = options == null ? void 0 : options.text) == null ? void 0 : _g.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
+    boolYes: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolYes) ?? askOptions.text.boolYes,
+    boolNo: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolNo) ?? askOptions.text.boolNo,
+    boolYesNoSeparator: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
+    boolYN: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolYN) ?? askOptions.text.boolYN,
+    selectAll: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.selectAll) ?? askOptions.text.selectAll,
+    done: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.done) ?? askOptions.text.done,
+    items: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.items) ?? askOptions.text.items,
+    countdown: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.countdown) ?? askOptions.text.countdown,
+    file: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.file) ?? askOptions.text.file,
+    directory: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.directory) ?? askOptions.text.directory,
+    loading: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.loading) ?? askOptions.text.loading,
+    selected: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.selected) ?? askOptions.text.selected,
+    specialNewFolderEnterNothingCancel: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
+    specialNewFolderAddingFolderTo: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
+    specialNewFolderQuestion: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
+    specialSaveFileSavingFileTo: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
+    specialSaveFileQuestion: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
   };
   askOptions.formatters = {
     formatPrompt: (() => {
@@ -1628,74 +1725,139 @@ var customise = (options) => {
     })()
   };
   askOptions.colours = {
-    decoration: processThemeItem((_o = options == null ? void 0 : options.colours) == null ? void 0 : _o.decoration, askOptions.colours.decoration),
-    questionText: processThemeItem((_p = options == null ? void 0 : options.colours) == null ? void 0 : _p.questionText, askOptions.colours.questionText),
-    specialIcon: processThemeItem((_q = options == null ? void 0 : options.colours) == null ? void 0 : _q.specialIcon, askOptions.colours.specialIcon),
-    openingIcon: processThemeItem((_r = options == null ? void 0 : options.colours) == null ? void 0 : _r.openingIcon, askOptions.colours.openingIcon),
-    promptIcon: processThemeItem((_s = options == null ? void 0 : options.colours) == null ? void 0 : _s.promptIcon, askOptions.colours.promptIcon),
-    result: processThemeItem((_t = options == null ? void 0 : options.colours) == null ? void 0 : _t.result, askOptions.colours.result),
-    resultText: processThemeItem((_u = options == null ? void 0 : options.colours) == null ? void 0 : _u.resultText, askOptions.colours.resultText),
-    resultNumber: processThemeItem((_v = options == null ? void 0 : options.colours) == null ? void 0 : _v.resultNumber, askOptions.colours.resultNumber),
-    resultBoolean: processThemeItem((_w = options == null ? void 0 : options.colours) == null ? void 0 : _w.resultBoolean, askOptions.colours.resultBoolean),
-    resultArray: processThemeItem((_x = options == null ? void 0 : options.colours) == null ? void 0 : _x.resultArray, askOptions.colours.resultArray),
-    errorMsg: processThemeItem((_y = options == null ? void 0 : options.colours) == null ? void 0 : _y.errorMsg, askOptions.colours.errorMsg),
-    item: processThemeItem((_z = options == null ? void 0 : options.colours) == null ? void 0 : _z.item, askOptions.colours.item),
-    itemIcon: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.itemIcon, askOptions.colours.itemIcon),
-    itemHover: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.itemHover, askOptions.colours.itemHover),
-    itemHoverIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.itemHoverIcon, askOptions.colours.itemHoverIcon),
-    itemBlockHover: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.itemBlockHover, askOptions.colours.itemBlockHover),
-    itemBlockHoverIcon: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
-    itemSelected: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.itemSelected, askOptions.colours.itemSelected),
-    itemSelectedIcon: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
-    itemUnselected: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.itemUnselected, askOptions.colours.itemUnselected),
-    itemUnselectedIcon: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
-    scrollbarTrack: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.scrollbarTrack, askOptions.colours.scrollbarTrack),
-    scrollbarBar: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.scrollbarBar, askOptions.colours.scrollbarBar),
-    selectAllText: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.selectAllText, askOptions.colours.selectAllText),
-    boolYNText: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.boolYNText, askOptions.colours.boolYNText),
-    countdown: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.countdown, askOptions.colours.countdown),
-    pause: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.pause, askOptions.colours.pause),
-    specialHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.specialHover, askOptions.colours.specialHover),
-    specialSelected: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.specialSelected, askOptions.colours.specialSelected),
-    specialHighlight: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.specialHighlight, askOptions.colours.specialHighlight),
-    specialUnselected: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.specialUnselected, askOptions.colours.specialUnselected),
-    specialFaded: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.specialFaded, askOptions.colours.specialFaded),
-    specialHint: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.specialHint, askOptions.colours.specialHint),
-    specialInactiveHover: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.specialInactiveHover, askOptions.colours.specialInactiveHover),
-    specialInactiveSelected: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
-    specialInactiveHighlight: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
-    specialInactiveUnselected: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.specialInactiveUnselected, askOptions.colours.specialInactiveUnselected),
-    specialInactiveFaded: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
-    specialInactiveHint: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.specialInactiveHint, askOptions.colours.specialInactiveHint),
-    specialInfo: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.specialInfo, askOptions.colours.specialInfo),
-    specialErrorMsg: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.specialErrorMsg, askOptions.colours.specialErrorMsg),
-    specialErrorIcon: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialErrorIcon, askOptions.colours.specialErrorIcon)
+    decoration: processThemeItem((_y = options == null ? void 0 : options.colours) == null ? void 0 : _y.decoration, askOptions.colours.decoration),
+    questionText: processThemeItem((_z = options == null ? void 0 : options.colours) == null ? void 0 : _z.questionText, askOptions.colours.questionText),
+    specialIcon: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.specialIcon, askOptions.colours.specialIcon),
+    openingIcon: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.openingIcon, askOptions.colours.openingIcon),
+    promptIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.promptIcon, askOptions.colours.promptIcon),
+    result: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.result, askOptions.colours.result),
+    resultText: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.resultText, askOptions.colours.resultText),
+    resultNumber: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.resultNumber, askOptions.colours.resultNumber),
+    resultBoolean: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.resultBoolean, askOptions.colours.resultBoolean),
+    resultArray: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.resultArray, askOptions.colours.resultArray),
+    resultDate: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.resultDate, askOptions.colours.resultDate),
+    loadingIcon: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.loadingIcon, askOptions.colours.loadingIcon),
+    errorMsg: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.errorMsg, askOptions.colours.errorMsg),
+    item: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.item, askOptions.colours.item),
+    itemIcon: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.itemIcon, askOptions.colours.itemIcon),
+    itemHover: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.itemHover, askOptions.colours.itemHover),
+    itemHoverIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.itemHoverIcon, askOptions.colours.itemHoverIcon),
+    itemBlockHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.itemBlockHover, askOptions.colours.itemBlockHover),
+    itemBlockHoverIcon: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
+    itemSelected: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemSelected, askOptions.colours.itemSelected),
+    itemSelectedIcon: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
+    itemUnselected: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemUnselected, askOptions.colours.itemUnselected),
+    itemUnselectedIcon: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
+    scrollbarTrack: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.scrollbarTrack, askOptions.colours.scrollbarTrack),
+    scrollbarBar: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.scrollbarBar, askOptions.colours.scrollbarBar),
+    selectAllText: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.selectAllText, askOptions.colours.selectAllText),
+    boolYNText: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.boolYNText, askOptions.colours.boolYNText),
+    countdown: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.countdown, askOptions.colours.countdown),
+    pause: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.pause, askOptions.colours.pause),
+    specialHover: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.specialHover, askOptions.colours.specialHover),
+    specialSelected: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.specialSelected, askOptions.colours.specialSelected),
+    specialHighlight: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialHighlight, askOptions.colours.specialHighlight),
+    specialNormal: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.specialNormal, askOptions.colours.specialNormal),
+    specialFaded: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.specialFaded, askOptions.colours.specialFaded),
+    specialHint: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialHint, askOptions.colours.specialHint),
+    specialInactiveHover: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialInactiveHover, askOptions.colours.specialInactiveHover),
+    specialInactiveSelected: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
+    specialInactiveHighlight: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
+    specialInactiveNormal: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
+    specialInactiveFaded: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
+    specialInactiveHint: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveHint, askOptions.colours.specialInactiveHint),
+    specialInfo: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInfo, askOptions.colours.specialInfo),
+    specialErrorMsg: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialErrorMsg, askOptions.colours.specialErrorMsg),
+    specialErrorIcon: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialErrorIcon, askOptions.colours.specialErrorIcon)
   };
   askOptions.symbols = {
-    specialIcon: processThemeItem((_ca = options == null ? void 0 : options.symbols) == null ? void 0 : _ca.specialIcon, askOptions.symbols.specialIcon),
-    openingIcon: processThemeItem((_da = options == null ? void 0 : options.symbols) == null ? void 0 : _da.openingIcon, askOptions.symbols.openingIcon),
-    promptIcon: processThemeItem((_ea = options == null ? void 0 : options.symbols) == null ? void 0 : _ea.promptIcon, askOptions.symbols.promptIcon),
-    errorMsgPrefix: processThemeItem((_fa = options == null ? void 0 : options.symbols) == null ? void 0 : _fa.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
-    itemIcon: processThemeItem((_ga = options == null ? void 0 : options.symbols) == null ? void 0 : _ga.itemIcon, askOptions.symbols.itemIcon),
-    itemHoverIcon: processThemeItem((_ha = options == null ? void 0 : options.symbols) == null ? void 0 : _ha.itemHoverIcon, askOptions.symbols.itemHoverIcon),
-    itemSelectedIcon: processThemeItem((_ia = options == null ? void 0 : options.symbols) == null ? void 0 : _ia.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
-    itemUnselectedIcon: processThemeItem((_ja = options == null ? void 0 : options.symbols) == null ? void 0 : _ja.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
-    scrollUpIcon: processThemeItem((_ka = options == null ? void 0 : options.symbols) == null ? void 0 : _ka.scrollUpIcon, askOptions.symbols.scrollUpIcon),
-    scrollDownIcon: processThemeItem((_la = options == null ? void 0 : options.symbols) == null ? void 0 : _la.scrollDownIcon, askOptions.symbols.scrollDownIcon),
-    scrollbarTrack: processThemeItem((_ma = options == null ? void 0 : options.symbols) == null ? void 0 : _ma.scrollbarTrack, askOptions.symbols.scrollbarTrack),
-    scrollbarBar: processThemeItem((_na = options == null ? void 0 : options.symbols) == null ? void 0 : _na.scrollbarBar, askOptions.symbols.scrollbarBar),
-    separatorLine: processThemeItem((_oa = options == null ? void 0 : options.symbols) == null ? void 0 : _oa.separatorLine, askOptions.symbols.separatorLine),
-    separatorNodeDown: processThemeItem((_pa = options == null ? void 0 : options.symbols) == null ? void 0 : _pa.separatorNodeDown, askOptions.symbols.separatorNodeDown),
-    separatorNodeNone: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.separatorNodeNone, askOptions.symbols.separatorNodeNone),
-    separatorNodeUp: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.separatorNodeUp, askOptions.symbols.separatorNodeUp),
-    specialErrorIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.specialErrorIcon, askOptions.symbols.specialErrorIcon)
+    specialIcon: processThemeItem((_oa = options == null ? void 0 : options.symbols) == null ? void 0 : _oa.specialIcon, askOptions.symbols.specialIcon),
+    openingIcon: processThemeItem((_pa = options == null ? void 0 : options.symbols) == null ? void 0 : _pa.openingIcon, askOptions.symbols.openingIcon),
+    promptIcon: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.promptIcon, askOptions.symbols.promptIcon),
+    errorMsgPrefix: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
+    itemIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.itemIcon, askOptions.symbols.itemIcon),
+    itemHoverIcon: processThemeItem((_ta = options == null ? void 0 : options.symbols) == null ? void 0 : _ta.itemHoverIcon, askOptions.symbols.itemHoverIcon),
+    itemSelectedIcon: processThemeItem((_ua = options == null ? void 0 : options.symbols) == null ? void 0 : _ua.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
+    itemUnselectedIcon: processThemeItem((_va = options == null ? void 0 : options.symbols) == null ? void 0 : _va.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
+    scrollUpIcon: processThemeItem((_wa = options == null ? void 0 : options.symbols) == null ? void 0 : _wa.scrollUpIcon, askOptions.symbols.scrollUpIcon),
+    scrollDownIcon: processThemeItem((_xa = options == null ? void 0 : options.symbols) == null ? void 0 : _xa.scrollDownIcon, askOptions.symbols.scrollDownIcon),
+    scrollbarTrack: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarBar: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.scrollbarBar, askOptions.symbols.scrollbarBar),
+    separatorLine: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.separatorLine, askOptions.symbols.separatorLine),
+    separatorNodeDown: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.separatorNodeDown, askOptions.symbols.separatorNodeDown),
+    separatorNodeNone: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.separatorNodeNone, askOptions.symbols.separatorNodeNone),
+    separatorNodeUp: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.separatorNodeUp, askOptions.symbols.separatorNodeUp),
+    specialErrorIcon: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.specialErrorIcon, askOptions.symbols.specialErrorIcon),
+    folderOpenableIcon: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
+    fileOpenableIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
   };
+};
+var setThemeColour = (colour) => {
+  const permitted = [
+    "white",
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "darkWhite",
+    "lightBlack",
+    "darkRed",
+    "darkGreen",
+    "darkYellow",
+    "darkBlue",
+    "darkMagenta",
+    "darkCyan",
+    "grey",
+    "gray"
+  ];
+  if (!permitted.includes(colour)) {
+    colour = "yellow";
+  }
+  const txtProp = colour;
+  const bgProp = colour + "Bg";
+  applyPartialOptionsToAskOptions({
+    general: {
+      themeColour: colour
+    },
+    colours: {
+      promptIcon: colr[txtProp].dim,
+      result: colr.dark[txtProp],
+      resultText: colr.dark[txtProp],
+      itemHover: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+      itemBlockHover: {
+        normal: colr[bgProp].black,
+        done: colr[bgProp].black
+      },
+      itemSelectedIcon: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+      specialHover: {
+        normal: colr.darkBg[bgProp].black,
+        done: colr.darkBg[bgProp].black
+      },
+      specialHighlight: colr[txtProp]
+    }
+  });
+};
+var customise = (options) => {
+  var _a;
+  applyPartialOptionsToAskOptions(options);
+  if (((_a = options == null ? void 0 : options.general) == null ? void 0 : _a.themeColour) !== void 0) {
+    setThemeColour(options.general.themeColour);
+  }
   cachedOptionsForStates.normal = void 0;
   cachedOptionsForStates.error = void 0;
   cachedOptionsForStates.done = void 0;
-  getAskOptionsForState2(false, false);
-  getAskOptionsForState2(false, true);
-  getAskOptionsForState2(true, false);
+  getAskOptionsForState(false, false);
+  getAskOptionsForState(false, true);
+  getAskOptionsForState(true, false);
 };
 
 // src/tools/ask/errorValidation.ts
@@ -1723,9 +1885,9 @@ var getPrinter = (question, baseOptions, valueOptions, itemsOptions) => {
   let lastScrollIndex = void 0;
   const askOptions2 = getAskOptions();
   const themes = {
-    normal: getAskOptionsForState2(false, false),
-    error: getAskOptionsForState2(false, true),
-    done: getAskOptionsForState2(true, false)
+    normal: getAskOptionsForState(false, false),
+    error: getAskOptionsForState(false, true),
+    done: getAskOptionsForState(true, false)
   };
   process.stdout.write(ansi2.cursor.save + ansi2.cursor.restore + ansi2.cursor.setShow(baseOptions.showCursor));
   const getOutputString = (isComplete, value, itemsData, errorMessage, isExit) => {
@@ -1906,7 +2068,7 @@ var valueDisplays = {
     );
   },
   array: (arr, isComplete, isError) => {
-    const theme = getAskOptionsForState2(isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
     let display = "";
     if (arr.length <= 2)
       display = arr.map((v) => valueDisplays.anyByType((v == null ? void 0 : v.title) ?? (v == null ? void 0 : v.value) ?? v, isComplete, isError)).join(", ");
@@ -1923,7 +2085,7 @@ var valueDisplays = {
     return "";
   },
   boolean: (bool, isComplete, isError) => {
-    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState2(isComplete, isError);
+    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState(isComplete, isError);
     if (isComplete) {
       return col.resultBoolean(bool ? txt.boolYes : txt.boolNo);
     }
@@ -1936,25 +2098,40 @@ var valueDisplays = {
     return `${yes} ${col.decoration(txt.boolYesNoSeparator)} ${no}`;
   },
   booleanYN: (bool, isComplete, isError) => {
-    const theme = getAskOptionsForState2(isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
     if (isComplete) {
       return bool === "" ? "" : bool ? theme.text.boolYes : theme.text.boolNo;
     }
     return theme.colours.boolYNText(`${theme.text.boolYN} `);
   },
   number: (num, isComplete, isError) => {
-    const theme = getAskOptionsForState2(isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
     return theme.colours.resultNumber("" + num);
   },
   text: (text2, isComplete, isError) => {
-    const theme = getAskOptionsForState2(isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
     return theme.colours.resultText(text2);
+  },
+  date: (date2, isComplete, isError, isDateOn, isTimeOn) => {
+    const theme = getAskOptionsForState(isComplete, isError);
+    const [ogDate, ogTime] = date2.toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
+    if (isDateOn === void 0 || isTimeOn === void 0) {
+      if (isDateOn === void 0)
+        isDateOn = ogDate !== "1970-01-01";
+      if (isTimeOn === void 0)
+        isTimeOn = ogTime !== "00:00";
+    }
+    const dateStr = isDateOn ? date2.toDateString() : void 0;
+    const timeStr = isTimeOn ? ogTime.split(":").slice(0, 2).map(Number).map((v) => (v + "").padStart(2, "0")).join(":") : void 0;
+    return theme.colours.resultDate([dateStr, timeStr].filter((v) => v).join(" @ "));
   },
   anyByType: (value, isComplete, isError) => {
     if (Array.isArray(value)) {
       const mappedArr = value.map((v) => valueDisplays.anyByType(v, isComplete, isError));
       return valueDisplays.array(mappedArr, isComplete, isError);
     }
+    if (value instanceof Date)
+      return valueDisplays.date(value, isComplete, isError);
     if (typeof value === "object")
       return valueDisplays.object(value, isComplete, isError);
     if (typeof value === "boolean")
@@ -1975,7 +2152,7 @@ var text = async (question, initial, validate, lc) => {
       print(false);
     },
     space(...args) {
-      this.key(...args);
+      textActions.key(...args);
     },
     exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
       exit();
@@ -2045,7 +2222,7 @@ var autotext = async (question, choices, initial, validate, lc) => {
       print(false);
     },
     space(...args) {
-      this.key(...args);
+      autotextActions.key(...args);
     },
     exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
       exit();
@@ -2111,7 +2288,7 @@ var autotext = async (question, choices, initial, validate, lc) => {
 var number = async (question, initial, validate, lc) => {
   const numberActions = {
     space(...args) {
-      this.key(...args);
+      numberActions.key(...args);
     },
     exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
       exit();
@@ -2193,11 +2370,11 @@ var boolean = async (question, initial = true, validate, lc) => {
   const options = getAskOptions();
   const booleanActions = {
     key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
-      if (options.general.boolTrueKeys.includes(rawValue)) {
+      if (options.text.boolTrueKeys.includes(rawValue)) {
         valueData.value = true;
         print(false);
       }
-      if (options.general.boolFalseKeys.includes(rawValue)) {
+      if (options.text.boolFalseKeys.includes(rawValue)) {
         valueData.value = false;
         print(false);
       }
@@ -2245,10 +2422,10 @@ var booleanYN = async (question, validate, lc) => {
   const options = getAskOptions();
   const booleanYNActions = {
     key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
-      if (options.general.boolTrueKeys.includes(rawValue)) {
+      if (options.text.boolTrueKeys.includes(rawValue)) {
         submit(true, true);
       }
-      if (options.general.boolFalseKeys.includes(rawValue)) {
+      if (options.text.boolFalseKeys.includes(rawValue)) {
         submit(false, false);
       }
     },
@@ -3073,7 +3250,11 @@ var trim = async (totalFrames, frameRate, options = {}) => {
   return deferred.promise;
 };
 
-// src/tools/ask/fileExplorer.ts
+// src/tools/ask/fileExplorer/handler.ts
+var import_swiss_ak21 = require("swiss-ak");
+
+// src/utils/fsUtils.ts
+var import_child_process = require("child_process");
 var fsP3 = __toESM(require("fs/promises"), 1);
 var import_swiss_ak20 = require("swiss-ak");
 
@@ -3098,6 +3279,10 @@ var PathTools;
 })(PathTools || (PathTools = {}));
 var explodePath = PathTools.explodePath;
 
+// src/tools/ask/fileExplorer/helpers.ts
+var fsP2 = __toESM(require("fs/promises"), 1);
+var import_swiss_ak19 = require("swiss-ak");
+
 // src/utils/actionBar.ts
 var import_swiss_ak18 = require("swiss-ak");
 var getActionBar = (ids, config, pressedId, disabledIds = []) => {
@@ -3118,84 +3303,24 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   );
 };
 
-// src/utils/fsUtils.ts
-var import_child_process = require("child_process");
-var fsP2 = __toESM(require("fs/promises"), 1);
-var import_swiss_ak19 = require("swiss-ak");
-var execute = (command) => {
-  return new Promise((resolve, reject) => {
-    (0, import_child_process.exec)(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      if (stderr) {
-        reject(stderr);
-        return;
-      }
-      resolve(stdout);
-    });
-  });
-};
-var intoLines = (out2) => out2.toString().split("\n").filter(import_swiss_ak19.fn.isTruthy);
-var getProbe = async (file) => {
-  const stdout = await (0, import_swiss_ak19.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
-  const props = Object.fromEntries(
-    stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
-  );
-  const asNumber = (val) => Number.isNaN(Number(val)) ? 0 : Number(val);
-  const framerate = asNumber(props.avg_frame_rate.split("/")[0]) / asNumber(props.avg_frame_rate.split("/")[1]);
-  return {
-    width: asNumber(props.width),
-    height: asNumber(props.height),
-    duration: asNumber(props.duration),
-    framerate
-  };
-};
-var mkdir2 = (dir) => {
-  return fsP2.mkdir(dir, { recursive: true });
-};
-var findDirs = async (dir = ".") => {
-  const newDir = PathTools.trailSlash(dir);
-  const stdout = await (0, import_swiss_ak19.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
-  const lines = intoLines(stdout);
-  return lines;
-};
-var findFiles = async (dir = ".") => {
-  const newDir = PathTools.trailSlash(dir);
-  const stdout = await (0, import_swiss_ak19.tryOr)("", async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
-  const lines = intoLines(stdout);
-  return lines;
-};
-var open = async (file) => {
-  try {
-    await execute(`open "${file}"`);
-  } catch (err) {
-  }
-};
-var isFileExist = async (file) => {
-  try {
-    await execute(`[[ -f "${file}" ]]`);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-var isDirExist = async (file) => {
-  try {
-    await execute(`[[ -d "${file}" ]]`);
-    return true;
-  } catch (e) {
-    return false;
-  }
+// src/tools/ask/fileExplorer/cache.ts
+var fsCache = {
+  cache: /* @__PURE__ */ new Map(),
+  getPathContents: (path) => fsCache.cache.get(path)
 };
 
-// src/tools/ask/fileExplorer.ts
-var fsCache = /* @__PURE__ */ new Map();
-var getPathContents = (path) => fsCache.get(path);
+// src/tools/waiters.ts
+var waiters;
+((waiters2) => {
+  waiters2.nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
+})(waiters || (waiters = {}));
+var nextTick = waiters.nextTick;
+
+// src/tools/ask/fileExplorer/helpers.ts
 var loadPathContents = async (path) => {
-  if (fsCache.has(path)) {
-    return fsCache.get(path);
+  if (fsCache.cache.has(path)) {
+    nextTick().then(() => forceLoadPathContents(path));
+    return fsCache.cache.get(path);
   }
   return forceLoadPathContents(path);
 };
@@ -3204,28 +3329,21 @@ var forceLoadPathContents = async (path) => {
   try {
     const pathType = await getPathType(path);
     if (pathType === "d") {
-      const lists = await Promise.all([
-        findDirs(path),
-        findFiles(path)
-      ]);
-      const [dirs, files] = lists.map((list) => (0, import_swiss_ak20.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
+      const scanResults = await scanDir(path);
+      const [dirs, files] = [scanResults.dirs, scanResults.files].map((list) => (0, import_swiss_ak19.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
       contents = { ...contents, dirs, files };
     }
     if (pathType === "f") {
-      const [stat2, probe] = await Promise.all([
-        (0, import_swiss_ak20.tryOr)(void 0, () => fsP3.stat(path)),
-        (0, import_swiss_ak20.tryOr)(void 0, () => getProbe(path))
+      const [stat3, info] = await Promise.all([
+        (0, import_swiss_ak19.tryOr)(void 0, () => fsP2.stat(path)),
+        (0, import_swiss_ak19.tryOr)(void 0, () => getBasicFileInfo(path))
       ]);
-      contents = { ...contents, info: { stat: stat2, probe } };
+      contents = { ...contents, info: { stat: stat3, info } };
     }
   } catch (err) {
   }
-  fsCache.set(path, contents);
+  fsCache.cache.set(path, contents);
   return contents;
-};
-var getPathType = async (path) => {
-  const [isDir, isFile] = await Promise.all([isDirExist(path), isFileExist(path)]);
-  return isDir ? "d" : isFile ? "f" : void 0;
 };
 var join = (...items) => {
   const result = items.join("/");
@@ -3257,12 +3375,13 @@ var keyActionDict = {
     label: "Submit"
   }
 };
-var getFEActionBar = (multi, pressed, disabled = []) => {
+var getFEActionBar = (multi, pressed, disabled = [], isError = false) => {
+  const theme = getAskOptionsForState(false, isError);
   const keyList = {
     single: ["move", "r", "f", "o", "return"],
     multi: ["move", "r", "f", "o", "space", "return"]
   }[multi ? "multi" : "single"];
-  return getActionBar(keyList, keyActionDict, pressed, disabled);
+  return theme.colours.specialInfo(getActionBar(keyList, keyActionDict, pressed, disabled));
 };
 var FILE_CATEGORIES = {
   image: ["jpg", "jpeg", "png", "tif", "tiff", "gif", "bmp", "webp", "psd", "ai", "cr2", "crw", "nef", "pef", "svg"],
@@ -3275,13 +3394,15 @@ var getFileCategory = (ext) => {
   return category || "";
 };
 var getFileIcon = (ext) => {
+  const { colours: col } = getAskOptionsForState(false, false);
   const category = getFileCategory(ext);
   const dispExt = ext.length % 2 === 0 ? ext : "." + ext;
   if (category === "image") {
+    const s = col.specialNormal("\u2600");
     return out.left(
       `\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557
-\u2551  ${colr.white("\u2600")}  \u250C\u2500\u2500\u2500\u2500\u2510${colr.white("\u2600")}  \u2551
-\u2551 ${colr.white("\u2600")}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${colr.white("\u2600")}\u2551
+\u2551  ${s}  \u250C\u2500\u2500\u2500\u2500\u2510${s}  \u2551
+\u2551 ${s}\u250C\u2500\u2500\u2524\u25AB\u25AB\u25AA\u25AB\u2502  ${s}\u2551
 \u255F\u2500\u2500\u2524\u25AB\u25AA\u2502\u25AB\u25AB\u25AB\u25AB\u251C\u2500\u2500\u2500\u2562
 \u2551\u25AA\u25AB\u2502\u25AB\u25AB\u2502\u25AA\u25AB\u25AB\u25AB\u2502\u25AB\u25AA\u25AB\u2551
 \u255A\u2550\u2550\u2567\u2550\u2550\u2567\u2550\u2550\u2550\u2550\u2567\u2550\u2550\u2550\u255D`,
@@ -3322,60 +3443,196 @@ var getFileIcon = (ext) => {
 };
 var humanFileSize = (size) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return import_swiss_ak20.MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
+  return import_swiss_ak19.MathsTools.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
+  const { colours: col } = getAskOptionsForState(false, false);
   const { filename, ext } = PathTools.explodePath(path);
-  const { stat: stat2, probe } = ((_a = getPathContents(path)) == null ? void 0 : _a.info) || {};
+  const { stat: stat3, info } = ((_a = fsCache.getPathContents(path)) == null ? void 0 : _a.info) || {};
   const result = [];
   result.push(out.center(getFileIcon(ext), panelWidth));
   const category = getFileCategory(ext);
   result.push(out.center(out.wrap(filename, panelWidth), panelWidth));
-  result.push(out.center(colr.dim(`${ext.toUpperCase()} ${category ? `${import_swiss_ak20.StringTools.capitalise(category)} ` : ""}File`), panelWidth));
-  result.push(out.center(colr.grey1("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
+  result.push(out.center(col.specialFaded(`${ext.toUpperCase()} ${category ? `${import_swiss_ak19.StringTools.capitalise(category)} ` : ""}File`), panelWidth));
+  result.push(out.center(col.decoration("\u2500".repeat(Math.round(panelWidth * 0.75))), panelWidth));
   const now = Date.now();
   const addItem = (title, value, extra) => {
-    result.push(out.split(`${colr.bold.dim(title)}`, `${value}${extra ? colr.dim(` (${colr.dim(extra)})`) : ""}`, panelWidth));
+    result.push(out.split(`${colr.bold(col.specialFaded(title))}`, `${value}${extra ? col.specialFaded(` (${extra})`) : ""}`, panelWidth));
   };
   const addTimeItem = (title, time2, append) => {
-    addItem(title, `${import_swiss_ak20.TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
+    addItem(title, `${import_swiss_ak19.TimeTools.toReadableDuration(now - time2, false, 2)}${append || ""}`);
   };
-  if (stat2) {
-    addItem(`Size`, `${humanFileSize(stat2.size)}`);
-    addTimeItem(`Modified`, stat2.mtimeMs, " ago");
-    addTimeItem(`Created`, stat2.ctimeMs, " ago");
+  if (stat3) {
+    addItem(`Size`, `${humanFileSize(stat3.size)}`);
+    addTimeItem(`Modified`, stat3.mtimeMs, " ago");
+    addTimeItem(`Created`, stat3.ctimeMs, " ago");
   }
-  if (probe) {
+  if (info) {
     if (["image", "video"].includes(category))
-      addItem(`Dimensions`, `${probe.width}\xD7${probe.height}`);
+      addItem(`Dimensions`, `${info.width}\xD7${info.height}`);
     if (["video", "audio"].includes(category))
-      addItem(`Duration`, import_swiss_ak20.TimeTools.toReadableDuration((0, import_swiss_ak20.seconds)(probe.duration), false, 2));
+      addItem(`Duration`, import_swiss_ak19.TimeTools.toReadableDuration((0, import_swiss_ak19.seconds)(info.duration), false, 2));
     if (["video"].includes(category))
-      addItem(`FPS`, `${probe.framerate}`);
+      addItem(`FPS`, `${info.framerate}`);
   }
   const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
-  return colr.dark.white(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
+  return col.specialNormal(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
-var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "") => {
-  const primaryWrapFn = colr.yellow;
-  const cursorWrapFn = colr.darkBg.yellowBg.black;
-  const ancestralCursorWrapFn = colr.greyBg.black;
-  const selectedIconWrapFn = colr.green;
-  const selectedWrapFn = colr.green;
-  const cursorOnSelectedWrapFn = colr.greenBg.black;
+
+// src/utils/fsUtils.ts
+var execute = (command) => {
+  return new Promise((resolve, reject) => {
+    LOG("EXECUTE", command);
+    (0, import_child_process.exec)(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      if (stderr) {
+        reject(stderr);
+        return;
+      }
+      resolve(stdout);
+    });
+  });
+};
+var getBasicFileInfo = async (file) => {
+  const ext = explodePath(file).ext;
+  if (FILE_CATEGORIES.video.includes(ext.toLowerCase())) {
+    return getFFProbe(file);
+  }
+  if (FILE_CATEGORIES.image.includes(ext.toLowerCase())) {
+    return getFileInfo(file);
+  }
+  return { width: void 0, height: void 0, duration: void 0, framerate: void 0 };
+};
+var getFileInfo = async (file) => {
+  const start = Date.now();
+  const stdout = (await (0, import_swiss_ak20.tryOr)("", async () => await execute(`file ${file}`))).toString();
+  const [width, height] = (stdout.match(/([0-9]{2,})x([0-9]{2,})/g) || [""])[0].split("x").map(Number).filter((n) => n);
+  LOG("TIME - getFileInfo", Date.now() - start);
+  return {
+    width,
+    height,
+    duration: void 0,
+    framerate: void 0
+  };
+};
+var getFFProbe = async (file) => {
+  const start = Date.now();
+  const stdout = await (0, import_swiss_ak20.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
+  const props = Object.fromEntries(
+    stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
+  );
+  const asNumber = (val) => Number.isNaN(Number(val)) ? 0 : Number(val);
+  const framerate = asNumber(props.avg_frame_rate.split("/")[0]) / asNumber(props.avg_frame_rate.split("/")[1]);
+  LOG("TIME - getProbe", Date.now() - start);
+  return {
+    width: asNumber(props.width),
+    height: asNumber(props.height),
+    duration: asNumber(props.duration),
+    framerate
+  };
+};
+var mkdir2 = async (dir) => {
+  const start = Date.now();
+  const result = await fsP3.mkdir(dir, { recursive: true });
+  LOG("TIME - mkdir", Date.now() - start);
+  return result;
+};
+var scanDir = async (dir = ".") => {
+  const start = Date.now();
+  try {
+    const found = await fsP3.readdir(dir, { withFileTypes: true });
+    const files = [];
+    const dirs = [];
+    for (const file of found) {
+      if (file.isDirectory()) {
+        dirs.push(file.name);
+      } else if (file.isFile()) {
+        files.push(file.name);
+      }
+    }
+    LOG("TIME - scanDir", Date.now() - start);
+    return { files, dirs };
+  } catch (err) {
+    LOG("ERROR", err);
+    return { files: [], dirs: [] };
+  }
+};
+var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
+  const start = Date.now();
+  try {
+    await execute(`open ${revealFlag ? "-R " : ""}"${file}"`);
+  } catch (err) {
+    if (count > 6)
+      return void 0;
+    const exploded = explodePath(file);
+    if (pathType === "f") {
+      return openFinder(exploded.dir, "d", true, count + 1);
+    }
+    if (revealFlag) {
+      return openFinder(file, pathType, false, count + 1);
+    }
+    return openFinder(exploded.dir, "d", true, count + 1);
+  }
+  LOG("TIME - open", Date.now() - start);
+};
+var getPathType = async (path) => {
+  const start = Date.now();
+  try {
+    const stat3 = await fsP3.stat(path);
+    const type = stat3.isFile() ? "f" : stat3.isDirectory() ? "d" : void 0;
+    LOG("TIME - getPathType", Date.now() - start);
+    return type;
+  } catch (err) {
+    LOG("TIME - getPathType", Date.now() - start);
+    return void 0;
+  }
+};
+
+// src/tools/ask/imitate.ts
+var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
+  const theme = getAskOptionsForState(isComplete, isError);
+  const resultText = valueDisplays.anyByType(result, isComplete, isError);
+  const output = theme.formatters.formatPrompt(question, resultText, void 0, errorMsg, theme, isComplete, false);
+  if (lc) {
+    const lines = output.split("\n");
+    lc.add(lines.length);
+  }
+  return output;
+};
+var imitate = (question, result, isComplete = true, isError = false, lc) => {
+  const options = getAskOptions();
+  const output = getImitateOutput(question, result, isComplete, isError);
+  console.log(output);
+  const lines = output.split("\n");
+  if (options.general.lc)
+    options.general.lc.add(lines.length);
+  if (lc && lc !== options.general.lc)
+    lc.add(lines.length);
+};
+
+// src/tools/ask/fileExplorer/handler.ts
+var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "", validateFn, lc) => {
+  const options = getAskOptions();
   const minWidth = 25;
   const maxWidth = 25;
   const maxItems = 15;
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
-  const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak20.getDeferred)();
+  const tempLC = getLineCounter2();
+  const deferred = (0, import_swiss_ak21.getDeferred)();
+  const originalLC = options.general.lc;
+  options.general.lc = getLineCounter2();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
   let currentPath = "";
   let cursorType = "d";
+  let isError = true;
+  let errorMsg = void 0;
   let pressed = void 0;
   let submitted = false;
   let loading = false;
@@ -3386,16 +3643,24 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       return;
     paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
     currentPath = paths[paths.length - 1];
-    const isDir = ((_a = getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(PathTools.explodePath(currentPath).filename)) || false;
+    const isDir = ((_a = fsCache.getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(PathTools.explodePath(currentPath).filename)) || false;
     cursorType = isDir ? "d" : "f";
+    const errorInfo = getErrorInfoFromValidationResult(runValidation());
+    isError = errorInfo.isError;
+    errorMsg = errorInfo.errorMessage;
+  };
+  const runValidation = (newFileName) => {
+    const currentDir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
+    const currentFileName = cursorType === "f" ? cursor[cursor.length - 1] : void 0;
+    return validateFn(cursorType, currentPath, currentDir, currentFileName, Array.from(multiSelected), newFileName);
   };
   const loadEssentials = async (executeFn = loadPathContents) => {
     await Promise.all([
-      import_swiss_ak20.PromiseTools.each(paths, executeFn),
+      import_swiss_ak21.PromiseTools.each(paths, executeFn),
       (async () => {
         const { dirs } = await executeFn(currentPath);
         const list = dirs;
-        return import_swiss_ak20.PromiseTools.each(
+        return import_swiss_ak21.PromiseTools.each(
           list.map((dir) => join(currentPath, dir)),
           executeFn
         );
@@ -3404,7 +3669,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const parent = PathTools.explodePath(currentPath).dir;
         const { dirs } = await executeFn(parent);
         const list = [...dirs];
-        return import_swiss_ak20.PromiseTools.each(
+        return import_swiss_ak21.PromiseTools.each(
           list.map((dir) => join(parent, dir)),
           executeFn
         );
@@ -3419,7 +3684,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     display();
   };
   const loadNewItem = async () => {
-    if (!getPathContents(currentPath)) {
+    if (!fsCache.getPathContents(currentPath)) {
       loading = true;
       display();
       await loadPathContents(currentPath);
@@ -3434,7 +3699,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     display();
     if (!key)
       return;
-    await (0, import_swiss_ak20.wait)((0, import_swiss_ak20.milliseconds)(100));
+    await (0, import_swiss_ak21.wait)((0, import_swiss_ak21.milliseconds)(100));
     if (!loading) {
       pressed = void 0;
       display();
@@ -3444,6 +3709,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (submitted)
       return;
     recalc();
+    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState(false, isError);
+    const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
+    const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
     const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
       const isHighlighted = name === highlighted;
       const fullPath = join(columnPath, name);
@@ -3452,50 +3720,54 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const template = (text2) => `${prefix}${text2} ${symbol} `;
       const extraChars = out.getWidth(template(""));
       const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-      let wrapFn = import_swiss_ak20.fn.noact;
+      let wrapFn = import_swiss_ak21.fn.noact;
       if (isHighlighted) {
         if (isActiveColumn) {
-          wrapFn = isSelected ? cursorOnSelectedWrapFn : cursorWrapFn;
+          wrapFn = col.specialHover;
         } else {
-          wrapFn = ancestralCursorWrapFn;
+          wrapFn = col.specialInactiveHover;
         }
       } else {
-        wrapFn = isSelected ? selectedWrapFn : regularWrapFn;
+        if (isActiveColumn) {
+          wrapFn = isSelected ? col.specialHighlight : regularWrapFn;
+        } else {
+          wrapFn = isSelected ? col.specialInactiveHighlight : regularWrapFn;
+        }
       }
       return wrapFn(colr.clear(stretched));
     };
     const { dir: formatDir, file: formatFile } = {
       single: {
         d: {
-          dir: formatter("\u203A", colr.grey5),
-          file: formatter(" ", colr.dim)
+          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded)
         },
         f: {
-          dir: formatter("\u203A", colr.grey3),
-          file: formatter(" ", colr.grey5)
+          dir: formatter(sym.folderOpenableIcon, col.specialFaded),
+          file: formatter(sym.fileOpenableIcon, col.specialNormal)
         },
         df: {
-          dir: formatter("\u203A", colr.grey5),
-          file: formatter(" ", colr.grey5)
+          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+          file: formatter(sym.fileOpenableIcon, col.specialNormal)
         }
       },
       multi: {
         d: {
-          dir: formatter("\u203A", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak20.symbols.RADIO_FULL)} `, ` ${import_swiss_ak20.symbols.RADIO_EMPTY} `),
-          file: formatter(" ", colr.dim, "   ", "   ")
+          dir: formatter(sym.folderOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon),
+          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded, "   ", "   ")
         },
         f: {
-          dir: formatter("\u203A", colr.grey3, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak20.symbols.RADIO_FULL)} `, ` ${import_swiss_ak20.symbols.RADIO_EMPTY} `)
+          dir: formatter(sym.folderOpenableIcon, col.specialFaded, "   ", "   "),
+          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
         },
         df: {
-          dir: formatter("\u203A", colr.grey5, "   ", "   "),
-          file: formatter(" ", colr.grey5, ` ${selectedIconWrapFn(import_swiss_ak20.symbols.RADIO_FULL)} `, ` ${import_swiss_ak20.symbols.RADIO_EMPTY} `)
+          dir: formatter(sym.folderOpenableIcon, col.specialNormal, "   ", "   "),
+          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
         }
       }
     }[isMulti ? "multi" : "single"][accepted.join("")];
     const emptyColumn = [" ".repeat(minWidth), ..." ".repeat(maxItems - 1).split("")];
-    const allColumns = paths.map(getPathContents).map((contents, index) => {
+    const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
       const dirs = (contents == null ? void 0 : contents.dirs) || [];
       const files = (contents == null ? void 0 : contents.files) || [];
       const list = [...dirs, ...files];
@@ -3516,9 +3788,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
         const fullWidth = out.getWidth(formatDir(width, "", false, "")(""));
         if (isScrollUp)
-          slicedLines[0] = colr.dim(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
+          slicedLines[0] = col.scrollbarTrack(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
         if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = colr.dim(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
+          slicedLines[slicedLines.length - 1] = col.scrollbarTrack(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
         return out.utils.joinLines(slicedLines);
       }
       return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
@@ -3526,10 +3798,10 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (cursorType === "f") {
       allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
     }
-    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak20.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+    const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak21.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
     const termWidth = out.utils.getTerminalWidth();
     const tableLines = table.getLines([columns], void 0, {
-      wrapLinesFn: colr.grey1,
+      wrapLinesFn: col.decoration,
       drawOuter: true,
       cellPadding: 0,
       truncate: "",
@@ -3537,31 +3809,33 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     });
     const tableOut = out.center(out.limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
     const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
+    const cursorTypeOut = colr.dim(`(${{ f: txt.file, d: txt.directory }[cursorType]})`);
     const infoLine = (() => {
-      if (loading) {
-        return colr.dim(out.center("=".repeat(20) + " Loading... " + "=".repeat(20)));
-      }
-      const count = isMulti ? colr.dim(`${colr.grey1("[")} ${multiSelected.size} selected ${colr.grey1("]")} `) : "";
-      const curr = out.limitToLengthStart(
-        `${currentPath} ${colr.dim(`(${{ f: "File", d: "Directory" }[cursorType]})`)}`,
-        tableWidth - (out.getWidth(count) + 3)
-      );
-      const split = out.split(curr, count, tableWidth - 2);
+      const loadingOut = loading ? col.specialFaded(txt.loading) : void 0;
+      const count = isMulti ? col.specialFaded(`${col.specialHint("[")} ${txt.selected(multiSelected.size)} ${col.specialHint("]")} `) : "";
+      const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
+      const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
       return out.center(split, termWidth);
     })();
-    const actionBar = getFEActionBar(isMulti, pressed);
-    lc.clear();
-    lc.wrap(1, () => ask.imitate(question, " ", false));
-    lc.log();
-    lc.log(infoLine);
-    lc.log(tableOut);
-    lc.log(actionBar);
+    const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+    const actionBar = getFEActionBar(isMulti, pressed, [], isError);
+    let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
+    const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);
+    output += imitated;
+    output += "\n" + infoLine;
+    output += "\n" + tableOut;
+    tempLC.log(output.replace(/\n/g, ansi2.erase.lineEnd + "\n"));
+    tempLC.checkpoint("actionBar");
+    let output2 = actionBar;
+    output2 += "\n".repeat(out.utils.getNumLines(imitated));
+    tempLC.log(output2.replace(/\n/g, ansi2.erase.lineEnd + "\n"));
+    tempLC.checkpoint("post-display");
   };
   const userActions = {
     moveVertical: (direction) => {
       const folds = cursor.slice(0, -1);
       const current = cursor[cursor.length - 1];
-      const currContents = getPathContents(paths[folds.length - 1]);
+      const currContents = fsCache.getPathContents(paths[folds.length - 1]);
       if (!currContents)
         return;
       const list = [...currContents.dirs, ...currContents.files];
@@ -3573,8 +3847,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     },
     moveRight: () => {
       const current = cursor[cursor.length - 1];
-      const currContents = getPathContents(paths[cursor.length - 2]);
-      const nextContents = getPathContents(paths[cursor.length - 1]);
+      const currContents = fsCache.getPathContents(paths[cursor.length - 2]);
+      const nextContents = fsCache.getPathContents(paths[cursor.length - 1]);
       if (!currContents || !nextContents || currContents.dirs.includes(current) === false)
         return;
       const nextList = [...nextContents.dirs, ...nextContents.files];
@@ -3595,7 +3869,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       loading = true;
       locked = true;
       setPressed("r");
-      const allKeys = Array.from(fsCache.keys());
+      const allKeys = Array.from(fsCache.cache.keys());
       const restKeys = new Set(allKeys);
       await loadEssentials((path) => {
         restKeys.delete(path);
@@ -3606,7 +3880,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       locked = false;
       if (pressed === "r")
         setPressed(void 0);
-      await import_swiss_ak20.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
+      await import_swiss_ak21.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
         return forceLoadPathContents;
@@ -3625,9 +3899,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     takeInput: async (preQuestion, inputFn, postQuestion) => {
       display();
       loading = true;
-      locked = true;
       kl.stop();
-      lc.clearBack(1);
+      tempLC.clearToCheckpoint("actionBar");
       await preQuestion();
       const value = await inputFn();
       const skipDisplay = postQuestion ? await postQuestion(value) ?? false : false;
@@ -3639,22 +3912,25 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       return value;
     },
     newFolder: async () => {
+      const { colours: col, text: txt } = getAskOptionsForState(false, false);
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       await userActions.takeInput(
         () => {
-          const info2 = colr.grey3("Enter nothing to cancel");
-          const info1Prefix = colr.grey3("  Adding folder to ");
+          tempLC.checkpoint("newFolder");
+          const info2 = col.specialFaded(txt.specialNewFolderEnterNothingCancel);
+          const info1Prefix = col.specialFaded("  " + txt.specialNewFolderAddingFolderTo);
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = colr.grey4(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
-          lc.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
+          tempLC.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
-        () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn("name")} the new folder?`, "")),
+        () => ask.text(txt.specialNewFolderQuestion(col.specialHighlight), "", void 0, tempLC),
         async (newFolderName) => {
           const newFolderPath = join(basePath, newFolderName);
           if (newFolderName !== "") {
             await mkdir2(newFolderPath);
           }
+          tempLC.clearToCheckpoint("newFolder");
           display();
           await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
           return;
@@ -3662,13 +3938,15 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       );
     },
     openFinder: async () => {
-      const dir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
-      await open(dir);
+      await openFinder(currentPath, cursorType);
     },
     submit: () => {
+      if (isError)
+        return;
       return isSave ? userActions.submitSave() : userActions.submitSelect();
     },
     submitSave: async () => {
+      const { colours: col, text: txt } = getAskOptionsForState(false, false);
       const initCursor = cursorType === "f" ? cursor[cursor.length - 1] : "";
       const initSugg = suggestedFileName;
       const initStart = startPath && await getPathType(startPath) === "f" ? PathTools.explodePath(startPath).filename : "";
@@ -3676,16 +3954,24 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
       const newFileName = await userActions.takeInput(
         () => {
-          lc.log(colr.grey3("  Saving file to ") + colr.grey4(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20)));
+          tempLC.checkpoint("saveName");
+          tempLC.log(
+            col.specialFaded("  " + txt.specialSaveFileSavingFileTo) + col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20))
+          );
         },
-        () => lc.wrap(1, () => ask.text(`What do you want to ${primaryWrapFn("name")} the file?`, initial)),
-        () => true
+        () => ask.text(txt.specialSaveFileQuestion(col.specialHighlight), initial, (text2) => runValidation(text2), tempLC),
+        () => {
+          tempLC.clearToCheckpoint("saveName");
+          return true;
+        }
       );
       submitted = true;
       kl.stop();
-      lc.clear();
+      tempLC.clear();
+      options.general.lc = originalLC;
       const result = join(basePath, newFileName);
-      ask.imitate(question, result, true);
+      ask.imitate(question, result, true, false, lc);
+      process.stdout.write(ansi2.cursor.show);
       return deferred.resolve([result]);
     },
     submitSelect: () => {
@@ -3694,22 +3980,30 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       submitted = true;
       setPressed("return");
       kl.stop();
-      lc.clear();
-      if (isMulti) {
-        const result = Array.from(multiSelected);
-        ask.imitate(question, result, true);
-        return deferred.resolve(result);
-      } else {
-        const result = currentPath;
-        ask.imitate(question, result, true);
-        return deferred.resolve([currentPath]);
-      }
+      tempLC.clear();
+      options.general.lc = originalLC;
+      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+      const result = isMulti ? Array.from(multiSelected) : [currentPath];
+      ask.imitate(question, resultOut, true, false, lc);
+      return deferred.resolve(result);
+    },
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      options.general.lc = originalLC;
+      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+      ask.imitate(question, resultOut, false, true, lc);
+      process.stdout.write(ansi2.cursor.show);
+      process.exit();
     }
   };
   const kl = getKeyListener((key) => {
     if (locked)
       return;
     switch (key) {
+      case "exit":
+      case "esc":
+        return userActions.exit();
       case "up":
         return userActions.moveVertical(-1);
       case "down":
@@ -3735,21 +4029,45 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   loadNewDepth();
   return deferred.promise;
 };
-var fileExplorer = async (questionText, selectType = "f", startPath = process.cwd()) => {
-  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath);
+
+// src/tools/ask/fileExplorer.ts
+var fileExplorer = async (questionText, selectType = "f", startPath = process.cwd(), validate) => {
+  const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {
+    if (!validate)
+      return true;
+    if (cursorType !== selectType)
+      return true;
+    const result = validate(currentCursor);
+    return result;
+  };
+  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath, void 0, vFn);
   return arr[0];
 };
-var multiFileExplorer = (questionText, selectType = "f", startPath = process.cwd()) => fileExplorerHandler(true, false, questionText, selectType, startPath);
-var saveFileExplorer = async (questionText, startPath = process.cwd(), suggestedFileName = "") => {
-  const arr = await fileExplorerHandler(false, true, questionText, "f", startPath, suggestedFileName);
+var multiFileExplorer = (questionText, selectType = "f", startPath = process.cwd(), validate) => {
+  const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {
+    if (!validate)
+      return true;
+    const result = validate(selected);
+    return result;
+  };
+  return fileExplorerHandler(true, false, questionText, selectType, startPath, void 0, vFn);
+};
+var saveFileExplorer = async (questionText, startPath = process.cwd(), suggestedFileName = "", validate) => {
+  const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {
+    if (!validate)
+      return true;
+    const result = validate(currentDir, newFileName ?? currentFileName);
+    return result;
+  };
+  const arr = await fileExplorerHandler(false, true, questionText, "f", startPath, suggestedFileName, vFn);
   return arr[0];
 };
 
 // src/tools/ask/datetime.ts
-var import_swiss_ak25 = require("swiss-ak");
+var import_swiss_ak26 = require("swiss-ak");
 
 // src/utils/dynDates.ts
-var import_swiss_ak21 = require("swiss-ak");
+var import_swiss_ak22 = require("swiss-ak");
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -3761,10 +4079,10 @@ var dateToDynTime = (date2) => {
   const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
   return [dateObj.getHours(), dateObj.getMinutes()];
 };
-var sortDynDates = (dates) => (0, import_swiss_ak21.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
+var sortDynDates = (dates) => (0, import_swiss_ak22.sortByMapped)(dates, (value) => Number(dynDateToDate(value)));
 var isSameMonth = (aDate, bDate) => aDate[0] === bDate[0] && aDate[1] === bDate[1];
 var isEqualDynDate = (aDate, bDate) => isSameMonth(aDate, bDate) && aDate[2] === bDate[2];
-var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak21.DAY) + 3) % 7;
+var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / import_swiss_ak22.DAY) + 3) % 7;
 var getDaysInMonth = (year, month, _dy) => {
   if (month !== 2)
     return [0, 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
@@ -3772,9 +4090,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = import_swiss_ak21.MathsTools.clamp(notNaN(inMo), 1, 12);
+  const outMo = import_swiss_ak22.MathsTools.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = import_swiss_ak21.MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = import_swiss_ak22.MathsTools.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {
@@ -3783,7 +4101,7 @@ var addMonths = ([yr, mo, dy], add = 1) => {
 };
 var addDays = ([yr, mo, dy], add = 1) => {
   const date2 = dynDateToDate([yr, mo, dy]);
-  const newDate = date2.getTime() + (0, import_swiss_ak21.days)(add);
+  const newDate = date2.getTime() + (0, import_swiss_ak22.days)(add);
   return dateToDynDate(newDate);
 };
 var getIntermediaryDates = (aDate, bDate) => {
@@ -3802,8 +4120,8 @@ var getIntermediaryDates = (aDate, bDate) => {
 };
 
 // src/utils/numberInputter.ts
-var import_swiss_ak22 = require("swiss-ak");
-var getNumberInputter = (timeout = (0, import_swiss_ak22.seconds)(1.5)) => {
+var import_swiss_ak23 = require("swiss-ak");
+var getNumberInputter = (timeout = (0, import_swiss_ak23.seconds)(1.5)) => {
   let lastKeyTimecode = 0;
   let logged = [];
   const get = () => Number(logged.join(""));
@@ -3833,7 +4151,7 @@ var getNumberInputter = (timeout = (0, import_swiss_ak22.seconds)(1.5)) => {
 };
 
 // src/tools/ask/datetime/date.ts
-var import_swiss_ak23 = require("swiss-ak");
+var import_swiss_ak24 = require("swiss-ak");
 
 // src/tools/ask/datetime/styles.ts
 var sectionStyles = {
@@ -3855,12 +4173,12 @@ var sectionStyles = {
   }
 };
 var getSpecialColours = (isActive, isComplete, isError) => {
-  const { colours: col } = getAskOptionsForState2(isComplete, isError);
+  const { colours: col } = getAskOptionsForState(isComplete, isError);
   return {
     hover: isActive ? col.specialHover : col.specialInactiveHover,
     selected: isActive ? col.specialSelected : col.specialInactiveSelected,
     highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
-    unselected: isActive ? col.specialUnselected : col.specialInactiveUnselected,
+    normal: isActive ? col.specialNormal : col.specialInactiveNormal,
     faded: isActive ? col.specialFaded : col.specialInactiveFaded,
     hint: isActive ? col.specialHint : col.specialInactiveHint,
     info: col.specialInfo
@@ -3875,23 +4193,23 @@ var getMonthCells = (year, month, _dy) => {
   const startWeekDay = getWeekday([year, month, 1]);
   const thisMonthMax = getDaysInMonth(year, month);
   const prevMonthMax = getDaysInMonth(...addMonths([year, month, 1], -1));
-  const thisMonth = (0, import_swiss_ak23.range)(thisMonthMax, 1, 1);
-  const prevMonth = (0, import_swiss_ak23.range)(prevMonthMax, -1, -1);
-  const nextMonth = (0, import_swiss_ak23.range)(28, -1, -1);
+  const thisMonth = (0, import_swiss_ak24.range)(thisMonthMax, 1, 1);
+  const prevMonth = (0, import_swiss_ak24.range)(prevMonthMax, -1, -1);
+  const nextMonth = (0, import_swiss_ak24.range)(28, -1, -1);
   const allCells = [...startWeekDay ? prevMonth.slice(-startWeekDay) : [], ...thisMonth, ...nextMonth];
-  const byRow = (0, import_swiss_ak23.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
+  const byRow = (0, import_swiss_ak24.range)(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
   return byRow;
 };
 var combineWraps = (...wraps) => (s) => wraps.reduce((acc, wrap) => wrap(acc), s);
 var getMonthTable = (active, cursors, selected, isRange, slice, isError, year, month, _dy) => {
-  const theme = getAskOptionsForState2(false, isError);
+  const theme = getAskOptionsForState(false, isError);
   const col = getSpecialColours(active, false, isError);
   const selCursor = cursors[selected];
   const monthCells = getMonthCells(year, month);
   const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
   const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
   const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(col.unselected, void 0, void 0, true)];
+  const formatDim = [...formatNonMonth, table.utils.getFormat(col.normal, void 0, void 0, true)];
   const formatCursor = [];
   if (isSameMonth([year, month, 1], selCursor)) {
     const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
@@ -3927,7 +4245,7 @@ var getMonthTable = (active, cursors, selected, isRange, slice, isError, year, m
   const getTitle = (text2, prefix, suffix) => {
     const resPrefix = active ? col.hint(prefix) : "";
     const resSuffix = active ? col.hint(suffix) : "";
-    const resText = out.center(col.unselected(text2), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
+    const resText = out.center(col.normal(text2), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
     return `${resPrefix}${resText}${resSuffix}`;
   };
   const titleYear = getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ");
@@ -4037,15 +4355,15 @@ var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, is
 };
 
 // src/tools/ask/datetime/time.ts
-var import_swiss_ak24 = require("swiss-ak");
+var import_swiss_ak25 = require("swiss-ak");
 var getSingleTimeDial = (value, sectionActive, dialActive, max, label, isError) => {
-  const theme = getAskOptionsForState2(false, isError);
+  const theme = getAskOptionsForState(false, isError);
   const col = getSpecialColours(sectionActive, false, isError);
-  const wrapFns = [col.faded, col.unselected, dialActive ? col.hover : col.selected];
+  const wrapFns = [col.faded, col.normal, dialActive ? col.hover : col.selected];
   const showExtra = wrapFns.length - 1;
-  const dialNums = (0, import_swiss_ak24.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
+  const dialNums = (0, import_swiss_ak25.range)(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
   const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
-  const lines = out.centerLines([col.unselected(label), theme.colours.decoration("\u25E2\u25E3"), ...dial, theme.colours.decoration("\u25E5\u25E4")], 4);
+  const lines = out.centerLines([col.normal(label), theme.colours.decoration("\u25E2\u25E3"), ...dial, theme.colours.decoration("\u25E5\u25E4")], 4);
   return lines;
 };
 var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) => {
@@ -4109,30 +4427,8 @@ var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) =>
   return result;
 };
 
-// src/tools/ask/imitate.ts
-var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
-  const theme = getAskOptionsForState2(isComplete, isError);
-  const resultText = valueDisplays.anyByType(result, isComplete, isError);
-  const output = theme.formatters.formatPrompt(question, resultText, void 0, errorMsg, theme, isComplete, false);
-  if (lc) {
-    const lines = output.split("\n");
-    lc.add(lines.length);
-  }
-  return output;
-};
-var imitate = (question, result, isComplete = true, isError = false, lc) => {
-  const options = getAskOptions();
-  const output = getImitateOutput(question, result, isComplete, isError);
-  console.log(output);
-  const lines = output.split("\n");
-  if (options.general.lc)
-    options.general.lc.add(lines.length);
-  if (lc && lc !== options.general.lc)
-    lc.add(lines.length);
-};
-
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = (0, import_swiss_ak25.getTimer)("DEBUG", false, colr.dark.red);
+var DEBUG_TIMER = (0, import_swiss_ak26.getTimer)("DEBUG", false, colr.dark.red);
 var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
@@ -4169,7 +4465,7 @@ var actionConfig = {
   }
 };
 var getDTActionBar = (isDateOn, isTimeOn, isRange, active, isError) => {
-  const theme = getAskOptionsForState2(false, isError);
+  const theme = getAskOptionsForState(false, isError);
   const keys = [
     isDateOn && !isTimeOn && isRange ? "tab-range" : void 0,
     isDateOn && isTimeOn && !isRange ? "tab-section" : void 0,
@@ -4181,7 +4477,7 @@ var getDTActionBar = (isDateOn, isTimeOn, isRange, active, isError) => {
 var getDTErrorLine = ({ isError, errorMessage }) => {
   if (!isError)
     return "";
-  const theme = getAskOptionsForState2(false, isError);
+  const theme = getAskOptionsForState(false, isError);
   const maxWidth = out.utils.getTerminalWidth() - (out.getWidth(theme.symbols.specialErrorIcon) + 2) * 2;
   const icon = theme.colours.specialErrorIcon(theme.symbols.specialErrorIcon);
   const msg = out.truncate(errorMessage, maxWidth);
@@ -4193,19 +4489,20 @@ var getCurrDynTime = () => {
   const now = new Date();
   return [now.getHours(), now.getMinutes()];
 };
-var displayDate = (ddate) => dynDateToDate(ddate).toDateString();
-var displayTime = (dtime) => dtime.map((v) => (v + "").padStart(2, "0")).join(":");
-var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange) => {
-  const [start, end] = isDateOn ? handlers.date.getValue() : [];
+var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange, isComplete, isError) => {
+  const theme = getAskOptionsForState(isComplete, isError);
+  const [start, end] = isDateOn ? handlers.date.getValue() : [[1970, 1, 1]];
   const time2 = isTimeOn ? handlers.time.getValue() : void 0;
-  const dateStr = isDateOn ? isRange ? `${displayDate(start)} \u2192 ${displayDate(end)}` : displayDate(start) : void 0;
-  const timeStr = isTimeOn ? displayTime(time2) : void 0;
-  return [dateStr, timeStr].filter((v) => v).join(" @ ");
+  if (isRange) {
+    const [startOut, endOut] = [start, end].map((d) => valueDisplays.date(dynDateToDate(d, time2), isComplete, isError, isDateOn, isTimeOn));
+    const separator2 = theme.colours.decoration(" \u2192 ");
+    return `${startOut}${separator2}${endOut}`;
+  }
+  return valueDisplays.date(dynDateToDate(start, time2), isComplete, isError, isDateOn, isTimeOn);
 };
 var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime(), convertFn, validateFn, lc) => {
-  const opts = getAskOptions();
   const tempLC = getLineCounter();
-  const deferred = (0, import_swiss_ak25.getDeferred)();
+  const deferred = (0, import_swiss_ak26.getDeferred)();
   const isSwitchable = isDateOn && isTimeOn;
   let activeHandler = isDateOn ? "date" : "time";
   let errorInfo = { isError: false, errorMessage: void 0 };
@@ -4237,7 +4534,7 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
       sections.push(out.centerLines([""], 8));
     if (time2.length)
       sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
+    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
     const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
     const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
     const outError = getDTErrorLine(errorInfo);
@@ -4271,7 +4568,7 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
     const { isError } = runValidation(dates, time2);
     if (isError)
       return;
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
+    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
     kl.stop();
     tempLC.clear();
     ask.imitate(questionText, outState, true, false, lc);
@@ -4311,38 +4608,44 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
   eachHandler((key, handler) => handler.triggerDisplay());
   return deferred.promise;
 };
+var getDefaultDate = (isDateOn, isTimeOn, dateOffset = 0) => {
+  let [date2, time2] = new Date(Date.now() + (0, import_swiss_ak26.days)(dateOffset)).toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
+  if (!isTimeOn)
+    time2 = "00:00";
+  return new Date(date2 + " " + time2);
+};
 var date = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(true, false);
   const initDate = dateToDynDate(initDateObj);
   const convertToDateObj = ([[ddate]]) => dynDateToDate(ddate);
   return overallHandler(questionText, true, false, false, [initDate, initDate], void 0, convertToDateObj, validate, lc);
 };
 var time = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(false, true);
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
   const convertToDateObj = ([_d, dtime]) => dynDateToDate(dateToDynDate(initDateObj), dtime);
   return overallHandler(questionText, false, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
 };
 var datetime = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(true, true);
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
   const convertToDateObj = ([[ddate], dtime]) => dynDateToDate(ddate, dtime);
   return overallHandler(questionText, true, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
 };
 var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => {
-  const initDateObj1 = initialStart || new Date();
-  const initDateObj2 = initialEnd || new Date();
+  const initDateObj1 = initialStart || getDefaultDate(true, false);
+  const initDateObj2 = initialEnd || getDefaultDate(true, false, 1);
   const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)];
   const convertToDateObjs = ([[ddate1, ddate2]]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)];
   return overallHandler(questionText, true, false, true, initDate, void 0, convertToDateObjs, validate, lc);
 };
 
 // src/tools/ask/section.ts
-var import_swiss_ak26 = require("swiss-ak");
+var import_swiss_ak27 = require("swiss-ak");
 var section = async (question, sectionHeader, ...questionFns) => {
-  const theme = getAskOptionsForState2(false, false);
+  const theme = getAskOptionsForState(false, false);
   const originalLC = theme.general.lc;
   const tempLC = getLineCounter();
   theme.general.lc = tempLC;
@@ -4377,14 +4680,14 @@ var section = async (question, sectionHeader, ...questionFns) => {
   return results;
 };
 var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.getTerminalWidth() - 2, lc) => {
-  const theme = getAskOptionsForState2(false, false);
+  const theme = getAskOptionsForState(false, false);
   const lineChar = theme.symbols.separatorLine;
   const chars = {
     down: theme.symbols.separatorNodeDown,
     none: theme.symbols.separatorNodeNone,
     up: theme.symbols.separatorNodeUp
   };
-  const line = import_swiss_ak26.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  const line = import_swiss_ak27.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
   const output = out.center(line, void 0, lineChar);
   console.log(theme.colours.decoration(output));
   const numLines = out.utils.getNumLines(output);
@@ -4395,12 +4698,12 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
 };
 
 // src/tools/ask/table.ts
-var import_swiss_ak27 = require("swiss-ak");
+var import_swiss_ak28 = require("swiss-ak");
 var highlightFn = colr.dark.cyan.underline;
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
   const questionText = typeof question === "string" ? question : question.get();
   const lc = getLineCounter();
-  const deferred = (0, import_swiss_ak27.getDeferred)();
+  const deferred = (0, import_swiss_ak28.getDeferred)();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
   ask.imitate(questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`, false);
@@ -4429,11 +4732,11 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     const finalBody = body.map((row, index) => {
       let firstCell;
       if (isMulti) {
-        const selectedSym = import_swiss_ak27.symbols.RADIO_FULL;
-        const unselectedSym = import_swiss_ak27.symbols.RADIO_EMPTY;
+        const selectedSym = import_swiss_ak28.symbols.RADIO_FULL;
+        const unselectedSym = import_swiss_ak28.symbols.RADIO_EMPTY;
         firstCell = selectedIndexes.includes(index) ? colr.reset(colr.dark.green(selectedSym)) : colr.reset(unselectedSym);
       } else {
-        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(import_swiss_ak27.symbols.CURSOR)) : " ";
+        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(import_swiss_ak28.symbols.CURSOR)) : " ";
       }
       return [firstCell, ...row];
     });
@@ -4460,7 +4763,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
   };
   const submit = () => {
     kl.stop();
-    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak27.fn.isTruthy);
+    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak28.fn.isTruthy);
     lc.clear();
     ask.imitate(questionText, isMulti ? `${results.length} selected` : results[0], true);
     deferred.resolve(results);
@@ -4511,17 +4814,22 @@ var ask;
   ask2.trim = trim;
   ask2.customise = customise;
   ask2.loading = (question, isComplete = false, isError = false, lc) => {
-    const imitated = getImitateOutput(question, `[Loading...]`, isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
+    const imitated = getImitateOutput(question, `\u25D0`, isComplete, isError);
     const numLines = imitated.split("\n").length;
-    const loader = out.loading((s) => {
-      process.stdout.write(ansi2.cursor.hide);
-      console.log(imitated.replace("Loading...", s));
-    }, numLines);
+    const loader = out.loading(
+      (s) => {
+        process.stdout.write(ansi2.cursor.hide);
+        return imitated.replace("\u25D0", theme.colours.loadingIcon(s));
+      },
+      numLines,
+      ["\u25D0", "\u25D3", "\u25D1", "\u25D2"]
+    );
     process.stdout.write(ansi2.cursor.show);
     return loader;
   };
   ask2.countdown = async (totalSeconds, template, isComplete, isError) => {
-    const theme = getAskOptionsForState2(isComplete, isError);
+    const theme = getAskOptionsForState(isComplete, isError);
     console.log();
     const textTemplate = template || theme.text.countdown;
     let lines = textTemplate(totalSeconds).split("\n").length;
@@ -4530,12 +4838,12 @@ var ask;
       process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.hide);
       lines = textValue.split("\n").length;
       console.log(theme.colours.countdown(textValue));
-      await (0, import_swiss_ak28.wait)((0, import_swiss_ak28.seconds)(1));
+      await (0, import_swiss_ak29.wait)((0, import_swiss_ak29.seconds)(1));
     }
     process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.show);
   };
   ask2.pause = async (text3 = "Press enter to continue...") => {
-    const theme = getAskOptionsForState2(false, false);
+    const theme = getAskOptionsForState(false, false);
     return new Promise((resolve) => {
       const message = typeof text3 === "object" && text3.get ? text3.get() : text3 + "";
       console.log(ansi2.cursor.hide + theme.colours.pause(message));
@@ -4597,7 +4905,7 @@ var ask;
 
 // src/tools/log.ts
 var import_util3 = __toESM(require("util"), 1);
-var import_swiss_ak29 = require("swiss-ak");
+var import_swiss_ak30 = require("swiss-ak");
 var defaultOptions = {
   showDate: false,
   showTime: true,
@@ -4678,7 +4986,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return import_swiss_ak29.ObjectTools.mapValues(allConfigs, (key, config) => {
+  return import_swiss_ak30.ObjectTools.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -4689,13 +4997,13 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBarTools.ts
-var import_swiss_ak30 = require("swiss-ak");
+var import_swiss_ak31 = require("swiss-ak");
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
-      wrapperFns = import_swiss_ak30.ArrayTools.randomise(wrapperFns);
+      wrapperFns = import_swiss_ak31.ArrayTools.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {
@@ -4718,15 +5026,9 @@ var progressBarTools;
     };
   };
 })(progressBarTools || (progressBarTools = {}));
-
-// src/tools/waiters.ts
-var waiters;
-((waiters2) => {
-  waiters2.nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
-})(waiters || (waiters = {}));
-var nextTick = waiters.nextTick;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  LOG,
   LogTools,
   PathTools,
   ansi,

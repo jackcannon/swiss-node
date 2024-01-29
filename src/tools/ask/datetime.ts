@@ -1,4 +1,4 @@
-import { getDeferred, getTimer } from 'swiss-ak';
+import { days, getDeferred, getTimer } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '../../utils/dynDates';
 import { getKeyListener } from '../keyListener';
@@ -12,9 +12,9 @@ import { timeHandler } from './datetime/time';
 import { DateTimeHandlerObj } from './datetime/types';
 import { colr } from '../colr';
 import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
-import { getImitateOutput, untrackedImitate } from './imitate';
+import { getImitateOutput } from './imitate';
 import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
-import { LOG } from '../../DELETEME/LOG';
+import { valueDisplays } from './basicInput/valueDisplays';
 
 //<!-- DOCS: 110 -->
 
@@ -89,19 +89,24 @@ interface HandlersObj {
   time: DateTimeHandlerObj<DynTime>;
 }
 
-const displayDate = (ddate: DynDate) => dynDateToDate(ddate).toDateString();
-const displayTime = (dtime: DynTime) => dtime.map((v) => (v + '').padStart(2, '0')).join(':');
-
-const getStateDisplay = (handlers: HandlersObj, isDateOn: boolean, isTimeOn: boolean, isRange: boolean): string => {
-  // TODO add resultDate/resultTime to colours and use here
-  const [start, end] = isDateOn ? handlers.date.getValue() : [];
+const getStateDisplay = (
+  handlers: HandlersObj,
+  isDateOn: boolean,
+  isTimeOn: boolean,
+  isRange: boolean,
+  isComplete: boolean,
+  isError: boolean
+): string => {
+  const theme = getAskOptionsForState(isComplete, isError);
+  const [start, end] = isDateOn ? handlers.date.getValue() : [[1970, 1, 1] as DynDate];
   const time = isTimeOn ? handlers.time.getValue() : undefined;
 
-  const dateStr = isDateOn ? (isRange ? `${displayDate(start)} → ${displayDate(end)}` : displayDate(start)) : undefined;
-
-  const timeStr = isTimeOn ? displayTime(time) : undefined;
-
-  return [dateStr, timeStr].filter((v) => v).join(' @ ');
+  if (isRange) {
+    const [startOut, endOut] = [start, end].map((d) => valueDisplays.date(dynDateToDate(d, time), isComplete, isError, isDateOn, isTimeOn));
+    const separator = theme.colours.decoration(' → ');
+    return `${startOut}${separator}${endOut}`;
+  }
+  return valueDisplays.date(dynDateToDate(start, time), isComplete, isError, isDateOn, isTimeOn);
 };
 
 interface ValueSet {
@@ -120,8 +125,6 @@ const overallHandler = <T extends unknown>(
   validateFn?: (result: T) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<T> => {
-  const opts = getAskOptions();
-
   // const originalLC = opts.general.lc;
   const tempLC = getLineCounter();
   // opts.general.lc = tempLC;
@@ -168,7 +171,7 @@ const overallHandler = <T extends unknown>(
     if (date.length && time.length) sections.push(out.centerLines([''], 8));
     if (time.length) sections.push(date.length ? out.centerLines(['', '', ...time]) : time); // add 2 lines to top of time if date is on
 
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
+    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
     const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), undefined, undefined, false);
     const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
     const outError = getDTErrorLine(errorInfo);
@@ -212,7 +215,7 @@ const overallHandler = <T extends unknown>(
     const { isError } = runValidation(dates, time);
     if (isError) return;
 
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange);
+    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
     kl.stop();
     tempLC.clear();
     // opts.general.lc = originalLC;
@@ -258,6 +261,13 @@ const overallHandler = <T extends unknown>(
   return deferred.promise;
 };
 
+const getDefaultDate = (isDateOn: boolean, isTimeOn: boolean, dateOffset: number = 0) => {
+  let [date, time] = new Date(Date.now() + days(dateOffset)).toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
+
+  if (!isTimeOn) time = '00:00';
+  return new Date(date + ' ' + time);
+};
+
 /**<!-- DOCS: ask.date ### @ -->
  * date
  *
@@ -279,7 +289,7 @@ export const date = async (
   validate?: (date: Date) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<Date> => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(true, false);
   const initDate = dateToDynDate(initDateObj);
 
   const convertToDateObj = ([[ddate]]: [[DynDate, DynDate], DynTime]) => dynDateToDate(ddate);
@@ -311,7 +321,7 @@ export const time = async (
   validate?: (date: Date) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<Date> => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(false, true);
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
 
@@ -341,7 +351,7 @@ export const datetime = async (
   validate?: (date: Date) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<Date> => {
-  const initDateObj = initial || new Date();
+  const initDateObj = initial || getDefaultDate(true, true);
   const initDate = dateToDynDate(initDateObj);
   const initTime = dateToDynTime(initDateObj);
 
@@ -376,8 +386,8 @@ export const dateRange = async (
   validate?: (dates: [Date, Date]) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<[Date, Date]> => {
-  const initDateObj1 = initialStart || new Date();
-  const initDateObj2 = initialEnd || new Date();
+  const initDateObj1 = initialStart || getDefaultDate(true, false);
+  const initDateObj2 = initialEnd || getDefaultDate(true, false, 1);
   const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)] as [DynDate, DynDate];
 
   const convertToDateObjs = ([[ddate1, ddate2]]: [[DynDate, DynDate], DynTime]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)] as [Date, Date];

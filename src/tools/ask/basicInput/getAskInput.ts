@@ -4,9 +4,7 @@ import { out, ansi, Breadcrumb, LineCounter } from '../../out';
 import { getKeyListener, KeyListener } from '../../keyListener';
 import { getFullChoices, PromptChoiceFull } from './getFullChoices';
 import { getScrolledItems } from './getScrolledItems';
-import { itemsFormatters } from './formatters';
-import { AskOptionsForState, getAskOptions, getAskOptionsForState } from './customise';
-import { LOG } from '../../../DELETEME/LOG';
+import { getAskOptions, getAskOptionsForState } from './customise';
 import { getErrorInfoFromValidationResult } from '../errorValidation';
 
 const getPrinter = <V extends unknown, I extends unknown, O extends unknown>(

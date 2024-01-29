@@ -40,7 +40,7 @@ export const text = async (
       print(false);
     },
     space(...args) {
-      this.key(...args);
+      textActions.key(...args);
     },
     // Ctrl-C
     exit(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
@@ -140,7 +140,7 @@ export const autotext = async <T = string>(
       print(false);
     },
     space(...args) {
-      this.key(...args);
+      autotextActions.key(...args);
     },
     // Ctrl-C
     exit(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
@@ -231,7 +231,7 @@ export const number = async (
 ): Promise<number> => {
   const numberActions: KeyPressActions<string, undefined, number> = {
     space(...args) {
-      this.key(...args);
+      numberActions.key(...args);
     },
     // Ctrl-C
     exit(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
@@ -340,11 +340,11 @@ export const boolean = async (
   const options = getAskOptions();
   const booleanActions: KeyPressActions<boolean, undefined, boolean> = {
     key(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
-      if (options.general.boolTrueKeys.includes(rawValue)) {
+      if (options.text.boolTrueKeys.includes(rawValue)) {
         valueData.value = true;
         print(false);
       }
-      if (options.general.boolFalseKeys.includes(rawValue)) {
+      if (options.text.boolFalseKeys.includes(rawValue)) {
         valueData.value = false;
         print(false);
       }
@@ -412,10 +412,10 @@ export const booleanYN = async (
   const options = getAskOptions();
   const booleanYNActions: KeyPressActions<boolean, undefined, boolean> = {
     key(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
-      if (options.general.boolTrueKeys.includes(rawValue)) {
+      if (options.text.boolTrueKeys.includes(rawValue)) {
         submit(true, true);
       }
-      if (options.general.boolFalseKeys.includes(rawValue)) {
+      if (options.text.boolFalseKeys.includes(rawValue)) {
         submit(false, false);
       }
     },

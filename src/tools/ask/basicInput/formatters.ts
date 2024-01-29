@@ -1,11 +1,11 @@
-import { ArrayTools, ObjOfType, fn, symbols, wait } from 'swiss-ak';
+import { ArrayTools } from 'swiss-ak';
 
 import { out, Breadcrumb, ansi } from '../../out';
-import { ColrFn, WrapFn, colr } from '../../colr';
+import { WrapFn, colr } from '../../colr';
 
 import { PromptChoiceFull } from './getFullChoices';
 import { ScrolledItems } from './getScrolledItems';
-import { AskOptionsForState, getAskOptions, getAskOptionsForState } from './customise';
+import { AskOptionsForState, getAskOptions } from './customise';
 import { LOG } from '../../../DELETEME/LOG';
 
 const SELECT_ALL = Symbol.for('SWISS.NODE.ASK.SELECT.ALL');
@@ -216,6 +216,31 @@ ${bottomLine}`;
   }
 };
 
+const getScrollbar = <T>(allItems: PromptChoiceFull<T>[], scrolledItems: ScrolledItems<T>, theme: AskOptionsForState): string[] => {
+  const { colours: col, symbols: sym, boxSymbols: box } = theme;
+
+  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
+  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+
+  const totalTrackHeight = scrolledItems.items.length;
+  const amountShown = scrolledItems.items.length / allItems.length;
+  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
+  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+
+  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
+  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
+  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
+  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+
+  const scrollbarBar = ArrayTools.repeat(barHeight, scrollBarIcon);
+  if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = scrollUpIcon;
+  if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+
+  return [...ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
+};
+
 export type FormatItemsFn = <T extends unknown>(
   allItems: PromptChoiceFull<T>[],
   scrolledItems: ScrolledItems<T>,
@@ -250,11 +275,6 @@ const standardItemFormatter = <T extends unknown>(
   const askOptions = getAskOptions();
   LOG('theme', { theme, itemHover: askOptions.colours.itemHover, itemHoverIcon: askOptions.colours.itemHoverIcon });
 
-  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
-  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
-  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
-  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
-
   const colItemHover = isBlock ? col.itemBlockHover : col.itemHover;
   const colItemHoverIcon = isBlock ? col.itemBlockHoverIcon : col.itemHoverIcon;
 
@@ -273,25 +293,7 @@ const standardItemFormatter = <T extends unknown>(
   }
   // scrollbar
   const hasScrollbar = !isExit && allItems.length > displayItems.length;
-  let scrollbar: string[] = [];
-
-  if (hasScrollbar) {
-    const totalTrackHeight = displayItems.length;
-    const amountShown = displayItems.length / allItems.length;
-    const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-    const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
-
-    const barProgress = scrolledItems.startingIndex / (allItems.length - displayItems.length);
-    const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
-    const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-    const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
-
-    const scrollbarBar = ArrayTools.repeat(barHeight, scrollBarIcon);
-    if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = scrollUpIcon;
-    if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
-
-    scrollbar = [...ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
-  }
+  let scrollbar: string[] = hasScrollbar ? getScrollbar(allItems, scrolledItems, theme) : [];
 
   return displayItems
     .map((item, index) => {
@@ -335,7 +337,7 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
     };
     return standardItemFormatter(allItems, scrolledItems, selected, type, theme, isExit, false, templateFn);
   },
-  alt: <T extends unknown>(
+  simpleAlt: <T extends unknown>(
     allItems: PromptChoiceFull<T>[],
     scrolledItems: ScrolledItems<T>,
     selected: number[] | undefined,
@@ -359,13 +361,10 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
     theme: AskOptionsForState,
     isExit: boolean
   ) => {
+    if (isExit) return itemsFormatters.simple(allItems, scrolledItems, selected, type, theme, isExit);
+
     const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
 
-    // const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
-    //   const mainSection = ` ${hoverIcon} ${selectIcon}${out.left(item.title, maxTitle + 1)}`;
-    //   const mainWrap = isHovered ? colr.inverse : fn.noact;
-    //   return wrapFn(`${scrollIcon} ${mainWrap(mainSection)}`);
-    // };
     const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
       const mainSection = ` ${hoverIcon} ${selectIcon}${out.left(item.title, maxTitle + 1)}`;
       return `${scrollIcon} ${wrapFn(mainSection)}`;
@@ -380,13 +379,10 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
     theme: AskOptionsForState,
     isExit: boolean
   ) => {
+    if (isExit) return itemsFormatters.simpleAlt(allItems, scrolledItems, selected, type, theme, isExit);
+
     const maxTitle = Math.max(...allItems.map((item) => out.getWidth(item.title)));
 
-    // const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
-    //   const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
-    //   const mainWrap = isHovered ? colr.inverse : fn.noact;
-    //   return wrapFn(`${scrollIcon} ${mainWrap(mainSection)}`);
-    // };
     const templateFn = (item, wrapFn, scrollIcon, hoverIcon, selectIcon, isHovered, isSelected) => {
       const mainSection = ` ${selectIcon}${hoverIcon} ${out.left(item.title, maxTitle + 1)}`;
       return `${scrollIcon} ${wrapFn(mainSection)}`;

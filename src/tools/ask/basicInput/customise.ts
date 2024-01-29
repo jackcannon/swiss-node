@@ -47,14 +47,15 @@ const populateAskOptions = (): AskOptionsStored => {
   if (askOptions) return askOptions;
   askOptions = {
     general: {
+      themeColour: 'yellow',
       lc: getLineCounter(),
       boxType: 'thick',
-      boolTrueKeys: 'Yy',
-      boolFalseKeys: 'Nn',
       maxItemsOnScreen: 10,
       scrollMargin: 2
     },
     text: {
+      boolTrueKeys: 'Yy',
+      boolFalseKeys: 'Nn',
       boolYes: 'yes',
       boolNo: 'no',
       boolYesNoSeparator: '/',
@@ -62,7 +63,18 @@ const populateAskOptions = (): AskOptionsStored => {
       selectAll: '[Select All]',
       done: 'done',
       items: (count: number) => `[${count} items]`,
-      countdown: (s) => `Starting in ${s}s...`
+      countdown: (s) => `Starting in ${s}s...`,
+      file: 'File',
+      directory: 'Directory',
+      loading: 'Loading...',
+      selected: (count: number) => `${count} selected`,
+
+      specialNewFolderEnterNothingCancel: 'Enter nothing to cancel',
+      specialNewFolderAddingFolderTo: 'Adding folder to ',
+      specialNewFolderQuestion: (hl) => `What do you want to ${hl('name')} the new folder?`,
+
+      specialSaveFileSavingFileTo: 'Saving file to ',
+      specialSaveFileQuestion: (hl) => `What do you want to ${hl('name')} the file?`
     },
     formatters: {
       formatPrompt: promptFormatters.oneLine,
@@ -71,7 +83,7 @@ const populateAskOptions = (): AskOptionsStored => {
     colours: {
       decoration: {
         normal: colr.grey1,
-        error: colr.dark.red,
+        error: colr.dark.red.dim,
         done: colr.grey1
       },
       questionText: {
@@ -89,32 +101,34 @@ const populateAskOptions = (): AskOptionsStored => {
         error: colr.dark.red,
         done: colr.grey1
       },
-      promptIcon: getSetFromSingle(colr.dark.primary.dim),
+      promptIcon: getSetFromSingle(colr.yellow.dim),
       result: getSetFromSingle(colr.dark.yellow),
       resultText: getSetFromSingle(colr.dark.yellow),
       resultNumber: getSetFromSingle(colr.dark.cyan),
       resultBoolean: getSetFromSingle(colr.dark.green),
       resultArray: getSetFromSingle(colr.lightBlack),
+      resultDate: getSetFromSingle(colr.light.blue),
+      loadingIcon: getSetFromSingle(colr.grey2),
       errorMsg: getSetFromSingle(colr.red),
       item: getSetFromSingle(colr.grey4),
       itemIcon: getSetFromSingle(colr),
       itemHover: {
-        normal: colr.primary,
+        normal: colr.yellow,
         error: colr.danger,
-        done: colr.primary
+        done: colr.yellow
       },
       itemHoverIcon: getSetFromSingle(colr),
       itemBlockHover: {
-        normal: colr.primaryBg,
+        normal: colr.yellowBg.black,
         error: colr.dangerBg,
-        done: colr.primaryBg
+        done: colr.yellowBg.black
       },
       itemBlockHoverIcon: getSetFromSingle(colr.black),
       itemSelected: getSetFromSingle(colr.grey4),
       itemSelectedIcon: {
-        normal: colr.primary,
+        normal: colr.yellow,
         error: colr.danger,
-        done: colr.primary
+        done: colr.yellow
       },
       itemUnselected: getSetFromSingle(colr.grey4),
       itemUnselectedIcon: getSetFromSingle(colr),
@@ -129,27 +143,34 @@ const populateAskOptions = (): AskOptionsStored => {
       },
       pause: getSetFromSingle(colr.grey4),
 
+      // special is for datetime, fileExplorer, etc
+      // level 1 important
       specialHover: {
         normal: colr.darkBg.yellowBg.black,
         error: colr.redBg.black,
         done: colr.darkBg.yellowBg.black
       },
+      // level 2 important
       specialSelected: getSetFromSingle(colr.darkBg.whiteBg.black),
+      // level 3 important - intermediary dates in a range, etc
       specialHighlight: getSetFromSingle(colr.yellow),
-      specialUnselected: getSetFromSingle(colr.dark.white),
+      // normal regular things
+      specialNormal: getSetFromSingle(colr.white), // colr.dark.white
+      // faded for things like dates in a different month
       specialFaded: getSetFromSingle(colr.grey3),
+      // hints for button presses, etc
       specialHint: getSetFromSingle(colr.grey1),
 
-      specialInactiveHover: getSetFromSingle(colr.darkBg.whiteBg.black),
-      specialInactiveSelected: getSetFromSingle(colr.greyBg.black),
+      specialInactiveHover: getSetFromSingle(colr.lightBlackBg.black),
+      specialInactiveSelected: getSetFromSingle(colr.lightBlackBg.black),
       specialInactiveHighlight: getSetFromSingle(colr.grey4),
-      specialInactiveUnselected: getSetFromSingle(colr.grey3),
+      specialInactiveNormal: getSetFromSingle(colr.grey3),
       specialInactiveFaded: getSetFromSingle(colr.grey2),
       specialInactiveHint: getSetFromSingle(colr.black),
 
-      specialInfo: getSetFromSingle(colr),
-      specialErrorMsg: getSetFromSingle(colr.red),
-      specialErrorIcon: getSetFromSingle(colr)
+      specialInfo: getSetFromSingle(colr), // the button info bar are the bottom of special prompts
+      specialErrorMsg: getSetFromSingle(colr.red), // The error message display for special prompts
+      specialErrorIcon: getSetFromSingle(colr) // Icon for the error message display for special prompts
     },
     symbols: {
       specialIcon: {
@@ -184,7 +205,10 @@ const populateAskOptions = (): AskOptionsStored => {
       separatorNodeNone: getSetFromSingle('◦'),
       separatorNodeUp: getSetFromSingle('▵'),
 
-      specialErrorIcon: getSetFromSingle(' ! ')
+      specialErrorIcon: getSetFromSingle(' ! '),
+
+      folderOpenableIcon: getSetFromSingle('›'),
+      fileOpenableIcon: getSetFromSingle(' ')
     }
   };
   return askOptions as AskOptionsStored;
@@ -258,30 +282,20 @@ const processThemeItem = <T extends unknown>(item: AskOptionsItem<T>, defaultIte
   return defaultItem;
 };
 
-/**<!-- DOCS: ask.customise #### @ -->
- * customise
- *
- * - `ask.customise`
- *
- * TODO docs
- *
- * ```typescript
- * TODO example
- * ```
- */
-export const customise = (options: Partial<ask.AskOptions>) => {
+const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
   if (!askOptions) populateAskOptions();
 
   askOptions.general = {
+    themeColour: options?.general?.themeColour ?? askOptions.general.themeColour,
     lc: options?.general?.lc ?? askOptions.general.lc,
     boxType: options?.general?.boxType ?? askOptions.general.boxType,
-    boolTrueKeys: options?.general?.boolTrueKeys ?? askOptions.general.boolTrueKeys,
-    boolFalseKeys: options?.general?.boolFalseKeys ?? askOptions.general.boolFalseKeys,
     maxItemsOnScreen: options?.general?.maxItemsOnScreen ?? askOptions.general.maxItemsOnScreen,
     scrollMargin: options?.general?.scrollMargin ?? askOptions.general.scrollMargin
   };
 
   askOptions.text = {
+    boolTrueKeys: options?.text?.boolTrueKeys ?? askOptions.text.boolTrueKeys,
+    boolFalseKeys: options?.text?.boolFalseKeys ?? askOptions.text.boolFalseKeys,
     boolYes: options?.text?.boolYes ?? askOptions.text.boolYes,
     boolNo: options?.text?.boolNo ?? askOptions.text.boolNo,
     boolYesNoSeparator: options?.text?.boolYesNoSeparator ?? askOptions.text.boolYesNoSeparator,
@@ -289,7 +303,18 @@ export const customise = (options: Partial<ask.AskOptions>) => {
     selectAll: options?.text?.selectAll ?? askOptions.text.selectAll,
     done: options?.text?.done ?? askOptions.text.done,
     items: options?.text?.items ?? askOptions.text.items,
-    countdown: options?.text?.countdown ?? askOptions.text.countdown
+    countdown: options?.text?.countdown ?? askOptions.text.countdown,
+    file: options?.text?.file ?? askOptions.text.file,
+    directory: options?.text?.directory ?? askOptions.text.directory,
+    loading: options?.text?.loading ?? askOptions.text.loading,
+    selected: options?.text?.selected ?? askOptions.text.selected,
+
+    specialNewFolderEnterNothingCancel: options?.text?.specialNewFolderEnterNothingCancel ?? askOptions.text.specialNewFolderEnterNothingCancel,
+    specialNewFolderAddingFolderTo: options?.text?.specialNewFolderAddingFolderTo ?? askOptions.text.specialNewFolderAddingFolderTo,
+    specialNewFolderQuestion: options?.text?.specialNewFolderQuestion ?? askOptions.text.specialNewFolderQuestion,
+
+    specialSaveFileSavingFileTo: options?.text?.specialSaveFileSavingFileTo ?? askOptions.text.specialSaveFileSavingFileTo,
+    specialSaveFileQuestion: options?.text?.specialSaveFileQuestion ?? askOptions.text.specialSaveFileQuestion
   };
 
   askOptions.formatters = {
@@ -325,6 +350,8 @@ export const customise = (options: Partial<ask.AskOptions>) => {
     resultNumber: processThemeItem(options?.colours?.resultNumber, askOptions.colours.resultNumber),
     resultBoolean: processThemeItem(options?.colours?.resultBoolean, askOptions.colours.resultBoolean),
     resultArray: processThemeItem(options?.colours?.resultArray, askOptions.colours.resultArray),
+    resultDate: processThemeItem(options?.colours?.resultDate, askOptions.colours.resultDate),
+    loadingIcon: processThemeItem(options?.colours?.loadingIcon, askOptions.colours.loadingIcon),
     errorMsg: processThemeItem(options?.colours?.errorMsg, askOptions.colours.errorMsg),
     item: processThemeItem(options?.colours?.item, askOptions.colours.item),
     itemIcon: processThemeItem(options?.colours?.itemIcon, askOptions.colours.itemIcon),
@@ -346,13 +373,13 @@ export const customise = (options: Partial<ask.AskOptions>) => {
     specialHover: processThemeItem(options?.colours?.specialHover, askOptions.colours.specialHover),
     specialSelected: processThemeItem(options?.colours?.specialSelected, askOptions.colours.specialSelected),
     specialHighlight: processThemeItem(options?.colours?.specialHighlight, askOptions.colours.specialHighlight),
-    specialUnselected: processThemeItem(options?.colours?.specialUnselected, askOptions.colours.specialUnselected),
+    specialNormal: processThemeItem(options?.colours?.specialNormal, askOptions.colours.specialNormal),
     specialFaded: processThemeItem(options?.colours?.specialFaded, askOptions.colours.specialFaded),
     specialHint: processThemeItem(options?.colours?.specialHint, askOptions.colours.specialHint),
     specialInactiveHover: processThemeItem(options?.colours?.specialInactiveHover, askOptions.colours.specialInactiveHover),
     specialInactiveSelected: processThemeItem(options?.colours?.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
     specialInactiveHighlight: processThemeItem(options?.colours?.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
-    specialInactiveUnselected: processThemeItem(options?.colours?.specialInactiveUnselected, askOptions.colours.specialInactiveUnselected),
+    specialInactiveNormal: processThemeItem(options?.colours?.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
     specialInactiveFaded: processThemeItem(options?.colours?.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
     specialInactiveHint: processThemeItem(options?.colours?.specialInactiveHint, askOptions.colours.specialInactiveHint),
     specialInfo: processThemeItem(options?.colours?.specialInfo, askOptions.colours.specialInfo),
@@ -380,8 +407,109 @@ export const customise = (options: Partial<ask.AskOptions>) => {
     separatorNodeNone: processThemeItem(options?.symbols?.separatorNodeNone, askOptions.symbols.separatorNodeNone),
     separatorNodeUp: processThemeItem(options?.symbols?.separatorNodeUp, askOptions.symbols.separatorNodeUp),
 
-    specialErrorIcon: processThemeItem(options?.symbols?.specialErrorIcon, askOptions.symbols.specialErrorIcon)
+    specialErrorIcon: processThemeItem(options?.symbols?.specialErrorIcon, askOptions.symbols.specialErrorIcon),
+    folderOpenableIcon: processThemeItem(options?.symbols?.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
+    fileOpenableIcon: processThemeItem(options?.symbols?.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
   };
+};
+
+const setThemeColour = <
+  T extends
+    | 'white'
+    | 'black'
+    | 'red'
+    | 'green'
+    | 'yellow'
+    | 'blue'
+    | 'magenta'
+    | 'cyan'
+    | 'darkWhite'
+    | 'lightBlack'
+    | 'darkRed'
+    | 'darkGreen'
+    | 'darkYellow'
+    | 'darkBlue'
+    | 'darkMagenta'
+    | 'darkCyan'
+    | 'grey'
+    | 'gray',
+  B extends `${T}Bg`
+>(
+  colour: T
+) => {
+  const permitted = [
+    'white',
+    'black',
+    'red',
+    'green',
+    'yellow',
+    'blue',
+    'magenta',
+    'cyan',
+    'darkWhite',
+    'lightBlack',
+    'darkRed',
+    'darkGreen',
+    'darkYellow',
+    'darkBlue',
+    'darkMagenta',
+    'darkCyan',
+    'grey',
+    'gray'
+  ] as T[];
+  if (!permitted.includes(colour)) {
+    colour = 'yellow' as T;
+  }
+
+  const txtProp = colour;
+  const bgProp = (colour + 'Bg') as B;
+
+  applyPartialOptionsToAskOptions({
+    general: {
+      themeColour: colour
+    },
+    colours: {
+      promptIcon: colr[txtProp].dim,
+      result: colr.dark[txtProp],
+      resultText: colr.dark[txtProp],
+      itemHover: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+      itemBlockHover: {
+        normal: colr[bgProp].black,
+        done: colr[bgProp].black
+      },
+      itemSelectedIcon: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+      specialHover: {
+        normal: colr.darkBg[bgProp].black,
+        done: colr.darkBg[bgProp].black
+      },
+      specialHighlight: colr[txtProp]
+    }
+  });
+};
+
+/**<!-- DOCS: ask.customise #### @ -->
+ * customise
+ *
+ * - `ask.customise`
+ *
+ * TODO docs
+ *
+ * ```typescript
+ * TODO example
+ * ```
+ */
+export const customise = (options: Partial<ask.AskOptions>) => {
+  applyPartialOptionsToAskOptions(options);
+
+  if (options?.general?.themeColour !== undefined) {
+    setThemeColour(options.general.themeColour);
+  }
 
   // Clear and (re)generate the cached state versions
   cachedOptionsForStates.normal = undefined;
@@ -408,14 +536,33 @@ export namespace ask {
    */
   export interface AskOptions {
     general?: {
+      themeColour?:
+        | 'white'
+        | 'black'
+        | 'red'
+        | 'green'
+        | 'yellow'
+        | 'blue'
+        | 'magenta'
+        | 'cyan'
+        | 'darkWhite'
+        | 'lightBlack'
+        | 'darkRed'
+        | 'darkGreen'
+        | 'darkYellow'
+        | 'darkBlue'
+        | 'darkMagenta'
+        | 'darkCyan'
+        | 'grey'
+        | 'gray';
       lc?: LineCounter;
       boxType?: 'thin' | 'thick';
-      boolTrueKeys?: string;
-      boolFalseKeys?: string;
       maxItemsOnScreen?: number;
       scrollMargin?: number;
     };
     text?: {
+      boolTrueKeys?: string;
+      boolFalseKeys?: string;
       boolYes?: string;
       boolNo?: string;
       boolYesNoSeparator?: string;
@@ -424,6 +571,17 @@ export namespace ask {
       done?: string;
       items?: (count: number) => string;
       countdown?: (secondsRemaining: number) => string;
+      file?: string;
+      directory?: string;
+      loading?: string;
+      selected?: (count: number) => string;
+
+      specialNewFolderEnterNothingCancel?: string;
+      specialNewFolderAddingFolderTo?: string;
+      specialNewFolderQuestion?: (hl: any) => string;
+
+      specialSaveFileSavingFileTo?: string;
+      specialSaveFileQuestion?: (hl: any) => string;
     };
     formatters?: {
       formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
@@ -440,6 +598,8 @@ export namespace ask {
       resultNumber?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       resultBoolean?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       resultArray?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      resultDate?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      loadingIcon?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       errorMsg?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       item?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       itemIcon?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
@@ -462,13 +622,13 @@ export namespace ask {
       specialHover?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialSelected?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialHighlight?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
-      specialUnselected?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      specialNormal?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialFaded?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialHint?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInactiveHover?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInactiveSelected?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInactiveHighlight?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
-      specialInactiveUnselected?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      specialInactiveNormal?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInactiveFaded?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInactiveHint?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialInfo?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
@@ -496,6 +656,9 @@ export namespace ask {
       separatorNodeUp?: string | { normal?: string; error?: string; done?: string };
 
       specialErrorIcon?: string | { normal?: string; error?: string; done?: string };
+
+      folderOpenableIcon?: string | { normal?: string; error?: string; done?: string };
+      fileOpenableIcon?: string | { normal?: string; error?: string; done?: string };
     };
   }
 }
@@ -510,15 +673,34 @@ export interface AskOptionsStored extends ask.AskOptions {
 }
 
 interface AskOptionsStoredGeneral {
+  themeColour:
+    | 'white'
+    | 'black'
+    | 'red'
+    | 'green'
+    | 'yellow'
+    | 'blue'
+    | 'magenta'
+    | 'cyan'
+    | 'darkWhite'
+    | 'lightBlack'
+    | 'darkRed'
+    | 'darkGreen'
+    | 'darkYellow'
+    | 'darkBlue'
+    | 'darkMagenta'
+    | 'darkCyan'
+    | 'grey'
+    | 'gray';
   lc: LineCounter;
   boxType: 'thin' | 'thick';
-  boolTrueKeys: string;
-  boolFalseKeys: string;
   maxItemsOnScreen: number;
   scrollMargin: number;
 }
 
 interface AskOptionsStoredText {
+  boolTrueKeys: string;
+  boolFalseKeys: string;
   boolYes: string;
   boolNo: string;
   boolYesNoSeparator: string;
@@ -527,6 +709,17 @@ interface AskOptionsStoredText {
   done: string;
   items: (count: number) => string;
   countdown: (secondsRemaining: number) => string;
+  file: string;
+  directory: string;
+  loading: string;
+  selected: (count: number) => string;
+
+  specialNewFolderEnterNothingCancel: string;
+  specialNewFolderAddingFolderTo: string;
+  specialNewFolderQuestion: (hl: any) => string;
+
+  specialSaveFileSavingFileTo: string;
+  specialSaveFileQuestion: (hl: any) => string;
 }
 
 interface AskOptionsStoredFormatters {
@@ -544,6 +737,8 @@ interface AskOptionsStoredColours {
   resultNumber: AskOptionsItemSet<WrapFn>;
   resultBoolean: AskOptionsItemSet<WrapFn>;
   resultArray: AskOptionsItemSet<WrapFn>;
+  resultDate: AskOptionsItemSet<WrapFn>;
+  loadingIcon: AskOptionsItemSet<WrapFn>;
   errorMsg: AskOptionsItemSet<WrapFn>;
   item: AskOptionsItemSet<WrapFn>;
   itemIcon: AskOptionsItemSet<WrapFn>;
@@ -566,13 +761,13 @@ interface AskOptionsStoredColours {
   specialHover: AskOptionsItemSet<WrapFn>; // level 1 important
   specialSelected: AskOptionsItemSet<WrapFn>; // level 2 important
   specialHighlight: AskOptionsItemSet<WrapFn>; // level 3 important - intermediary dates in a range, etc
-  specialUnselected: AskOptionsItemSet<WrapFn>; // normal regular things
+  specialNormal: AskOptionsItemSet<WrapFn>; // normal regular things
   specialFaded: AskOptionsItemSet<WrapFn>; // faded for things like dates in a different month
   specialHint: AskOptionsItemSet<WrapFn>; // hints for button presses, etc
   specialInactiveHover: AskOptionsItemSet<WrapFn>;
   specialInactiveSelected: AskOptionsItemSet<WrapFn>;
   specialInactiveHighlight: AskOptionsItemSet<WrapFn>;
-  specialInactiveUnselected: AskOptionsItemSet<WrapFn>;
+  specialInactiveNormal: AskOptionsItemSet<WrapFn>;
   specialInactiveFaded: AskOptionsItemSet<WrapFn>;
   specialInactiveHint: AskOptionsItemSet<WrapFn>;
   specialInfo: AskOptionsItemSet<WrapFn>; // the button info bar are the bottom of special prompts
@@ -600,6 +795,8 @@ interface AskOptionsStoredSymbols {
   separatorNodeUp: AskOptionsItemSet<string>;
 
   specialErrorIcon: AskOptionsItemSet<string>;
+  folderOpenableIcon: AskOptionsItemSet<string>; // used in fileExplorer to show a folder can be opened
+  fileOpenableIcon: AskOptionsItemSet<string>; // shown at end of row for files (usually just a space)
 }
 
 export interface AskOptionsForState {

@@ -1,8 +1,5 @@
-import { LOG } from '../../../DELETEME/LOG';
-import { colr } from '../../colr';
 import { out } from '../../out';
-import { number } from '../basicInput';
-import { AskOptionsForState, AskOptionsStored, getAskOptions, getAskOptionsForState } from './customise';
+import { getAskOptionsForState } from './customise';
 import { AskItemData } from './getAskInput';
 
 export const valueDisplays = {
@@ -59,6 +56,27 @@ export const valueDisplays = {
     const theme = getAskOptionsForState(isComplete, isError);
     return theme.colours.resultText(text);
   },
+  date: (date: Date, isComplete: boolean, isError: boolean, isDateOn?: boolean, isTimeOn?: boolean): string => {
+    const theme = getAskOptionsForState(isComplete, isError);
+    const [ogDate, ogTime] = date.toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
+    if (isDateOn === undefined || isTimeOn === undefined) {
+      if (isDateOn === undefined) isDateOn = ogDate !== '1970-01-01';
+      if (isTimeOn === undefined) isTimeOn = ogTime !== '00:00';
+    }
+
+    const dateStr = isDateOn ? date.toDateString() : undefined;
+
+    const timeStr = isTimeOn
+      ? ogTime
+          .split(':')
+          .slice(0, 2)
+          .map(Number)
+          .map((v) => (v + '').padStart(2, '0'))
+          .join(':')
+      : undefined;
+
+    return theme.colours.resultDate([dateStr, timeStr].filter((v) => v).join(' @ '));
+  },
 
   // Used by ask.imitate
   anyByType: (value: any, isComplete: boolean, isError: boolean): string => {
@@ -66,6 +84,7 @@ export const valueDisplays = {
       const mappedArr = value.map((v) => valueDisplays.anyByType(v, isComplete, isError));
       return valueDisplays.array(mappedArr, isComplete, isError);
     }
+    if (value instanceof Date) return valueDisplays.date(value, isComplete, isError);
     if (typeof value === 'object') return valueDisplays.object(value, isComplete, isError);
     if (typeof value === 'boolean') return valueDisplays.boolean(value, isComplete, isError);
     if (typeof value === 'number') return valueDisplays.number(value, isComplete, isError);

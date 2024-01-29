@@ -5,21 +5,20 @@ import { getSpecialColours } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 import { ErrorInfo } from '../errorValidation';
 import { LOG } from '../../../DELETEME/LOG';
-import { colr } from '../../colr';
 import { getAskOptionsForState } from '../basicInput/customise';
 
 const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: boolean, max: number, label: string, isError: boolean) => {
   const theme = getAskOptionsForState(false, isError);
   const col = getSpecialColours(sectionActive, false, isError);
 
-  const wrapFns = [col.faded, col.unselected, dialActive ? col.hover : col.selected];
+  const wrapFns = [col.faded, col.normal, dialActive ? col.hover : col.selected];
   const showExtra = wrapFns.length - 1;
 
   const dialNums = range(showExtra * 2 + 1, undefined, value - showExtra).map((v) => (v + max) % max);
 
   const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + '').padStart(2)} `)));
 
-  const lines = out.centerLines([col.unselected(label), theme.colours.decoration('◢◣'), ...dial, theme.colours.decoration('◥◤')], 4);
+  const lines = out.centerLines([col.normal(label), theme.colours.decoration('◢◣'), ...dial, theme.colours.decoration('◥◤')], 4);
 
   return lines;
 };

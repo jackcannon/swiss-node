@@ -377,21 +377,29 @@ interface LineCounter$1 {
      * const lc = getLineCounter();
      * lc.log('hello'); // 1
      * ```
+     *
      * @param {...any} args The arguments to log
      * @returns {number} The number of lines added
      */
     log(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.move ##### -->
-     * lc.move
+    /**<!-- DOCS: out.LineCounter.overwrite ##### -->
+     * lc.overwrite
      *
-     * Moves the cursor down by a given number of lines
+     * Similar to lc.log, but designed for overwriting lines that have already been printed on the screen
      *
-     * Can be negative to move up
+     * Use in combination with ansi.cursor.up to move the cursor up and replace/overwrite lines.
      *
-     * @param {number} lines The number of lines to move
-     * @returns {void}
+     * Adds a ansi.erase.lineEnd before each new line so that the line is cleared apart from what you're overwriting it with.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.overwrite('hello'); // 1
+     * ```
+     *
+     * @param {...any} args The arguments to overwrite
+     * @returns {number} The number of lines added
      */
-    move(lines: number): void;
+    overwrite(...args: any[]): number;
     /**<!-- DOCS: out.LineCounter.wrap ##### -->
      * lc.wrap
      *
@@ -401,6 +409,7 @@ interface LineCounter$1 {
      * const lc = getLineCounter();
      * lc.wrap(1, () => console.log('a single line')); // 1
      * ```
+     *
      * @param {number} newLines The number of lines to add
      * @param {(...args: A[]) => number | T} func The function to wrap
      * @param {...A} args The arguments to pass to the function
@@ -416,6 +425,7 @@ interface LineCounter$1 {
      * const lc = getLineCounter();
      * lc.add(1);
      * ```
+     *
      * @param {number} newLines The number of lines to add
      * @returns {void}
      */
@@ -432,6 +442,7 @@ interface LineCounter$1 {
      * lc.add(1);
      * lc.get(); // 3
      * ```
+     *
      * @returns {number} The line counter
      */
     get(): number;
@@ -450,10 +461,47 @@ interface LineCounter$1 {
      * lc.getSince('test-a'); // 2
      * lc.getSince('test-b'); // 1
      * ```
+     *
      * @param {string} checkpointID The checkpoint to check
      * @returns {number} The number of lines since the checkpoint
      */
     getSince(checkpointID: string): number;
+    /**<!-- DOCS: out.LineCounter.moveCursor ##### -->
+     * lc.moveCursor
+     *
+     * Move the cursor without clearing/erasing lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @param {number} y How many lines to move the cursor (down if positive, up if negative)
+     * @returns {void}
+     */
+    moveCursor(y: number): void;
+    /**<!-- DOCS: out.LineCounter.moveHome ##### -->
+     * lc.moveHome
+     *
+     * Move the cursor to the start of the line count without clearing/erasing lines.
+     *
+     * Same as `lc.clear`, but without clearing the lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @returns {void}
+     */
+    moveHome(): void;
+    /**<!-- DOCS: out.LineCounter.moveToCheckpoint ##### -->
+     * lc.moveToCheckpoint
+     *
+     * Move the cursor to a previously recorded checkpoint
+     *
+     * Same as `lc.clearToCheckpoint`, but without clearing the lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @param {string} checkpointID The checkpoint to move to
+     * @returns {void}
+     */
+    moveToCheckpoint(checkpointID: string): void;
     /**<!-- DOCS: out.LineCounter.clear ##### -->
      * lc.clear
      *
@@ -464,6 +512,7 @@ interface LineCounter$1 {
      * lc.log('hello'); // 1
      * lc.clear();
      * ```
+     *
      * @returns {void}
      */
     clear(): void;
@@ -480,11 +529,25 @@ interface LineCounter$1 {
      * lc.log('line 4'); // 1
      * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
      * ```
+     *
      * @param {number} linesToMoveBack The number of lines to clear
      * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
      * @returns {void}
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
+    /**<!-- DOCS: out.LineCounter.clearDown ##### -->
+     * lc.clearDown
+     *
+     * Moves the cursor down by a given number of lines
+     *
+     * Can be negative to move up (clearing lines)
+     *
+     * > **NOTE:** This adds new lines
+     *
+     * @param {number} lines The number of lines to move
+     * @returns {void}
+     */
+    clearDown(lines: number): void;
     /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
      * lc.checkpoint
      *
@@ -500,6 +563,7 @@ interface LineCounter$1 {
      * lc.getSince('test-a'); // 2
      * lc.getSince('test-b'); // 1
      * ```
+     *
      * @param {string} [checkpointID] The checkpoint to record
      * @returns {string} The checkpointID
      */
@@ -518,6 +582,7 @@ interface LineCounter$1 {
      * lc.log('line 4'); // 1
      * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
      * ```
+     *
      * @param {string} checkpointID The checkpoint to clear to
      * @returns {void}
      */
@@ -528,31 +593,70 @@ interface LineCounter$1 {
      * Get ansi codes for clear/erase functions, and update the line counter in the process.
      */
     ansi: {
-        /**<!-- DOCS: out.LineCounter.ansi.move ###### -->
-         * lc.move
+        /**<!-- DOCS: out.LineCounter.ansi.moveCursor ###### -->
+         * lc.ansi.moveCursor
          *
-         * Moves the cursor up by a given number of lines
-         * @param {number} lines The number of lines to move
+         * Move the cursor without clearing/erasing lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {number} y How many lines to move the cursor (down if positive, up if negative)
          * @returns {string}
          */
-        move(lines: number): string;
-        /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
-         * lc.clear
+        moveCursor(y: number): string;
+        /**<!-- DOCS: out.LineCounter.ansi.moveHome ###### -->
+         * lc.ansi.moveHome
          *
-         * clears the line counter, and moves the cursor up by the value of the line counter
+         * Move the cursor to the start of the line count without clearing/erasing lines.
+         *
+         * Same as `lc.clear`, but without clearing the lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @returns {string}
+         */
+        moveHome(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.moveToCheckpoint ###### -->
+         * lc.ansi.moveToCheckpoint
+         *
+         * Move the cursor to a previously recorded checkpoint
+         *
+         * Same as `lc.clearToCheckpoint`, but without clearing the lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {string} checkpointID The checkpoint to move to
+         * @returns {string}
+         */
+        moveToCheckpoint(checkpointID: string): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
+         * lc.ansi.clear
+         *
+         * Clears the line counter, and moves the cursor up by the value of the line counter
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
          * ```typescript
          * const lc = getLineCounter();
          * lc.log('hello'); // 1
          * process.stdout.write(lc.ansi.clear());
          * ```
+         *
          * @returns {string}
          */
         clear(): string;
         /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
-         * lc.clearBack
+         * lc.ansi.clearBack
          *
          * Clears a given number of lines, and updates the line counter
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
          * ```typescript
          * const lc = getLineCounter();
@@ -562,15 +666,33 @@ interface LineCounter$1 {
          * lc.log('line 4'); // 1
          * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
          * ```
+         *
          * @param {number} linesToMoveBack The number of lines to clear
          * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
          * @returns {string}
          */
         clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearDown ###### -->
+         * lc.ansi.clearDown
+         *
+         * Moves the cursor down by a given number of lines
+         *
+         * Can be negative to move up (clearing lines)
+         *
+         * > **NOTE:** This adds new lines
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {number} lines The number of lines to move
+         * @returns {string}
+         */
+        clearDown(lines: number): string;
         /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
-         * lc.clearToCheckpoint
+         * lc.ansi.clearToCheckpoint
          *
          * Clear lines up to a previously recorded checkpoint
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
          * ```typescript
          * const lc = getLineCounter();
@@ -581,10 +703,27 @@ interface LineCounter$1 {
          * lc.log('line 4'); // 1
          * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
          * ```
+         *
          * @param {string} checkpointID The checkpoint to clear to
          * @returns {string}
          */
         clearToCheckpoint(checkpointID: string): string;
+        /**<!-- DOCS: out.LineCounter.ansi.save ###### -->
+         * lc.ansi.save
+         *
+         * Saves the current cursor position and also tracks the line count
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         */
+        save(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.restore ###### -->
+         * lc.ansi.restore
+         *
+         * Restores to the previously saved cursor position and also tracks the line count
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         */
+        restore(): string;
     };
 }
 
@@ -2949,7 +3088,7 @@ declare namespace out {
      *
      * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
      *
-     * Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
+     * > __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
      * @param {string} text
      * @returns {number}
      */
@@ -3234,6 +3373,8 @@ declare namespace out {
      *
      * Display an animated loading indicator
      *
+     * If the given action returns a string, it will be printed. Otherwise, it will assume the action prints to output itself (and clears the number of lines given as the second argument)
+     *
      * ```typescript
      * const loader = out.loading();
      * // ...
@@ -3244,7 +3385,7 @@ declare namespace out {
      * @param {string[]} [symbols=loadingChars]
      * @returns {{ stop: () => void; }}
      */
-    export const loading: (action?: (s: string) => any, lines?: number, symbols?: string[]) => {
+    export const loading: (action?: (s: string) => string | void, lines?: number, symbols?: string[]) => {
         stop: () => void;
     };
     /**<!-- DOCS: out.limitToLength ### @ -->
@@ -4280,14 +4421,15 @@ declare namespace ask$1 {
      */
     interface AskOptions {
         general?: {
+            themeColour?: 'white' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'darkWhite' | 'lightBlack' | 'darkRed' | 'darkGreen' | 'darkYellow' | 'darkBlue' | 'darkMagenta' | 'darkCyan' | 'grey' | 'gray';
             lc?: LineCounter;
             boxType?: 'thin' | 'thick';
-            boolTrueKeys?: string;
-            boolFalseKeys?: string;
             maxItemsOnScreen?: number;
             scrollMargin?: number;
         };
         text?: {
+            boolTrueKeys?: string;
+            boolFalseKeys?: string;
             boolYes?: string;
             boolNo?: string;
             boolYesNoSeparator?: string;
@@ -4296,6 +4438,15 @@ declare namespace ask$1 {
             done?: string;
             items?: (count: number) => string;
             countdown?: (secondsRemaining: number) => string;
+            file?: string;
+            directory?: string;
+            loading?: string;
+            selected?: (count: number) => string;
+            specialNewFolderEnterNothingCancel?: string;
+            specialNewFolderAddingFolderTo?: string;
+            specialNewFolderQuestion?: (hl: any) => string;
+            specialSaveFileSavingFileTo?: string;
+            specialSaveFileQuestion?: (hl: any) => string;
         };
         formatters?: {
             formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
@@ -4348,6 +4499,16 @@ declare namespace ask$1 {
                 done?: WrapFn;
             };
             resultArray?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            resultDate?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            loadingIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
@@ -4452,7 +4613,7 @@ declare namespace ask$1 {
                 error?: WrapFn;
                 done?: WrapFn;
             };
-            specialUnselected?: WrapFn | {
+            specialNormal?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
@@ -4482,7 +4643,7 @@ declare namespace ask$1 {
                 error?: WrapFn;
                 done?: WrapFn;
             };
-            specialInactiveUnselected?: WrapFn | {
+            specialInactiveNormal?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
@@ -4599,18 +4760,29 @@ declare namespace ask$1 {
                 error?: string;
                 done?: string;
             };
+            folderOpenableIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            fileOpenableIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
         };
     }
 }
 interface AskOptionsStoredGeneral {
+    themeColour: 'white' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'darkWhite' | 'lightBlack' | 'darkRed' | 'darkGreen' | 'darkYellow' | 'darkBlue' | 'darkMagenta' | 'darkCyan' | 'grey' | 'gray';
     lc: LineCounter;
     boxType: 'thin' | 'thick';
-    boolTrueKeys: string;
-    boolFalseKeys: string;
     maxItemsOnScreen: number;
     scrollMargin: number;
 }
 interface AskOptionsStoredText {
+    boolTrueKeys: string;
+    boolFalseKeys: string;
     boolYes: string;
     boolNo: string;
     boolYesNoSeparator: string;
@@ -4619,6 +4791,15 @@ interface AskOptionsStoredText {
     done: string;
     items: (count: number) => string;
     countdown: (secondsRemaining: number) => string;
+    file: string;
+    directory: string;
+    loading: string;
+    selected: (count: number) => string;
+    specialNewFolderEnterNothingCancel: string;
+    specialNewFolderAddingFolderTo: string;
+    specialNewFolderQuestion: (hl: any) => string;
+    specialSaveFileSavingFileTo: string;
+    specialSaveFileQuestion: (hl: any) => string;
 }
 interface AskOptionsStoredFormatters {
     formatPrompt: FormatPromptFn;
@@ -4635,6 +4816,8 @@ interface AskOptionsStoredColours {
     resultNumber: AskOptionsItemSet<WrapFn>;
     resultBoolean: AskOptionsItemSet<WrapFn>;
     resultArray: AskOptionsItemSet<WrapFn>;
+    resultDate: AskOptionsItemSet<WrapFn>;
+    loadingIcon: AskOptionsItemSet<WrapFn>;
     errorMsg: AskOptionsItemSet<WrapFn>;
     item: AskOptionsItemSet<WrapFn>;
     itemIcon: AskOptionsItemSet<WrapFn>;
@@ -4655,13 +4838,13 @@ interface AskOptionsStoredColours {
     specialHover: AskOptionsItemSet<WrapFn>;
     specialSelected: AskOptionsItemSet<WrapFn>;
     specialHighlight: AskOptionsItemSet<WrapFn>;
-    specialUnselected: AskOptionsItemSet<WrapFn>;
+    specialNormal: AskOptionsItemSet<WrapFn>;
     specialFaded: AskOptionsItemSet<WrapFn>;
     specialHint: AskOptionsItemSet<WrapFn>;
     specialInactiveHover: AskOptionsItemSet<WrapFn>;
     specialInactiveSelected: AskOptionsItemSet<WrapFn>;
     specialInactiveHighlight: AskOptionsItemSet<WrapFn>;
-    specialInactiveUnselected: AskOptionsItemSet<WrapFn>;
+    specialInactiveNormal: AskOptionsItemSet<WrapFn>;
     specialInactiveFaded: AskOptionsItemSet<WrapFn>;
     specialInactiveHint: AskOptionsItemSet<WrapFn>;
     specialInfo: AskOptionsItemSet<WrapFn>;
@@ -4686,6 +4869,8 @@ interface AskOptionsStoredSymbols {
     separatorNodeNone: AskOptionsItemSet<string>;
     separatorNodeUp: AskOptionsItemSet<string>;
     specialErrorIcon: AskOptionsItemSet<string>;
+    folderOpenableIcon: AskOptionsItemSet<string>;
+    fileOpenableIcon: AskOptionsItemSet<string>;
 }
 interface AskOptionsForState {
     general: AskOptionsStoredGeneral;
@@ -4903,7 +5088,7 @@ declare namespace ask {
      * @param {string} [startPath=process.cwd()]
      * @returns {Promise<string>}
      */
-    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string>;
+    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (path: string) => string | boolean | void | Error) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
      * multiFileExplorer
      * 
@@ -4924,7 +5109,7 @@ declare namespace ask {
      * @param {string} [startPath=process.cwd()]
      * @returns {Promise<string[]>}
      */
-    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string) => Promise<string[]>;
+    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
      * saveFileExplorer
      * 
@@ -4942,7 +5127,7 @@ declare namespace ask {
      * @param {string} [suggestedFileName='']
      * @returns {Promise<string>}
      */
-    const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string) => Promise<string>;
+    const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string, validate?: (dir: string, filename?: string) => string | boolean | void | Error) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
      * table
      * 
@@ -5851,4 +6036,6 @@ interface KeyListener {
     stop(): void;
 }
 
-export { Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };
+declare const LOG: (...args: any[]) => Promise<void>;
+
+export { Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LOG, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };

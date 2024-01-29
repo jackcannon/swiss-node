@@ -902,20 +902,29 @@ A collection of functions to print to the console
     - [**getLineCounter**](#getlinecounter)
       - [**LineCounter**](#linecounter)
         - [lc.log](#lclog)
-        - [lc.move](#out_linecounter_move)
+        - [lc.overwrite](#lcoverwrite)
         - [lc.wrap](#lcwrap)
         - [lc.add](#lcadd)
         - [lc.get](#lcget)
         - [lc.getSince](#lcgetsince)
-        - [lc.clear](#out_linecounter_clear)
-        - [lc.clearBack](#out_linecounter_clearback)
+        - [lc.moveCursor](#lcmovecursor)
+        - [lc.moveHome](#lcmovehome)
+        - [lc.moveToCheckpoint](#lcmovetocheckpoint)
+        - [lc.clear](#lcclear)
+        - [lc.clearBack](#lcclearback)
+        - [lc.clearDown](#lccleardown)
         - [lc.checkpoint](#lccheckpoint)
-        - [lc.clearToCheckpoint](#out_linecounter_cleartocheckpoint)
+        - [lc.clearToCheckpoint](#lccleartocheckpoint)
         - [**lc.ansi**](#lcansi)
-          - [lc.move](#out_linecounter_ansi_move)
-          - [lc.clear](#out_linecounter_ansi_clear)
-          - [lc.clearBack](#out_linecounter_ansi_clearback)
-          - [lc.clearToCheckpoint](#out_linecounter_ansi_cleartocheckpoint)
+          - [lc.ansi.moveCursor](#lcansimovecursor)
+          - [lc.ansi.moveHome](#lcansimovehome)
+          - [lc.ansi.moveToCheckpoint](#lcansimovetocheckpoint)
+          - [lc.ansi.clear](#lcansiclear)
+          - [lc.ansi.clearBack](#lcansiclearback)
+          - [lc.ansi.clearDown](#lcansicleardown)
+          - [lc.ansi.clearToCheckpoint](#lcansicleartocheckpoint)
+          - [lc.ansi.save](#lcansisave)
+          - [lc.ansi.restore](#lcansirestore)
     - [**utils**](#out_utils)
       - [getTerminalWidth](#getterminalwidth)
       - [getLines](#out_utils_getlines)
@@ -941,7 +950,7 @@ A rough approximation of the width of the given text (as it would appear in the 
 
 Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
 
-Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
+> __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
 
 |  #  | Parameter Name | Required | Type     |
 |:---:|:---------------|:---------|:---------|
@@ -1336,6 +1345,8 @@ out.loading(action: (s: string) => any, lines: number, symbols: string[]): { sto
 
 Display an animated loading indicator
 
+If the given action returns a string, it will be printed. Otherwise, it will assume the action prints to output itself (and clears the number of lines given as the second argument)
+
 ```typescript
 const loader = out.loading();
 // ...
@@ -1597,10 +1608,10 @@ out.ansi.cursor.move(x: number, y: number): string
 
 Move the cursor a specific amount of spaces
 
-|  #  | Parameter Name | Required | Type     | Default | Description                                                               |
-|:---:|:---------------|:---------|:---------|:--------|:--------------------------------------------------------------------------|
+|  #  | Parameter Name | Required | Type     | Default | Description                                                                 |
+|:---:|:---------------|:---------|:---------|:--------|:----------------------------------------------------------------------------|
 | *0* | `x`            | *No*     | `number` | `0`     | How many spaces to move the cursor horizontally (negative values move left) |
-| *1* | `y`            | *No*     | `number` | `0`     | How many spaces to move the cursor vertically (negative values move up)   |
+| *1* | `y`            | *No*     | `number` | `0`     | How many spaces to move the cursor vertically (negative values move up)     |
 
 | Return Type |              |
 |-------------|--------------|
@@ -2120,18 +2131,25 @@ lc.log('hello'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### <span id="out_linecounter_move">lc.move</span>
-Moves the cursor down by a given number of lines
+##### lc.overwrite
+Similar to lc.log, but designed for overwriting lines that have already been printed on the screen
 
-Can be negative to move up
+Use in combination with ansi.cursor.up to move the cursor up and replace/overwrite lines.
 
-|  #  | Parameter Name | Required | Type     | Description                 |
-|:---:|:---------------|:---------|:---------|:----------------------------|
-| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+Adds a ansi.erase.lineEnd before each new line so that the line is cleared apart from what you're overwriting it with.
 
-| Return Type |
-|-------------|
-| `void`      |
+```typescript
+const lc = getLineCounter();
+lc.overwrite('hello'); // 1
+```
+
+|  #   | Parameter Name | Required | Type    | Description                |
+|:----:|:---------------|:---------|:--------|:---------------------------|
+| *0…* | `args`         | **Yes**  | `any[]` | The arguments to overwrite |
+
+| Return Type |                       |
+|-------------|-----------------------|
+| `number`    | number of lines added |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -2214,7 +2232,52 @@ lc.getSince('test-b'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### <span id="out_linecounter_clear">lc.clear</span>
+##### lc.moveCursor
+Move the cursor without clearing/erasing lines.
+
+Updates the line count in the process.
+
+|  #  | Parameter Name | Required | Type     | Description                                                          |
+|:---:|:---------------|:---------|:---------|:---------------------------------------------------------------------|
+| *0* | `y`            | **Yes**  | `number` | How many lines to move the cursor (down if positive, up if negative) |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+##### lc.moveHome
+Move the cursor to the start of the line count without clearing/erasing lines.
+
+Same as `lc.clear`, but without clearing the lines.
+
+Updates the line count in the process.
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+##### lc.moveToCheckpoint
+Move the cursor to a previously recorded checkpoint
+
+Same as `lc.clearToCheckpoint`, but without clearing the lines.
+
+Updates the line count in the process.
+
+|  #  | Parameter Name | Required | Type     | Description               |
+|:---:|:---------------|:---------|:---------|:--------------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to move to |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+##### lc.clear
 clears the line counter, and moves the cursor up by the value of the line counter
 
 ```typescript
@@ -2229,7 +2292,7 @@ lc.clear();
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### <span id="out_linecounter_clearback">lc.clearBack</span>
+##### lc.clearBack
 Clears a given number of lines, and updates the line counter
 
 ```typescript
@@ -2241,10 +2304,27 @@ lc.log('line 4'); // 1
 lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name         | Required | Type      | Description                                                               |
-|:---:|:-----------------------|:---------|:----------|:--------------------------------------------------------------------------|
-| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                              |
+|  #  | Parameter Name         | Required | Type      | Description                                                                   |
+|:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
 | *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+##### lc.clearDown
+Moves the cursor down by a given number of lines
+
+Can be negative to move up (clearing lines)
+
+> **NOTE:** This adds new lines
+
+|  #  | Parameter Name | Required | Type     | Description                 |
+|:---:|:---------------|:---------|:---------|:----------------------------|
+| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
 
 | Return Type |
 |-------------|
@@ -2276,7 +2356,7 @@ lc.getSince('test-b'); // 1
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-##### <span id="out_linecounter_cleartocheckpoint">lc.clearToCheckpoint</span>
+##### lc.clearToCheckpoint
 Clear lines up to a previously recorded checkpoint
 
 ```typescript
@@ -2304,12 +2384,16 @@ Get ansi codes for clear/erase functions, and update the line counter in the pro
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-###### <span id="out_linecounter_ansi_move">lc.move</span>
-Moves the cursor up by a given number of lines
+###### lc.ansi.moveCursor
+Move the cursor without clearing/erasing lines.
 
-|  #  | Parameter Name | Required | Type     | Description                 |
-|:---:|:---------------|:---------|:---------|:----------------------------|
-| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+Updates the line count in the process.
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+|  #  | Parameter Name | Required | Type     | Description                                                          |
+|:---:|:---------------|:---------|:---------|:---------------------------------------------------------------------|
+| *0* | `y`            | **Yes**  | `number` | How many lines to move the cursor (down if positive, up if negative) |
 
 | Return Type |
 |-------------|
@@ -2317,8 +2401,44 @@ Moves the cursor up by a given number of lines
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-###### <span id="out_linecounter_ansi_clear">lc.clear</span>
-clears the line counter, and moves the cursor up by the value of the line counter
+###### lc.ansi.moveHome
+Move the cursor to the start of the line count without clearing/erasing lines.
+
+Same as `lc.clear`, but without clearing the lines.
+
+Updates the line count in the process.
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### lc.ansi.moveToCheckpoint
+Move the cursor to a previously recorded checkpoint
+
+Same as `lc.clearToCheckpoint`, but without clearing the lines.
+
+Updates the line count in the process.
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+|  #  | Parameter Name | Required | Type     | Description               |
+|:---:|:---------------|:---------|:---------|:--------------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to move to |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### lc.ansi.clear
+Clears the line counter, and moves the cursor up by the value of the line counter
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
 ```typescript
 const lc = getLineCounter();
@@ -2332,8 +2452,10 @@ process.stdout.write(lc.ansi.clear());
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-###### <span id="out_linecounter_ansi_clearback">lc.clearBack</span>
+###### lc.ansi.clearBack
 Clears a given number of lines, and updates the line counter
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
 ```typescript
 const lc = getLineCounter();
@@ -2344,9 +2466,9 @@ lc.log('line 4'); // 1
 process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name         | Required | Type      | Description                                                               |
-|:---:|:-----------------------|:---------|:----------|:--------------------------------------------------------------------------|
-| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                              |
+|  #  | Parameter Name         | Required | Type      | Description                                                                   |
+|:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
 | *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
 
 | Return Type |
@@ -2355,8 +2477,29 @@ process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleare
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
-###### <span id="out_linecounter_ansi_cleartocheckpoint">lc.clearToCheckpoint</span>
+###### lc.ansi.clearDown
+Moves the cursor down by a given number of lines
+
+Can be negative to move up (clearing lines)
+
+> **NOTE:** This adds new lines
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+|  #  | Parameter Name | Required | Type     | Description                 |
+|:---:|:---------------|:---------|:---------|:----------------------------|
+| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+
+| Return Type |
+|-------------|
+| `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### lc.ansi.clearToCheckpoint
 Clear lines up to a previously recorded checkpoint
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
 ```typescript
 const lc = getLineCounter();
@@ -2375,6 +2518,20 @@ process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 
 | Return Type |
 |-------------|
 | `string`    |
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### lc.ansi.save
+Saves the current cursor position and also tracks the line count
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+
+###### lc.ansi.restore
+Restores to the previously saved cursor position and also tracks the line count
+
+> **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 

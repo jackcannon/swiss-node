@@ -9,6 +9,7 @@ interface SectionStyle {
   secondary: WrapFn;
   primary: WrapFn;
 }
+// TODO still need this?
 export const sectionStyles: { sectActive: SectionStyle; sectInactive: SectionStyle } = {
   sectActive: {
     dark: colr.grey1,
@@ -36,7 +37,7 @@ export const getSpecialColours = (isActive: boolean, isComplete: boolean, isErro
     hover: isActive ? col.specialHover : col.specialInactiveHover,
     selected: isActive ? col.specialSelected : col.specialInactiveSelected,
     highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
-    unselected: isActive ? col.specialUnselected : col.specialInactiveUnselected,
+    normal: isActive ? col.specialNormal : col.specialInactiveNormal,
     faded: isActive ? col.specialFaded : col.specialInactiveFaded,
     hint: isActive ? col.specialHint : col.specialInactiveHint,
     info: col.specialInfo
