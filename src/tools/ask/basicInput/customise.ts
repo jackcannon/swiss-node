@@ -51,7 +51,9 @@ const populateAskOptions = (): AskOptionsStored => {
       lc: getLineCounter(),
       boxType: 'thick',
       maxItemsOnScreen: 10,
-      scrollMargin: 2
+      scrollMargin: 2,
+      fileExplorerColumnWidth: 25,
+      fileExplorerMaxItems: 15
     },
     text: {
       boolTrueKeys: 'Yy',
@@ -290,7 +292,9 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     lc: options?.general?.lc ?? askOptions.general.lc,
     boxType: options?.general?.boxType ?? askOptions.general.boxType,
     maxItemsOnScreen: options?.general?.maxItemsOnScreen ?? askOptions.general.maxItemsOnScreen,
-    scrollMargin: options?.general?.scrollMargin ?? askOptions.general.scrollMargin
+    scrollMargin: options?.general?.scrollMargin ?? askOptions.general.scrollMargin,
+    fileExplorerColumnWidth: options?.general?.fileExplorerColumnWidth ?? askOptions.general.fileExplorerColumnWidth,
+    fileExplorerMaxItems: options?.general?.fileExplorerMaxItems ?? askOptions.general.fileExplorerMaxItems
   };
 
   askOptions.text = {
@@ -559,6 +563,8 @@ export namespace ask {
       boxType?: 'thin' | 'thick';
       maxItemsOnScreen?: number;
       scrollMargin?: number;
+      fileExplorerColumnWidth?: number;
+      fileExplorerMaxItems?: number;
     };
     text?: {
       boolTrueKeys?: string;
@@ -696,6 +702,8 @@ interface AskOptionsStoredGeneral {
   boxType: 'thin' | 'thick';
   maxItemsOnScreen: number;
   scrollMargin: number;
+  fileExplorerColumnWidth: number;
+  fileExplorerMaxItems: number;
 }
 
 interface AskOptionsStoredText {

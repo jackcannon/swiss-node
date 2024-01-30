@@ -4,7 +4,7 @@ import { out, Breadcrumb, ansi } from '../../out';
 import { WrapFn, colr } from '../../colr';
 
 import { PromptChoiceFull } from './getFullChoices';
-import { ScrolledItems } from './getScrolledItems';
+import { ScrolledItems, getScrollbar } from './getScrolledItems';
 import { AskOptionsForState, getAskOptions } from './customise';
 import { LOG } from '../../../DELETEME/LOG';
 
@@ -216,34 +216,9 @@ ${bottomLine}`;
   }
 };
 
-const getScrollbar = <T>(allItems: PromptChoiceFull<T>[], scrolledItems: ScrolledItems<T>, theme: AskOptionsForState): string[] => {
-  const { colours: col, symbols: sym, boxSymbols: box } = theme;
-
-  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
-  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
-  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
-  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
-
-  const totalTrackHeight = scrolledItems.items.length;
-  const amountShown = scrolledItems.items.length / allItems.length;
-  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
-
-  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
-  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
-  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
-
-  const scrollbarBar = ArrayTools.repeat(barHeight, scrollBarIcon);
-  if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = scrollUpIcon;
-  if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
-
-  return [...ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
-};
-
 export type FormatItemsFn = <T extends unknown>(
   allItems: PromptChoiceFull<T>[],
-  scrolledItems: ScrolledItems<T>,
+  scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
   selected: number[] | undefined,
   type: 'single' | 'multi',
   theme: AskOptionsForState,
@@ -254,7 +229,7 @@ export type FormatItemsFn = <T extends unknown>(
 // The outputTemplate is a function that takes the styled elements and puts them together
 const standardItemFormatter = <T extends unknown>(
   allItems: PromptChoiceFull<T>[],
-  scrolledItems: ScrolledItems<T>,
+  scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
   selected: number[] | undefined,
   type: 'single' | 'multi',
   theme: AskOptionsForState,
@@ -323,7 +298,7 @@ const standardItemFormatter = <T extends unknown>(
 export const itemsFormatters: { [key: string]: FormatItemsFn } = {
   simple: <T extends unknown>(
     allItems: PromptChoiceFull<T>[],
-    scrolledItems: ScrolledItems<T>,
+    scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
     selected: number[] | undefined,
     type: 'single' | 'multi',
     theme: AskOptionsForState,
@@ -339,7 +314,7 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
   },
   simpleAlt: <T extends unknown>(
     allItems: PromptChoiceFull<T>[],
-    scrolledItems: ScrolledItems<T>,
+    scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
     selected: number[] | undefined,
     type: 'single' | 'multi',
     theme: AskOptionsForState,
@@ -355,7 +330,7 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
   },
   block: <T extends unknown>(
     allItems: PromptChoiceFull<T>[],
-    scrolledItems: ScrolledItems<T>,
+    scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
     selected: number[] | undefined,
     type: 'single' | 'multi',
     theme: AskOptionsForState,
@@ -373,7 +348,7 @@ export const itemsFormatters: { [key: string]: FormatItemsFn } = {
   },
   blockAlt: <T extends unknown>(
     allItems: PromptChoiceFull<T>[],
-    scrolledItems: ScrolledItems<T>,
+    scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
     selected: number[] | undefined,
     type: 'single' | 'multi',
     theme: AskOptionsForState,

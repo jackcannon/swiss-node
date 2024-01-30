@@ -1174,6 +1174,7 @@ var getFullChoices = (choices) => choices.map((choice) => typeof choice === "str
 }));
 
 // src/tools/ask/basicInput/getScrolledItems.ts
+var import_swiss_ak8 = require("swiss-ak");
 var getScrolledItems = (items, hovered, lastStartingIndex, maxShow = 10, margin = 2) => {
   if (items.length <= maxShow) {
     return {
@@ -1196,22 +1197,40 @@ var getScrolledItems = (items, hovered, lastStartingIndex, maxShow = 10, margin 
     doesScrollDown: startingIndex + maxShow < items.length
   };
 };
+var getScrollbar = (allItems, scrolledItems, theme) => {
+  const { colours: col, symbols: sym, boxSymbols: box } = theme;
+  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
+  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+  const totalTrackHeight = scrolledItems.items.length;
+  const amountShown = scrolledItems.items.length / allItems.length;
+  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
+  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
+  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
+  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
+  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+  const scrollbarBar = import_swiss_ak8.ArrayTools.repeat(barHeight, scrollBarIcon);
+  if (scrolledItems.doesScrollUp && barHeight >= 2)
+    scrollbarBar[0] = scrollUpIcon;
+  if (scrolledItems.doesScrollDown && barHeight >= 2)
+    scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+  return [...import_swiss_ak8.ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...import_swiss_ak8.ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
+};
 
 // src/tools/ask/basicInput/customise.ts
 var import_swiss_ak10 = require("swiss-ak");
 
-// src/tools/ask/basicInput/formatters.ts
-var import_swiss_ak9 = require("swiss-ak");
-
 // src/DELETEME/LOG.ts
 var import_promises = __toESM(require("fs/promises"), 1);
-var import_swiss_ak8 = require("swiss-ak");
+var import_swiss_ak9 = require("swiss-ak");
 var import_util2 = __toESM(require("util"), 1);
 var logItems = [];
 var logFile = "/Users/jackcannon/Projects/swiss-node/debug/LOG.txt";
 var LOG = async (...args) => {
   logItems.push(args.map((arg) => import_util2.default.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
-  await import_swiss_ak8.queue.add("log", () => import_promises.default.writeFile(logFile, logItems.join("\n")));
+  await import_swiss_ak9.queue.add("log", () => import_promises.default.writeFile(logFile, logItems.join("\n")));
 };
 
 // src/tools/ask/basicInput/formatters.ts
@@ -1336,27 +1355,6 @@ ${bottomLine}`;
     return promptFormatters.fullBox(question, value, items, errorMessage, theme, isComplete, isExit);
   }
 };
-var getScrollbar = (allItems, scrolledItems, theme) => {
-  const { colours: col, symbols: sym, boxSymbols: box } = theme;
-  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
-  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
-  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
-  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
-  const totalTrackHeight = scrolledItems.items.length;
-  const amountShown = scrolledItems.items.length / allItems.length;
-  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
-  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
-  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
-  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
-  const scrollbarBar = import_swiss_ak9.ArrayTools.repeat(barHeight, scrollBarIcon);
-  if (scrolledItems.doesScrollUp && barHeight >= 2)
-    scrollbarBar[0] = scrollUpIcon;
-  if (scrolledItems.doesScrollDown && barHeight >= 2)
-    scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
-  return [...import_swiss_ak9.ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...import_swiss_ak9.ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
-};
 var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isExit, isBlock, itemOutputTemplate) => {
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
   const askOptions2 = getAskOptions();
@@ -1466,7 +1464,9 @@ var populateAskOptions = () => {
       lc: getLineCounter2(),
       boxType: "thick",
       maxItemsOnScreen: 10,
-      scrollMargin: 2
+      scrollMargin: 2,
+      fileExplorerColumnWidth: 25,
+      fileExplorerMaxItems: 15
     },
     text: {
       boolTrueKeys: "Yy",
@@ -1667,7 +1667,7 @@ var processThemeItem = (item, defaultItem) => {
   return defaultItem;
 };
 var applyPartialOptionsToAskOptions = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
@@ -1675,28 +1675,30 @@ var applyPartialOptionsToAskOptions = (options) => {
     lc: ((_b = options == null ? void 0 : options.general) == null ? void 0 : _b.lc) ?? askOptions.general.lc,
     boxType: ((_c = options == null ? void 0 : options.general) == null ? void 0 : _c.boxType) ?? askOptions.general.boxType,
     maxItemsOnScreen: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
-    scrollMargin: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.scrollMargin) ?? askOptions.general.scrollMargin
+    scrollMargin: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.scrollMargin) ?? askOptions.general.scrollMargin,
+    fileExplorerColumnWidth: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.fileExplorerColumnWidth) ?? askOptions.general.fileExplorerColumnWidth,
+    fileExplorerMaxItems: ((_g = options == null ? void 0 : options.general) == null ? void 0 : _g.fileExplorerMaxItems) ?? askOptions.general.fileExplorerMaxItems
   };
   askOptions.text = {
-    boolTrueKeys: ((_f = options == null ? void 0 : options.text) == null ? void 0 : _f.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
-    boolFalseKeys: ((_g = options == null ? void 0 : options.text) == null ? void 0 : _g.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
-    boolYes: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolYes) ?? askOptions.text.boolYes,
-    boolNo: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolNo) ?? askOptions.text.boolNo,
-    boolYesNoSeparator: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
-    boolYN: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolYN) ?? askOptions.text.boolYN,
-    selectAll: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.selectAll) ?? askOptions.text.selectAll,
-    done: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.done) ?? askOptions.text.done,
-    items: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.items) ?? askOptions.text.items,
-    countdown: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.countdown) ?? askOptions.text.countdown,
-    file: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.file) ?? askOptions.text.file,
-    directory: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.directory) ?? askOptions.text.directory,
-    loading: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.loading) ?? askOptions.text.loading,
-    selected: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.selected) ?? askOptions.text.selected,
-    specialNewFolderEnterNothingCancel: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
-    specialNewFolderAddingFolderTo: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
-    specialNewFolderQuestion: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
-    specialSaveFileSavingFileTo: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
-    specialSaveFileQuestion: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
+    boolTrueKeys: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
+    boolFalseKeys: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
+    boolYes: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYes) ?? askOptions.text.boolYes,
+    boolNo: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolNo) ?? askOptions.text.boolNo,
+    boolYesNoSeparator: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
+    boolYN: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.boolYN) ?? askOptions.text.boolYN,
+    selectAll: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.selectAll) ?? askOptions.text.selectAll,
+    done: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.done) ?? askOptions.text.done,
+    items: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.items) ?? askOptions.text.items,
+    countdown: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.countdown) ?? askOptions.text.countdown,
+    file: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.file) ?? askOptions.text.file,
+    directory: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.directory) ?? askOptions.text.directory,
+    loading: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.loading) ?? askOptions.text.loading,
+    selected: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.selected) ?? askOptions.text.selected,
+    specialNewFolderEnterNothingCancel: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
+    specialNewFolderAddingFolderTo: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
+    specialNewFolderQuestion: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
+    specialSaveFileSavingFileTo: ((_y = options == null ? void 0 : options.text) == null ? void 0 : _y.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
+    specialSaveFileQuestion: ((_z = options == null ? void 0 : options.text) == null ? void 0 : _z.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
   };
   askOptions.formatters = {
     formatPrompt: (() => {
@@ -1725,71 +1727,71 @@ var applyPartialOptionsToAskOptions = (options) => {
     })()
   };
   askOptions.colours = {
-    decoration: processThemeItem((_y = options == null ? void 0 : options.colours) == null ? void 0 : _y.decoration, askOptions.colours.decoration),
-    questionText: processThemeItem((_z = options == null ? void 0 : options.colours) == null ? void 0 : _z.questionText, askOptions.colours.questionText),
-    specialIcon: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.specialIcon, askOptions.colours.specialIcon),
-    openingIcon: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.openingIcon, askOptions.colours.openingIcon),
-    promptIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.promptIcon, askOptions.colours.promptIcon),
-    result: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.result, askOptions.colours.result),
-    resultText: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.resultText, askOptions.colours.resultText),
-    resultNumber: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.resultNumber, askOptions.colours.resultNumber),
-    resultBoolean: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.resultBoolean, askOptions.colours.resultBoolean),
-    resultArray: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.resultArray, askOptions.colours.resultArray),
-    resultDate: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.resultDate, askOptions.colours.resultDate),
-    loadingIcon: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.loadingIcon, askOptions.colours.loadingIcon),
-    errorMsg: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.errorMsg, askOptions.colours.errorMsg),
-    item: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.item, askOptions.colours.item),
-    itemIcon: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.itemIcon, askOptions.colours.itemIcon),
-    itemHover: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.itemHover, askOptions.colours.itemHover),
-    itemHoverIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.itemHoverIcon, askOptions.colours.itemHoverIcon),
-    itemBlockHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.itemBlockHover, askOptions.colours.itemBlockHover),
-    itemBlockHoverIcon: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
-    itemSelected: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemSelected, askOptions.colours.itemSelected),
-    itemSelectedIcon: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
-    itemUnselected: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemUnselected, askOptions.colours.itemUnselected),
-    itemUnselectedIcon: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
-    scrollbarTrack: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.scrollbarTrack, askOptions.colours.scrollbarTrack),
-    scrollbarBar: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.scrollbarBar, askOptions.colours.scrollbarBar),
-    selectAllText: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.selectAllText, askOptions.colours.selectAllText),
-    boolYNText: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.boolYNText, askOptions.colours.boolYNText),
-    countdown: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.countdown, askOptions.colours.countdown),
-    pause: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.pause, askOptions.colours.pause),
-    specialHover: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.specialHover, askOptions.colours.specialHover),
-    specialSelected: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.specialSelected, askOptions.colours.specialSelected),
-    specialHighlight: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialHighlight, askOptions.colours.specialHighlight),
-    specialNormal: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.specialNormal, askOptions.colours.specialNormal),
-    specialFaded: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.specialFaded, askOptions.colours.specialFaded),
-    specialHint: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialHint, askOptions.colours.specialHint),
-    specialInactiveHover: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialInactiveHover, askOptions.colours.specialInactiveHover),
-    specialInactiveSelected: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
-    specialInactiveHighlight: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
-    specialInactiveNormal: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
-    specialInactiveFaded: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
-    specialInactiveHint: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveHint, askOptions.colours.specialInactiveHint),
-    specialInfo: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInfo, askOptions.colours.specialInfo),
-    specialErrorMsg: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialErrorMsg, askOptions.colours.specialErrorMsg),
-    specialErrorIcon: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialErrorIcon, askOptions.colours.specialErrorIcon)
+    decoration: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.decoration, askOptions.colours.decoration),
+    questionText: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.questionText, askOptions.colours.questionText),
+    specialIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.specialIcon, askOptions.colours.specialIcon),
+    openingIcon: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.openingIcon, askOptions.colours.openingIcon),
+    promptIcon: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.promptIcon, askOptions.colours.promptIcon),
+    result: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.result, askOptions.colours.result),
+    resultText: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.resultText, askOptions.colours.resultText),
+    resultNumber: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.resultNumber, askOptions.colours.resultNumber),
+    resultBoolean: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.resultBoolean, askOptions.colours.resultBoolean),
+    resultArray: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.resultArray, askOptions.colours.resultArray),
+    resultDate: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.resultDate, askOptions.colours.resultDate),
+    loadingIcon: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.loadingIcon, askOptions.colours.loadingIcon),
+    errorMsg: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.errorMsg, askOptions.colours.errorMsg),
+    item: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.item, askOptions.colours.item),
+    itemIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.itemIcon, askOptions.colours.itemIcon),
+    itemHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.itemHover, askOptions.colours.itemHover),
+    itemHoverIcon: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.itemHoverIcon, askOptions.colours.itemHoverIcon),
+    itemBlockHover: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemBlockHover, askOptions.colours.itemBlockHover),
+    itemBlockHoverIcon: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
+    itemSelected: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemSelected, askOptions.colours.itemSelected),
+    itemSelectedIcon: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
+    itemUnselected: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.itemUnselected, askOptions.colours.itemUnselected),
+    itemUnselectedIcon: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
+    scrollbarTrack: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.scrollbarTrack, askOptions.colours.scrollbarTrack),
+    scrollbarBar: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.scrollbarBar, askOptions.colours.scrollbarBar),
+    selectAllText: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.selectAllText, askOptions.colours.selectAllText),
+    boolYNText: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.boolYNText, askOptions.colours.boolYNText),
+    countdown: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.countdown, askOptions.colours.countdown),
+    pause: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.pause, askOptions.colours.pause),
+    specialHover: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialHover, askOptions.colours.specialHover),
+    specialSelected: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.specialSelected, askOptions.colours.specialSelected),
+    specialHighlight: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.specialHighlight, askOptions.colours.specialHighlight),
+    specialNormal: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialNormal, askOptions.colours.specialNormal),
+    specialFaded: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialFaded, askOptions.colours.specialFaded),
+    specialHint: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialHint, askOptions.colours.specialHint),
+    specialInactiveHover: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialInactiveHover, askOptions.colours.specialInactiveHover),
+    specialInactiveSelected: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
+    specialInactiveHighlight: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
+    specialInactiveNormal: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
+    specialInactiveFaded: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
+    specialInactiveHint: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialInactiveHint, askOptions.colours.specialInactiveHint),
+    specialInfo: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialInfo, askOptions.colours.specialInfo),
+    specialErrorMsg: processThemeItem((_oa = options == null ? void 0 : options.colours) == null ? void 0 : _oa.specialErrorMsg, askOptions.colours.specialErrorMsg),
+    specialErrorIcon: processThemeItem((_pa = options == null ? void 0 : options.colours) == null ? void 0 : _pa.specialErrorIcon, askOptions.colours.specialErrorIcon)
   };
   askOptions.symbols = {
-    specialIcon: processThemeItem((_oa = options == null ? void 0 : options.symbols) == null ? void 0 : _oa.specialIcon, askOptions.symbols.specialIcon),
-    openingIcon: processThemeItem((_pa = options == null ? void 0 : options.symbols) == null ? void 0 : _pa.openingIcon, askOptions.symbols.openingIcon),
-    promptIcon: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.promptIcon, askOptions.symbols.promptIcon),
-    errorMsgPrefix: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
-    itemIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.itemIcon, askOptions.symbols.itemIcon),
-    itemHoverIcon: processThemeItem((_ta = options == null ? void 0 : options.symbols) == null ? void 0 : _ta.itemHoverIcon, askOptions.symbols.itemHoverIcon),
-    itemSelectedIcon: processThemeItem((_ua = options == null ? void 0 : options.symbols) == null ? void 0 : _ua.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
-    itemUnselectedIcon: processThemeItem((_va = options == null ? void 0 : options.symbols) == null ? void 0 : _va.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
-    scrollUpIcon: processThemeItem((_wa = options == null ? void 0 : options.symbols) == null ? void 0 : _wa.scrollUpIcon, askOptions.symbols.scrollUpIcon),
-    scrollDownIcon: processThemeItem((_xa = options == null ? void 0 : options.symbols) == null ? void 0 : _xa.scrollDownIcon, askOptions.symbols.scrollDownIcon),
-    scrollbarTrack: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.scrollbarTrack, askOptions.symbols.scrollbarTrack),
-    scrollbarBar: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.scrollbarBar, askOptions.symbols.scrollbarBar),
-    separatorLine: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.separatorLine, askOptions.symbols.separatorLine),
-    separatorNodeDown: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.separatorNodeDown, askOptions.symbols.separatorNodeDown),
-    separatorNodeNone: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.separatorNodeNone, askOptions.symbols.separatorNodeNone),
-    separatorNodeUp: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.separatorNodeUp, askOptions.symbols.separatorNodeUp),
-    specialErrorIcon: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.specialErrorIcon, askOptions.symbols.specialErrorIcon),
-    folderOpenableIcon: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
-    fileOpenableIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
+    specialIcon: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.specialIcon, askOptions.symbols.specialIcon),
+    openingIcon: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.openingIcon, askOptions.symbols.openingIcon),
+    promptIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.promptIcon, askOptions.symbols.promptIcon),
+    errorMsgPrefix: processThemeItem((_ta = options == null ? void 0 : options.symbols) == null ? void 0 : _ta.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
+    itemIcon: processThemeItem((_ua = options == null ? void 0 : options.symbols) == null ? void 0 : _ua.itemIcon, askOptions.symbols.itemIcon),
+    itemHoverIcon: processThemeItem((_va = options == null ? void 0 : options.symbols) == null ? void 0 : _va.itemHoverIcon, askOptions.symbols.itemHoverIcon),
+    itemSelectedIcon: processThemeItem((_wa = options == null ? void 0 : options.symbols) == null ? void 0 : _wa.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
+    itemUnselectedIcon: processThemeItem((_xa = options == null ? void 0 : options.symbols) == null ? void 0 : _xa.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
+    scrollUpIcon: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.scrollUpIcon, askOptions.symbols.scrollUpIcon),
+    scrollDownIcon: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.scrollDownIcon, askOptions.symbols.scrollDownIcon),
+    scrollbarTrack: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarBar: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.scrollbarBar, askOptions.symbols.scrollbarBar),
+    separatorLine: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.separatorLine, askOptions.symbols.separatorLine),
+    separatorNodeDown: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.separatorNodeDown, askOptions.symbols.separatorNodeDown),
+    separatorNodeNone: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.separatorNodeNone, askOptions.symbols.separatorNodeNone),
+    separatorNodeUp: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.separatorNodeUp, askOptions.symbols.separatorNodeUp),
+    specialErrorIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.specialErrorIcon, askOptions.symbols.specialErrorIcon),
+    folderOpenableIcon: processThemeItem((_Ha = options == null ? void 0 : options.symbols) == null ? void 0 : _Ha.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
+    fileOpenableIcon: processThemeItem((_Ia = options == null ? void 0 : options.symbols) == null ? void 0 : _Ia.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
   };
 };
 var setThemeColour = (colour) => {
@@ -3309,17 +3311,9 @@ var fsCache = {
   getPathContents: (path) => fsCache.cache.get(path)
 };
 
-// src/tools/waiters.ts
-var waiters;
-((waiters2) => {
-  waiters2.nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
-})(waiters || (waiters = {}));
-var nextTick = waiters.nextTick;
-
 // src/tools/ask/fileExplorer/helpers.ts
 var loadPathContents = async (path) => {
   if (fsCache.cache.has(path)) {
-    nextTick().then(() => forceLoadPathContents(path));
     return fsCache.cache.get(path);
   }
   return forceLoadPathContents(path);
@@ -3617,15 +3611,13 @@ var imitate = (question, result, isComplete = true, isError = false, lc) => {
 // src/tools/ask/fileExplorer/handler.ts
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "", validateFn, lc) => {
   const options = getAskOptions();
-  const minWidth = 25;
-  const maxWidth = 25;
-  const maxItems = 15;
+  const minWidth = options.general.fileExplorerColumnWidth;
+  const maxWidth = options.general.fileExplorerColumnWidth;
+  const maxItems = options.general.fileExplorerMaxItems;
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const tempLC = getLineCounter2();
   const deferred = (0, import_swiss_ak21.getDeferred)();
-  const originalLC = options.general.lc;
-  options.general.lc = getLineCounter2();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
@@ -3633,10 +3625,14 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   let cursorType = "d";
   let isError = true;
   let errorMsg = void 0;
+  const cursorIndexes = {};
+  const scrollLastStartingIndex = {};
   let pressed = void 0;
   let submitted = false;
   let loading = false;
   let locked = false;
+  const originalLC = options.general.lc;
+  options.general.lc = getLineCounter2();
   const recalc = () => {
     var _a;
     if (submitted)
@@ -3648,6 +3644,28 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     const errorInfo = getErrorInfoFromValidationResult(runValidation());
     isError = errorInfo.isError;
     errorMsg = errorInfo.errorMessage;
+  };
+  const loadInitialPathIndexes = () => {
+    recalc();
+    paths.forEach((path, index) => {
+      const cursorItem = cursor[index + 1];
+      if (cursorItem === void 0)
+        return;
+      const contents = fsCache.getPathContents(path);
+      const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
+      cursorIndexes[path] = [cursorIndex, ...cursorIndexes[path] || []].slice(0, 2);
+      LOG("loadInitial - D", { cursorIndexes });
+    });
+  };
+  const updateCursorIndexes = (newIndex) => {
+    recalc();
+    const currentParentDir = paths[paths.length - 2];
+    if (!cursorIndexes[currentParentDir])
+      cursorIndexes[currentParentDir] = [];
+    const lastKnownIndex = cursorIndexes[currentParentDir][0];
+    if (lastKnownIndex !== newIndex)
+      cursorIndexes[currentParentDir] = [newIndex, lastKnownIndex];
+    LOG("updateCursorIndexes", { cursorIndexes });
   };
   const runValidation = (newFileName) => {
     const currentDir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
@@ -3709,7 +3727,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     if (submitted)
       return;
     recalc();
-    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState(false, isError);
+    const theme = getAskOptionsForState(false, isError);
+    const { colours: col, symbols: sym, general: gen, text: txt } = theme;
     const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
     const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
     const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
@@ -3768,11 +3787,13 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     }[isMulti ? "multi" : "single"][accepted.join("")];
     const emptyColumn = [" ".repeat(minWidth), ..." ".repeat(maxItems - 1).split("")];
     const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
+      const currentParentDir = paths[index];
       const dirs = (contents == null ? void 0 : contents.dirs) || [];
       const files = (contents == null ? void 0 : contents.files) || [];
       const list = [...dirs, ...files];
+      const isScrollbar = list.length > maxItems;
       const contentWidth = Math.max(...list.map((s) => s.length));
-      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth));
+      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
       const highlighted = cursor[index + 1];
       const highlightedIndex = list.indexOf(highlighted);
       const isActiveCol = index + 2 === cursor.length;
@@ -3781,17 +3802,13 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
         ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
       ];
-      if (formattedLines.length > maxItems) {
-        const startIndex = Math.max(0, highlightedIndex - maxItems + 2);
-        const isScrollUp = startIndex > 0;
-        const isScrollDown = startIndex + maxItems < formattedLines.length;
-        const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
-        const fullWidth = out.getWidth(formatDir(width, "", false, "")(""));
-        if (isScrollUp)
-          slicedLines[0] = col.scrollbarTrack(out.center("\u2191" + " ".repeat(Math.floor(width / 2)) + "\u2191", fullWidth));
-        if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = col.scrollbarTrack(out.center("\u2193" + " ".repeat(Math.floor(width / 2)) + "\u2193", fullWidth));
-        return out.utils.joinLines(slicedLines);
+      if (isScrollbar) {
+        const [currentHoverIndex] = cursorIndexes[currentParentDir] ?? [highlightedIndex !== -1 ? highlightedIndex : 0];
+        const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
+        const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
+        scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
+        const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
+        return out.utils.joinLines(scrolledItems.items.map((line, index2) => line + scrollbar[index2]));
       }
       return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
     });
@@ -3843,6 +3860,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const nextIndex = (list.length + currIndex + direction) % list.length;
       const nextValue = list[nextIndex];
       cursor = [...folds, nextValue];
+      updateCursorIndexes(nextIndex);
       loadNewItem();
     },
     moveRight: () => {
@@ -3854,7 +3872,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const nextList = [...nextContents.dirs, ...nextContents.files];
       if (!nextList.length)
         return;
-      cursor = [...cursor, nextList[0]];
+      const savedIndex = (cursorIndexes[paths[cursor.length - 1]] || [])[0] ?? 0;
+      cursor = [...cursor, nextList[savedIndex] ?? nextList[0]];
       loadNewDepth();
     },
     moveLeft: () => {
@@ -4026,7 +4045,9 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         return userActions.submit();
     }
   });
-  loadNewDepth();
+  loadNewDepth().then(() => {
+    loadInitialPathIndexes();
+  });
   return deferred.promise;
 };
 
@@ -5026,6 +5047,13 @@ var progressBarTools;
     };
   };
 })(progressBarTools || (progressBarTools = {}));
+
+// src/tools/waiters.ts
+var waiters;
+((waiters2) => {
+  waiters2.nextTick = () => new Promise((resolve) => process.nextTick(() => resolve(void 0)));
+})(waiters || (waiters = {}));
+var nextTick = waiters.nextTick;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   LOG,

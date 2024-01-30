@@ -11,7 +11,7 @@ import { getAskOptionsForState } from '../basicInput/customise';
 
 export const loadPathContents = async (path: string): Promise<PathContents> => {
   if (fsCache.cache.has(path)) {
-    nextTick().then(() => forceLoadPathContents(path));
+    // nextTick().then(() => forceLoadPathContents(path));
     return fsCache.cache.get(path);
   }
   return forceLoadPathContents(path);

@@ -4384,7 +4384,7 @@ interface PromptChoiceFull<T> {
 }
 
 interface ScrolledItems<T> {
-    items: PromptChoiceFull<T>[];
+    items: T[];
     startingIndex: number;
     hoveredIndex: number;
     doesScrollUp: boolean;
@@ -4392,7 +4392,7 @@ interface ScrolledItems<T> {
 }
 
 declare type FormatPromptFn = (question: string | Breadcrumb, value: string, items: string | undefined, errorMessage: string | undefined, theme: AskOptionsForState, isComplete: boolean, isExit: boolean) => string;
-declare type FormatItemsFn = <T extends unknown>(allItems: PromptChoiceFull<T>[], scrolledItems: ScrolledItems<T>, selected: number[] | undefined, type: 'single' | 'multi', theme: AskOptionsForState, isExit: boolean) => string;
+declare type FormatItemsFn = <T extends unknown>(allItems: PromptChoiceFull<T>[], scrolledItems: ScrolledItems<PromptChoiceFull<T>>, selected: number[] | undefined, type: 'single' | 'multi', theme: AskOptionsForState, isExit: boolean) => string;
 
 interface BoxSymbols {
     horizontal: string;
@@ -4426,6 +4426,8 @@ declare namespace ask$1 {
             boxType?: 'thin' | 'thick';
             maxItemsOnScreen?: number;
             scrollMargin?: number;
+            fileExplorerColumnWidth?: number;
+            fileExplorerMaxItems?: number;
         };
         text?: {
             boolTrueKeys?: string;
@@ -4779,6 +4781,8 @@ interface AskOptionsStoredGeneral {
     boxType: 'thin' | 'thick';
     maxItemsOnScreen: number;
     scrollMargin: number;
+    fileExplorerColumnWidth: number;
+    fileExplorerMaxItems: number;
 }
 interface AskOptionsStoredText {
     boolTrueKeys: string;

@@ -1,7 +1,9 @@
+import { ArrayTools } from 'swiss-ak';
+import { AskOptionsForState } from './customise';
 import { PromptChoiceFull } from './getFullChoices';
 
 export interface ScrolledItems<T> {
-  items: PromptChoiceFull<T>[];
+  items: T[];
   startingIndex: number;
   hoveredIndex: number;
   doesScrollUp: boolean;
@@ -9,7 +11,7 @@ export interface ScrolledItems<T> {
 }
 
 export const getScrolledItems = <T extends unknown>(
-  items: PromptChoiceFull<T>[],
+  items: T[],
   hovered: number,
   lastStartingIndex: number | undefined,
   maxShow: number = 10,
@@ -43,4 +45,29 @@ export const getScrolledItems = <T extends unknown>(
     doesScrollUp: startingIndex > 0,
     doesScrollDown: startingIndex + maxShow < items.length
   };
+};
+
+export const getScrollbar = <T>(allItems: T[], scrolledItems: ScrolledItems<T>, theme: AskOptionsForState): string[] => {
+  const { colours: col, symbols: sym, boxSymbols: box } = theme;
+
+  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
+  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+
+  const totalTrackHeight = scrolledItems.items.length;
+  const amountShown = scrolledItems.items.length / allItems.length;
+  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
+  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+
+  const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
+  const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
+  const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
+  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+
+  const scrollbarBar = ArrayTools.repeat(barHeight, scrollBarIcon);
+  if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = scrollUpIcon;
+  if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+
+  return [...ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
 };

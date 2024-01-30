@@ -13,6 +13,7 @@ import { getImitateOutput } from '../imitate';
 import { getAskOptions, getAskOptionsForState } from '../basicInput/customise';
 import { LOG } from '../../../DELETEME/LOG';
 import { getErrorInfoFromValidationResult } from '../errorValidation';
+import { getScrollbar, getScrolledItems } from '../basicInput/getScrolledItems';
 
 // TODO do proper scrollbar
 
@@ -36,9 +37,9 @@ export const fileExplorerHandler = async (
   // options
   const options = getAskOptions();
 
-  const minWidth = 25;
-  const maxWidth = 25;
-  const maxItems = 15;
+  const minWidth = options.general.fileExplorerColumnWidth;
+  const maxWidth = options.general.fileExplorerColumnWidth;
+  const maxItems = options.general.fileExplorerMaxItems;
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
 
   // pre-calced values
@@ -47,10 +48,6 @@ export const fileExplorerHandler = async (
   // objects
   const tempLC = getLineCounter();
   const deferred = getDeferred<string[]>();
-
-  // remove general line counter
-  const originalLC = options.general.lc;
-  options.general.lc = getLineCounter(); // we don't use this one
 
   // set by user actions
   let cursor = startPath.split('/');
@@ -62,11 +59,17 @@ export const fileExplorerHandler = async (
   let cursorType: 'd' | 'f' = 'd';
   let isError: boolean = true;
   let errorMsg: string = undefined;
+  const cursorIndexes: { [dirPath: string]: number[] } = {};
+  const scrollLastStartingIndex: { [dirPath: string]: number } = {};
 
   let pressed: string = undefined;
   let submitted: boolean = false;
   let loading: boolean = false; // is loading something
   let locked: boolean = false; // prevent multiple keypresses
+
+  // remove general line counter
+  const originalLC = options.general.lc;
+  options.general.lc = getLineCounter(); // we don't use this one
 
   const recalc = () => {
     if (submitted) return;
@@ -80,6 +83,31 @@ export const fileExplorerHandler = async (
     const errorInfo = getErrorInfoFromValidationResult(runValidation());
     isError = errorInfo.isError;
     errorMsg = errorInfo.errorMessage;
+  };
+
+  const loadInitialPathIndexes = () => {
+    recalc();
+    paths.forEach((path, index) => {
+      const cursorItem = cursor[index + 1];
+      if (cursorItem === undefined) return;
+      const contents = fsCache.getPathContents(path);
+      const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
+
+      cursorIndexes[path] = [cursorIndex, ...(cursorIndexes[path] || [])].slice(0, 2);
+
+      LOG('loadInitial - D', { cursorIndexes });
+    });
+  };
+
+  const updateCursorIndexes = (newIndex: number) => {
+    recalc();
+    const currentParentDir = paths[paths.length - 2];
+
+    if (!cursorIndexes[currentParentDir]) cursorIndexes[currentParentDir] = [];
+    const lastKnownIndex = cursorIndexes[currentParentDir][0];
+    if (lastKnownIndex !== newIndex) cursorIndexes[currentParentDir] = [newIndex, lastKnownIndex];
+
+    LOG('updateCursorIndexes', { cursorIndexes });
   };
 
   const runValidation = (newFileName?: string) => {
@@ -148,7 +176,8 @@ export const fileExplorerHandler = async (
     if (submitted) return;
     recalc();
 
-    const { colours: col, symbols: sym, general: gen, text: txt } = getAskOptionsForState(false, isError);
+    const theme = getAskOptionsForState(false, isError);
+    const { colours: col, symbols: sym, general: gen, text: txt } = theme;
 
     // prepared styled elements
     const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
@@ -159,7 +188,7 @@ export const fileExplorerHandler = async (
       highlighted: string,
       isActiveColumn: boolean,
       columnPath: string
-    ) => (name: string, index?: number, all?: string[]) => any;
+    ) => (name: string, index?: number, all?: string[]) => string;
 
     const formatter =
       (symbol: string, regularWrapFn: Function, selectedPrefix: string = ' ', unselectedPrefix: string = ' '): Formatter =>
@@ -226,12 +255,15 @@ export const fileExplorerHandler = async (
     const emptyColumn = [' '.repeat(minWidth), ...' '.repeat(maxItems - 1).split('')];
 
     const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
+      const currentParentDir = paths[index];
       const dirs = contents?.dirs || [];
       const files = contents?.files || [];
       const list = [...dirs, ...files];
 
+      const isScrollbar = list.length > maxItems;
+
       const contentWidth = Math.max(...list.map((s) => s.length));
-      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth));
+      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
 
       const highlighted = cursor[index + 1];
       const highlightedIndex = list.indexOf(highlighted);
@@ -244,21 +276,31 @@ export const fileExplorerHandler = async (
         ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
       ];
 
-      if (formattedLines.length > maxItems) {
-        const startIndex = Math.max(0, highlightedIndex - maxItems + 2);
+      if (isScrollbar) {
+        const [currentHoverIndex] = cursorIndexes[currentParentDir] ?? [highlightedIndex !== -1 ? highlightedIndex : 0];
+        const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
 
-        const isScrollUp = startIndex > 0;
-        const isScrollDown = startIndex + maxItems < formattedLines.length;
+        const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
+        scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
 
-        const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
+        const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
 
-        const fullWidth = out.getWidth(formatDir(width, '', false, '')(''));
+        return out.utils.joinLines(scrolledItems.items.map((line, index) => line + scrollbar[index]));
 
-        if (isScrollUp) slicedLines[0] = col.scrollbarTrack(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
-        if (isScrollDown)
-          slicedLines[slicedLines.length - 1] = col.scrollbarTrack(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
+        // const startIndex = Math.max(0, highlightedIndex - maxItems + 2);
 
-        return out.utils.joinLines(slicedLines);
+        // const isScrollUp = startIndex > 0;
+        // const isScrollDown = startIndex + maxItems < formattedLines.length;
+
+        // const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
+
+        // const fullWidth = out.getWidth(formatDir(width, '', false, '')(''));
+
+        // if (isScrollUp) slicedLines[0] = col.scrollbarTrack(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
+        // if (isScrollDown)
+        //   slicedLines[slicedLines.length - 1] = col.scrollbarTrack(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
+
+        // return out.utils.joinLines(slicedLines);
       }
 
       // pad lines to ensure full height
@@ -328,6 +370,7 @@ export const fileExplorerHandler = async (
       const nextValue = list[nextIndex];
 
       cursor = [...folds, nextValue];
+      updateCursorIndexes(nextIndex);
       loadNewItem();
     },
 
@@ -338,7 +381,10 @@ export const fileExplorerHandler = async (
       if (!currContents || !nextContents || currContents.dirs.includes(current) === false) return;
       const nextList = [...nextContents.dirs, ...nextContents.files];
       if (!nextList.length) return;
-      cursor = [...cursor, nextList[0]];
+
+      const savedIndex = (cursorIndexes[paths[cursor.length - 1]] || [])[0] ?? 0;
+
+      cursor = [...cursor, nextList[savedIndex] ?? nextList[0]];
       loadNewDepth();
     },
     moveLeft: () => {
@@ -529,7 +575,9 @@ export const fileExplorerHandler = async (
     }
   });
 
-  loadNewDepth();
+  loadNewDepth().then(() => {
+    loadInitialPathIndexes();
+  });
 
   return deferred.promise;
 };
