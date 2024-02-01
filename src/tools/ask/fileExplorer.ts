@@ -24,6 +24,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
  * @param {string | Breadcrumb} questionText
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
+ * @param {(path: string) => Error | string | boolean | void} [validate]
  * @returns {Promise<string>}
  */
 export const fileExplorer = async (
@@ -68,6 +69,7 @@ export const fileExplorer = async (
  * @param {string | Breadcrumb} questionText
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
+ * @param {(paths: string[]) => Error | string | boolean | void} [validate]
  * @returns {Promise<string[]>}
  */
 export const multiFileExplorer = (
@@ -106,6 +108,7 @@ const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
  * @param {string | Breadcrumb} questionText
  * @param {string} [startPath=process.cwd()]
  * @param {string} [suggestedFileName='']
+ * @param {(dir: string, filename?: string) => Error | string | boolean | void} [validate]
  * @returns {Promise<string>}
  */
 export const saveFileExplorer = async (

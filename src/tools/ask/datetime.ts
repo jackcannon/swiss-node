@@ -288,6 +288,8 @@ const getDefaultDate = (isDateOn: boolean, isTimeOn: boolean, dateOffset: number
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
+ * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const date = async (
@@ -320,6 +322,8 @@ export const date = async (
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
+ * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const time = async (
@@ -350,6 +354,8 @@ export const time = async (
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
+ * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const datetime = async (
@@ -384,6 +390,8 @@ const range = await ask.dateRange('When is the festival?');
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initialStart]
  * @param {Date} [initialEnd]
+ * @param {(dates: [Date, Date]) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<[Date, Date]>}
  */
 export const dateRange = async (

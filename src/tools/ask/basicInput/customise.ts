@@ -549,6 +549,8 @@ const setThemeColour = <
  * ```typescript
  * TODO example
  * ```
+ * @param {Partial<ask.AskOptions>} options
+ * @returns {void}
  */
 export const customise = (options: Partial<ask.AskOptions>) => {
   applyPartialOptionsToAskOptions(options);

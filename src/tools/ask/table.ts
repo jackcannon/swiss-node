@@ -370,10 +370,10 @@ const getTableSelectActionBar = (multi: boolean, pressed?: string, disabled: str
  * ```
  * @param {string | Breadcrumb} question
  * @param {T[]} items
+ * @param {AskTableDisplaySettings<T>} [settings={}]
  * @param {T | number} [initial]
- * @param {any[][] | ItemToRowMapFunction<T>} [rows]
- * @param {any[][] | RemapOf<T, string>} [headers]
- * @param {table.TableOptions} [tableOptions]
+ * @param {(item: T) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<T>}
  */
 export const select = async <T extends unknown>(
@@ -432,10 +432,10 @@ export const select = async <T extends unknown>(
  * ```
  * @param {string | Breadcrumb} question
  * @param {T[]} items
+ * @param {AskTableDisplaySettings<T>} [settings={}]
  * @param {T[] | number[]} [initial]
- * @param {any[][] | ItemToRowMapFunction<T>} [rows]
- * @param {any[][] | RemapOf<T, string>} [headers]
- * @param {table.TableOptions} [tableOptions]
+ * @param {(items: T[]) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<T[]>}
  */
 export const multiselect = <T extends unknown>(

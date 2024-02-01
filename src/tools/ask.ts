@@ -118,7 +118,10 @@ export namespace ask {
    * loader.stop();
    * ```
    * @param {string | Breadcrumb} question
-   * @returns {any}
+   * @param {boolean} [isComplete=false]
+   * @param {boolean} [isError=false]
+   * @param {LineCounter} [lc]
+   * @returns {{ stop: () => void; }}
    */
   export const loading = (
     question: string | Breadcrumb,
@@ -155,8 +158,9 @@ export namespace ask {
    * await ask.countdown(5);
    * ```
    * @param {number} totalSeconds
-   * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
-   * @param {string} [complete]
+   * @param {(s: second) => string} [template]
+   * @param {boolean} [isComplete]
+   * @param {boolean} [isError]
    * @returns {Promise<void>}
    */
   export const countdown = async (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
@@ -238,9 +242,10 @@ export namespace ask {
    * data = {name: 'Jack'}
    * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
    * ```
-   * @param {T | undefined} value
    * @param {string | Breadcrumb} question
-   * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
+   * @param {T | undefined} value
+   * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn
+   * @param {LineCounter} [lc]
    * @returns {Promise<T>}
    */
   export const prefill = async <T extends unknown = string>(
@@ -283,9 +288,9 @@ export namespace ask {
    * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
    * ```
    * @param {Partial<T>} [startObj={}]
-   * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
+   * @returns {any}
    */
-  export const wizard = <T extends unknown>(startObj: Partial<T> = {}) => {
+  export const wizard = <T extends unknown>(startObj: Partial<T> = {}): ask.Wizard<T> => {
     let obj: Partial<T> = { ...startObj };
     const history: Partial<T>[] = [];
     history.push(obj);
@@ -311,6 +316,13 @@ export namespace ask {
       }
     };
   };
+
+  export interface Wizard<T> {
+    add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
+    addPartial(partial: Partial<T>): void;
+    getPartial(): Partial<T>;
+    get(): T;
+  }
 
   //<!-- DOCS: 150 -->
 

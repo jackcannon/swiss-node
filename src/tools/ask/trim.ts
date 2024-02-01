@@ -63,9 +63,12 @@ const getTrimActionBar = () => {
  * - `ask.trim`
  *
  * Get a start and end frame from the user
+ * @param {string | Breadcrumb} question
  * @param {number} totalFrames
- * @param {number} frameRate
- * @param {Partial<AskTrimOptions>} [options={}]
+ * @param {number} [frameRate=60]
+ * @param {Partial<Handles<number>>} [initial]
+ * @param {(handles: Handles<number>) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<Handles<number>>}
  */
 export const trim = async (

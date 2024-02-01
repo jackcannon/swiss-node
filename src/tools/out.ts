@@ -523,7 +523,7 @@ export namespace out {
    * // ...
    * loader.stop();
    * ```
-   * @param {(s: string) => any} [action=loadingDefault]
+   * @param {(s: string) => string | void} [action=loadingDefault]
    * @param {number} [lines=1]
    * @param {string[]} [symbols=loadingChars]
    * @returns {{ stop: () => void; }}

@@ -22,6 +22,8 @@ import { valueDisplays } from './basicInput/valueDisplays';
  * ```
  * @param {string | Breadcrumb} question
  * @param {string} [initial]
+ * @param {(value: string) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<string>}
  */
 export const text = async (
@@ -107,6 +109,8 @@ export const text = async (
  * @param {string | Breadcrumb} question
  * @param {ask.PromptChoice<T>[]} choices
  * @param {T | string} [initial]
+ * @param {(item: T, index: number, typedValue: string) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<T>}
  */
 export const autotext = async <T = string>(
@@ -220,7 +224,9 @@ export const autotext = async <T = string>(
  * const age = await ask.number('How old are you?'); // 30
  * ```
  * @param {string | Breadcrumb} question
- * @param {number} [initial=1]
+ * @param {number} [initial]
+ * @param {(value: number) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<number>}
  */
 export const number = async (
@@ -329,6 +335,8 @@ export const number = async (
  * ```
  * @param {string | Breadcrumb} question
  * @param {boolean} [initial=true]
+ * @param {(value: boolean) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<boolean>}
  */
 export const boolean = async (
@@ -402,6 +410,8 @@ export const boolean = async (
  * const isCool = await ask.booleanYN('Is this cool?'); // true
  * ```
  * @param {string | Breadcrumb} question
+ * @param {(value: boolean) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<boolean>}
  */
 export const booleanYN = async (
@@ -460,7 +470,9 @@ export const booleanYN = async (
  * ```
  * @param {string | Breadcrumb} question
  * @param {ask.PromptChoice<T>[]} choices
- * @param {T} [initial]
+ * @param {ask.PromptChoice<T> | number} [initial]
+ * @param {(item: T, index: number) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<T>}
  */
 export const select = async <T = string>(
@@ -534,7 +546,9 @@ export const select = async <T = string>(
  * ```
  * @param {string | Breadcrumb} question
  * @param {ask.PromptChoice<T>[]} choices
- * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[]} [initial]
+ * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial]
+ * @param {(items: T[], indexes: number[]) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<T[]>}
  */
 export const multiselect = async <T = string>(

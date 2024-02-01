@@ -726,6 +726,8 @@ export namespace table {
      * - `table.utils.getFullOptions`
      *
      * A function for simplifying the format configuration
+     * @param {TableOptions} opts
+     * @returns {FullTableOptions}
      */
     export const getFullOptions = (opts: TableOptions): FullTableOptions => ({
       overrideChar: '',

@@ -46,9 +46,9 @@ type TupleFromQuestionFuncs<T extends QuestionFunc<any>[]> = {
  * Question 2a: [ answer2, answer2b ]
  * ```
  * @param {string | Breadcrumb} question
- * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionHeader]
- * @param {...QuestionFuncs} [questionFns]
- * @returns {Promise<UnwrapPromFuncs<QuestionFuncs>>}
+ * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader]
+ * @param {...[...T]} [questionFns]
+ * @returns {Promise<TupleFromQuestionFuncs<T>>}
  */
 export const section = async <T extends QuestionFunc<any>[]>(
   question: string | Breadcrumb,
@@ -118,7 +118,8 @@ export const section = async <T extends QuestionFunc<any>[]>(
  * @param {number} [spacing=8]
  * @param {number} [offset=0]
  * @param {number} [width=out.utils.getTerminalWidth() - 2]
- * @returns {number}
+ * @param {LineCounter} [lc]
+ * @returns {void}
  */
 export const separator = (
   version: 'down' | 'none' | 'up' = 'down',

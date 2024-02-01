@@ -20,7 +20,7 @@
  *
  * kl.stop();
  * ```
- * @param {(keyName?: string, rawValue?: string) => void} callback
+ * @param {(keyName: string, rawValue: string) => void} callback
  * @param {boolean} [isStart=true]
  * @param {boolean} [isDebugLog=false]
  * @returns {KeyListener}

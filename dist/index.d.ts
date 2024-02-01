@@ -3185,6 +3185,8 @@ declare namespace table {
          * - `table.utils.getFullOptions`
          *
          * A function for simplifying the format configuration
+         * @param {TableOptions} opts
+         * @returns {FullTableOptions}
          */
         const getFullOptions: (opts: TableOptions) => FullTableOptions;
     }
@@ -3894,7 +3896,7 @@ declare namespace out {
      * // ...
      * loader.stop();
      * ```
-     * @param {(s: string) => any} [action=loadingDefault]
+     * @param {(s: string) => string | void} [action=loadingDefault]
      * @param {number} [lines=1]
      * @param {string[]} [symbols=loadingChars]
      * @returns {{ stop: () => void; }}
@@ -4995,6 +4997,8 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {string} [initial]
+     * @param {(value: string) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<string>}
      */
     const text: (question: string | Breadcrumb$1, initial?: string, validate?: (value: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string>;
@@ -5011,6 +5015,8 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
      * @param {T | string} [initial]
+     * @param {(item: T, index: number, typedValue: string) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
     const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, validate?: (item: T, index: number, typedValue: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
@@ -5025,7 +5031,9 @@ declare namespace ask {
      * const age = await ask.number('How old are you?'); // 30
      * ```
      * @param {string | Breadcrumb} question
-     * @param {number} [initial=1]
+     * @param {number} [initial]
+     * @param {(value: number) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<number>}
      */
     const number: (question: string | Breadcrumb$1, initial?: number, validate?: (value: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<number>;
@@ -5041,6 +5049,8 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {boolean} [initial=true]
+     * @param {(value: boolean) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<boolean>}
      */
     const boolean: (question: string | Breadcrumb$1, initial?: boolean, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
@@ -5057,6 +5067,8 @@ declare namespace ask {
      * const isCool = await ask.booleanYN('Is this cool?'); // true
      * ```
      * @param {string | Breadcrumb} question
+     * @param {(value: boolean) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<boolean>}
      */
     const booleanYN: (question: string | Breadcrumb$1, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
@@ -5072,7 +5084,9 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
-     * @param {T} [initial]
+     * @param {ask.PromptChoice<T> | number} [initial]
+     * @param {(item: T, index: number) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
     const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | PromptChoice<T>, validate?: (item: T, index: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
@@ -5088,7 +5102,9 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
-     * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[]} [initial]
+     * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial]
+     * @param {(items: T[], indexes: number[]) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<T[]>}
      */
     const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | number[] | PromptChoice<T> | PromptChoice<T>[], validate?: (items: T[], indexes: number[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
@@ -5105,6 +5121,8 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
+     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
     const date: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
@@ -5124,6 +5142,8 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
+     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
     const time: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
@@ -5140,6 +5160,8 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
+     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
     const datetime: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
@@ -5160,6 +5182,8 @@ declare namespace ask {
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initialStart]
      * @param {Date} [initialEnd]
+     * @param {(dates: [Date, Date]) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<[Date, Date]>}
      */
     const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date, validate?: (dates: [Date, Date]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<[Date, Date]>;
@@ -5180,6 +5204,7 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
+     * @param {(path: string) => Error | string | boolean | void} [validate]
      * @returns {Promise<string>}
      */
     const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (path: string) => string | boolean | void | Error) => Promise<string>;
@@ -5201,6 +5226,7 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
+     * @param {(paths: string[]) => Error | string | boolean | void} [validate]
      * @returns {Promise<string[]>}
      */
     const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error) => Promise<string[]>;
@@ -5219,6 +5245,7 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {string} [startPath=process.cwd()]
      * @param {string} [suggestedFileName='']
+     * @param {(dir: string, filename?: string) => Error | string | boolean | void} [validate]
      * @returns {Promise<string>}
      */
     const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string, validate?: (dir: string, filename?: string) => string | boolean | void | Error) => Promise<string>;
@@ -5258,10 +5285,10 @@ declare namespace ask {
          * ```
          * @param {string | Breadcrumb} question
          * @param {T[]} items
+         * @param {AskTableDisplaySettings<T>} [settings={}]
          * @param {T | number} [initial]
-         * @param {any[][] | ItemToRowMapFunction<T>} [rows]
-         * @param {any[][] | RemapOf<T, string>} [headers]
-         * @param {table.TableOptions} [tableOptions]
+         * @param {(item: T) => Error | string | boolean | void} [validate]
+         * @param {LineCounter} [lc]
          * @returns {Promise<T>}
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
@@ -5298,10 +5325,10 @@ declare namespace ask {
          * ```
          * @param {string | Breadcrumb} question
          * @param {T[]} items
+         * @param {AskTableDisplaySettings<T>} [settings={}]
          * @param {T[] | number[]} [initial]
-         * @param {any[][] | ItemToRowMapFunction<T>} [rows]
-         * @param {any[][] | RemapOf<T, string>} [headers]
-         * @param {table.TableOptions} [tableOptions]
+         * @param {(items: T[]) => Error | string | boolean | void} [validate]
+         * @param {LineCounter} [lc]
          * @returns {Promise<T[]>}
          */
         const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number[] | T[], validate?: (items: T[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
@@ -5312,9 +5339,12 @@ declare namespace ask {
      * - `ask.trim`
      * 
      * Get a start and end frame from the user
+     * @param {string | Breadcrumb} question
      * @param {number} totalFrames
-     * @param {number} frameRate
-     * @param {Partial<AskTrimOptions>} [options={}]
+     * @param {number} [frameRate=60]
+     * @param {Partial<Handles<number>>} [initial]
+     * @param {(handles: Handles<number>) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<Handles<number>>}
      */
     const trim: (question: string | Breadcrumb$1, totalFrames: number, frameRate?: number, initial?: Partial<Handles<number>>, validate?: (handles: Handles<number>) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Handles<number>>;
@@ -5333,6 +5363,8 @@ declare namespace ask {
      * ```typescript
      * TODO example
      * ```
+     * @param {Partial<ask.AskOptions>} options
+     * @returns {void}
      */
     const customise: (options: Partial<ask$1.AskOptions>) => void;
     /**<!-- DOCS: ask.loading #### @ -->
@@ -5350,7 +5382,10 @@ declare namespace ask {
      * loader.stop();
      * ```
      * @param {string | Breadcrumb} question
-     * @returns {any}
+     * @param {boolean} [isComplete=false]
+     * @param {boolean} [isError=false]
+     * @param {LineCounter} [lc]
+     * @returns {{ stop: () => void; }}
      */
     const loading: (question: string | Breadcrumb$1, isComplete?: boolean, isError?: boolean, lc?: LineCounter) => {
         stop: () => void;
@@ -5366,8 +5401,9 @@ declare namespace ask {
      * await ask.countdown(5);
      * ```
      * @param {number} totalSeconds
-     * @param {(s: second) => string} [template=(s) => `Starting in ${s}s...`]
-     * @param {string} [complete]
+     * @param {(s: second) => string} [template]
+     * @param {boolean} [isComplete]
+     * @param {boolean} [isError]
      * @returns {Promise<void>}
      */
     const countdown: (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean) => Promise<void>;
@@ -5397,10 +5433,13 @@ declare namespace ask {
      * 
      * ask.imitate('What is your name?', 'Jack', true);
      * ```
-     * @param {boolean} isComplete
      * @param {string | Breadcrumb} question
      * @param {any} [result]
-     * @returns {number}
+     * @param {boolean} [isComplete=true]
+     * @param {boolean} [isError=false]
+     * @param {string} [errorMessage]
+     * @param {LineCounter} [lc]
+     * @returns {void}
      */
     const imitate: (question: string | Breadcrumb$1, result?: any, isComplete?: boolean, isError?: boolean, errorMessage?: string, lc?: LineCounter$1) => void;
     /**<!-- DOCS: ask.prefill #### @ -->
@@ -5421,9 +5460,10 @@ declare namespace ask {
      * data = {name: 'Jack'}
      * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
      * ```
-     * @param {T | undefined} value
      * @param {string | Breadcrumb} question
-     * @param {(question: string | Breadcrumb) => Promise<T> | T} askFn
+     * @param {T | undefined} value
+     * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn
+     * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
     const prefill: <T extends unknown = string>(question: string | Breadcrumb$1, value: T, askFn: (question: string | Breadcrumb$1, lc: LineCounter) => T | Promise<T>, lc?: LineCounter) => Promise<T>;
@@ -5454,14 +5494,15 @@ declare namespace ask {
      * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
      * ```
      * @param {Partial<T>} [startObj={}]
-     * @returns {{ add(partial: Partial<T>): void; getPartial(): Partial<T>; get(): T; }}
+     * @returns {any}
      */
-    const wizard: <T extends unknown>(startObj?: Partial<T>) => {
+    const wizard: <T extends unknown>(startObj?: Partial<T>) => Wizard<T>;
+    interface Wizard<T> {
         add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
         addPartial(partial: Partial<T>): void;
         getPartial(): Partial<T>;
         get(): T;
-    };
+    }
     /**<!-- DOCS-ALIAS: ask.section -->
      * section
      * 
@@ -5496,9 +5537,9 @@ declare namespace ask {
      * Question 2a: [ answer2, answer2b ]
      * ```
      * @param {string | Breadcrumb} question
-     * @param {(lc: LineCounter, separator: () => void) => void | Promise<any>} [sectionHeader]
-     * @param {...QuestionFuncs} [questionFns]
-     * @returns {Promise<UnwrapPromFuncs<QuestionFuncs>>}
+     * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader]
+     * @param {...[...T]} [questionFns]
+     * @returns {Promise<TupleFromQuestionFuncs<T>>}
      */
     const section: <T extends ((qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionHeader?: (lc: LineCounter$1) => void | Promise<any>, ...questionFns_0: T) => Promise<{ [K in keyof T]: T[K] extends (qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<infer U> ? U : never; }>;
     /**<!-- DOCS-ALIAS: ask.separator -->
@@ -5522,7 +5563,8 @@ declare namespace ask {
      * @param {number} [spacing=8]
      * @param {number} [offset=0]
      * @param {number} [width=out.utils.getTerminalWidth() - 2]
-     * @returns {number}
+     * @param {LineCounter} [lc]
+     * @returns {void}
      */
     const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number, lc?: LineCounter$1) => void;
     /**<!-- DOCS: ask.utils 180 ### -->
@@ -6096,7 +6138,7 @@ declare const nextTick: () => Promise<unknown>;
  *
  * kl.stop();
  * ```
- * @param {(keyName?: string, rawValue?: string) => void} callback
+ * @param {(keyName: string, rawValue: string) => void} callback
  * @param {boolean} [isStart=true]
  * @param {boolean} [isDebugLog=false]
  * @returns {KeyListener}
