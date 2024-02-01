@@ -11,10 +11,11 @@ export const valueDisplays = {
     );
   },
   array: (arr: any[], isComplete: boolean, isError: boolean): string => {
+    const PRINT_LIMIT = 3;
     const theme = getAskOptionsForState(isComplete, isError);
     let display = '';
-    if (arr.length <= 2) display = arr.map((v) => valueDisplays.anyByType(v?.title ?? v?.value ?? v, isComplete, isError)).join(', ');
-    if (arr.length > 2) display = theme.text.items(arr.length);
+    if (arr.length <= PRINT_LIMIT) display = arr.map((v) => valueDisplays.anyByType(v?.title ?? v?.value ?? v, isComplete, isError)).join(', ');
+    if (arr.length > PRINT_LIMIT) display = theme.text.items(arr.length);
 
     return theme.colours.resultArray(display);
   },

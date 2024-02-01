@@ -1,17 +1,16 @@
-import { days, getDeferred, getTimer } from 'swiss-ak';
+import { days, getDeferred } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { dateToDynDate, dateToDynTime, DynDate, dynDateToDate, DynTime } from '../../utils/dynDates';
 import { getKeyListener } from '../keyListener';
 import { getNumberInputter } from '../../utils/numberInputter';
 import { ask } from '../ask';
-import { LineCounter, out } from '../out';
+import { LineCounter, ansi, out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { getLineCounter } from '../out/lineCounter';
 import { dateHandler } from './datetime/date';
 import { timeHandler } from './datetime/time';
 import { DateTimeHandlerObj } from './datetime/types';
-import { colr } from '../colr';
-import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
+import { getAskOptionsForState } from './basicInput/customise';
 import { getImitateOutput } from './imitate';
 import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
 import { valueDisplays } from './basicInput/valueDisplays';
@@ -19,9 +18,6 @@ import { valueDisplays } from './basicInput/valueDisplays';
 //<!-- DOCS: 110 -->
 
 type DateTimeSection = 'date' | 'time';
-
-const DEBUG_TIMER = getTimer('DEBUG', false, colr.dark.red);
-const IS_DEBUG = false;
 
 const actionConfig: ActionBarConfig = {
   'tab-section': {
@@ -125,9 +121,7 @@ const overallHandler = <T extends unknown>(
   validateFn?: (result: T) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<T> => {
-  // const originalLC = opts.general.lc;
   const tempLC = getLineCounter();
-  // opts.general.lc = tempLC;
 
   const deferred = getDeferred<T>();
 
@@ -138,105 +132,118 @@ const overallHandler = <T extends unknown>(
   let errorInfo: ErrorInfo = { isError: false, errorMessage: undefined };
   const getErrorInfo = () => errorInfo;
 
+  const displayCache: { date: string[]; time: string[] } = { date: [], time: [] };
   const valueCache: ValueSet = {
     date: initialDate,
     time: initialTime
   };
-  const onValueChange =
-    <P extends 'date' | 'time'>(key: P) =>
-    (newValue: ValueSet[P]) => {
-      valueCache[key] = newValue;
-      errorInfo = runValidation();
-    };
 
-  const getResult = (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => convertFn([dateData, timeData]);
+  const operation = {
+    onValueChange:
+      <P extends 'date' | 'time'>(key: P) =>
+      (newValue: ValueSet[P]) => {
+        valueCache[key] = newValue;
+        errorInfo = operation.runValidation();
+      },
 
-  const runValidation = (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => {
-    const validateResult = validateFn?.(getResult(dateData, timeData));
-    const info = getErrorInfoFromValidationResult(validateResult);
-    return info;
-  };
+    getResult: (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => convertFn([dateData, timeData]),
 
-  const displayCache: { date: string[]; time: string[] } = { date: [], time: [] };
-  const onDisplay = (key: 'date' | 'time') => (lines: string[]) => {
-    DEBUG_TIMER.start('overall display');
-    displayCache[key] = lines;
+    runValidation: (dateData: [DynDate, DynDate] = valueCache.date, timeData: DynTime = valueCache.time) => {
+      const validateResult = validateFn?.(operation.getResult(dateData, timeData));
+      const info = getErrorInfoFromValidationResult(validateResult);
+      return info;
+    },
 
-    const { date, time } = displayCache;
+    onDisplay: (key: 'date' | 'time') => (lines: string[]) => {
+      displayCache[key] = lines;
+      operation.display();
+    },
+    display: () => {
+      const { date, time } = displayCache;
 
-    const { isError, errorMessage } = errorInfo;
+      const { isError } = errorInfo;
 
-    const sections = [];
-    if (date.length) sections.push(date);
-    if (date.length && time.length) sections.push(out.centerLines([''], 8));
-    if (time.length) sections.push(date.length ? out.centerLines(['', '', ...time]) : time); // add 2 lines to top of time if date is on
+      const sections = [];
+      if (date.length) sections.push(date);
+      if (date.length && time.length) sections.push(out.centerLines([''], 8));
+      if (time.length) sections.push(date.length ? out.centerLines(['', '', ...time]) : time); // add 2 lines to top of time if date is on
 
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
-    const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), undefined, undefined, false);
-    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
-    const outError = getDTErrorLine(errorInfo);
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
+      const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), undefined, undefined, false);
+      const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
+      const outError = getDTErrorLine(errorInfo);
 
-    let output = '';
-    output += getImitateOutput(questionText, outState, false, isError, undefined);
-    output += '\n';
-    output += '\n' + outMain;
-    output += '\n' + outError;
-    output += '\n' + outAction;
+      let output = ansi.cursor.hide;
+      output += getImitateOutput(questionText, outState, false, isError, undefined);
+      output += '\n';
+      output += '\n' + outMain;
+      output += '\n' + outError;
+      output += '\n' + outAction;
 
-    tempLC.log(tempLC.ansi.clear() + output);
+      tempLC.overwrite(tempLC.ansi.moveHome() + output);
+    },
+    eachHandler: (cb: (key: string, handler: DateTimeHandlerObj<any>) => any) =>
+      Object.entries(handlers)
+        .filter(([key, handler]) => handler)
+        .forEach(([key, handler]) => cb(key, handler)),
 
-    if (IS_DEBUG) {
-      tempLC.add(DEBUG_TIMER.log());
+    switchActive: () => {
+      if (isSwitchable) {
+        activeHandler = activeHandler === 'date' ? 'time' : 'date';
+        operation.eachHandler((key, handler) => handler.setActive(key === activeHandler));
+      }
+    },
+
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, true);
+      ask.imitate(questionText, outState, false, true, undefined, lc);
+      process.stdout.write(ansi.cursor.show);
+      process.exit();
+    },
+
+    submit: () => {
+      const dates = handlers.date?.getValue();
+      const time = handlers.time?.getValue();
+
+      const { isError } = operation.runValidation(dates, time);
+      if (isError) return;
+
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
+      kl.stop();
+      tempLC.clear();
+      ask.imitate(questionText, outState, true, false, undefined, lc);
+      process.stdout.write(ansi.cursor.show);
+      deferred.resolve(convertFn([dates, time]));
     }
-    DEBUG_TIMER.reset();
   };
 
   const handlers: HandlersObj = {
     date:
-      (isDateOn && dateHandler(activeHandler === 'date', initialDate, onValueChange('date'), getErrorInfo, onDisplay('date'), isRange)) || undefined,
-    time: (isTimeOn && timeHandler(activeHandler === 'time', initialTime, onValueChange('time'), getErrorInfo, onDisplay('time'))) || undefined
-  };
-  const eachHandler = (cb: (key: string, handler: DateTimeHandlerObj<any>) => any) =>
-    Object.entries(handlers)
-      .filter(([key, handler]) => handler)
-      .forEach(([key, handler]) => cb(key, handler));
-
-  const switchActive = () => {
-    if (isSwitchable) {
-      activeHandler = activeHandler === 'date' ? 'time' : 'date';
-      eachHandler((key, handler) => handler.setActive(key === activeHandler));
-    }
-  };
-
-  const submit = () => {
-    const dates = handlers.date?.getValue();
-    const time = handlers.time?.getValue();
-
-    const { isError } = runValidation(dates, time);
-    if (isError) return;
-
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
-    kl.stop();
-    tempLC.clear();
-    // opts.general.lc = originalLC;
-    ask.imitate(questionText, outState, true, false, lc);
-    deferred.resolve(convertFn([dates, time]));
+      (isDateOn &&
+        dateHandler(activeHandler === 'date', initialDate, operation.onValueChange('date'), getErrorInfo, operation.onDisplay('date'), isRange)) ||
+      undefined,
+    time:
+      (isTimeOn && timeHandler(activeHandler === 'time', initialTime, operation.onValueChange('time'), getErrorInfo, operation.onDisplay('time'))) ||
+      undefined
   };
 
   const numberInputter = getNumberInputter();
-
   const kl = getKeyListener((key) => {
-    DEBUG_TIMER.start('since keypress');
     switch (key) {
+      case 'exit':
+      case 'esc':
+        return operation.exit();
       case 'tab':
         numberInputter.reset();
         if (isDateOn && !isTimeOn && isRange && activeHandler === 'date') {
           return handlers.date.inputKey(key, undefined);
         }
-        return switchActive();
+        return operation.switchActive();
       case 'return':
         numberInputter.reset();
-        return submit();
+        return operation.submit();
       case '0':
       case '1':
       case '2':
@@ -256,7 +263,7 @@ const overallHandler = <T extends unknown>(
     }
   });
 
-  eachHandler((key, handler) => handler.triggerDisplay());
+  operation.eachHandler((key, handler) => handler.triggerDisplay());
 
   return deferred.promise;
 };

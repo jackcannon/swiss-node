@@ -47,27 +47,46 @@ export const getScrolledItems = <T extends unknown>(
   };
 };
 
-export const getScrollbar = <T>(allItems: T[], scrolledItems: ScrolledItems<T>, theme: AskOptionsForState): string[] => {
+export const getScrollbar = <T>(
+  allItems: T[],
+  scrolledItems: ScrolledItems<T>,
+  theme: AskOptionsForState,
+  height: number = scrolledItems.items.length,
+  trimmedEndTop: boolean = false,
+  trimmedEndBottom: boolean = false
+): string[] => {
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
 
-  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
-  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
-  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
-  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
+  const trackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const barIcon = col.scrollbarBar(sym.scrollbarBar);
+  const upIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const downIcon = col.scrollbarBar(sym.scrollDownIcon);
 
-  const totalTrackHeight = scrolledItems.items.length;
+  const trackTrimTopIcon = col.scrollbarTrack(sym.scrollbarTrackTrimTop);
+  const trackTrimBottomIcon = col.scrollbarTrack(sym.scrollbarTrackTrimBottom);
+  const barTrimTopIcon = col.scrollbarBar(sym.scrollbarBarTrimTop);
+  const barTrimBottomIcon = col.scrollbarBar(sym.scrollbarBarTrimBottom);
+
   const amountShown = scrolledItems.items.length / allItems.length;
-  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+  const barHeight = Math.max(1, Math.round(height * amountShown));
+  const emptyTrackHeight = Math.max(0, height - barHeight);
 
   const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
   const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
   const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
+  const trackEndHeight = Math.max(0, height - (trackStartHeight + barHeight));
 
-  const scrollbarBar = ArrayTools.repeat(barHeight, scrollBarIcon);
-  if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = scrollUpIcon;
-  if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
+  const scrollbarBar = ArrayTools.repeat(barHeight, barIcon);
+  if (scrolledItems.doesScrollUp && barHeight >= 2) scrollbarBar[0] = upIcon;
+  if (scrolledItems.doesScrollDown && barHeight >= 2) scrollbarBar[scrollbarBar.length - 1] = downIcon;
 
-  return [...ArrayTools.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, scrollTrackIcon)];
+  const result = [...ArrayTools.repeat(trackStartHeight, trackIcon), ...scrollbarBar, ...ArrayTools.repeat(trackEndHeight, trackIcon)];
+
+  if (trimmedEndTop) {
+    result[0] = trackStartHeight === 0 ? barTrimTopIcon : trackTrimTopIcon;
+  }
+  if (trimmedEndBottom) {
+    result[result.length - 1] = trackEndHeight === 0 ? barTrimBottomIcon : trackTrimBottomIcon;
+  }
+  return result;
 };

@@ -13,6 +13,8 @@ import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
 import * as imitateAsk from './ask/imitate';
 
+export { AskTableDisplaySettings } from './ask/table';
+
 //<!-- DOCS: 100 -->
 /**<!-- DOCS: ask ##! -->
  * ask
@@ -248,7 +250,7 @@ export namespace ask {
     lc?: LineCounter
   ): Promise<T> => {
     if (value !== undefined) {
-      imitate(question, value, true, false, lc);
+      imitate(question, value, true, false, undefined, lc);
       return value;
     }
     return askFn(question, lc);

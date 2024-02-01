@@ -1,27 +1,4 @@
-import * as swiss_ak from 'swiss-ak';
-import { Partial as Partial$1, OfType, second, progressBar } from 'swiss-ak';
-
-interface Handles<T = any> {
-    start: T;
-    end: T;
-}
-interface AskTrimOptions {
-    speed: number;
-    fastSpeed: number;
-    showInstructions: boolean;
-    charTrack: string;
-    charHandle: string;
-    charActiveHandle: string;
-    charBar: string;
-    charHandleBase: string;
-    charActiveHandleBase: string;
-    wrapTrack: Function;
-    wrapHandle: Function;
-    wrapActiveHandle: Function;
-    wrapBar: Function;
-    wrapHandleBase: Function;
-    wrapActiveHandleBase: Function;
-}
+import { Partial as Partial$1, OfType, RemapOf, second, progressBar } from 'swiss-ak';
 
 interface AnsiEscapeCodes {
     /**<!-- DOCS: out.ansi.cursor #### -->
@@ -348,383 +325,16 @@ interface AnsiEscapeCodes {
     null: string;
 }
 
-declare type Text = string | string[];
-
-/**<!-- DOCS: out.LineCounter #### -->
- * LineCounter
- *
- * - `out.LineCounter`
- * - `LineCounter`
- *
- * Return type for getLineCounter
- *
- * ```typescript
- * const lc = getLineCounter();
- * lc.log('hello'); // 1
- * lc.wrap(1, () => console.log('a single line')); // 1
- * lc.add(1);
- * lc.get(); // 3
- * lc.clear();
- * ```
- */
-interface LineCounter$1 {
-    /**<!-- DOCS: out.LineCounter.log ##### -->
-     * lc.log
-     *
-     * Same as console.log, but adds to the lc counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * ```
-     *
-     * @param {...any} args The arguments to log
-     * @returns {number} The number of lines added
-     */
-    log(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.overwrite ##### -->
-     * lc.overwrite
-     *
-     * Similar to lc.log, but designed for overwriting lines that have already been printed on the screen
-     *
-     * Use in combination with ansi.cursor.up to move the cursor up and replace/overwrite lines.
-     *
-     * Adds a ansi.erase.lineEnd before each new line so that the line is cleared apart from what you're overwriting it with.
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.overwrite('hello'); // 1
-     * ```
-     *
-     * @param {...any} args The arguments to overwrite
-     * @returns {number} The number of lines added
-     */
-    overwrite(...args: any[]): number;
-    /**<!-- DOCS: out.LineCounter.wrap ##### -->
-     * lc.wrap
-     *
-     * Wraps a function, and adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * ```
-     *
-     * @param {number} newLines The number of lines to add
-     * @param {(...args: A[]) => number | T} func The function to wrap
-     * @param {...A} args The arguments to pass to the function
-     * @returns {T} The result of the function
-     */
-    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
-    /**<!-- DOCS: out.LineCounter.add ##### -->
-     * lc.add
-     *
-     * Adds a given number to the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.add(1);
-     * ```
-     *
-     * @param {number} newLines The number of lines to add
-     * @returns {void}
-     */
-    add(newLines: number): void;
-    /**<!-- DOCS: out.LineCounter.get ##### -->
-     * lc.get
-     *
-     * returns the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.add(1);
-     * lc.get(); // 3
-     * ```
-     *
-     * @returns {number} The line counter
-     */
-    get(): number;
-    /**<!-- DOCS: out.LineCounter.getSince ##### -->
-     * lc.getSince
-     *
-     * Returns the number of lines since a given checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     *
-     * @param {string} checkpointID The checkpoint to check
-     * @returns {number} The number of lines since the checkpoint
-     */
-    getSince(checkpointID: string): number;
-    /**<!-- DOCS: out.LineCounter.moveCursor ##### -->
-     * lc.moveCursor
-     *
-     * Move the cursor without clearing/erasing lines.
-     *
-     * Updates the line count in the process.
-     *
-     * @param {number} y How many lines to move the cursor (down if positive, up if negative)
-     * @returns {void}
-     */
-    moveCursor(y: number): void;
-    /**<!-- DOCS: out.LineCounter.moveHome ##### -->
-     * lc.moveHome
-     *
-     * Move the cursor to the start of the line count without clearing/erasing lines.
-     *
-     * Same as `lc.clear`, but without clearing the lines.
-     *
-     * Updates the line count in the process.
-     *
-     * @returns {void}
-     */
-    moveHome(): void;
-    /**<!-- DOCS: out.LineCounter.moveToCheckpoint ##### -->
-     * lc.moveToCheckpoint
-     *
-     * Move the cursor to a previously recorded checkpoint
-     *
-     * Same as `lc.clearToCheckpoint`, but without clearing the lines.
-     *
-     * Updates the line count in the process.
-     *
-     * @param {string} checkpointID The checkpoint to move to
-     * @returns {void}
-     */
-    moveToCheckpoint(checkpointID: string): void;
-    /**<!-- DOCS: out.LineCounter.clear ##### -->
-     * lc.clear
-     *
-     * clears the line counter, and moves the cursor up by the value of the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.clear();
-     * ```
-     *
-     * @returns {void}
-     */
-    clear(): void;
-    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
-     * lc.clearBack
-     *
-     * Clears a given number of lines, and updates the line counter
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
-     * ```
-     *
-     * @param {number} linesToMoveBack The number of lines to clear
-     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
-     * @returns {void}
-     */
-    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
-    /**<!-- DOCS: out.LineCounter.clearDown ##### -->
-     * lc.clearDown
-     *
-     * Moves the cursor down by a given number of lines
-     *
-     * Can be negative to move up (clearing lines)
-     *
-     * > **NOTE:** This adds new lines
-     *
-     * @param {number} lines The number of lines to move
-     * @returns {void}
-     */
-    clearDown(lines: number): void;
-    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
-     * lc.checkpoint
-     *
-     * Records a 'checkpoint' that can be returned to later
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('hello'); // 1
-     * lc.checkpoint('test-a');
-     * lc.wrap(1, () => console.log('a single line')); // 1
-     * lc.checkpoint('test-b');
-     * lc.add(1);
-     * lc.getSince('test-a'); // 2
-     * lc.getSince('test-b'); // 1
-     * ```
-     *
-     * @param {string} [checkpointID] The checkpoint to record
-     * @returns {string} The checkpointID
-     */
-    checkpoint(checkpointID?: string): string;
-    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
-     * lc.clearToCheckpoint
-     *
-     * Clear lines up to a previously recorded checkpoint
-     *
-     * ```typescript
-     * const lc = getLineCounter();
-     * lc.log('line 1'); // 1
-     * lc.log('line 2'); // 1
-     * lc.checkpoint('test');
-     * lc.log('line 3'); // 1
-     * lc.log('line 4'); // 1
-     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
-     * ```
-     *
-     * @param {string} checkpointID The checkpoint to clear to
-     * @returns {void}
-     */
-    clearToCheckpoint(checkpointID: string): void;
-    /**<!-- DOCS: out.LineCounter.ansi ##### -->
-     * lc.ansi
-     *
-     * Get ansi codes for clear/erase functions, and update the line counter in the process.
-     */
-    ansi: {
-        /**<!-- DOCS: out.LineCounter.ansi.moveCursor ###### -->
-         * lc.ansi.moveCursor
-         *
-         * Move the cursor without clearing/erasing lines.
-         *
-         * Updates the line count in the process.
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * @param {number} y How many lines to move the cursor (down if positive, up if negative)
-         * @returns {string}
-         */
-        moveCursor(y: number): string;
-        /**<!-- DOCS: out.LineCounter.ansi.moveHome ###### -->
-         * lc.ansi.moveHome
-         *
-         * Move the cursor to the start of the line count without clearing/erasing lines.
-         *
-         * Same as `lc.clear`, but without clearing the lines.
-         *
-         * Updates the line count in the process.
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * @returns {string}
-         */
-        moveHome(): string;
-        /**<!-- DOCS: out.LineCounter.ansi.moveToCheckpoint ###### -->
-         * lc.ansi.moveToCheckpoint
-         *
-         * Move the cursor to a previously recorded checkpoint
-         *
-         * Same as `lc.clearToCheckpoint`, but without clearing the lines.
-         *
-         * Updates the line count in the process.
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * @param {string} checkpointID The checkpoint to move to
-         * @returns {string}
-         */
-        moveToCheckpoint(checkpointID: string): string;
-        /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
-         * lc.ansi.clear
-         *
-         * Clears the line counter, and moves the cursor up by the value of the line counter
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * ```typescript
-         * const lc = getLineCounter();
-         * lc.log('hello'); // 1
-         * process.stdout.write(lc.ansi.clear());
-         * ```
-         *
-         * @returns {string}
-         */
-        clear(): string;
-        /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
-         * lc.ansi.clearBack
-         *
-         * Clears a given number of lines, and updates the line counter
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * ```typescript
-         * const lc = getLineCounter();
-         * lc.log('line 1'); // 1
-         * lc.log('line 2'); // 1
-         * lc.log('line 3'); // 1
-         * lc.log('line 4'); // 1
-         * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
-         * ```
-         *
-         * @param {number} linesToMoveBack The number of lines to clear
-         * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
-         * @returns {string}
-         */
-        clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
-        /**<!-- DOCS: out.LineCounter.ansi.clearDown ###### -->
-         * lc.ansi.clearDown
-         *
-         * Moves the cursor down by a given number of lines
-         *
-         * Can be negative to move up (clearing lines)
-         *
-         * > **NOTE:** This adds new lines
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * @param {number} lines The number of lines to move
-         * @returns {string}
-         */
-        clearDown(lines: number): string;
-        /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
-         * lc.ansi.clearToCheckpoint
-         *
-         * Clear lines up to a previously recorded checkpoint
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         *
-         * ```typescript
-         * const lc = getLineCounter();
-         * lc.log('line 1'); // 1
-         * lc.log('line 2'); // 1
-         * lc.checkpoint('test');
-         * lc.log('line 3'); // 1
-         * lc.log('line 4'); // 1
-         * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
-         * ```
-         *
-         * @param {string} checkpointID The checkpoint to clear to
-         * @returns {string}
-         */
-        clearToCheckpoint(checkpointID: string): string;
-        /**<!-- DOCS: out.LineCounter.ansi.save ###### -->
-         * lc.ansi.save
-         *
-         * Saves the current cursor position and also tracks the line count
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         */
-        save(): string;
-        /**<!-- DOCS: out.LineCounter.ansi.restore ###### -->
-         * lc.ansi.restore
-         *
-         * Restores to the previously saved cursor position and also tracks the line count
-         *
-         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
-         */
-        restore(): string;
-    };
+interface CharLookup<T> {
+    hTop: T;
+    hNor: T;
+    hSep: T;
+    hBot: T;
+    mSep: T;
+    bTop: T;
+    bNor: T;
+    bSep: T;
+    bBot: T;
 }
 
 /**<!-- DOCS: colr ##! -->
@@ -3055,6 +2665,910 @@ interface ColrSets {
     readonly info: ColrSet;
 }
 
+/**<!-- DOCS: table ##! -->
+ * table
+ *
+ * A simple table generator
+ */
+declare namespace table {
+    /**<!-- DOCS: table.print ### @ -->
+     * print
+     *
+     * - `table.print`
+     *
+     * Print a table
+     *
+     * ```typescript
+     * const header = [['Name', 'Age']];
+     * const body = [['John', '25'], ['Jane', '26']];
+     * table.print(body, header); // 7
+     *
+     * // ┏━━━━━━┳━━━━━┓
+     * // ┃ Name ┃ Age ┃
+     * // ┡━━━━━━╇━━━━━┩
+     * // │ John │ 25  │
+     * // ├──────┼─────┤
+     * // │ Jane │ 26  │
+     * // └──────┴─────┘
+     * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {number}
+     */
+    const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
+    /**<!-- DOCS: table.printObjects ### @ -->
+     * printObjects
+     *
+     * - `table.printObjects`
+     *
+     * Print a table of given objects
+     *
+     * ```typescript
+     * const objs = [
+     *   // objs
+     *   { a: '1', b: '2', c: '3' },
+     *   { a: '0', c: '2' },
+     *   { b: '4' },
+     *   { a: '6' }
+     * ];
+     * const header = {
+     *   a: 'Col A',
+     *   b: 'Col B',
+     *   c: 'Col C'
+     * };
+     * table.printObjects(objs, header); // 11
+     *
+     * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
+     * // ┃ Col A ┃ Col B ┃ Col C ┃
+     * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
+     * // │ 1     │ 2     │ 3     │
+     * // ├───────┼───────┼───────┤
+     * // │ 0     │       │ 2     │
+     * // ├───────┼───────┼───────┤
+     * // │       │ 4     │       │
+     * // ├───────┼───────┼───────┤
+     * // │ 6     │       │       │
+     * // └───────┴───────┴───────┘
+     * ```
+     * @param {Object[]} objects
+     * @param {Object} [headers={}]
+     * @param {TableOptions} [options={}]
+     * @returns {number}
+     */
+    const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
+    /**<!-- DOCS: table.markdown ### @ -->
+     * markdown
+     *
+     * - `table.markdown`
+     *
+     * Generate a markdown table
+     *
+     * ```typescript
+     * const header = [['Name', 'Age (in years)', 'Job']];
+     * const body = [
+     *   ['Alexander', '25', 'Builder'],
+     *   ['Jane', '26', 'Software Engineer']
+     * ];
+     * const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
+     * console.log(md.join('\n'));
+     *
+     * // |      Name | Age (in years) | Job               |
+     * // |----------:|:--------------:|:------------------|
+     * // | Alexander |       25       | Builder           |
+     * // |      Jane |       26       | Software Engineer |
+     * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {string[]}
+     */
+    const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
+    /**<!-- DOCS: table.getLines ### @ -->
+     * getLines
+     *
+     * - `table.getLines`
+     *
+     * Get the lines of a table (rather than printing it)
+     *
+     * ```typescript
+     * const header = [['Name', 'Age']];
+     * const body = [['John', '25'], ['Jane', '26']];
+     * table.getLines(body, header);
+     * // [
+     * //   '┏━━━━━━┳━━━━━┓',
+     * //   '┃ \x1B[1mName\x1B[22m ┃ \x1B[1mAge\x1B[22m ┃',
+     * //   '┡━━━━━━╇━━━━━┩',
+     * //   '│ John │ 25  │',
+     * //   '├──────┼─────┤',
+     * //   '│ Jane │ 26  │',
+     * //   '└──────┴─────┘'
+     * // ]
+     * ```
+     * @param {any[][]} body
+     * @param {any[][]} [header]
+     * @param {TableOptions} [options={}]
+     * @returns {string[]}
+     */
+    const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
+    /**<!-- DOCS: table.FullTableOptions ###! -->
+     * TableOptions
+     *
+     * The configuration options for the table
+     */
+    interface FullTableOptions {
+        /**<!-- DOCS: table.FullTableOptions.wrapperFn #### -->
+         * wrapperFn
+         *
+         * Function to wrap each line of the output in (e.g. colr.blue)
+         */
+        wrapperFn: Function;
+        /**<!-- DOCS: table.FullTableOptions.wrapLinesFn #### -->
+         * wrapLinesFn
+         *
+         * Function to wrap the output lines of each cell of the table (e.g. colr.blue)
+         */
+        wrapLinesFn: Function;
+        /**<!-- DOCS: table.FullTableOptions.wrapHeaderLinesFn #### -->
+         * wrapHeaderLinesFn
+         *
+         * Function to wrap the output lines of each cell of the header of the table (e.g. colr.blue)
+         *
+         * Default: `colr.bold`
+         */
+        wrapHeaderLinesFn: Function;
+        /**<!-- DOCS: table.FullTableOptions.wrapBodyLinesFn #### -->
+         * wrapBodyLinesFn
+         *
+         * Function to wrap the output lines of each cell of the body of the table (e.g. colr.blue)
+         */
+        wrapBodyLinesFn: Function;
+        /**<!-- DOCS: table.FullTableOptions.overrideChar #### -->
+         * overrideChar
+         *
+         * Character to use instead of lines
+         *
+         * Override character options are applied in the following order (later options have higher priority):
+         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+         */
+        overrideChar: string;
+        /**<!-- DOCS: table.FullTableOptions.overrideHorChar #### -->
+         * overrideHorChar
+         *
+         * Character to use instead of horizontal lines
+         *
+         * Override character options are applied in the following order (later options have higher priority):
+         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+         */
+        overrideHorChar: string;
+        /**<!-- DOCS: table.FullTableOptions.overrideVerChar #### -->
+         * overrideVerChar
+         *
+         * Character to use instead of vertical lines
+         *
+         * Override character options are applied in the following order (later options have higher priority):
+         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+         */
+        overrideVerChar: string;
+        /**<!-- DOCS: table.FullTableOptions.overrideCornChar #### -->
+         * overrideCornChar
+         *
+         * Character to use instead of corner and intersecting lines (┌, ┬, ┐, ├, ┼, ┤, └, ┴, ┘)
+         *
+         * Override character options are applied in the following order (later options have higher priority):
+         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+         */
+        overrideCornChar: string;
+        /**<!-- DOCS: table.FullTableOptions.overrideOuterChar #### -->
+         * overrideOuterChar
+         *
+         * Character to use instead of lines on the outside of the table (┌, ┬, ┐, ├, ┤, └, ┴, ┘)
+         *
+         * Override character options are applied in the following order (later options have higher priority):
+         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
+         */
+        overrideOuterChar: string;
+        /**<!-- DOCS: table.FullTableOptions.overrideCharSet #### -->
+         * overrideCharSet
+         *
+         * Completely override all the characters used in the table.
+         *
+         * See TableCharLookup for more information.
+         *
+         * Default:
+         * ```
+         * {
+         *   hTop: ['━', '┏', '┳', '┓'],
+         *   hNor: [' ', '┃', '┃', '┃'],
+         *   hSep: ['━', '┣', '╋', '┫'],
+         *   hBot: ['━', '┗', '┻', '┛'],
+         *   mSep: ['━', '┡', '╇', '┩'],
+         *   bTop: ['─', '┌', '┬', '┐'],
+         *   bNor: [' ', '│', '│', '│'],
+         *   bSep: ['─', '├', '┼', '┤'],
+         *   bBot: ['─', '└', '┴', '┘']
+         * }
+         * ```
+         */
+        overrideCharSet: TableCharLookup;
+        /**<!-- DOCS: table.FullTableOptions.overridePrioritiseVer #### -->
+         * overridePrioritiseVer
+         *
+         * By default, if not overrideHorChar and overrideVerChar are set, overrideHorChar will be prioritised (and used where both are applicable).
+         * Setting this to true will prioritise overrideVerChar instead.
+         *
+         * Default: `false`
+         */
+        overridePrioritiseVer: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawOuter #### -->
+         * drawOuter
+         *
+         * Whether to draw the outer border of the table
+         */
+        drawOuter: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawRowLines #### -->
+         * drawRowLines
+         *
+         * Whether to draw lines between rows (other than separating header and body)
+         */
+        drawRowLines: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawColLines #### -->
+         * drawColLines
+         *
+         * Whether to draw lines between columns
+         */
+        drawColLines: boolean;
+        /**<!-- DOCS: table.FullTableOptions.colWidths #### -->
+         * colWidths
+         *
+         * Preferred width (in number of characters) of each column
+         */
+        colWidths: number[];
+        /**<!-- DOCS: table.FullTableOptions.align #### -->
+         * align
+         *
+         * How the table should be aligned on the screen
+         *
+         * left, right, center or justify
+         */
+        align: out.AlignType;
+        /**<!-- DOCS: table.FullTableOptions.alignCols #### -->
+         * alignCols
+         *
+         * How each column should be aligned
+         *
+         * Array with alignment for each column: left, right, center or justify
+         */
+        alignCols: out.AlignType[];
+        /**<!-- DOCS: table.FullTableOptions.transpose #### -->
+         * transpose
+         *
+         * Change rows into columns and vice versa
+         */
+        transpose: boolean;
+        /**<!-- DOCS: table.FullTableOptions.transposeBody #### -->
+         * transposeBody
+         *
+         * Change rows into columns and vice versa (body only)
+         */
+        transposeBody: boolean;
+        /**<!-- DOCS: table.FullTableOptions.margin #### -->
+         * margin
+         *
+         * The amount of space to leave around the outside of the table
+         */
+        margin: number | number[];
+        /**<!-- DOCS: table.FullTableOptions.cellPadding #### -->
+         * cellPadding
+         *
+         * The amount of space to leave around the outside of each cell
+         */
+        cellPadding: number;
+        /**<!-- DOCS: table.FullTableOptions.format #### -->
+         * format
+         *
+         * A set of formatting configurations
+         */
+        format: TableFormatConfig[];
+        /**<!-- DOCS: table.FullTableOptions.truncate #### -->
+         * truncate
+         *
+         * Truncates (cuts the end off) line instead of wrapping
+         */
+        truncate: false | string;
+        /**<!-- DOCS: table.FullTableOptions.maxWidth #### -->
+         * maxWidth
+         *
+         * Maximum width of the table
+         */
+        maxWidth: number;
+    }
+    /**<!-- DOCS: table.TableOptions ### -1 -->
+     * TableOptions
+     *
+     * The configuration options for the table
+     */
+    type TableOptions = Partial$1<FullTableOptions>;
+    /**<!-- DOCS: table.TableCharLookup ### 451 -->
+     * TableCharLookup
+     *
+     * The configuration for the table line characters
+     *
+     * Each property in the object represents a row type:
+     *
+     * | Type   | Description                                                       | Example     |
+     * |:------:|-------------------------------------------------------------------|:-----------:|
+     * | `hTop` | Lines at the top of the table, if there's a header                | `┏━━━┳━━━┓` |
+     * | `hNor` | Regular lines of cells in a header cell                           | `┃...┃...┃` |
+     * | `hSep` | Lines between rows of the header                                  | `┣━━━╋━━━┫` |
+     * | `hBot` | Lines at the bottom of the table, if there's a header but no body | `┗━━━┻━━━┛` |
+     * | `mSep` | Lines between the header and the body if both are there           | `┡━━━╇━━━┩` |
+     * | `bTop` | Lines at the top of the table, if there's not a header            | `┌───┬───┐` |
+     * | `bNor` | Regular lines of cells in a body cell                             | `│...│...│` |
+     * | `bSep` | Lines between rows of the body                                    | `├───┼───┤` |
+     * | `bBot` | Lines at the bottom of the table                                  | `└───┴───┘` |
+     *
+     * Each item in each array is a character to use for the row type:
+     *
+     * | Index | Description                                                               | Example |
+     * |:-----:|---------------------------------------------------------------------------|:-------:|
+     * | `0`   | A regular character for the row (gets repeated for the width of the cell) | `━`     |
+     * | `1`   | A border line at the start of the row                                     | `┣`     |
+     * | `2`   | A border line between cells                                               | `╋`     |
+     * | `3`   | A border line at the end of the row                                       | `┫`     |
+     */
+    type TableCharLookup = Partial$1<CharLookup<string[]>>;
+    /**<!-- DOCS: table.TableFormatConfig ###! -->
+     * TableFormatConfig
+     *
+     * Configuration for formatting a cell
+     */
+    interface TableFormatConfig {
+        /**<!-- DOCS: table.formatFn #### -->
+         * formatFn
+         *
+         * A wrapper function to apply to the cell
+         */
+        formatFn: Function;
+        /**<!-- DOCS: table.isHeader #### -->
+         * isHeader
+         *
+         * Whether to apply the format to the header
+         */
+        isHeader?: boolean;
+        /**<!-- DOCS: table.isBody #### -->
+         * isBody
+         *
+         * Whether to apply the format to the body
+         */
+        isBody?: boolean;
+        /**<!-- DOCS: table.row #### -->
+         * row
+         *
+         * A specific row to apply the format to
+         */
+        row?: number;
+        /**<!-- DOCS: table.col #### -->
+         * col
+         *
+         * A specific column to apply the format to
+         */
+        col?: number;
+    }
+    /**<!-- DOCS: table.utils ### -->
+     * utils
+     */
+    namespace utils {
+        /**<!-- DOCS: table.utils.objectsToTable #### @ -->
+         * objectsToTable
+         *
+         * - `table.utils.objectsToTable`
+         *
+         * Process an array of objects into a table format (string[][])
+         *
+         * ```typescript
+         * const objs = [
+         *   { name: 'John', age: 25 },
+         *   { name: 'Jane', age: 26 }
+         * ];
+         * table.utils.objectsToTable(objs)
+         * // {
+         * //   header: [ [ 'name', 'age' ] ],
+         * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
+         * // }
+         * ```
+         * @param {Object[]} objects
+         * @param {Object} [headers={}]
+         * @returns {{ header: any[][]; body: any[][]; }}
+         */
+        const objectsToTable: (objects: Object[], headers?: Object) => {
+            header: any[][];
+            body: any[][];
+        };
+        /**<!-- DOCS: table.utils.transpose #### @ -->
+         * transpose
+         *
+         * - `table.utils.transpose`
+         *
+         * Change rows into columns and vice versa
+         *
+         * ```typescript
+         * const input = [
+         *   ['John', 25],
+         *   ['Jane', 26],
+         *   ['Derek', 27]
+         * ];
+         * table.utils.transpose(input)
+         * // [
+         * //   [ 'John', 'Jane', 'Derek' ],
+         * //   [ 25, 26, 27 ]
+         * // ]
+         * ```
+         * @param {any[][]} rows
+         * @returns {any[][]}
+         */
+        const transpose: (rows: any[][]) => any[][];
+        /**<!-- DOCS: table.utils.concatRows #### @ -->
+         * concatRows
+         *
+         * - `table.utils.concatRows`
+         *
+         * Concatenate header and body rows into one list of rows
+         *
+         * ```typescript
+         * const header = [['Name', 'Age']];
+         * const body = [
+         *   ['John', 25],
+         *   ['Jane', 26],
+         *   ['Derek', 27]
+         * ];
+         * table.utils.concatRows({header, body})
+         * // [
+         * //   [ 'Name', 'Age' ],
+         * //   [ 'John', 25 ],
+         * //   [ 'Jane', 26 ],
+         * //   [ 'Derek', 27 ]
+         * // ]
+         * ```
+         * @param {{ header: any[][]; body: any[][] }} cells
+         * @returns {any[][]}
+         */
+        const concatRows: (cells: {
+            header: any[][];
+            body: any[][];
+        }) => any[][];
+        /**<!-- DOCS: table.utils.getFormat #### @ -->
+         * getFormat
+         *
+         * - `table.utils.getFormat`
+         *
+         * A function for simplifying the format configuration
+         *
+         * ```typescript
+         * const wrap = (str: string) => 'X';
+         *
+         * const format = [table.utils.getFormat(wrap, 0, 0), table.utils.getFormat(wrap, 1, 1, false, true), table.utils.getFormat(wrap, 2, 2, true, false)];
+         * // [
+         * //   { formatFn: wrap, row: 0, col: 0 },
+         * //   { formatFn: wrap, row: 1, col: 1, isHeader: false, isBody: true },
+         * //   { formatFn: wrap, row: 2, col: 2, isHeader: true, isBody: false }
+         * // ]
+         *
+         * const header = partition(range(9), 3);
+         * const body = partition(range(9), 3);
+         * table.print(header, body, {format})
+         * // ┏━━━┳━━━┳━━━┓
+         * // ┃ 0 ┃ 1 ┃ 2 ┃
+         * // ┣━━━╋━━━╋━━━┫
+         * // ┃ 3 ┃ 4 ┃ 5 ┃
+         * // ┣━━━╋━━━╋━━━┫
+         * // ┃ 6 ┃ 7 ┃ X ┃
+         * // ┡━━━╇━━━╇━━━┩
+         * // │ X │ 1 │ 2 │
+         * // ├───┼───┼───┤
+         * // │ 3 │ X │ 5 │
+         * // ├───┼───┼───┤
+         * // │ 6 │ 7 │ 8 │
+         * // └───┴───┴───┘
+         * ```
+         * @param {WrapFn} format
+         * @param {number} [row]
+         * @param {number} [col]
+         * @param {boolean} [isHeader]
+         * @param {boolean} [isBody]
+         * @returns {TableFormatConfig}
+         */
+        const getFormat: (format: WrapFn, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
+        /**<!-- DOCS: table.utils.getFullOptions #### @ -->
+         * getFullOptions
+         *
+         * - `table.utils.getFullOptions`
+         *
+         * A function for simplifying the format configuration
+         */
+        const getFullOptions: (opts: TableOptions) => FullTableOptions;
+    }
+}
+
+declare type Text = string | string[];
+
+/**<!-- DOCS: out.LineCounter #### -->
+ * LineCounter
+ *
+ * - `out.LineCounter`
+ * - `LineCounter`
+ *
+ * Return type for getLineCounter
+ *
+ * ```typescript
+ * const lc = getLineCounter();
+ * lc.log('hello'); // 1
+ * lc.wrap(1, () => console.log('a single line')); // 1
+ * lc.add(1);
+ * lc.get(); // 3
+ * lc.clear();
+ * ```
+ */
+interface LineCounter$1 {
+    /**<!-- DOCS: out.LineCounter.log ##### -->
+     * lc.log
+     *
+     * Same as console.log, but adds to the lc counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * ```
+     *
+     * @param {...any} args The arguments to log
+     * @returns {number} The number of lines added
+     */
+    log(...args: any[]): number;
+    /**<!-- DOCS: out.LineCounter.overwrite ##### -->
+     * lc.overwrite
+     *
+     * Similar to lc.log, but designed for overwriting lines that have already been printed on the screen
+     *
+     * Use in combination with ansi.cursor.up to move the cursor up and replace/overwrite lines.
+     *
+     * Adds a ansi.erase.lineEnd before each new line so that the line is cleared apart from what you're overwriting it with.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.overwrite('hello'); // 1
+     * ```
+     *
+     * @param {...any} args The arguments to overwrite
+     * @returns {number} The number of lines added
+     */
+    overwrite(...args: any[]): number;
+    /**<!-- DOCS: out.LineCounter.wrap ##### -->
+     * lc.wrap
+     *
+     * Wraps a function, and adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * ```
+     *
+     * @param {number} newLines The number of lines to add
+     * @param {(...args: A[]) => number | T} func The function to wrap
+     * @param {...A} args The arguments to pass to the function
+     * @returns {T} The result of the function
+     */
+    wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
+    /**<!-- DOCS: out.LineCounter.add ##### -->
+     * lc.add
+     *
+     * Adds a given number to the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.add(1);
+     * ```
+     *
+     * @param {number} newLines The number of lines to add
+     * @returns {void}
+     */
+    add(newLines: number): void;
+    /**<!-- DOCS: out.LineCounter.get ##### -->
+     * lc.get
+     *
+     * returns the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.add(1);
+     * lc.get(); // 3
+     * ```
+     *
+     * @returns {number} The line counter
+     */
+    get(): number;
+    /**<!-- DOCS: out.LineCounter.getSince ##### -->
+     * lc.getSince
+     *
+     * Returns the number of lines since a given checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     *
+     * @param {string} checkpointID The checkpoint to check
+     * @returns {number} The number of lines since the checkpoint
+     */
+    getSince(checkpointID: string): number;
+    /**<!-- DOCS: out.LineCounter.moveCursor ##### -->
+     * lc.moveCursor
+     *
+     * Move the cursor without clearing/erasing lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @param {number} y How many lines to move the cursor (down if positive, up if negative)
+     * @returns {void}
+     */
+    moveCursor(y: number): void;
+    /**<!-- DOCS: out.LineCounter.moveHome ##### -->
+     * lc.moveHome
+     *
+     * Move the cursor to the start of the line count without clearing/erasing lines.
+     *
+     * Same as `lc.clear`, but without clearing the lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @returns {void}
+     */
+    moveHome(): void;
+    /**<!-- DOCS: out.LineCounter.moveToCheckpoint ##### -->
+     * lc.moveToCheckpoint
+     *
+     * Move the cursor to a previously recorded checkpoint
+     *
+     * Same as `lc.clearToCheckpoint`, but without clearing the lines.
+     *
+     * Updates the line count in the process.
+     *
+     * @param {string} checkpointID The checkpoint to move to
+     * @returns {void}
+     */
+    moveToCheckpoint(checkpointID: string): void;
+    /**<!-- DOCS: out.LineCounter.clear ##### -->
+     * lc.clear
+     *
+     * clears the line counter, and moves the cursor up by the value of the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.clear();
+     * ```
+     *
+     * @returns {void}
+     */
+    clear(): void;
+    /**<!-- DOCS: out.LineCounter.clearBack ##### -->
+     * lc.clearBack
+     *
+     * Clears a given number of lines, and updates the line counter
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
+     * ```
+     *
+     * @param {number} linesToMoveBack The number of lines to clear
+     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+     * @returns {void}
+     */
+    clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
+    /**<!-- DOCS: out.LineCounter.clearDown ##### -->
+     * lc.clearDown
+     *
+     * Moves the cursor down by a given number of lines
+     *
+     * Can be negative to move up (clearing lines)
+     *
+     * > **NOTE:** This adds new lines
+     *
+     * @param {number} lines The number of lines to move
+     * @returns {void}
+     */
+    clearDown(lines: number): void;
+    /**<!-- DOCS: out.LineCounter.checkpoint ##### -->
+     * lc.checkpoint
+     *
+     * Records a 'checkpoint' that can be returned to later
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test-a');
+     * lc.wrap(1, () => console.log('a single line')); // 1
+     * lc.checkpoint('test-b');
+     * lc.add(1);
+     * lc.getSince('test-a'); // 2
+     * lc.getSince('test-b'); // 1
+     * ```
+     *
+     * @param {string} [checkpointID] The checkpoint to record
+     * @returns {string} The checkpointID
+     */
+    checkpoint(checkpointID?: string): string;
+    /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
+     * lc.clearToCheckpoint
+     *
+     * Clear lines up to a previously recorded checkpoint
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.checkpoint('test');
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
+     * ```
+     *
+     * @param {string} checkpointID The checkpoint to clear to
+     * @returns {void}
+     */
+    clearToCheckpoint(checkpointID: string): void;
+    /**<!-- DOCS: out.LineCounter.ansi ##### -->
+     * lc.ansi
+     *
+     * Get ansi codes for clear/erase functions, and update the line counter in the process.
+     */
+    ansi: {
+        /**<!-- DOCS: out.LineCounter.ansi.moveCursor ###### -->
+         * lc.ansi.moveCursor
+         *
+         * Move the cursor without clearing/erasing lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {number} y How many lines to move the cursor (down if positive, up if negative)
+         * @returns {string}
+         */
+        moveCursor(y: number): string;
+        /**<!-- DOCS: out.LineCounter.ansi.moveHome ###### -->
+         * lc.ansi.moveHome
+         *
+         * Move the cursor to the start of the line count without clearing/erasing lines.
+         *
+         * Same as `lc.clear`, but without clearing the lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @returns {string}
+         */
+        moveHome(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.moveToCheckpoint ###### -->
+         * lc.ansi.moveToCheckpoint
+         *
+         * Move the cursor to a previously recorded checkpoint
+         *
+         * Same as `lc.clearToCheckpoint`, but without clearing the lines.
+         *
+         * Updates the line count in the process.
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {string} checkpointID The checkpoint to move to
+         * @returns {string}
+         */
+        moveToCheckpoint(checkpointID: string): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
+         * lc.ansi.clear
+         *
+         * Clears the line counter, and moves the cursor up by the value of the line counter
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.clear());
+         * ```
+         *
+         * @returns {string}
+         */
+        clear(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
+         * lc.ansi.clearBack
+         *
+         * Clears a given number of lines, and updates the line counter
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('line 1'); // 1
+         * lc.log('line 2'); // 1
+         * lc.log('line 3'); // 1
+         * lc.log('line 4'); // 1
+         * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
+         * ```
+         *
+         * @param {number} linesToMoveBack The number of lines to clear
+         * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+         * @returns {string}
+         */
+        clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearDown ###### -->
+         * lc.ansi.clearDown
+         *
+         * Moves the cursor down by a given number of lines
+         *
+         * Can be negative to move up (clearing lines)
+         *
+         * > **NOTE:** This adds new lines
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * @param {number} lines The number of lines to move
+         * @returns {string}
+         */
+        clearDown(lines: number): string;
+        /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
+         * lc.ansi.clearToCheckpoint
+         *
+         * Clear lines up to a previously recorded checkpoint
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('line 1'); // 1
+         * lc.log('line 2'); // 1
+         * lc.checkpoint('test');
+         * lc.log('line 3'); // 1
+         * lc.log('line 4'); // 1
+         * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
+         * ```
+         *
+         * @param {string} checkpointID The checkpoint to clear to
+         * @returns {string}
+         */
+        clearToCheckpoint(checkpointID: string): string;
+        /**<!-- DOCS: out.LineCounter.ansi.save ###### -->
+         * lc.ansi.save
+         *
+         * Saves the current cursor position and also tracks the line count
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         */
+        save(): string;
+        /**<!-- DOCS: out.LineCounter.ansi.restore ###### -->
+         * lc.ansi.restore
+         *
+         * Restores to the previously saved cursor position and also tracks the line count
+         *
+         * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         */
+        restore(): string;
+    };
+}
+
 /**<!-- DOCS: out.Breadcrumb #### -->
  * Breadcrumb
  *
@@ -3847,533 +4361,9 @@ declare type LineCounter = LineCounter$1;
  */
 declare const ansi: AnsiEscapeCodes;
 
-interface CharLookup<T> {
-    hTop: T;
-    hNor: T;
-    hSep: T;
-    hBot: T;
-    mSep: T;
-    bTop: T;
-    bNor: T;
-    bSep: T;
-    bBot: T;
-}
-
-/**<!-- DOCS: table ##! -->
- * table
- *
- * A simple table generator
- */
-declare namespace table {
-    /**<!-- DOCS: table.print ### @ -->
-     * print
-     *
-     * - `table.print`
-     *
-     * Print a table
-     *
-     * ```typescript
-     * const header = [['Name', 'Age']];
-     * const body = [['John', '25'], ['Jane', '26']];
-     * table.print(body, header); // 7
-     *
-     * // ┏━━━━━━┳━━━━━┓
-     * // ┃ Name ┃ Age ┃
-     * // ┡━━━━━━╇━━━━━┩
-     * // │ John │ 25  │
-     * // ├──────┼─────┤
-     * // │ Jane │ 26  │
-     * // └──────┴─────┘
-     * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {number}
-     */
-    const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
-    /**<!-- DOCS: table.printObjects ### @ -->
-     * printObjects
-     *
-     * - `table.printObjects`
-     *
-     * Print a table of given objects
-     *
-     * ```typescript
-     * const objs = [
-     *   // objs
-     *   { a: '1', b: '2', c: '3' },
-     *   { a: '0', c: '2' },
-     *   { b: '4' },
-     *   { a: '6' }
-     * ];
-     * const header = {
-     *   a: 'Col A',
-     *   b: 'Col B',
-     *   c: 'Col C'
-     * };
-     * table.printObjects(objs, header); // 11
-     *
-     * // ┏━━━━━━━┳━━━━━━━┳━━━━━━━┓
-     * // ┃ Col A ┃ Col B ┃ Col C ┃
-     * // ┡━━━━━━━╇━━━━━━━╇━━━━━━━┩
-     * // │ 1     │ 2     │ 3     │
-     * // ├───────┼───────┼───────┤
-     * // │ 0     │       │ 2     │
-     * // ├───────┼───────┼───────┤
-     * // │       │ 4     │       │
-     * // ├───────┼───────┼───────┤
-     * // │ 6     │       │       │
-     * // └───────┴───────┴───────┘
-     * ```
-     * @param {Object[]} objects
-     * @param {Object} [headers={}]
-     * @param {TableOptions} [options={}]
-     * @returns {number}
-     */
-    const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
-    /**<!-- DOCS: table.markdown ### @ -->
-     * markdown
-     *
-     * - `table.markdown`
-     *
-     * Generate a markdown table
-     *
-     * ```typescript
-     * const header = [['Name', 'Age (in years)', 'Job']];
-     * const body = [
-     *   ['Alexander', '25', 'Builder'],
-     *   ['Jane', '26', 'Software Engineer']
-     * ];
-     * const md = table.markdown(body, header, { alignCols: ['right', 'center', 'left'] });
-     * console.log(md.join('\n'));
-     *
-     * // |      Name | Age (in years) | Job               |
-     * // |----------:|:--------------:|:------------------|
-     * // | Alexander |       25       | Builder           |
-     * // |      Jane |       26       | Software Engineer |
-     * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {string[]}
-     */
-    const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
-    /**<!-- DOCS: table.getLines ### @ -->
-     * getLines
-     *
-     * - `table.getLines`
-     *
-     * Get the lines of a table (rather than printing it)
-     *
-     * ```typescript
-     * const header = [['Name', 'Age']];
-     * const body = [['John', '25'], ['Jane', '26']];
-     * table.getLines(body, header);
-     * // [
-     * //   '┏━━━━━━┳━━━━━┓',
-     * //   '┃ \x1B[1mName\x1B[22m ┃ \x1B[1mAge\x1B[22m ┃',
-     * //   '┡━━━━━━╇━━━━━┩',
-     * //   '│ John │ 25  │',
-     * //   '├──────┼─────┤',
-     * //   '│ Jane │ 26  │',
-     * //   '└──────┴─────┘'
-     * // ]
-     * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {string[]}
-     */
-    const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
-    /**<!-- DOCS: table.FullTableOptions ###! -->
-     * TableOptions
-     *
-     * The configuration options for the table
-     */
-    interface FullTableOptions {
-        /**<!-- DOCS: table.FullTableOptions.wrapperFn #### -->
-         * wrapperFn
-         *
-         * Function to wrap each line of the output in (e.g. colr.blue)
-         */
-        wrapperFn: Function;
-        /**<!-- DOCS: table.FullTableOptions.wrapLinesFn #### -->
-         * wrapLinesFn
-         *
-         * Function to wrap the output lines of each cell of the table (e.g. colr.blue)
-         */
-        wrapLinesFn: Function;
-        /**<!-- DOCS: table.FullTableOptions.wrapHeaderLinesFn #### -->
-         * wrapHeaderLinesFn
-         *
-         * Function to wrap the output lines of each cell of the header of the table (e.g. colr.blue)
-         *
-         * Default: `colr.bold`
-         */
-        wrapHeaderLinesFn: Function;
-        /**<!-- DOCS: table.FullTableOptions.wrapBodyLinesFn #### -->
-         * wrapBodyLinesFn
-         *
-         * Function to wrap the output lines of each cell of the body of the table (e.g. colr.blue)
-         */
-        wrapBodyLinesFn: Function;
-        /**<!-- DOCS: table.FullTableOptions.overrideChar #### -->
-         * overrideChar
-         *
-         * Character to use instead of lines
-         *
-         * Override character options are applied in the following order (later options have higher priority):
-         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
-         */
-        overrideChar: string;
-        /**<!-- DOCS: table.FullTableOptions.overrideHorChar #### -->
-         * overrideHorChar
-         *
-         * Character to use instead of horizontal lines
-         *
-         * Override character options are applied in the following order (later options have higher priority):
-         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
-         */
-        overrideHorChar: string;
-        /**<!-- DOCS: table.FullTableOptions.overrideVerChar #### -->
-         * overrideVerChar
-         *
-         * Character to use instead of vertical lines
-         *
-         * Override character options are applied in the following order (later options have higher priority):
-         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
-         */
-        overrideVerChar: string;
-        /**<!-- DOCS: table.FullTableOptions.overrideCornChar #### -->
-         * overrideCornChar
-         *
-         * Character to use instead of corner and intersecting lines (┌, ┬, ┐, ├, ┼, ┤, └, ┴, ┘)
-         *
-         * Override character options are applied in the following order (later options have higher priority):
-         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
-         */
-        overrideCornChar: string;
-        /**<!-- DOCS: table.FullTableOptions.overrideOuterChar #### -->
-         * overrideOuterChar
-         *
-         * Character to use instead of lines on the outside of the table (┌, ┬, ┐, ├, ┤, └, ┴, ┘)
-         *
-         * Override character options are applied in the following order (later options have higher priority):
-         * overrideChar, overrideHorChar/overrideVerChar (see overridePrioritiseVer), overrideOuterChar, overrideCornChar, overrideCharSet
-         */
-        overrideOuterChar: string;
-        /**<!-- DOCS: table.FullTableOptions.overrideCharSet #### -->
-         * overrideCharSet
-         *
-         * Completely override all the characters used in the table.
-         *
-         * See TableCharLookup for more information.
-         *
-         * Default:
-         * ```
-         * {
-         *   hTop: ['━', '┏', '┳', '┓'],
-         *   hNor: [' ', '┃', '┃', '┃'],
-         *   hSep: ['━', '┣', '╋', '┫'],
-         *   hBot: ['━', '┗', '┻', '┛'],
-         *   mSep: ['━', '┡', '╇', '┩'],
-         *   bTop: ['─', '┌', '┬', '┐'],
-         *   bNor: [' ', '│', '│', '│'],
-         *   bSep: ['─', '├', '┼', '┤'],
-         *   bBot: ['─', '└', '┴', '┘']
-         * }
-         * ```
-         */
-        overrideCharSet: TableCharLookup;
-        /**<!-- DOCS: table.FullTableOptions.overridePrioritiseVer #### -->
-         * overridePrioritiseVer
-         *
-         * By default, if not overrideHorChar and overrideVerChar are set, overrideHorChar will be prioritised (and used where both are applicable).
-         * Setting this to true will prioritise overrideVerChar instead.
-         *
-         * Default: `false`
-         */
-        overridePrioritiseVer: boolean;
-        /**<!-- DOCS: table.FullTableOptions.drawOuter #### -->
-         * drawOuter
-         *
-         * Whether to draw the outer border of the table
-         */
-        drawOuter: boolean;
-        /**<!-- DOCS: table.FullTableOptions.drawRowLines #### -->
-         * drawRowLines
-         *
-         * Whether to draw lines between rows (other than separating header and body)
-         */
-        drawRowLines: boolean;
-        /**<!-- DOCS: table.FullTableOptions.drawColLines #### -->
-         * drawColLines
-         *
-         * Whether to draw lines between columns
-         */
-        drawColLines: boolean;
-        /**<!-- DOCS: table.FullTableOptions.colWidths #### -->
-         * colWidths
-         *
-         * Preferred width (in number of characters) of each column
-         */
-        colWidths: number[];
-        /**<!-- DOCS: table.FullTableOptions.align #### -->
-         * align
-         *
-         * How the table should be aligned on the screen
-         *
-         * left, right, center or justify
-         */
-        align: out.AlignType;
-        /**<!-- DOCS: table.FullTableOptions.alignCols #### -->
-         * alignCols
-         *
-         * How each column should be aligned
-         *
-         * Array with alignment for each column: left, right, center or justify
-         */
-        alignCols: out.AlignType[];
-        /**<!-- DOCS: table.FullTableOptions.transpose #### -->
-         * transpose
-         *
-         * Change rows into columns and vice versa
-         */
-        transpose: boolean;
-        /**<!-- DOCS: table.FullTableOptions.transposeBody #### -->
-         * transposeBody
-         *
-         * Change rows into columns and vice versa (body only)
-         */
-        transposeBody: boolean;
-        /**<!-- DOCS: table.FullTableOptions.margin #### -->
-         * margin
-         *
-         * The amount of space to leave around the outside of the table
-         */
-        margin: number | number[];
-        /**<!-- DOCS: table.FullTableOptions.cellPadding #### -->
-         * cellPadding
-         *
-         * The amount of space to leave around the outside of each cell
-         */
-        cellPadding: number;
-        /**<!-- DOCS: table.FullTableOptions.format #### -->
-         * format
-         *
-         * A set of formatting configurations
-         */
-        format: TableFormatConfig[];
-        /**<!-- DOCS: table.FullTableOptions.truncate #### -->
-         * truncate
-         *
-         * Truncates (cuts the end off) line instead of wrapping
-         */
-        truncate: false | string;
-        /**<!-- DOCS: table.FullTableOptions.maxWidth #### -->
-         * maxWidth
-         *
-         * Maximum width of the table
-         */
-        maxWidth: number;
-    }
-    /**<!-- DOCS: table.TableOptions ### -1 -->
-     * TableOptions
-     *
-     * The configuration options for the table
-     */
-    type TableOptions = Partial$1<FullTableOptions>;
-    /**<!-- DOCS: table.TableCharLookup ### 451 -->
-     * TableCharLookup
-     *
-     * The configuration for the table line characters
-     *
-     * Each property in the object represents a row type:
-     *
-     * | Type   | Description                                                       | Example     |
-     * |:------:|-------------------------------------------------------------------|:-----------:|
-     * | `hTop` | Lines at the top of the table, if there's a header                | `┏━━━┳━━━┓` |
-     * | `hNor` | Regular lines of cells in a header cell                           | `┃...┃...┃` |
-     * | `hSep` | Lines between rows of the header                                  | `┣━━━╋━━━┫` |
-     * | `hBot` | Lines at the bottom of the table, if there's a header but no body | `┗━━━┻━━━┛` |
-     * | `mSep` | Lines between the header and the body if both are there           | `┡━━━╇━━━┩` |
-     * | `bTop` | Lines at the top of the table, if there's not a header            | `┌───┬───┐` |
-     * | `bNor` | Regular lines of cells in a body cell                             | `│...│...│` |
-     * | `bSep` | Lines between rows of the body                                    | `├───┼───┤` |
-     * | `bBot` | Lines at the bottom of the table                                  | `└───┴───┘` |
-     *
-     * Each item in each array is a character to use for the row type:
-     *
-     * | Index | Description                                                               | Example |
-     * |:-----:|---------------------------------------------------------------------------|:-------:|
-     * | `0`   | A regular character for the row (gets repeated for the width of the cell) | `━`     |
-     * | `1`   | A border line at the start of the row                                     | `┣`     |
-     * | `2`   | A border line between cells                                               | `╋`     |
-     * | `3`   | A border line at the end of the row                                       | `┫`     |
-     */
-    type TableCharLookup = Partial$1<CharLookup<string[]>>;
-    /**<!-- DOCS: table.TableFormatConfig ###! -->
-     * TableFormatConfig
-     *
-     * Configuration for formatting a cell
-     */
-    interface TableFormatConfig {
-        /**<!-- DOCS: table.formatFn #### -->
-         * formatFn
-         *
-         * A wrapper function to apply to the cell
-         */
-        formatFn: Function;
-        /**<!-- DOCS: table.isHeader #### -->
-         * isHeader
-         *
-         * Whether to apply the format to the header
-         */
-        isHeader?: boolean;
-        /**<!-- DOCS: table.isBody #### -->
-         * isBody
-         *
-         * Whether to apply the format to the body
-         */
-        isBody?: boolean;
-        /**<!-- DOCS: table.row #### -->
-         * row
-         *
-         * A specific row to apply the format to
-         */
-        row?: number;
-        /**<!-- DOCS: table.col #### -->
-         * col
-         *
-         * A specific column to apply the format to
-         */
-        col?: number;
-    }
-    /**<!-- DOCS: table.utils ### -->
-     * utils
-     */
-    namespace utils {
-        /**<!-- DOCS: table.utils.objectsToTable #### @ -->
-         * objectsToTable
-         *
-         * - `table.utils.objectsToTable`
-         *
-         * Process an array of objects into a table format (string[][])
-         *
-         * ```typescript
-         * const objs = [
-         *   { name: 'John', age: 25 },
-         *   { name: 'Jane', age: 26 }
-         * ];
-         * table.utils.objectsToTable(objs)
-         * // {
-         * //   header: [ [ 'name', 'age' ] ],
-         * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
-         * // }
-         * ```
-         * @param {Object[]} objects
-         * @param {Object} [headers={}]
-         * @returns {{ header: any[][]; body: any[][]; }}
-         */
-        const objectsToTable: (objects: Object[], headers?: Object) => {
-            header: any[][];
-            body: any[][];
-        };
-        /**<!-- DOCS: table.utils.transpose #### @ -->
-         * transpose
-         *
-         * - `table.utils.transpose`
-         *
-         * Change rows into columns and vice versa
-         *
-         * ```typescript
-         * const input = [
-         *   ['John', 25],
-         *   ['Jane', 26],
-         *   ['Derek', 27]
-         * ];
-         * table.utils.transpose(input)
-         * // [
-         * //   [ 'John', 'Jane', 'Derek' ],
-         * //   [ 25, 26, 27 ]
-         * // ]
-         * ```
-         * @param {any[][]} rows
-         * @returns {any[][]}
-         */
-        const transpose: (rows: any[][]) => any[][];
-        /**<!-- DOCS: table.utils.concatRows #### @ -->
-         * concatRows
-         *
-         * - `table.utils.concatRows`
-         *
-         * Concatenate header and body rows into one list of rows
-         *
-         * ```typescript
-         * const header = [['Name', 'Age']];
-         * const body = [
-         *   ['John', 25],
-         *   ['Jane', 26],
-         *   ['Derek', 27]
-         * ];
-         * table.utils.concatRows({header, body})
-         * // [
-         * //   [ 'Name', 'Age' ],
-         * //   [ 'John', 25 ],
-         * //   [ 'Jane', 26 ],
-         * //   [ 'Derek', 27 ]
-         * // ]
-         * ```
-         * @param {{ header: any[][]; body: any[][] }} cells
-         * @returns {any[][]}
-         */
-        const concatRows: (cells: {
-            header: any[][];
-            body: any[][];
-        }) => any[][];
-        /**<!-- DOCS: table.utils.getFormat #### @ -->
-         * getFormat
-         *
-         * - `table.utils.getFormat`
-         *
-         * A function for simplifying the format configuration
-         *
-         * ```typescript
-         * const wrap = (str: string) => 'X';
-         *
-         * const format = [table.utils.getFormat(wrap, 0, 0), table.utils.getFormat(wrap, 1, 1, false, true), table.utils.getFormat(wrap, 2, 2, true, false)];
-         * // [
-         * //   { formatFn: wrap, row: 0, col: 0 },
-         * //   { formatFn: wrap, row: 1, col: 1, isHeader: false, isBody: true },
-         * //   { formatFn: wrap, row: 2, col: 2, isHeader: true, isBody: false }
-         * // ]
-         *
-         * const header = partition(range(9), 3);
-         * const body = partition(range(9), 3);
-         * table.print(header, body, {format})
-         * // ┏━━━┳━━━┳━━━┓
-         * // ┃ 0 ┃ 1 ┃ 2 ┃
-         * // ┣━━━╋━━━╋━━━┫
-         * // ┃ 3 ┃ 4 ┃ 5 ┃
-         * // ┣━━━╋━━━╋━━━┫
-         * // ┃ 6 ┃ 7 ┃ X ┃
-         * // ┡━━━╇━━━╇━━━┩
-         * // │ X │ 1 │ 2 │
-         * // ├───┼───┼───┤
-         * // │ 3 │ X │ 5 │
-         * // ├───┼───┼───┤
-         * // │ 6 │ 7 │ 8 │
-         * // └───┴───┴───┘
-         * ```
-         * @param {WrapFn} format
-         * @param {number} [row]
-         * @param {number} [col]
-         * @param {boolean} [isHeader]
-         * @param {boolean} [isBody]
-         * @returns {TableFormatConfig}
-         */
-        const getFormat: (format: WrapFn, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
-    }
+interface Handles<T = any> {
+    start: T;
+    end: T;
 }
 
 interface PromptChoiceFull<T> {
@@ -4428,6 +4418,9 @@ declare namespace ask$1 {
             scrollMargin?: number;
             fileExplorerColumnWidth?: number;
             fileExplorerMaxItems?: number;
+            tableSelectMaxHeightPercentage?: number;
+            timelineSpeed?: number;
+            timelineFastSpeed?: number;
         };
         text?: {
             boolTrueKeys?: string;
@@ -4675,6 +4668,31 @@ declare namespace ask$1 {
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            tableSelectHover?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            timelineTrack?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            timelineTrackActive?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            timelineHandle?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
+            timelineHandleActive?: WrapFn | {
+                normal?: WrapFn;
+                error?: WrapFn;
+                done?: WrapFn;
+            };
         };
         symbols?: {
             specialIcon?: string | {
@@ -4732,7 +4750,27 @@ declare namespace ask$1 {
                 error?: string;
                 done?: string;
             };
+            scrollbarTrackTrimTop?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollbarTrackTrimBottom?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
             scrollbarBar?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollbarBarTrimTop?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            scrollbarBarTrimBottom?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
@@ -4772,6 +4810,21 @@ declare namespace ask$1 {
                 error?: string;
                 done?: string;
             };
+            timelineTrack?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            timelineHandle?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
+            timelineBar?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
         };
     }
 }
@@ -4783,6 +4836,9 @@ interface AskOptionsStoredGeneral {
     scrollMargin: number;
     fileExplorerColumnWidth: number;
     fileExplorerMaxItems: number;
+    tableSelectMaxHeightPercentage: number;
+    timelineSpeed: number;
+    timelineFastSpeed: number;
 }
 interface AskOptionsStoredText {
     boolTrueKeys: string;
@@ -4854,6 +4910,11 @@ interface AskOptionsStoredColours {
     specialInfo: AskOptionsItemSet<WrapFn>;
     specialErrorMsg: AskOptionsItemSet<WrapFn>;
     specialErrorIcon: AskOptionsItemSet<WrapFn>;
+    tableSelectHover: AskOptionsItemSet<WrapFn>;
+    timelineTrack: AskOptionsItemSet<WrapFn>;
+    timelineTrackActive: AskOptionsItemSet<WrapFn>;
+    timelineHandle: AskOptionsItemSet<WrapFn>;
+    timelineHandleActive: AskOptionsItemSet<WrapFn>;
 }
 interface AskOptionsStoredSymbols {
     specialIcon: AskOptionsItemSet<string>;
@@ -4867,7 +4928,11 @@ interface AskOptionsStoredSymbols {
     scrollUpIcon: AskOptionsItemSet<string>;
     scrollDownIcon: AskOptionsItemSet<string>;
     scrollbarTrack: AskOptionsItemSet<string>;
+    scrollbarTrackTrimTop: AskOptionsItemSet<string>;
+    scrollbarTrackTrimBottom: AskOptionsItemSet<string>;
     scrollbarBar: AskOptionsItemSet<string>;
+    scrollbarBarTrimTop: AskOptionsItemSet<string>;
+    scrollbarBarTrimBottom: AskOptionsItemSet<string>;
     separatorLine: AskOptionsItemSet<string>;
     separatorNodeDown: AskOptionsItemSet<string>;
     separatorNodeNone: AskOptionsItemSet<string>;
@@ -4875,6 +4940,9 @@ interface AskOptionsStoredSymbols {
     specialErrorIcon: AskOptionsItemSet<string>;
     folderOpenableIcon: AskOptionsItemSet<string>;
     fileOpenableIcon: AskOptionsItemSet<string>;
+    timelineTrack: AskOptionsItemSet<string>;
+    timelineHandle: AskOptionsItemSet<string>;
+    timelineBar: AskOptionsItemSet<string>;
 }
 interface AskOptionsForState {
     general: AskOptionsStoredGeneral;
@@ -4885,6 +4953,28 @@ interface AskOptionsForState {
         boxType: 'thin' | 'thick';
     };
     boxSymbols: BoxSymbols;
+}
+
+declare type ItemToRowMapFunction<T extends unknown> = (item: T, index: number, items: T[]) => any[];
+/**<!-- DOCS: ask.table.AskTableDisplaySettings #### @ -->
+ * AskTableDisplaySettings<T>
+ *
+ * - `AskTableDisplaySettings<T>`
+ *
+ * Settings for how the table should display the items
+ *
+ * All settings are optional.
+ *
+ * | Name      | Type                            | Description                                                      |
+ * | --------- | ------------------------------- | ---------------------------------------------------------------- |
+ * | `rows`    | `any[][] \| (item: T) => any[]` | Rows to display or function that takes an item and returns a row |
+ * | `headers` | `any[][] \| RemapOf<T, string>` | Header to display, or object with title for each item property   |
+ * | `options` | `table.TableOptions`            | Options object for table (some options are overridden)           |
+ */
+interface AskTableDisplaySettings<T> {
+    rows?: any[][] | ItemToRowMapFunction<T>;
+    headers?: any[][] | RemapOf<T, string>;
+    options?: table.TableOptions;
 }
 
 /**<!-- DOCS: ask ##! -->
@@ -5171,10 +5261,10 @@ declare namespace ask {
          * @param {T | number} [initial]
          * @param {any[][] | ItemToRowMapFunction<T>} [rows]
          * @param {any[][] | RemapOf<T, string>} [headers]
-         * @param {tableOut.TableOptions} [tableOptions]
+         * @param {table.TableOptions} [tableOptions]
          * @returns {Promise<T>}
          */
-        const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number | T, rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T>;
+        const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
          * multiselect
          * 
@@ -5211,10 +5301,10 @@ declare namespace ask {
          * @param {T[] | number[]} [initial]
          * @param {any[][] | ItemToRowMapFunction<T>} [rows]
          * @param {any[][] | RemapOf<T, string>} [headers]
-         * @param {tableOut.TableOptions} [tableOptions]
+         * @param {table.TableOptions} [tableOptions]
          * @returns {Promise<T[]>}
          */
-        const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], initial?: number[] | T[], rows?: any[][] | ((item?: T, index?: number, items?: T[]) => any[]), headers?: any[][] | swiss_ak.RemapOf<T, string>, tableOptions?: swiss_ak.Partial<table.FullTableOptions>) => Promise<T[]>;
+        const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number[] | T[], validate?: (items: T[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
     }
     /**<!-- DOCS-ALIAS: ask.trim -->
      * trim
@@ -5227,7 +5317,7 @@ declare namespace ask {
      * @param {Partial<AskTrimOptions>} [options={}]
      * @returns {Promise<Handles<number>>}
      */
-    const trim: (totalFrames: number, frameRate: number, options?: Partial<AskTrimOptions>) => Promise<Handles<number>>;
+    const trim: (question: string | Breadcrumb$1, totalFrames: number, frameRate?: number, initial?: Partial<Handles<number>>, validate?: (handles: Handles<number>) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Handles<number>>;
     /**<!-- DOCS: ask.ExtraHeader ### @ -->
      * Extra
      *
@@ -5312,7 +5402,7 @@ declare namespace ask {
      * @param {any} [result]
      * @returns {number}
      */
-    const imitate: (question: string | Breadcrumb$1, result?: any, isComplete?: boolean, isError?: boolean, lc?: LineCounter$1) => void;
+    const imitate: (question: string | Breadcrumb$1, result?: any, isComplete?: boolean, isError?: boolean, errorMessage?: string, lc?: LineCounter$1) => void;
     /**<!-- DOCS: ask.prefill #### @ -->
      * prefill
      *
@@ -6042,4 +6132,4 @@ interface KeyListener {
 
 declare const LOG: (...args: any[]) => Promise<void>;
 
-export { Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LOG, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };
+export { AskTableDisplaySettings, Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LOG, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };

@@ -15,8 +15,6 @@ import { LOG } from '../../../DELETEME/LOG';
 import { getErrorInfoFromValidationResult } from '../errorValidation';
 import { getScrollbar, getScrolledItems } from '../basicInput/getScrolledItems';
 
-// TODO do proper scrollbar
-
 export const fileExplorerHandler = async (
   isMulti: boolean = false,
   isSave: boolean = false,
@@ -59,7 +57,7 @@ export const fileExplorerHandler = async (
   let cursorType: 'd' | 'f' = 'd';
   let isError: boolean = true;
   let errorMsg: string = undefined;
-  const cursorIndexes: { [dirPath: string]: number[] } = {};
+  const cursorIndexes: { [dirPath: string]: number } = {};
   const scrollLastStartingIndex: { [dirPath: string]: number } = {};
 
   let pressed: string = undefined;
@@ -71,288 +69,274 @@ export const fileExplorerHandler = async (
   const originalLC = options.general.lc;
   options.general.lc = getLineCounter(); // we don't use this one
 
-  const recalc = () => {
-    if (submitted) return;
-    paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
+  const operation = {
+    recalc: () => {
+      if (submitted) return;
+      paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
 
-    currentPath = paths[paths.length - 1];
+      currentPath = paths[paths.length - 1];
 
-    const isDir = fsCache.getPathContents(paths[paths.length - 2])?.dirs.includes(PathTools.explodePath(currentPath).filename) || false;
-    cursorType = isDir ? 'd' : 'f';
+      const isDir = fsCache.getPathContents(paths[paths.length - 2])?.dirs.includes(PathTools.explodePath(currentPath).filename) || false;
+      cursorType = isDir ? 'd' : 'f';
 
-    const errorInfo = getErrorInfoFromValidationResult(runValidation());
-    isError = errorInfo.isError;
-    errorMsg = errorInfo.errorMessage;
-  };
+      const errorInfo = getErrorInfoFromValidationResult(operation.runValidation());
+      isError = errorInfo.isError;
+      errorMsg = errorInfo.errorMessage;
+    },
 
-  const loadInitialPathIndexes = () => {
-    recalc();
-    paths.forEach((path, index) => {
-      const cursorItem = cursor[index + 1];
-      if (cursorItem === undefined) return;
-      const contents = fsCache.getPathContents(path);
-      const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
+    loadInitialPathIndexes: () => {
+      operation.recalc();
+      paths.forEach((path, index) => {
+        const cursorItem = cursor[index + 1];
+        if (cursorItem === undefined) return;
+        const contents = fsCache.getPathContents(path);
+        const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
 
-      cursorIndexes[path] = [cursorIndex, ...(cursorIndexes[path] || [])].slice(0, 2);
+        cursorIndexes[path] = cursorIndex;
 
-      LOG('loadInitial - D', { cursorIndexes });
-    });
-  };
+        LOG('loadInitial - D', { cursorIndexes });
+      });
+    },
 
-  const updateCursorIndexes = (newIndex: number) => {
-    recalc();
-    const currentParentDir = paths[paths.length - 2];
+    updateCursorIndexes: (newIndex: number) => {
+      operation.recalc();
+      const currentParentDir = paths[paths.length - 2];
 
-    if (!cursorIndexes[currentParentDir]) cursorIndexes[currentParentDir] = [];
-    const lastKnownIndex = cursorIndexes[currentParentDir][0];
-    if (lastKnownIndex !== newIndex) cursorIndexes[currentParentDir] = [newIndex, lastKnownIndex];
+      const lastKnownIndex = cursorIndexes[currentParentDir];
+      if (lastKnownIndex !== newIndex) cursorIndexes[currentParentDir] = newIndex;
 
-    LOG('updateCursorIndexes', { cursorIndexes });
-  };
+      LOG('updateCursorIndexes', { cursorIndexes });
+    },
 
-  const runValidation = (newFileName?: string) => {
-    const currentDir = cursorType === 'f' ? paths[paths.length - 2] : currentPath;
-    const currentFileName = cursorType === 'f' ? cursor[cursor.length - 1] : undefined;
-    return validateFn(cursorType, currentPath, currentDir, currentFileName, Array.from(multiSelected), newFileName);
-  };
+    runValidation: (newFileName?: string) => {
+      const currentDir = cursorType === 'f' ? paths[paths.length - 2] : currentPath;
+      const currentFileName = cursorType === 'f' ? cursor[cursor.length - 1] : undefined;
+      return validateFn(cursorType, currentPath, currentDir, currentFileName, Array.from(multiSelected), newFileName);
+    },
 
-  const loadEssentials = async (executeFn: (path: string) => Promise<PathContents> = loadPathContents) => {
-    await Promise.all([
-      PromiseTools.each(paths, executeFn),
-      (async () => {
-        // current dir
-        const { dirs } = await executeFn(currentPath);
-        const list = dirs;
-        return PromiseTools.each(
-          list.map((dir) => join(currentPath, dir)),
-          executeFn
-        );
-      })(),
-      (async () => {
-        // parent dir
-        const parent = PathTools.explodePath(currentPath).dir;
-        const { dirs } = await executeFn(parent);
-        const list = [...dirs];
-        return PromiseTools.each(
-          list.map((dir) => join(parent, dir)),
-          executeFn
-        );
-      })()
-    ]);
-  };
+    loadEssentials: async (executeFn: (path: string) => Promise<PathContents> = loadPathContents) => {
+      await Promise.all([
+        PromiseTools.each(paths, executeFn),
+        (async () => {
+          // current dir
+          const { dirs } = await executeFn(currentPath);
+          const list = dirs;
+          return PromiseTools.each(
+            list.map((dir) => join(currentPath, dir)),
+            executeFn
+          );
+        })(),
+        (async () => {
+          // parent dir
+          const parent = PathTools.explodePath(currentPath).dir;
+          const { dirs } = await executeFn(parent);
+          const list = [...dirs];
+          return PromiseTools.each(
+            list.map((dir) => join(parent, dir)),
+            executeFn
+          );
+        })()
+      ]);
+    },
 
-  const loadNewDepth = async () => {
-    loading = true;
-    display();
-    await loadEssentials(loadPathContents);
-    loading = false;
-    display();
-  };
-
-  const loadNewItem = async () => {
-    if (!fsCache.getPathContents(currentPath)) {
+    loadNewDepth: async () => {
       loading = true;
-      display();
-      await loadPathContents(currentPath);
+      operation.display();
+      await operation.loadEssentials(loadPathContents);
       loading = false;
-      display();
-    } else {
-      display();
-    }
-  };
+      operation.display();
+    },
 
-  const setPressed = async (key: string) => {
-    pressed = key;
-    display();
-    if (!key) return;
-    await wait(milliseconds(100));
-    if (!loading) {
-      pressed = undefined;
-      display();
-    }
-  };
-
-  const display = async () => {
-    if (submitted) return;
-    recalc();
-
-    const theme = getAskOptionsForState(false, isError);
-    const { colours: col, symbols: sym, general: gen, text: txt } = theme;
-
-    // prepared styled elements
-    const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
-    const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
-
-    type Formatter = (
-      width: number,
-      highlighted: string,
-      isActiveColumn: boolean,
-      columnPath: string
-    ) => (name: string, index?: number, all?: string[]) => string;
-
-    const formatter =
-      (symbol: string, regularWrapFn: Function, selectedPrefix: string = ' ', unselectedPrefix: string = ' '): Formatter =>
-      (width: number, highlighted: string, isActiveColumn: boolean, columnPath: string) =>
-      (name: string, index?: number, all?: string[]) => {
-        const isHighlighted = name === highlighted;
-        const fullPath = join(columnPath, name);
-        const isSelected = isMulti && multiSelected.has(fullPath);
-        const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-        const template = (text) => `${prefix}${text} ${symbol} `;
-        const extraChars = out.getWidth(template(''));
-        const stretched = template(out.left(out.truncate(name, width - extraChars, '…'), width - extraChars));
-
-        let wrapFn: Function = fn.noact;
-        if (isHighlighted) {
-          if (isActiveColumn) {
-            wrapFn = col.specialHover;
-          } else {
-            wrapFn = col.specialInactiveHover;
-          }
-        } else {
-          if (isActiveColumn) {
-            wrapFn = isSelected ? col.specialHighlight : regularWrapFn;
-          } else {
-            wrapFn = isSelected ? col.specialInactiveHighlight : regularWrapFn;
-          }
-        }
-
-        return wrapFn(colr.clear(stretched));
-      };
-
-    const { dir: formatDir, file: formatFile } = {
-      single: {
-        d: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
-          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded)
-        },
-        f: {
-          dir: formatter(sym.folderOpenableIcon, col.specialFaded),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal)
-        },
-        df: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal)
-        }
-      },
-      multi: {
-        d: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon),
-          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded, '   ', '   ')
-        },
-        f: {
-          dir: formatter(sym.folderOpenableIcon, col.specialFaded, '   ', '   '),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
-        },
-        df: {
-          // shouldn't happen, but here anyway
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal, '   ', '   '),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
-        }
+    loadNewItem: async () => {
+      if (!fsCache.getPathContents(currentPath)) {
+        loading = true;
+        operation.display();
+        await loadPathContents(currentPath);
+        loading = false;
+        operation.display();
+      } else {
+        operation.display();
       }
-    }[isMulti ? 'multi' : 'single'][accepted.join('')] as { dir: Formatter; file: Formatter };
+    },
 
-    const emptyColumn = [' '.repeat(minWidth), ...' '.repeat(maxItems - 1).split('')];
+    setPressed: async (key: string) => {
+      pressed = key;
+      operation.display();
+      if (!key) return;
+      await wait(milliseconds(100));
+      if (!loading) {
+        pressed = undefined;
+        operation.display();
+      }
+    },
 
-    const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
-      const currentParentDir = paths[index];
-      const dirs = contents?.dirs || [];
-      const files = contents?.files || [];
-      const list = [...dirs, ...files];
+    display: async () => {
+      if (submitted) return;
+      operation.recalc();
 
-      const isScrollbar = list.length > maxItems;
+      const theme = getAskOptionsForState(false, isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
 
-      const contentWidth = Math.max(...list.map((s) => s.length));
-      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
+      // prepared styled elements
+      const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
+      const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
 
-      const highlighted = cursor[index + 1];
-      const highlightedIndex = list.indexOf(highlighted);
-      const isActiveCol = index + 2 === cursor.length;
+      type Formatter = (
+        width: number,
+        highlighted: string,
+        isActiveColumn: boolean,
+        columnPath: string
+      ) => (name: string, index?: number, all?: string[]) => string;
 
-      const columnPath = paths[index];
+      const formatter =
+        (symbol: string, regularWrapFn: Function, selectedPrefix: string = ' ', unselectedPrefix: string = ' '): Formatter =>
+        (width: number, highlighted: string, isActiveColumn: boolean, columnPath: string) =>
+        (name: string, index?: number, all?: string[]) => {
+          const isHighlighted = name === highlighted;
+          const fullPath = join(columnPath, name);
+          const isSelected = isMulti && multiSelected.has(fullPath);
+          const prefix = isSelected ? selectedPrefix : unselectedPrefix;
+          const template = (text) => `${prefix}${text} ${symbol} `;
+          const extraChars = out.getWidth(template(''));
+          const stretched = template(out.left(out.truncate(name, width - extraChars, '…'), width - extraChars));
 
-      const formattedLines = [
-        ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
-        ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
-      ];
+          let wrapFn: Function = fn.noact;
+          if (isHighlighted) {
+            if (isActiveColumn) {
+              wrapFn = col.specialHover;
+            } else {
+              wrapFn = col.specialInactiveHover;
+            }
+          } else {
+            if (isActiveColumn) {
+              wrapFn = isSelected ? col.specialHighlight : regularWrapFn;
+            } else {
+              wrapFn = isSelected ? col.specialInactiveHighlight : regularWrapFn;
+            }
+          }
 
-      if (isScrollbar) {
-        const [currentHoverIndex] = cursorIndexes[currentParentDir] ?? [highlightedIndex !== -1 ? highlightedIndex : 0];
-        const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
+          return wrapFn(colr.clear(stretched));
+        };
 
-        const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
-        scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
+      const { dir: formatDir, file: formatFile } = {
+        single: {
+          d: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+            file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded)
+          },
+          f: {
+            dir: formatter(sym.folderOpenableIcon, col.specialFaded),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal)
+          },
+          df: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal)
+          }
+        },
+        multi: {
+          d: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon),
+            file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded, '   ', '   ')
+          },
+          f: {
+            dir: formatter(sym.folderOpenableIcon, col.specialFaded, '   ', '   '),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
+          },
+          df: {
+            // shouldn't happen, but here anyway
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal, '   ', '   '),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
+          }
+        }
+      }[isMulti ? 'multi' : 'single'][accepted.join('')] as { dir: Formatter; file: Formatter };
 
-        const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
+      const emptyColumn = [' '.repeat(minWidth), ...' '.repeat(maxItems - 1).split('')];
 
-        return out.utils.joinLines(scrolledItems.items.map((line, index) => line + scrollbar[index]));
+      const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
+        const currentParentDir = paths[index];
+        const dirs = contents?.dirs || [];
+        const files = contents?.files || [];
+        const list = [...dirs, ...files];
 
-        // const startIndex = Math.max(0, highlightedIndex - maxItems + 2);
+        const isScrollbar = list.length > maxItems;
 
-        // const isScrollUp = startIndex > 0;
-        // const isScrollDown = startIndex + maxItems < formattedLines.length;
+        const contentWidth = Math.max(...list.map((s) => s.length));
+        const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
 
-        // const slicedLines = formattedLines.slice(startIndex, startIndex + maxItems);
+        const highlighted = cursor[index + 1];
+        const highlightedIndex = list.indexOf(highlighted);
+        const isActiveCol = index + 2 === cursor.length;
 
-        // const fullWidth = out.getWidth(formatDir(width, '', false, '')(''));
+        const columnPath = paths[index];
 
-        // if (isScrollUp) slicedLines[0] = col.scrollbarTrack(out.center('↑' + ' '.repeat(Math.floor(width / 2)) + '↑', fullWidth));
-        // if (isScrollDown)
-        //   slicedLines[slicedLines.length - 1] = col.scrollbarTrack(out.center('↓' + ' '.repeat(Math.floor(width / 2)) + '↓', fullWidth));
+        const formattedLines = [
+          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
+          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
+        ];
 
-        // return out.utils.joinLines(slicedLines);
+        if (isScrollbar) {
+          const currentHoverIndex = cursorIndexes[currentParentDir] ?? (highlightedIndex !== -1 ? highlightedIndex : 0);
+          const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
+
+          const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
+          scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
+
+          const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
+
+          return out.utils.joinLines(scrolledItems.items.map((line, index) => line + scrollbar[index]));
+        }
+
+        // pad lines to ensure full height
+        return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
+      });
+
+      if (cursorType === 'f') {
+        allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
       }
 
-      // pad lines to ensure full height
-      return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
-    });
+      // show exactly x columns
+      const columns = [...allColumns.slice(-maxColumns), ...ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
 
-    if (cursorType === 'f') {
-      allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
+      const termWidth = out.utils.getTerminalWidth();
+
+      const tableLines = table.getLines([columns], undefined, {
+        wrapLinesFn: col.decoration,
+        drawOuter: true,
+        cellPadding: 0,
+        truncate: '',
+        maxWidth: Infinity
+      });
+      const tableOut = out.center(out.limitToLengthStart(tableLines.join('\n'), termWidth - 1), termWidth);
+      const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
+
+      const cursorTypeOut = colr.dim(`(${{ f: txt.file, d: txt.directory }[cursorType]})`);
+      const infoLine = (() => {
+        const loadingOut = loading ? col.specialFaded(txt.loading) : undefined;
+
+        const count = isMulti ? col.specialFaded(`${col.specialHint('[')} ${txt.selected(multiSelected.size)} ${col.specialHint(']')} `) : '';
+        const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
+        const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
+        return out.center(split, termWidth);
+      })();
+      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+
+      const actionBar = getFEActionBar(isMulti, pressed, [], isError);
+
+      // Actual draw
+      let output = ansi.cursor.hide + tempLC.ansi.moveHome();
+
+      const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);
+
+      output += imitated;
+      output += '\n' + infoLine;
+      output += '\n' + tableOut;
+      tempLC.overwrite(output);
+      tempLC.checkpoint('actionBar');
+      let output2 = actionBar;
+      output2 += '\n'.repeat(out.utils.getNumLines(imitated)); // allows room for extra inputs at bottom of screen
+      tempLC.overwrite(output2);
+      tempLC.checkpoint('post-display');
     }
-
-    // show exactly x columns
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
-
-    const termWidth = out.utils.getTerminalWidth();
-
-    const tableLines = table.getLines([columns], undefined, {
-      wrapLinesFn: col.decoration,
-      drawOuter: true,
-      cellPadding: 0,
-      truncate: '',
-      maxWidth: Infinity
-    });
-    const tableOut = out.center(out.limitToLengthStart(tableLines.join('\n'), termWidth - 1), termWidth);
-    const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
-
-    const cursorTypeOut = colr.dim(`(${{ f: txt.file, d: txt.directory }[cursorType]})`);
-    const infoLine = (() => {
-      const loadingOut = loading ? col.specialFaded(txt.loading) : undefined;
-
-      const count = isMulti ? col.specialFaded(`${col.specialHint('[')} ${txt.selected(multiSelected.size)} ${col.specialHint(']')} `) : '';
-      const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
-      const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
-      return out.center(split, termWidth);
-    })();
-    const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
-
-    const actionBar = getFEActionBar(isMulti, pressed, [], isError);
-
-    // Actual draw
-    let output = ansi.cursor.hide + tempLC.ansi.moveHome();
-
-    const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);
-
-    output += imitated;
-    output += '\n' + infoLine;
-    output += '\n' + tableOut;
-    tempLC.log(output.replace(/\n/g, ansi.erase.lineEnd + '\n'));
-    tempLC.checkpoint('actionBar');
-    let output2 = actionBar;
-    output2 += '\n'.repeat(out.utils.getNumLines(imitated)); // allows room for extra inputs at bottom of screen
-    tempLC.log(output2.replace(/\n/g, ansi.erase.lineEnd + '\n'));
-    tempLC.checkpoint('post-display');
   };
 
   // controls
@@ -370,8 +354,8 @@ export const fileExplorerHandler = async (
       const nextValue = list[nextIndex];
 
       cursor = [...folds, nextValue];
-      updateCursorIndexes(nextIndex);
-      loadNewItem();
+      operation.updateCursorIndexes(nextIndex);
+      operation.loadNewItem();
     },
 
     moveRight: () => {
@@ -382,33 +366,33 @@ export const fileExplorerHandler = async (
       const nextList = [...nextContents.dirs, ...nextContents.files];
       if (!nextList.length) return;
 
-      const savedIndex = (cursorIndexes[paths[cursor.length - 1]] || [])[0] ?? 0;
+      const savedIndex = cursorIndexes[paths[cursor.length - 1]] ?? 0;
 
       cursor = [...cursor, nextList[savedIndex] ?? nextList[0]];
-      loadNewDepth();
+      operation.loadNewDepth();
     },
     moveLeft: () => {
       if (cursor.length <= 2) return;
       cursor = cursor.slice(0, -1);
-      loadNewDepth();
+      operation.loadNewDepth();
     },
     refresh: async () => {
       if (loading) return;
       loading = true;
       locked = true;
-      setPressed('r');
+      operation.setPressed('r');
       const allKeys = Array.from(fsCache.cache.keys());
 
       const restKeys = new Set<string>(allKeys);
 
-      await loadEssentials((path: string) => {
+      await operation.loadEssentials((path: string) => {
         restKeys.delete(path);
         return forceLoadPathContents(path);
       });
-      display();
+      operation.display();
       loading = false;
       locked = false;
-      if (pressed === 'r') setPressed(undefined);
+      if (pressed === 'r') operation.setPressed(undefined);
 
       await PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted) return;
@@ -423,7 +407,7 @@ export const fileExplorerHandler = async (
         } else {
           multiSelected.add(currentPath);
         }
-        setPressed('space');
+        operation.setPressed('space');
       }
     },
     takeInput: async <T extends unknown>(
@@ -431,7 +415,7 @@ export const fileExplorerHandler = async (
       inputFn: () => Promise<T>,
       postQuestion?: (result: T) => Promise<boolean | void> | boolean | void
     ): Promise<T> => {
-      display();
+      operation.display();
       loading = true;
       // locked = true;
       kl.stop();
@@ -440,7 +424,7 @@ export const fileExplorerHandler = async (
       await preQuestion();
       const value = await inputFn();
       const skipDisplay = postQuestion ? (await postQuestion(value)) ?? false : false;
-      if (!skipDisplay) display();
+      if (!skipDisplay) operation.display();
 
       kl.start();
       loading = false;
@@ -472,7 +456,7 @@ export const fileExplorerHandler = async (
             await mkdir(newFolderPath);
           }
           tempLC.clearToCheckpoint('newFolder');
-          display();
+          operation.display();
           await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
           return;
         }
@@ -503,7 +487,7 @@ export const fileExplorerHandler = async (
               col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20))
           );
         },
-        () => ask.text(txt.specialSaveFileQuestion(col.specialHighlight), initial, (text) => runValidation(text), tempLC),
+        () => ask.text(txt.specialSaveFileQuestion(col.specialHighlight), initial, (text) => operation.runValidation(text), tempLC),
         () => {
           tempLC.clearToCheckpoint('saveName');
           return true;
@@ -516,7 +500,7 @@ export const fileExplorerHandler = async (
       options.general.lc = originalLC;
 
       const result = join(basePath, newFileName);
-      ask.imitate(question, result, true, false, lc);
+      ask.imitate(question, result, true, false, undefined, lc);
       process.stdout.write(ansi.cursor.show);
       return deferred.resolve([result]);
     },
@@ -524,14 +508,14 @@ export const fileExplorerHandler = async (
       if (!accepted.includes(cursorType)) return;
 
       submitted = true;
-      setPressed('return');
+      operation.setPressed('return');
       kl.stop();
       tempLC.clear();
       options.general.lc = originalLC;
 
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const result = isMulti ? Array.from(multiSelected) : [currentPath];
-      ask.imitate(question, resultOut, true, false, lc);
+      ask.imitate(question, resultOut, true, false, undefined, lc);
       return deferred.resolve(result);
     },
     exit: () => {
@@ -540,7 +524,7 @@ export const fileExplorerHandler = async (
       options.general.lc = originalLC;
 
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
-      ask.imitate(question, resultOut, false, true, lc);
+      ask.imitate(question, resultOut, false, true, undefined, lc);
       process.stdout.write(ansi.cursor.show);
       process.exit();
     }
@@ -575,8 +559,8 @@ export const fileExplorerHandler = async (
     }
   });
 
-  loadNewDepth().then(() => {
-    loadInitialPathIndexes();
+  operation.loadNewDepth().then(() => {
+    operation.loadInitialPathIndexes();
   });
 
   return deferred.promise;

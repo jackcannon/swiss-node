@@ -14,43 +14,6 @@ import { WrapFn, colr } from './colr';
 export namespace table {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  const getFullOptions = (opts: TableOptions): FullTableOptions => ({
-    overrideChar: '',
-    overrideHorChar: opts.overrideChar || '',
-    overrideVerChar: opts.overrideChar || '',
-    overrideCornChar: opts.overrideChar || '',
-    overrideOuterChar: opts.overrideChar || '',
-    overrideCharSet: undefined,
-    overridePrioritiseVer: false,
-    align: 'left',
-    alignCols: ['left'],
-    colWidths: [],
-    cellPadding: 1,
-    truncate: false,
-    maxWidth: out.utils.getTerminalWidth(),
-    ...opts,
-    wrapperFn: typeof opts.wrapperFn !== 'function' ? fn.noact : opts.wrapperFn,
-    wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
-    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
-    wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
-    drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
-    drawRowLines: typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines,
-    drawColLines: typeof opts.drawColLines !== 'boolean' ? true : opts.drawColLines,
-    transpose: typeof opts.transpose !== 'boolean' ? false : opts.transpose,
-    transposeBody: typeof opts.transposeBody !== 'boolean' ? false : opts.transposeBody,
-    format: (opts.format || []).map(toFullFormatConfig),
-    margin: ((input: number | number[] = 0) => {
-      const arr = [input].flat();
-
-      const top = arr[0] ?? 0;
-      const right = arr[1] ?? top;
-      const bottom = arr[2] ?? top;
-      const left = arr[3] ?? right ?? top;
-
-      return [top, right, bottom, left];
-    })(opts.margin) as number[]
-  });
-
   const empty = (numCols: number, char: string = '') => ArrayTools.create(numCols, char);
 
   /**<!-- DOCS: table.print ### @ -->
@@ -243,7 +206,7 @@ export namespace table {
    */
   export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     // const lc = getLineCounter();
-    const opts = getFullOptions(options);
+    const opts = utils.getFullOptions(options);
     const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
 
     const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin as number[];
@@ -756,5 +719,49 @@ export namespace table {
       if (isBody !== undefined) result.isBody = isBody;
       return result;
     };
+
+    /**<!-- DOCS: table.utils.getFullOptions #### @ -->
+     * getFullOptions
+     *
+     * - `table.utils.getFullOptions`
+     *
+     * A function for simplifying the format configuration
+     */
+    export const getFullOptions = (opts: TableOptions): FullTableOptions => ({
+      overrideChar: '',
+      overrideHorChar: opts.overrideChar || '',
+      overrideVerChar: opts.overrideChar || '',
+      overrideCornChar: opts.overrideChar || '',
+      overrideOuterChar: opts.overrideChar || '',
+      overrideCharSet: undefined,
+      overridePrioritiseVer: false,
+      align: 'left',
+      alignCols: ['left'],
+      colWidths: [],
+      cellPadding: 1,
+      truncate: false,
+      maxWidth: out.utils.getTerminalWidth(),
+      ...opts,
+      wrapperFn: typeof opts.wrapperFn !== 'function' ? fn.noact : opts.wrapperFn,
+      wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
+      wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
+      wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
+      drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
+      drawRowLines: typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines,
+      drawColLines: typeof opts.drawColLines !== 'boolean' ? true : opts.drawColLines,
+      transpose: typeof opts.transpose !== 'boolean' ? false : opts.transpose,
+      transposeBody: typeof opts.transposeBody !== 'boolean' ? false : opts.transposeBody,
+      format: (opts.format || []).map(toFullFormatConfig),
+      margin: ((input: number | number[] = 0) => {
+        const arr = [input].flat();
+
+        const top = arr[0] ?? 0;
+        const right = arr[1] ?? top;
+        const bottom = arr[2] ?? top;
+        const left = arr[3] ?? right ?? top;
+
+        return [top, right, bottom, left];
+      })(opts.margin) as number[]
+    });
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

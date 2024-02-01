@@ -39,17 +39,19 @@ export const timeHandler: DateTimeHandler<DynTime> = (
   let cursor: number = 0; // 0 = hour, 1 = minute, 2 = second
   let active: boolean = isActive;
 
-  const display = () => {
-    const { isError, errorMessage } = getErrorInfo();
+  const operation = {
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
 
-    LOG('timeHandler.display', { isError, errorMessage, current, cursor, active });
+      LOG('timeHandler.display', { isError, errorMessage, current, cursor, active });
 
-    const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
-    const lines = out.concatLineGroups(...dials);
+      const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
+      const lines = out.concatLineGroups(...dials);
 
-    const padded = out.centerLines(lines);
+      const padded = out.centerLines(lines);
 
-    displayCb(padded);
+      displayCb(padded);
+    }
   };
 
   const userActions = {
@@ -57,18 +59,18 @@ export const timeHandler: DateTimeHandler<DynTime> = (
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + val) % max;
       valueChangeCb(current);
-      display();
+      operation.display();
     },
     moveHor: (dir: number) => {
       cursor = (MAX_COL + cursor + dir) % MAX_COL;
       valueChangeCb(current);
-      display();
+      operation.display();
     },
     moveVer: (dir: number) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + current[cursor] + dir) % max;
       valueChangeCb(current);
-      display();
+      operation.display();
     }
   };
 
@@ -76,14 +78,12 @@ export const timeHandler: DateTimeHandler<DynTime> = (
     getValue: () => current,
     setActive: (isActive: boolean) => {
       active = isActive;
-      display();
+      operation.display();
     },
-    triggerDisplay: () => display(),
+    triggerDisplay: () => operation.display(),
     inputKey: (key: string, num?: number) => {
       if (num !== undefined) return userActions.set(num);
       switch (key) {
-        case 'esc':
-          return process.exit(0);
         case 'right':
           return userActions.moveHor(1);
         case 'left':

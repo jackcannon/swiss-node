@@ -46,6 +46,7 @@ A collection of functions to ask the user for input.
     - [**table**](#ask_table)
       - [select](#ask_table_select)
       - [multiselect](#ask_table_multiselect)
+      - [AskTableDisplaySettings<T>](#asktabledisplaysettingst)
     - [trim](#trim)
     - [**Extra**](#extra)
       - [customise](#customise)
@@ -425,7 +426,7 @@ A collection of functions for asking questions with tables.
 #### <span id="ask_table_select">select</span>
 
 ```typescript
-ask.table.select(question: string | Breadcrumb, items: T[], initial: T | number, rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T>
+ask.table.select(question: string | Breadcrumb, items: T[], initial: T | number, rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: table.TableOptions): Promise<T>
 ```
 
 Get a single selection from a table.
@@ -459,7 +460,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 | *2* | `initial`      | *No*     | `T \| number`                        |
 | *3* | `rows`         | *No*     | `any[][] \| ItemToRowMapFunction<T>` |
 | *4* | `headers`      | *No*     | `any[][] \| RemapOf<T, string>`      |
-| *5* | `tableOptions` | *No*     | `tableOut.TableOptions`              |
+| *5* | `tableOptions` | *No*     | `table.TableOptions`                 |
 
 | Return Type  |
 |--------------|
@@ -470,7 +471,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 #### <span id="ask_table_multiselect">multiselect</span>
 
 ```typescript
-ask.table.multiselect(question: string | Breadcrumb, items: T[], initial: T[] | number[], rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: tableOut.TableOptions): Promise<T[]>
+ask.table.multiselect(question: string | Breadcrumb, items: T[], initial: T[] | number[], rows: any[][] | ItemToRowMapFunction<T>, headers: any[][] | RemapOf<T, string>, tableOptions: table.TableOptions): Promise<T[]>
 ```
 
 Get multiple selections from a table.
@@ -507,11 +508,29 @@ const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, 
 | *2* | `initial`      | *No*     | `T[] \| number[]`                    |
 | *3* | `rows`         | *No*     | `any[][] \| ItemToRowMapFunction<T>` |
 | *4* | `headers`      | *No*     | `any[][] \| RemapOf<T, string>`      |
-| *5* | `tableOptions` | *No*     | `tableOut.TableOptions`              |
+| *5* | `tableOptions` | *No*     | `table.TableOptions`                 |
 
 | Return Type    |
 |----------------|
 | `Promise<T[]>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### AskTableDisplaySettings<T>
+
+```typescript
+AskTableDisplaySettings<T>;
+```
+
+Settings for how the table should display the items
+
+All settings are optional.
+
+| Name      | Type                            | Description                                                      |
+| --------- | ------------------------------- | ---------------------------------------------------------------- |
+| `rows`    | `any[][] \| (item: T) => any[]` | Rows to display or function that takes an item and returns a row |
+| `headers` | `any[][] \| RemapOf<T, string>` | Header to display, or object with title for each item property   |
+| `options` | `table.TableOptions`            | Options object for table (some options are overridden)           |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -5531,6 +5550,7 @@ A simple table generator
       - [transpose](#table_utils_transpose)
       - [concatRows](#concatrows)
       - [getFormat](#getformat)
+      - [getFullOptions](#getfulloptions)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -6088,6 +6108,16 @@ table.print(header, body, {format})
 | Return Type         |
 |---------------------|
 | `TableFormatConfig` |
+
+<p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
+
+#### getFullOptions
+
+```typescript
+table.utils.getFullOptions;
+```
+
+A function for simplifying the format configuration
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 

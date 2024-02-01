@@ -609,14 +609,15 @@ var getLineCounter = () => {
   let lineCount = 0;
   const checkpoints = {};
   const log2 = (...args) => {
-    const output = args.map(getLogStr).join(" ");
+    const output = out.wrap(args.map(getLogStr).join(" "));
     const added = out.utils.getNumLines(output);
     lineCount += added;
     console.log(output);
     return added;
   };
   const overwrite = (...args) => {
-    const output = args.map(getLogStr).join(" ").replace(/\n/g, ansi.erase.lineEnd + "\n") + ansi.erase.lineEnd;
+    let output = out.wrap(args.map(getLogStr).join(" "));
+    output = output.replace(/\n/g, ansi.erase.lineEnd + "\n") + ansi.erase.lineEnd;
     const added = out.utils.getNumLines(output);
     lineCount += added;
     console.log(output);
@@ -932,7 +933,7 @@ var out;
   const loadingChars = ArrayTools2.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) => colr.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
-  out2.loading = (action = loadingDefault, lines = 1, symbols6 = loadingChars) => {
+  out2.loading = (action = loadingDefault, lines = 1, symbols5 = loadingChars) => {
     let stopped = false;
     let count = 0;
     let previousLinesDrawn = 0;
@@ -941,7 +942,7 @@ var out;
         return;
       if (count)
         process.stdout.write(out2.ansi.cursor.up(previousLinesDrawn));
-      const output = action(symbols6[count++ % symbols6.length]);
+      const output = action(symbols5[count++ % symbols5.length]);
       previousLinesDrawn = lines;
       if (output !== void 0) {
         console.log(output);
@@ -1147,26 +1148,36 @@ var getScrolledItems = (items, hovered, lastStartingIndex, maxShow = 10, margin 
     doesScrollDown: startingIndex + maxShow < items.length
   };
 };
-var getScrollbar = (allItems, scrolledItems, theme) => {
+var getScrollbar = (allItems, scrolledItems, theme, height = scrolledItems.items.length, trimmedEndTop = false, trimmedEndBottom = false) => {
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
-  const scrollTrackIcon = col.scrollbarTrack(sym.scrollbarTrack);
-  const scrollBarIcon = col.scrollbarBar(sym.scrollbarBar);
-  const scrollUpIcon = col.scrollbarBar(sym.scrollUpIcon);
-  const scrollDownIcon = col.scrollbarBar(sym.scrollDownIcon);
-  const totalTrackHeight = scrolledItems.items.length;
+  const trackIcon = col.scrollbarTrack(sym.scrollbarTrack);
+  const barIcon = col.scrollbarBar(sym.scrollbarBar);
+  const upIcon = col.scrollbarBar(sym.scrollUpIcon);
+  const downIcon = col.scrollbarBar(sym.scrollDownIcon);
+  const trackTrimTopIcon = col.scrollbarTrack(sym.scrollbarTrackTrimTop);
+  const trackTrimBottomIcon = col.scrollbarTrack(sym.scrollbarTrackTrimBottom);
+  const barTrimTopIcon = col.scrollbarBar(sym.scrollbarBarTrimTop);
+  const barTrimBottomIcon = col.scrollbarBar(sym.scrollbarBarTrimBottom);
   const amountShown = scrolledItems.items.length / allItems.length;
-  const barHeight = Math.max(1, Math.round(totalTrackHeight * amountShown));
-  const emptyTrackHeight = Math.max(0, totalTrackHeight - barHeight);
+  const barHeight = Math.max(1, Math.round(height * amountShown));
+  const emptyTrackHeight = Math.max(0, height - barHeight);
   const barProgress = scrolledItems.startingIndex / (allItems.length - scrolledItems.items.length);
   const roundFn = barProgress < 0.33 ? Math.ceil : barProgress < 0.66 ? Math.round : Math.floor;
   const trackStartHeight = roundFn(emptyTrackHeight * barProgress);
-  const trackEndHeight = Math.max(0, totalTrackHeight - (trackStartHeight + barHeight));
-  const scrollbarBar = ArrayTools3.repeat(barHeight, scrollBarIcon);
+  const trackEndHeight = Math.max(0, height - (trackStartHeight + barHeight));
+  const scrollbarBar = ArrayTools3.repeat(barHeight, barIcon);
   if (scrolledItems.doesScrollUp && barHeight >= 2)
-    scrollbarBar[0] = scrollUpIcon;
+    scrollbarBar[0] = upIcon;
   if (scrolledItems.doesScrollDown && barHeight >= 2)
-    scrollbarBar[scrollbarBar.length - 1] = scrollDownIcon;
-  return [...ArrayTools3.repeat(trackStartHeight, scrollTrackIcon), ...scrollbarBar, ...ArrayTools3.repeat(trackEndHeight, scrollTrackIcon)];
+    scrollbarBar[scrollbarBar.length - 1] = downIcon;
+  const result = [...ArrayTools3.repeat(trackStartHeight, trackIcon), ...scrollbarBar, ...ArrayTools3.repeat(trackEndHeight, trackIcon)];
+  if (trimmedEndTop) {
+    result[0] = trackStartHeight === 0 ? barTrimTopIcon : trackTrimTopIcon;
+  }
+  if (trimmedEndBottom) {
+    result[result.length - 1] = trackEndHeight === 0 ? barTrimBottomIcon : trackTrimBottomIcon;
+  }
+  return result;
 };
 
 // src/tools/ask/basicInput/customise.ts
@@ -1416,7 +1427,10 @@ var populateAskOptions = () => {
       maxItemsOnScreen: 10,
       scrollMargin: 2,
       fileExplorerColumnWidth: 25,
-      fileExplorerMaxItems: 15
+      fileExplorerMaxItems: 15,
+      tableSelectMaxHeightPercentage: 75,
+      timelineSpeed: 1,
+      timelineFastSpeed: 5
     },
     text: {
       boolTrueKeys: "Yy",
@@ -1495,8 +1509,8 @@ var populateAskOptions = () => {
       },
       itemUnselected: getSetFromSingle(colr.grey4),
       itemUnselectedIcon: getSetFromSingle(colr),
-      scrollbarTrack: getSetFromSingle(colr.lightBlack),
-      scrollbarBar: getSetFromSingle(colr.lightBlackBg.black),
+      scrollbarTrack: getSetFromSingle(colr.reset.lightBlack),
+      scrollbarBar: getSetFromSingle(colr.reset.lightBlack.inverse),
       selectAllText: getSetFromSingle(colr.grey3),
       boolYNText: getSetFromSingle(colr.grey),
       countdown: {
@@ -1521,9 +1535,18 @@ var populateAskOptions = () => {
       specialInactiveNormal: getSetFromSingle(colr.grey3),
       specialInactiveFaded: getSetFromSingle(colr.grey2),
       specialInactiveHint: getSetFromSingle(colr.black),
-      specialInfo: getSetFromSingle(colr),
+      specialInfo: getSetFromSingle(colr.grey2),
       specialErrorMsg: getSetFromSingle(colr.red),
-      specialErrorIcon: getSetFromSingle(colr)
+      specialErrorIcon: getSetFromSingle(colr),
+      tableSelectHover: {
+        normal: colr.yellow,
+        error: colr.danger,
+        done: colr.yellow
+      },
+      timelineTrack: getSetFromSingle(colr.grey1),
+      timelineTrackActive: getSetFromSingle(colr.grey3),
+      timelineHandle: getSetFromSingle(colr.grey4),
+      timelineHandleActive: getSetFromSingle(colr.yellow)
     },
     symbols: {
       specialIcon: {
@@ -1548,15 +1571,22 @@ var populateAskOptions = () => {
       itemUnselectedIcon: getSetFromSingle(symbols2.RADIO_EMPTY),
       scrollUpIcon: getSetFromSingle(symbols2.ARROW_UPP),
       scrollDownIcon: getSetFromSingle(symbols2.ARROW_DWN),
-      scrollbarTrack: getSetFromSingle("\u2507"),
+      scrollbarTrack: getSetFromSingle("\u2502"),
+      scrollbarTrackTrimTop: getSetFromSingle("\u2577"),
+      scrollbarTrackTrimBottom: getSetFromSingle("\u2575"),
       scrollbarBar: getSetFromSingle(" "),
+      scrollbarBarTrimTop: getSetFromSingle("\u2580"),
+      scrollbarBarTrimBottom: getSetFromSingle("\u2584"),
       separatorLine: getSetFromSingle("\u2504"),
       separatorNodeDown: getSetFromSingle("\u25BF"),
       separatorNodeNone: getSetFromSingle("\u25E6"),
       separatorNodeUp: getSetFromSingle("\u25B5"),
       specialErrorIcon: getSetFromSingle(" ! "),
       folderOpenableIcon: getSetFromSingle("\u203A"),
-      fileOpenableIcon: getSetFromSingle(" ")
+      fileOpenableIcon: getSetFromSingle(" "),
+      timelineTrack: getSetFromSingle("\u2588"),
+      timelineHandle: getSetFromSingle("\u2503"),
+      timelineBar: getSetFromSingle("\u2588")
     }
   };
   return askOptions;
@@ -1617,7 +1647,7 @@ var processThemeItem = (item, defaultItem) => {
   return defaultItem;
 };
 var applyPartialOptionsToAskOptions = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
@@ -1627,28 +1657,31 @@ var applyPartialOptionsToAskOptions = (options) => {
     maxItemsOnScreen: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
     scrollMargin: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.scrollMargin) ?? askOptions.general.scrollMargin,
     fileExplorerColumnWidth: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.fileExplorerColumnWidth) ?? askOptions.general.fileExplorerColumnWidth,
-    fileExplorerMaxItems: ((_g = options == null ? void 0 : options.general) == null ? void 0 : _g.fileExplorerMaxItems) ?? askOptions.general.fileExplorerMaxItems
+    fileExplorerMaxItems: ((_g = options == null ? void 0 : options.general) == null ? void 0 : _g.fileExplorerMaxItems) ?? askOptions.general.fileExplorerMaxItems,
+    tableSelectMaxHeightPercentage: ((_h = options == null ? void 0 : options.general) == null ? void 0 : _h.tableSelectMaxHeightPercentage) ?? askOptions.general.tableSelectMaxHeightPercentage,
+    timelineSpeed: ((_i = options == null ? void 0 : options.general) == null ? void 0 : _i.timelineSpeed) ?? askOptions.general.timelineSpeed,
+    timelineFastSpeed: ((_j = options == null ? void 0 : options.general) == null ? void 0 : _j.timelineFastSpeed) ?? askOptions.general.timelineFastSpeed
   };
   askOptions.text = {
-    boolTrueKeys: ((_h = options == null ? void 0 : options.text) == null ? void 0 : _h.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
-    boolFalseKeys: ((_i = options == null ? void 0 : options.text) == null ? void 0 : _i.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
-    boolYes: ((_j = options == null ? void 0 : options.text) == null ? void 0 : _j.boolYes) ?? askOptions.text.boolYes,
-    boolNo: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolNo) ?? askOptions.text.boolNo,
-    boolYesNoSeparator: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
-    boolYN: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.boolYN) ?? askOptions.text.boolYN,
-    selectAll: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.selectAll) ?? askOptions.text.selectAll,
-    done: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.done) ?? askOptions.text.done,
-    items: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.items) ?? askOptions.text.items,
-    countdown: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.countdown) ?? askOptions.text.countdown,
-    file: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.file) ?? askOptions.text.file,
-    directory: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.directory) ?? askOptions.text.directory,
-    loading: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.loading) ?? askOptions.text.loading,
-    selected: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.selected) ?? askOptions.text.selected,
-    specialNewFolderEnterNothingCancel: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
-    specialNewFolderAddingFolderTo: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
-    specialNewFolderQuestion: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
-    specialSaveFileSavingFileTo: ((_y = options == null ? void 0 : options.text) == null ? void 0 : _y.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
-    specialSaveFileQuestion: ((_z = options == null ? void 0 : options.text) == null ? void 0 : _z.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
+    boolTrueKeys: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
+    boolFalseKeys: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
+    boolYes: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.boolYes) ?? askOptions.text.boolYes,
+    boolNo: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.boolNo) ?? askOptions.text.boolNo,
+    boolYesNoSeparator: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
+    boolYN: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.boolYN) ?? askOptions.text.boolYN,
+    selectAll: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.selectAll) ?? askOptions.text.selectAll,
+    done: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.done) ?? askOptions.text.done,
+    items: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.items) ?? askOptions.text.items,
+    countdown: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.countdown) ?? askOptions.text.countdown,
+    file: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.file) ?? askOptions.text.file,
+    directory: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.directory) ?? askOptions.text.directory,
+    loading: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.loading) ?? askOptions.text.loading,
+    selected: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.selected) ?? askOptions.text.selected,
+    specialNewFolderEnterNothingCancel: ((_y = options == null ? void 0 : options.text) == null ? void 0 : _y.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
+    specialNewFolderAddingFolderTo: ((_z = options == null ? void 0 : options.text) == null ? void 0 : _z.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
+    specialNewFolderQuestion: ((_A = options == null ? void 0 : options.text) == null ? void 0 : _A.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
+    specialSaveFileSavingFileTo: ((_B = options == null ? void 0 : options.text) == null ? void 0 : _B.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
+    specialSaveFileQuestion: ((_C = options == null ? void 0 : options.text) == null ? void 0 : _C.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
   };
   askOptions.formatters = {
     formatPrompt: (() => {
@@ -1677,71 +1710,83 @@ var applyPartialOptionsToAskOptions = (options) => {
     })()
   };
   askOptions.colours = {
-    decoration: processThemeItem((_A = options == null ? void 0 : options.colours) == null ? void 0 : _A.decoration, askOptions.colours.decoration),
-    questionText: processThemeItem((_B = options == null ? void 0 : options.colours) == null ? void 0 : _B.questionText, askOptions.colours.questionText),
-    specialIcon: processThemeItem((_C = options == null ? void 0 : options.colours) == null ? void 0 : _C.specialIcon, askOptions.colours.specialIcon),
-    openingIcon: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.openingIcon, askOptions.colours.openingIcon),
-    promptIcon: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.promptIcon, askOptions.colours.promptIcon),
-    result: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.result, askOptions.colours.result),
-    resultText: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.resultText, askOptions.colours.resultText),
-    resultNumber: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.resultNumber, askOptions.colours.resultNumber),
-    resultBoolean: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.resultBoolean, askOptions.colours.resultBoolean),
-    resultArray: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.resultArray, askOptions.colours.resultArray),
-    resultDate: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.resultDate, askOptions.colours.resultDate),
-    loadingIcon: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.loadingIcon, askOptions.colours.loadingIcon),
-    errorMsg: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.errorMsg, askOptions.colours.errorMsg),
-    item: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.item, askOptions.colours.item),
-    itemIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.itemIcon, askOptions.colours.itemIcon),
-    itemHover: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.itemHover, askOptions.colours.itemHover),
-    itemHoverIcon: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.itemHoverIcon, askOptions.colours.itemHoverIcon),
-    itemBlockHover: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemBlockHover, askOptions.colours.itemBlockHover),
-    itemBlockHoverIcon: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
-    itemSelected: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemSelected, askOptions.colours.itemSelected),
-    itemSelectedIcon: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
-    itemUnselected: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.itemUnselected, askOptions.colours.itemUnselected),
-    itemUnselectedIcon: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
-    scrollbarTrack: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.scrollbarTrack, askOptions.colours.scrollbarTrack),
-    scrollbarBar: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.scrollbarBar, askOptions.colours.scrollbarBar),
-    selectAllText: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.selectAllText, askOptions.colours.selectAllText),
-    boolYNText: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.boolYNText, askOptions.colours.boolYNText),
-    countdown: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.countdown, askOptions.colours.countdown),
-    pause: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.pause, askOptions.colours.pause),
-    specialHover: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.specialHover, askOptions.colours.specialHover),
-    specialSelected: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.specialSelected, askOptions.colours.specialSelected),
-    specialHighlight: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.specialHighlight, askOptions.colours.specialHighlight),
-    specialNormal: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialNormal, askOptions.colours.specialNormal),
-    specialFaded: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialFaded, askOptions.colours.specialFaded),
-    specialHint: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialHint, askOptions.colours.specialHint),
-    specialInactiveHover: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialInactiveHover, askOptions.colours.specialInactiveHover),
-    specialInactiveSelected: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
-    specialInactiveHighlight: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
-    specialInactiveNormal: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
-    specialInactiveFaded: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
-    specialInactiveHint: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialInactiveHint, askOptions.colours.specialInactiveHint),
-    specialInfo: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialInfo, askOptions.colours.specialInfo),
-    specialErrorMsg: processThemeItem((_oa = options == null ? void 0 : options.colours) == null ? void 0 : _oa.specialErrorMsg, askOptions.colours.specialErrorMsg),
-    specialErrorIcon: processThemeItem((_pa = options == null ? void 0 : options.colours) == null ? void 0 : _pa.specialErrorIcon, askOptions.colours.specialErrorIcon)
+    decoration: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.decoration, askOptions.colours.decoration),
+    questionText: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.questionText, askOptions.colours.questionText),
+    specialIcon: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.specialIcon, askOptions.colours.specialIcon),
+    openingIcon: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.openingIcon, askOptions.colours.openingIcon),
+    promptIcon: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.promptIcon, askOptions.colours.promptIcon),
+    result: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.result, askOptions.colours.result),
+    resultText: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.resultText, askOptions.colours.resultText),
+    resultNumber: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.resultNumber, askOptions.colours.resultNumber),
+    resultBoolean: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.resultBoolean, askOptions.colours.resultBoolean),
+    resultArray: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.resultArray, askOptions.colours.resultArray),
+    resultDate: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.resultDate, askOptions.colours.resultDate),
+    loadingIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.loadingIcon, askOptions.colours.loadingIcon),
+    errorMsg: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.errorMsg, askOptions.colours.errorMsg),
+    item: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.item, askOptions.colours.item),
+    itemIcon: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemIcon, askOptions.colours.itemIcon),
+    itemHover: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemHover, askOptions.colours.itemHover),
+    itemHoverIcon: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemHoverIcon, askOptions.colours.itemHoverIcon),
+    itemBlockHover: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemBlockHover, askOptions.colours.itemBlockHover),
+    itemBlockHoverIcon: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
+    itemSelected: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.itemSelected, askOptions.colours.itemSelected),
+    itemSelectedIcon: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
+    itemUnselected: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.itemUnselected, askOptions.colours.itemUnselected),
+    itemUnselectedIcon: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
+    scrollbarTrack: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.scrollbarTrack, askOptions.colours.scrollbarTrack),
+    scrollbarBar: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.scrollbarBar, askOptions.colours.scrollbarBar),
+    selectAllText: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.selectAllText, askOptions.colours.selectAllText),
+    boolYNText: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.boolYNText, askOptions.colours.boolYNText),
+    countdown: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.countdown, askOptions.colours.countdown),
+    pause: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.pause, askOptions.colours.pause),
+    specialHover: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialHover, askOptions.colours.specialHover),
+    specialSelected: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialSelected, askOptions.colours.specialSelected),
+    specialHighlight: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialHighlight, askOptions.colours.specialHighlight),
+    specialNormal: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialNormal, askOptions.colours.specialNormal),
+    specialFaded: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialFaded, askOptions.colours.specialFaded),
+    specialHint: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialHint, askOptions.colours.specialHint),
+    specialInactiveHover: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveHover, askOptions.colours.specialInactiveHover),
+    specialInactiveSelected: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
+    specialInactiveHighlight: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
+    specialInactiveNormal: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
+    specialInactiveFaded: processThemeItem((_oa = options == null ? void 0 : options.colours) == null ? void 0 : _oa.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
+    specialInactiveHint: processThemeItem((_pa = options == null ? void 0 : options.colours) == null ? void 0 : _pa.specialInactiveHint, askOptions.colours.specialInactiveHint),
+    specialInfo: processThemeItem((_qa = options == null ? void 0 : options.colours) == null ? void 0 : _qa.specialInfo, askOptions.colours.specialInfo),
+    specialErrorMsg: processThemeItem((_ra = options == null ? void 0 : options.colours) == null ? void 0 : _ra.specialErrorMsg, askOptions.colours.specialErrorMsg),
+    specialErrorIcon: processThemeItem((_sa = options == null ? void 0 : options.colours) == null ? void 0 : _sa.specialErrorIcon, askOptions.colours.specialErrorIcon),
+    tableSelectHover: processThemeItem((_ta = options == null ? void 0 : options.colours) == null ? void 0 : _ta.tableSelectHover, askOptions.colours.tableSelectHover),
+    timelineTrack: processThemeItem((_ua = options == null ? void 0 : options.colours) == null ? void 0 : _ua.timelineTrack, askOptions.colours.timelineTrack),
+    timelineTrackActive: processThemeItem((_va = options == null ? void 0 : options.colours) == null ? void 0 : _va.timelineTrackActive, askOptions.colours.timelineTrackActive),
+    timelineHandle: processThemeItem((_wa = options == null ? void 0 : options.colours) == null ? void 0 : _wa.timelineHandle, askOptions.colours.timelineHandle),
+    timelineHandleActive: processThemeItem((_xa = options == null ? void 0 : options.colours) == null ? void 0 : _xa.timelineHandleActive, askOptions.colours.timelineHandleActive)
   };
   askOptions.symbols = {
-    specialIcon: processThemeItem((_qa = options == null ? void 0 : options.symbols) == null ? void 0 : _qa.specialIcon, askOptions.symbols.specialIcon),
-    openingIcon: processThemeItem((_ra = options == null ? void 0 : options.symbols) == null ? void 0 : _ra.openingIcon, askOptions.symbols.openingIcon),
-    promptIcon: processThemeItem((_sa = options == null ? void 0 : options.symbols) == null ? void 0 : _sa.promptIcon, askOptions.symbols.promptIcon),
-    errorMsgPrefix: processThemeItem((_ta = options == null ? void 0 : options.symbols) == null ? void 0 : _ta.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
-    itemIcon: processThemeItem((_ua = options == null ? void 0 : options.symbols) == null ? void 0 : _ua.itemIcon, askOptions.symbols.itemIcon),
-    itemHoverIcon: processThemeItem((_va = options == null ? void 0 : options.symbols) == null ? void 0 : _va.itemHoverIcon, askOptions.symbols.itemHoverIcon),
-    itemSelectedIcon: processThemeItem((_wa = options == null ? void 0 : options.symbols) == null ? void 0 : _wa.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
-    itemUnselectedIcon: processThemeItem((_xa = options == null ? void 0 : options.symbols) == null ? void 0 : _xa.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
-    scrollUpIcon: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.scrollUpIcon, askOptions.symbols.scrollUpIcon),
-    scrollDownIcon: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.scrollDownIcon, askOptions.symbols.scrollDownIcon),
-    scrollbarTrack: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.scrollbarTrack, askOptions.symbols.scrollbarTrack),
-    scrollbarBar: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.scrollbarBar, askOptions.symbols.scrollbarBar),
-    separatorLine: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.separatorLine, askOptions.symbols.separatorLine),
-    separatorNodeDown: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.separatorNodeDown, askOptions.symbols.separatorNodeDown),
-    separatorNodeNone: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.separatorNodeNone, askOptions.symbols.separatorNodeNone),
-    separatorNodeUp: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.separatorNodeUp, askOptions.symbols.separatorNodeUp),
-    specialErrorIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.specialErrorIcon, askOptions.symbols.specialErrorIcon),
-    folderOpenableIcon: processThemeItem((_Ha = options == null ? void 0 : options.symbols) == null ? void 0 : _Ha.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
-    fileOpenableIcon: processThemeItem((_Ia = options == null ? void 0 : options.symbols) == null ? void 0 : _Ia.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
+    specialIcon: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.specialIcon, askOptions.symbols.specialIcon),
+    openingIcon: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.openingIcon, askOptions.symbols.openingIcon),
+    promptIcon: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.promptIcon, askOptions.symbols.promptIcon),
+    errorMsgPrefix: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
+    itemIcon: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.itemIcon, askOptions.symbols.itemIcon),
+    itemHoverIcon: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.itemHoverIcon, askOptions.symbols.itemHoverIcon),
+    itemSelectedIcon: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
+    itemUnselectedIcon: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
+    scrollUpIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.scrollUpIcon, askOptions.symbols.scrollUpIcon),
+    scrollDownIcon: processThemeItem((_Ha = options == null ? void 0 : options.symbols) == null ? void 0 : _Ha.scrollDownIcon, askOptions.symbols.scrollDownIcon),
+    scrollbarTrack: processThemeItem((_Ia = options == null ? void 0 : options.symbols) == null ? void 0 : _Ia.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarTrackTrimTop: processThemeItem((_Ja = options == null ? void 0 : options.symbols) == null ? void 0 : _Ja.scrollbarTrackTrimTop, askOptions.symbols.scrollbarTrackTrimTop),
+    scrollbarTrackTrimBottom: processThemeItem((_Ka = options == null ? void 0 : options.symbols) == null ? void 0 : _Ka.scrollbarTrackTrimBottom, askOptions.symbols.scrollbarTrackTrimBottom),
+    scrollbarBar: processThemeItem((_La = options == null ? void 0 : options.symbols) == null ? void 0 : _La.scrollbarBar, askOptions.symbols.scrollbarBar),
+    scrollbarBarTrimTop: processThemeItem((_Ma = options == null ? void 0 : options.symbols) == null ? void 0 : _Ma.scrollbarBarTrimTop, askOptions.symbols.scrollbarBarTrimTop),
+    scrollbarBarTrimBottom: processThemeItem((_Na = options == null ? void 0 : options.symbols) == null ? void 0 : _Na.scrollbarBarTrimBottom, askOptions.symbols.scrollbarBarTrimBottom),
+    separatorLine: processThemeItem((_Oa = options == null ? void 0 : options.symbols) == null ? void 0 : _Oa.separatorLine, askOptions.symbols.separatorLine),
+    separatorNodeDown: processThemeItem((_Pa = options == null ? void 0 : options.symbols) == null ? void 0 : _Pa.separatorNodeDown, askOptions.symbols.separatorNodeDown),
+    separatorNodeNone: processThemeItem((_Qa = options == null ? void 0 : options.symbols) == null ? void 0 : _Qa.separatorNodeNone, askOptions.symbols.separatorNodeNone),
+    separatorNodeUp: processThemeItem((_Ra = options == null ? void 0 : options.symbols) == null ? void 0 : _Ra.separatorNodeUp, askOptions.symbols.separatorNodeUp),
+    specialErrorIcon: processThemeItem((_Sa = options == null ? void 0 : options.symbols) == null ? void 0 : _Sa.specialErrorIcon, askOptions.symbols.specialErrorIcon),
+    folderOpenableIcon: processThemeItem((_Ta = options == null ? void 0 : options.symbols) == null ? void 0 : _Ta.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
+    fileOpenableIcon: processThemeItem((_Ua = options == null ? void 0 : options.symbols) == null ? void 0 : _Ua.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
+    timelineTrack: processThemeItem((_Va = options == null ? void 0 : options.symbols) == null ? void 0 : _Va.timelineTrack, askOptions.symbols.timelineTrack),
+    timelineHandle: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.timelineHandle, askOptions.symbols.timelineHandle),
+    timelineBar: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineBar, askOptions.symbols.timelineBar)
   };
 };
 var setThemeColour = (colour) => {
@@ -1794,7 +1839,12 @@ var setThemeColour = (colour) => {
         normal: colr.darkBg[bgProp].black,
         done: colr.darkBg[bgProp].black
       },
-      specialHighlight: colr[txtProp]
+      specialHighlight: colr[txtProp],
+      tableSelectHover: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+      timelineHandleActive: colr[txtProp]
     }
   });
 };
@@ -1866,9 +1916,14 @@ var getPrinter = (question, baseOptions, valueOptions, itemsOptions) => {
     const outputHasSave = output.includes(ansi2.cursor.save);
     let writeOutput = "";
     writeOutput += ansi2.cursor.down(numLinesAfter - 1);
-    writeOutput += ansi2.erase.lines(numLinesLastPrint - 1) + ansi2.cursor.lineStart + ansi2.erase.line;
+    if (numLinesLastPrint > numLinesOutput) {
+      writeOutput += ansi2.erase.lines(numLinesLastPrint - numLinesOutput) + ansi2.cursor.up(numLinesOutput - 1);
+    } else {
+      writeOutput += ansi2.cursor.up(numLinesLastPrint - 1);
+    }
+    writeOutput += ansi2.cursor.lineStart;
     writeOutput += ansi2.erase.reserve(numLinesOutput);
-    writeOutput += output;
+    writeOutput += output.replace(/\n/g, ansi2.erase.lineEnd + "\n") + ansi2.erase.lineEnd;
     if (!isComplete && !isExit) {
       writeOutput += ansi2.cursor.setShow(baseOptions.showCursor);
       if (outputHasSave)
@@ -2020,11 +2075,12 @@ var valueDisplays = {
     );
   },
   array: (arr, isComplete, isError) => {
+    const PRINT_LIMIT = 3;
     const theme = getAskOptionsForState(isComplete, isError);
     let display = "";
-    if (arr.length <= 2)
+    if (arr.length <= PRINT_LIMIT)
       display = arr.map((v) => valueDisplays.anyByType((v == null ? void 0 : v.title) ?? (v == null ? void 0 : v.value) ?? v, isComplete, isError)).join(", ");
-    if (arr.length > 2)
+    if (arr.length > PRINT_LIMIT)
       display = theme.text.items(arr.length);
     return theme.colours.resultArray(display);
   },
@@ -2584,7 +2640,10 @@ var multiselect = async (question, choices, initial, validate, lc) => {
 };
 
 // src/tools/ask/trim.ts
-import { getDeferred, hours, ObjectTools as ObjectTools3, seconds, symbols as symbols3 } from "swiss-ak";
+import { getDeferred, hours, MathsTools as MathsTools2, ObjectTools as ObjectTools3, seconds, symbols as symbols3 } from "swiss-ak";
+
+// src/utils/actionBar.ts
+import { fn as fn7 } from "swiss-ak";
 
 // src/tools/table.ts
 import { fn as fn6, ArrayTools as ArrayTools7, StringTools as StringTools3 } from "swiss-ak";
@@ -2803,40 +2862,6 @@ var getTableCharacters = (opts) => {
 // src/tools/table.ts
 var table;
 ((table2) => {
-  const getFullOptions2 = (opts) => ({
-    overrideChar: "",
-    overrideHorChar: opts.overrideChar || "",
-    overrideVerChar: opts.overrideChar || "",
-    overrideCornChar: opts.overrideChar || "",
-    overrideOuterChar: opts.overrideChar || "",
-    overrideCharSet: void 0,
-    overridePrioritiseVer: false,
-    align: "left",
-    alignCols: ["left"],
-    colWidths: [],
-    cellPadding: 1,
-    truncate: false,
-    maxWidth: out.utils.getTerminalWidth(),
-    ...opts,
-    wrapperFn: typeof opts.wrapperFn !== "function" ? fn6.noact : opts.wrapperFn,
-    wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn6.noact : opts.wrapLinesFn,
-    wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? colr.bold : opts.wrapHeaderLinesFn,
-    wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn6.noact : opts.wrapBodyLinesFn,
-    drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
-    drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
-    drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
-    transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
-    transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
-    format: (opts.format || []).map(toFullFormatConfig),
-    margin: ((input = 0) => {
-      const arr = [input].flat();
-      const top = arr[0] ?? 0;
-      const right = arr[1] ?? top;
-      const bottom = arr[2] ?? top;
-      const left = arr[3] ?? right ?? top;
-      return [top, right, bottom, left];
-    })(opts.margin)
-  });
   const empty2 = (numCols, char = "") => ArrayTools7.create(numCols, char);
   table2.print = (body, header, options = {}) => {
     const lines = table2.getLines(body, header, options);
@@ -2903,7 +2928,7 @@ var table;
     return lines;
   };
   table2.getLines = (body, header, options = {}) => {
-    const opts = getFullOptions2(options);
+    const opts = utils.getFullOptions(options);
     const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
     const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
     const result = [];
@@ -2990,8 +3015,83 @@ var table;
         result.isBody = isBody;
       return result;
     };
+    utils2.getFullOptions = (opts) => ({
+      overrideChar: "",
+      overrideHorChar: opts.overrideChar || "",
+      overrideVerChar: opts.overrideChar || "",
+      overrideCornChar: opts.overrideChar || "",
+      overrideOuterChar: opts.overrideChar || "",
+      overrideCharSet: void 0,
+      overridePrioritiseVer: false,
+      align: "left",
+      alignCols: ["left"],
+      colWidths: [],
+      cellPadding: 1,
+      truncate: false,
+      maxWidth: out.utils.getTerminalWidth(),
+      ...opts,
+      wrapperFn: typeof opts.wrapperFn !== "function" ? fn6.noact : opts.wrapperFn,
+      wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? fn6.noact : opts.wrapLinesFn,
+      wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? colr.bold : opts.wrapHeaderLinesFn,
+      wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? fn6.noact : opts.wrapBodyLinesFn,
+      drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
+      drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
+      drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
+      transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
+      transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
+      format: (opts.format || []).map(toFullFormatConfig),
+      margin: ((input = 0) => {
+        const arr = [input].flat();
+        const top = arr[0] ?? 0;
+        const right = arr[1] ?? top;
+        const bottom = arr[2] ?? top;
+        const left = arr[3] ?? right ?? top;
+        return [top, right, bottom, left];
+      })(opts.margin)
+    });
   })(utils = table2.utils || (table2.utils = {}));
 })(table || (table = {}));
+
+// src/utils/actionBar.ts
+var getActionBar = (ids, config, pressedId, disabledIds = []) => {
+  const keyList = ids.filter(fn7.isTruthy).filter((key) => config[key]);
+  const row = keyList.map((key) => {
+    const { keys, label } = config[key];
+    return ` [ ${keys} ] ${label} `;
+  });
+  const format = [];
+  if (pressedId) {
+    format.push({ formatFn: colr.darkBg.whiteBg.black, col: keyList.indexOf(pressedId) });
+  }
+  if (disabledIds.length) {
+    disabledIds.forEach((key) => format.push({ formatFn: colr.dim.strikethrough, col: keyList.indexOf(key) }));
+  }
+  return out.utils.joinLines(
+    table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
+  );
+};
+
+// src/tools/ask/imitate.ts
+var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
+  const theme = getAskOptionsForState(isComplete, isError);
+  const resultText = valueDisplays.anyByType(result, isComplete, isError);
+  const output = theme.formatters.formatPrompt(question, resultText, void 0, errorMsg, theme, isComplete, false);
+  if (lc) {
+    const lines = output.split("\n");
+    lc.add(lines.length);
+  }
+  return output;
+};
+var imitate = (question, result, isComplete = true, isError = false, errorMessage, lc) => {
+  const options = getAskOptions();
+  const output = getImitateOutput(question, result, isComplete, isError, isError ? errorMessage : void 0);
+  console.log(output);
+  const lines = output.split("\n");
+  if (options.general.lc)
+    options.general.lc.add(lines.length);
+  if (lc && lc !== options.general.lc)
+    lc.add(lines.length);
+};
 
 // src/tools/ask/trim.ts
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
@@ -3008,197 +3108,214 @@ var getNextHandle = (tool) => {
   const all = ["start", "end"];
   return all[(all.indexOf(tool) + 1) % all.length];
 };
-var getFullOptions = (opts) => ({
-  speed: 1,
-  fastSpeed: 5,
-  showInstructions: true,
-  charTrack: " ",
-  charHandle: "\u2503",
-  charBar: "\u2588",
-  wrapTrack: colr.greyBg,
-  wrapHandle: colr.white,
-  wrapBar: colr.dark.white,
-  ...opts,
-  charActiveHandle: opts.charActiveHandle ?? opts.charHandle ?? "\u2503",
-  charHandleBase: opts.charHandleBase ?? opts.charHandle ?? "\u2588",
-  charActiveHandleBase: opts.charActiveHandleBase ?? opts.charHandleBase ?? opts.charActiveHandle ?? opts.charHandle ?? "\u2588",
-  wrapActiveHandle: opts.wrapActiveHandle ?? opts.wrapHandle ?? colr.yellow.bold,
-  wrapHandleBase: opts.wrapHandleBase ?? opts.wrapHandle ?? colr.white,
-  wrapActiveHandleBase: opts.wrapActiveHandleBase ?? opts.wrapHandleBase ?? opts.wrapActiveHandle ?? opts.wrapHandle ?? colr.yellow.bold
-});
-var getChars = (opts) => ({
-  track: opts.charTrack,
-  handle: opts.charHandle,
-  bar: opts.charBar,
-  activeHandle: opts.charActiveHandle,
-  handleBase: opts.charHandleBase,
-  activeHandleBase: opts.charActiveHandleBase
-});
-var getColors = (opts) => ({
-  track: opts.wrapTrack,
-  handle: opts.wrapHandle,
-  bar: opts.wrapBar,
-  activeHandle: opts.wrapActiveHandle,
-  handleBase: opts.wrapHandleBase,
-  activeHandleBase: opts.wrapActiveHandleBase
-});
-var trim = async (totalFrames, frameRate, options = {}) => {
-  const opts = getFullOptions(options);
-  const lc = getLineCounter();
+var getTrimActionBar = () => {
+  const { general: gen } = getAskOptions();
+  const actionBarConfig = {
+    move: {
+      keys: "\u2190 \u2192",
+      label: `Move ${gen.timelineSpeed} frame${gen.timelineSpeed > 1 ? "s" : ""}`
+    },
+    moveFast: {
+      keys: "\u2191 \u2193",
+      label: `Move ${gen.timelineFastSpeed} frame${gen.timelineFastSpeed > 1 ? "s" : ""}`
+    },
+    switch: {
+      keys: "tab",
+      label: "Switch Handle"
+    },
+    return: {
+      keys: "\u2B90 ",
+      label: "Submit"
+    }
+  };
+  return getActionBar(["move", "moveFast", "switch", "return"], actionBarConfig);
+};
+var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) => {
+  const opts = getAskOptions();
+  const tempLC = getLineCounter();
   const deferred = getDeferred();
   const totalLength = seconds(Math.floor(totalFrames / frameRate));
   const showHours = totalLength > hours(1);
+  let errorInfo = getErrorInfoFromValidationResult(true);
   let activeHandle = "start";
   const handles = {
-    start: 0,
-    end: totalFrames - 1
+    start: (initial == null ? void 0 : initial.start) !== void 0 ? MathsTools2.clamp(initial.start, 0, totalFrames - 1) : 0,
+    end: (initial == null ? void 0 : initial.end) !== void 0 ? MathsTools2.clamp(initial.end, 0, totalFrames - 1) : totalFrames - 1
   };
-  let displayCount = -1;
-  const display = () => {
-    displayCount++;
-    lc.clear();
-    const width = out.utils.getTerminalWidth();
-    const totalSpace = width - 2;
-    const handlePositions = ObjectTools3.mapValues(
-      handles,
-      (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
-    );
-    const befSpace = Math.max(0, handlePositions.start);
-    const barSpace = Math.max(0, handlePositions.end - handlePositions.start);
-    const aftSpace = Math.max(0, totalSpace - handlePositions.end);
-    const char = getChars(opts);
-    const cols = getColors(opts);
-    const actvHand = cols.activeHandle(char.activeHandle);
-    const inactvHand = cols.handle(char.handle);
-    const handStart = activeHandle == "start" ? actvHand : inactvHand;
-    const handEnd = activeHandle == "end" ? actvHand : inactvHand;
-    const drawHandleLabels = () => {
-      const handleLabelsRaw = ObjectTools3.mapValues(handles, (_k, value) => [
-        ` ${toTimeCode(value, frameRate, showHours)} `,
-        ""
-      ]);
-      const handleLabelWidths = ObjectTools3.mapValues(
-        handleLabelsRaw,
-        (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
+  let cacheTermSize = [0, 0];
+  let cacheActionBar = "";
+  const operation = {
+    calc: () => {
+      const termSize = [process.stdout.columns, process.stdout.rows];
+      if (termSize[0] != cacheTermSize[0] || termSize[1] != cacheTermSize[1]) {
+        cacheTermSize = termSize;
+        cacheActionBar = getTrimActionBar();
+      }
+    },
+    validate: () => {
+      if (!validate)
+        return;
+      const result = operation.getResult();
+      const validationResult = validate(result);
+      errorInfo = getErrorInfoFromValidationResult(validationResult);
+    },
+    getResult: () => ({ start: handles.start, end: handles.end }),
+    getResultOutput: (isComplete = false) => {
+      const { colours: col } = getAskOptionsForState(false, errorInfo.isError);
+      const result = operation.getResult();
+      const startOut = col.resultNumber(result.start + colr.dim(` (${toTimeCode(result.start, frameRate, showHours)})`));
+      const endOut = col.resultNumber(result.end + colr.dim(` (${toTimeCode(result.end, frameRate, showHours)})`));
+      return `${startOut} ${col.decoration(symbols3.ARROW_RGT)} ${endOut}`;
+    },
+    display: () => {
+      operation.calc();
+      const width = out.utils.getTerminalWidth();
+      const theme = getAskOptionsForState(false, errorInfo.isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
+      const totalSpace = width - 2;
+      const handlePositions = ObjectTools3.mapValues(
+        handles,
+        (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
       );
-      const handleAligns = {
-        start: handleLabelWidths.start > befSpace ? "left" : "right",
-        end: handleLabelWidths.end > aftSpace ? "right" : "left"
+      const befSpace = Math.max(0, handlePositions.start);
+      const barSpace = Math.max(0, handlePositions.end - handlePositions.start);
+      const aftSpace = Math.max(0, totalSpace - handlePositions.end);
+      const actvHand = col.timelineHandleActive(sym.timelineHandle);
+      const inactvHand = col.timelineHandle(sym.timelineHandle);
+      const handStart = activeHandle == "start" ? actvHand : inactvHand;
+      const handEnd = activeHandle == "end" ? actvHand : inactvHand;
+      const getHandleLabels = () => {
+        const handleLabelsRaw = ObjectTools3.mapValues(handles, (_k, value) => [
+          ` ${toTimeCode(value, frameRate, showHours)} `,
+          ""
+        ]);
+        const handleLabelWidths = ObjectTools3.mapValues(
+          handleLabelsRaw,
+          (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
+        );
+        const handleAligns = {
+          start: handleLabelWidths.start > befSpace ? "left" : "right",
+          end: handleLabelWidths.end > aftSpace ? "right" : "left"
+        };
+        const handleLabels = ObjectTools3.mapValues(
+          handleLabelsRaw,
+          (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
+        );
+        const strtBef = handleAligns.start === "right";
+        const endBef = handleAligns.end === "right";
+        const potentialMaxLabelSpace = handlePositions.end - handlePositions.start;
+        if (!strtBef && potentialMaxLabelSpace < handleLabelWidths.start) {
+          handleLabels.start = handleLabels.start.map((s) => s.slice(0, Math.max(0, potentialMaxLabelSpace - 1)));
+          handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => out.getWidth(s)));
+        }
+        if (endBef && potentialMaxLabelSpace < handleLabelWidths.end) {
+          handleLabels.end = handleLabels.end.map((s) => s.slice(s.length - Math.max(0, potentialMaxLabelSpace - 1)));
+          handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => out.getWidth(s)));
+        }
+        const befLabelSpace = Math.max(0, befSpace - (strtBef ? handleLabelWidths.start : 0));
+        const barLabelSpace = Math.max(0, barSpace - (!strtBef ? handleLabelWidths.start : 0) - (endBef ? handleLabelWidths.end : 0));
+        const aftLabelSpace = Math.max(0, aftSpace - (!endBef ? handleLabelWidths.end : 0));
+        const bef = " ".repeat(befLabelSpace);
+        const bar = " ".repeat(barLabelSpace);
+        const aft = " ".repeat(aftLabelSpace);
+        const handle1 = `${bef}${strtBef ? handleLabels.start[0] : ""}${handStart}${!strtBef ? handleLabels.start[0] : ""}${bar}${endBef ? handleLabels.end[0] : ""}${handEnd}${!endBef ? handleLabels.end[0] : ""}${aft}`;
+        const handle2 = `${bef}${strtBef ? handleLabels.start[1] : ""}${handStart}${!strtBef ? handleLabels.start[1] : ""}${bar}${endBef ? handleLabels.end[1] : ""}${handEnd}${!endBef ? handleLabels.end[1] : ""}${aft}`;
+        return handle1 + "\n" + handle2;
       };
-      const handleLabels = ObjectTools3.mapValues(
-        handleLabelsRaw,
-        (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
-      );
-      const strtBef = handleAligns.start === "right";
-      const endBef = handleAligns.end === "right";
-      const potentialMaxLabelSpace = handlePositions.end - handlePositions.start;
-      if (!strtBef && potentialMaxLabelSpace < handleLabelWidths.start) {
-        handleLabels.start = handleLabels.start.map((s) => s.slice(0, Math.max(0, potentialMaxLabelSpace - 1)));
-        handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => out.getWidth(s)));
-      }
-      if (endBef && potentialMaxLabelSpace < handleLabelWidths.end) {
-        handleLabels.end = handleLabels.end.map((s) => s.slice(s.length - Math.max(0, potentialMaxLabelSpace - 1)));
-        handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => out.getWidth(s)));
-      }
-      const befLabelSpace = Math.max(0, befSpace - (strtBef ? handleLabelWidths.start : 0));
-      const barLabelSpace = Math.max(0, barSpace - (!strtBef ? handleLabelWidths.start : 0) - (endBef ? handleLabelWidths.end : 0));
-      const aftLabelSpace = Math.max(0, aftSpace - (!endBef ? handleLabelWidths.end : 0));
-      const bef = " ".repeat(befLabelSpace);
-      const bar = " ".repeat(barLabelSpace);
-      const aft = " ".repeat(aftLabelSpace);
-      lc.log(
-        `${bef}${strtBef ? handleLabels.start[0] : ""}${handStart}${!strtBef ? handleLabels.start[0] : ""}${bar}${endBef ? handleLabels.end[0] : ""}${handEnd}${!endBef ? handleLabels.end[0] : ""}${aft}`
-      );
-      lc.log(
-        `${bef}${strtBef ? handleLabels.start[1] : ""}${handStart}${!strtBef ? handleLabels.start[1] : ""}${bar}${endBef ? handleLabels.end[1] : ""}${handEnd}${!endBef ? handleLabels.end[1] : ""}${aft}`
-      );
-    };
-    const drawBottomLabels = () => {
-      const startVideoLabel = `[${toTimeCode(0, frameRate, showHours)}]`;
-      const endVideoLabel = `[${toTimeCode(totalFrames - 1, frameRate, showHours)}]`;
-      const trimmedVideoLabel = toTimeCode(handles.end - handles.start, frameRate, showHours);
-      const availSpace = width - (out.getWidth(startVideoLabel) + out.getWidth(endVideoLabel) + out.getWidth(trimmedVideoLabel));
-      const centerPosition = handlePositions.start + Math.floor((handlePositions.end - handlePositions.start) / 2);
-      const centerInSpace = centerPosition - out.getWidth(startVideoLabel) - Math.floor(out.getWidth(trimmedVideoLabel) / 2) + 1;
-      const bef = " ".repeat(Math.max(0, Math.min(availSpace, centerInSpace)));
-      const aft = " ".repeat(Math.max(0, Math.min(availSpace, availSpace - centerInSpace)));
-      lc.log(`${startVideoLabel}${bef}${trimmedVideoLabel}${aft}${endVideoLabel}`);
-    };
-    const drawBar = () => {
-      const actvHand2 = cols.activeHandleBase(char.activeHandleBase);
-      const inactvHand2 = cols.handleBase(char.handleBase);
-      const handStart2 = activeHandle == "start" ? actvHand2 : inactvHand2;
-      const handEnd2 = activeHandle == "end" ? actvHand2 : inactvHand2;
-      const bef = cols.track(char.track.repeat(befSpace));
-      const bar = cols.bar(char.bar.repeat(barSpace));
-      const aft = cols.track(char.track.repeat(aftSpace));
-      lc.log(`${bef}${handStart2}${bar}${handEnd2}${aft}`);
-    };
-    const drawInstructions = () => {
-      if (opts.showInstructions && displayCount < 5) {
-        const body = [
-          [
-            colr.grey.dim(`[${symbols3.TRI_LFT}/${symbols3.TRI_RGT}] move ${opts.speed} frame${opts.speed > 1 ? "s" : ""}`),
-            colr.grey.dim(`[${symbols3.TRI_UPP}/${symbols3.TRI_DWN}] move ${opts.fastSpeed} frame${opts.fastSpeed > 1 ? "s" : ""}`),
-            colr.grey.dim(`[TAB] switch handle`),
-            colr.grey.dim(`[ENTER] submit`)
-          ]
-        ];
-        lc.add(table.print(body, void 0, { drawOuter: false, drawRowLines: false, drawColLines: false, colWidths: [100], alignCols: ["center"] }));
-      } else {
-        lc.log();
-      }
-    };
-    drawHandleLabels();
-    drawBar();
-    drawBottomLabels();
-    drawInstructions();
-  };
-  const swapHandle = () => activeHandle = getNextHandle(activeHandle);
-  const adjustHandle = (amount) => {
-    handles[activeHandle] += amount;
-    if (handles[activeHandle] < 0)
-      handles[activeHandle] = 0;
-    if (handles[activeHandle] > totalFrames - 1)
-      handles[activeHandle] = totalFrames - 1;
-    if (handles.end <= handles.start) {
-      const oldStart = handles.start;
-      const oldEnd = handles.end;
-      handles.end = oldStart;
-      handles.start = oldEnd;
-      swapHandle();
+      const getBar = () => {
+        const actvHand2 = col.timelineHandleActive(sym.timelineBar);
+        const inactvHand2 = col.timelineHandle(sym.timelineBar);
+        const handStart2 = activeHandle == "start" ? actvHand2 : inactvHand2;
+        const handEnd2 = activeHandle == "end" ? actvHand2 : inactvHand2;
+        const bef = col.timelineTrack(sym.timelineTrack.repeat(befSpace));
+        const bar = col.timelineTrackActive(sym.timelineBar.repeat(barSpace));
+        const aft = col.timelineTrack(sym.timelineTrack.repeat(aftSpace));
+        return `${bef}${handStart2}${bar}${handEnd2}${aft}`;
+      };
+      const getBottomLabels = () => {
+        const startVideoLabel = `[${toTimeCode(0, frameRate, showHours)}]`;
+        const endVideoLabel = `[${toTimeCode(totalFrames - 1, frameRate, showHours)}]`;
+        const trimmedVideoLabel = toTimeCode(handles.end - handles.start, frameRate, showHours);
+        const availSpace = width - (out.getWidth(startVideoLabel) + out.getWidth(endVideoLabel) + out.getWidth(trimmedVideoLabel));
+        const centerPosition = handlePositions.start + Math.floor((handlePositions.end - handlePositions.start) / 2);
+        const centerInSpace = centerPosition - out.getWidth(startVideoLabel) - Math.floor(out.getWidth(trimmedVideoLabel) / 2) + 1;
+        const bef = " ".repeat(Math.max(0, Math.min(availSpace, centerInSpace)));
+        const aft = " ".repeat(Math.max(0, Math.min(availSpace, availSpace - centerInSpace)));
+        return `${startVideoLabel}${bef}${trimmedVideoLabel}${aft}${endVideoLabel}`;
+      };
+      const getInstructions = () => col.specialInfo(cacheActionBar);
+      let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
+      output += getImitateOutput(question, operation.getResultOutput(false), false, errorInfo.isError, errorInfo.errorMessage);
+      output += "\n";
+      output += "\n" + getHandleLabels();
+      output += "\n" + getBar();
+      output += "\n" + getBottomLabels();
+      output += "\n";
+      output += "\n" + getInstructions();
+      tempLC.overwrite(output);
     }
   };
-  const submit = () => {
-    kl.stop();
-    lc.clear();
-    const fixedHandles = { start: handles.start, end: handles.end - 1 };
-    deferred.resolve(fixedHandles);
+  const userActions = {
+    swapHandle: () => activeHandle = getNextHandle(activeHandle),
+    adjustHandle: (amount) => {
+      handles[activeHandle] += amount;
+      if (handles[activeHandle] < 0)
+        handles[activeHandle] = 0;
+      if (handles[activeHandle] > totalFrames - 1)
+        handles[activeHandle] = totalFrames - 1;
+      if (handles.end <= handles.start) {
+        const oldStart = handles.start;
+        const oldEnd = handles.end;
+        handles.end = oldStart;
+        handles.start = oldEnd;
+        userActions.swapHandle();
+      }
+      operation.validate();
+    },
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      imitate(question, operation.getResultOutput(true), false, true, void 0, lc);
+      process.exit();
+    },
+    submit: () => {
+      operation.validate();
+      if (errorInfo.isError)
+        return;
+      kl.stop();
+      tempLC.clear();
+      const fixedHandles = operation.getResult();
+      imitate(question, operation.getResultOutput(true), true, false, void 0, lc);
+      deferred.resolve(fixedHandles);
+    }
   };
-  const updateHandles = (keyName) => {
+  const kl = getKeyListener((keyName) => {
     switch (keyName) {
+      case "exit":
+      case "esc":
+        return userActions.exit();
       case "return":
-        return submit();
+        return userActions.submit();
       case "tab":
-        swapHandle();
+        userActions.swapHandle();
         break;
       case "left":
-        adjustHandle(-opts.speed);
+        userActions.adjustHandle(-opts.general.timelineSpeed);
         break;
       case "right":
-        adjustHandle(opts.speed);
+        userActions.adjustHandle(opts.general.timelineSpeed);
         break;
       case "up":
-        adjustHandle(opts.fastSpeed);
+        userActions.adjustHandle(opts.general.timelineFastSpeed);
         break;
       case "down":
-        adjustHandle(-opts.fastSpeed);
+        userActions.adjustHandle(-opts.general.timelineFastSpeed);
         break;
     }
-    display();
-  };
-  const kl = getKeyListener(updateHandles, true);
-  display();
+    operation.display();
+  }, true);
+  operation.validate();
+  operation.display();
   return deferred.promise;
 };
 
@@ -3233,27 +3350,7 @@ var explodePath = PathTools.explodePath;
 
 // src/tools/ask/fileExplorer/helpers.ts
 import * as fsP2 from "fs/promises";
-import { MathsTools as MathsTools2, StringTools as StringTools4, TimeTools, seconds as seconds2, sortNumberedText, tryOr } from "swiss-ak";
-
-// src/utils/actionBar.ts
-import { fn as fn7 } from "swiss-ak";
-var getActionBar = (ids, config, pressedId, disabledIds = []) => {
-  const keyList = ids.filter(fn7.isTruthy).filter((key) => config[key]);
-  const row = keyList.map((key) => {
-    const { keys, label } = config[key];
-    return ` [ ${keys} ] ${label} `;
-  });
-  const format = [];
-  if (pressedId) {
-    format.push({ formatFn: colr.darkBg.whiteBg.black, col: keyList.indexOf(pressedId) });
-  }
-  if (disabledIds.length) {
-    disabledIds.forEach((key) => format.push({ formatFn: colr.dim.strikethrough, col: keyList.indexOf(key) }));
-  }
-  return out.utils.joinLines(
-    table.getLines([row], void 0, { drawOuter: false, drawColLines: false, drawRowLines: false, alignCols: ["center"], colWidths: [200], format })
-  );
-};
+import { MathsTools as MathsTools3, StringTools as StringTools4, TimeTools, seconds as seconds2, sortNumberedText, tryOr } from "swiss-ak";
 
 // src/tools/ask/fileExplorer/cache.ts
 var fsCache = {
@@ -3387,7 +3484,7 @@ var getFileIcon = (ext) => {
 };
 var humanFileSize = (size) => {
   const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return MathsTools2.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
+  return MathsTools3.roundTo(0.01, size / Math.pow(1024, i)) * 1 + " " + ["B", "kB", "MB", "GB", "TB"][i];
 };
 var getFilePanel = (path, panelWidth, maxLines) => {
   var _a;
@@ -3536,28 +3633,6 @@ var getPathType = async (path) => {
   }
 };
 
-// src/tools/ask/imitate.ts
-var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
-  const theme = getAskOptionsForState(isComplete, isError);
-  const resultText = valueDisplays.anyByType(result, isComplete, isError);
-  const output = theme.formatters.formatPrompt(question, resultText, void 0, errorMsg, theme, isComplete, false);
-  if (lc) {
-    const lines = output.split("\n");
-    lc.add(lines.length);
-  }
-  return output;
-};
-var imitate = (question, result, isComplete = true, isError = false, lc) => {
-  const options = getAskOptions();
-  const output = getImitateOutput(question, result, isComplete, isError);
-  console.log(output);
-  const lines = output.split("\n");
-  if (options.general.lc)
-    options.general.lc.add(lines.length);
-  if (lc && lc !== options.general.lc)
-    lc.add(lines.length);
-};
-
 // src/tools/ask/fileExplorer/handler.ts
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "", validateFn, lc) => {
   const options = getAskOptions();
@@ -3583,220 +3658,220 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   let locked = false;
   const originalLC = options.general.lc;
   options.general.lc = getLineCounter2();
-  const recalc = () => {
-    var _a;
-    if (submitted)
-      return;
-    paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
-    currentPath = paths[paths.length - 1];
-    const isDir = ((_a = fsCache.getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(PathTools.explodePath(currentPath).filename)) || false;
-    cursorType = isDir ? "d" : "f";
-    const errorInfo = getErrorInfoFromValidationResult(runValidation());
-    isError = errorInfo.isError;
-    errorMsg = errorInfo.errorMessage;
-  };
-  const loadInitialPathIndexes = () => {
-    recalc();
-    paths.forEach((path, index) => {
-      const cursorItem = cursor[index + 1];
-      if (cursorItem === void 0)
+  const operation = {
+    recalc: () => {
+      var _a;
+      if (submitted)
         return;
-      const contents = fsCache.getPathContents(path);
-      const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
-      cursorIndexes[path] = [cursorIndex, ...cursorIndexes[path] || []].slice(0, 2);
-      LOG("loadInitial - D", { cursorIndexes });
-    });
-  };
-  const updateCursorIndexes = (newIndex) => {
-    recalc();
-    const currentParentDir = paths[paths.length - 2];
-    if (!cursorIndexes[currentParentDir])
-      cursorIndexes[currentParentDir] = [];
-    const lastKnownIndex = cursorIndexes[currentParentDir][0];
-    if (lastKnownIndex !== newIndex)
-      cursorIndexes[currentParentDir] = [newIndex, lastKnownIndex];
-    LOG("updateCursorIndexes", { cursorIndexes });
-  };
-  const runValidation = (newFileName) => {
-    const currentDir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
-    const currentFileName = cursorType === "f" ? cursor[cursor.length - 1] : void 0;
-    return validateFn(cursorType, currentPath, currentDir, currentFileName, Array.from(multiSelected), newFileName);
-  };
-  const loadEssentials = async (executeFn = loadPathContents) => {
-    await Promise.all([
-      PromiseTools.each(paths, executeFn),
-      (async () => {
-        const { dirs } = await executeFn(currentPath);
-        const list = dirs;
-        return PromiseTools.each(
-          list.map((dir) => join(currentPath, dir)),
-          executeFn
-        );
-      })(),
-      (async () => {
-        const parent = PathTools.explodePath(currentPath).dir;
-        const { dirs } = await executeFn(parent);
-        const list = [...dirs];
-        return PromiseTools.each(
-          list.map((dir) => join(parent, dir)),
-          executeFn
-        );
-      })()
-    ]);
-  };
-  const loadNewDepth = async () => {
-    loading = true;
-    display();
-    await loadEssentials(loadPathContents);
-    loading = false;
-    display();
-  };
-  const loadNewItem = async () => {
-    if (!fsCache.getPathContents(currentPath)) {
+      paths = cursor.map((f, index, all) => join(...all.slice(0, index + 1)));
+      currentPath = paths[paths.length - 1];
+      const isDir = ((_a = fsCache.getPathContents(paths[paths.length - 2])) == null ? void 0 : _a.dirs.includes(PathTools.explodePath(currentPath).filename)) || false;
+      cursorType = isDir ? "d" : "f";
+      const errorInfo = getErrorInfoFromValidationResult(operation.runValidation());
+      isError = errorInfo.isError;
+      errorMsg = errorInfo.errorMessage;
+    },
+    loadInitialPathIndexes: () => {
+      operation.recalc();
+      paths.forEach((path, index) => {
+        const cursorItem = cursor[index + 1];
+        if (cursorItem === void 0)
+          return;
+        const contents = fsCache.getPathContents(path);
+        const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
+        cursorIndexes[path] = cursorIndex;
+        LOG("loadInitial - D", { cursorIndexes });
+      });
+    },
+    updateCursorIndexes: (newIndex) => {
+      operation.recalc();
+      const currentParentDir = paths[paths.length - 2];
+      const lastKnownIndex = cursorIndexes[currentParentDir];
+      if (lastKnownIndex !== newIndex)
+        cursorIndexes[currentParentDir] = newIndex;
+      LOG("updateCursorIndexes", { cursorIndexes });
+    },
+    runValidation: (newFileName) => {
+      const currentDir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
+      const currentFileName = cursorType === "f" ? cursor[cursor.length - 1] : void 0;
+      return validateFn(cursorType, currentPath, currentDir, currentFileName, Array.from(multiSelected), newFileName);
+    },
+    loadEssentials: async (executeFn = loadPathContents) => {
+      await Promise.all([
+        PromiseTools.each(paths, executeFn),
+        (async () => {
+          const { dirs } = await executeFn(currentPath);
+          const list = dirs;
+          return PromiseTools.each(
+            list.map((dir) => join(currentPath, dir)),
+            executeFn
+          );
+        })(),
+        (async () => {
+          const parent = PathTools.explodePath(currentPath).dir;
+          const { dirs } = await executeFn(parent);
+          const list = [...dirs];
+          return PromiseTools.each(
+            list.map((dir) => join(parent, dir)),
+            executeFn
+          );
+        })()
+      ]);
+    },
+    loadNewDepth: async () => {
       loading = true;
-      display();
-      await loadPathContents(currentPath);
+      operation.display();
+      await operation.loadEssentials(loadPathContents);
       loading = false;
-      display();
-    } else {
-      display();
-    }
-  };
-  const setPressed = async (key) => {
-    pressed = key;
-    display();
-    if (!key)
-      return;
-    await wait2(milliseconds(100));
-    if (!loading) {
-      pressed = void 0;
-      display();
-    }
-  };
-  const display = async () => {
-    if (submitted)
-      return;
-    recalc();
-    const theme = getAskOptionsForState(false, isError);
-    const { colours: col, symbols: sym, general: gen, text: txt } = theme;
-    const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
-    const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
-    const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
-      const isHighlighted = name === highlighted;
-      const fullPath = join(columnPath, name);
-      const isSelected = isMulti && multiSelected.has(fullPath);
-      const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-      const template = (text2) => `${prefix}${text2} ${symbol} `;
-      const extraChars = out.getWidth(template(""));
-      const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-      let wrapFn = fn8.noact;
-      if (isHighlighted) {
-        if (isActiveColumn) {
-          wrapFn = col.specialHover;
-        } else {
-          wrapFn = col.specialInactiveHover;
-        }
+      operation.display();
+    },
+    loadNewItem: async () => {
+      if (!fsCache.getPathContents(currentPath)) {
+        loading = true;
+        operation.display();
+        await loadPathContents(currentPath);
+        loading = false;
+        operation.display();
       } else {
-        if (isActiveColumn) {
-          wrapFn = isSelected ? col.specialHighlight : regularWrapFn;
+        operation.display();
+      }
+    },
+    setPressed: async (key) => {
+      pressed = key;
+      operation.display();
+      if (!key)
+        return;
+      await wait2(milliseconds(100));
+      if (!loading) {
+        pressed = void 0;
+        operation.display();
+      }
+    },
+    display: async () => {
+      if (submitted)
+        return;
+      operation.recalc();
+      const theme = getAskOptionsForState(false, isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
+      const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
+      const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
+      const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
+        const isHighlighted = name === highlighted;
+        const fullPath = join(columnPath, name);
+        const isSelected = isMulti && multiSelected.has(fullPath);
+        const prefix = isSelected ? selectedPrefix : unselectedPrefix;
+        const template = (text2) => `${prefix}${text2} ${symbol} `;
+        const extraChars = out.getWidth(template(""));
+        const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
+        let wrapFn = fn8.noact;
+        if (isHighlighted) {
+          if (isActiveColumn) {
+            wrapFn = col.specialHover;
+          } else {
+            wrapFn = col.specialInactiveHover;
+          }
         } else {
-          wrapFn = isSelected ? col.specialInactiveHighlight : regularWrapFn;
+          if (isActiveColumn) {
+            wrapFn = isSelected ? col.specialHighlight : regularWrapFn;
+          } else {
+            wrapFn = isSelected ? col.specialInactiveHighlight : regularWrapFn;
+          }
         }
-      }
-      return wrapFn(colr.clear(stretched));
-    };
-    const { dir: formatDir, file: formatFile } = {
-      single: {
-        d: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
-          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded)
+        return wrapFn(colr.clear(stretched));
+      };
+      const { dir: formatDir, file: formatFile } = {
+        single: {
+          d: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+            file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded)
+          },
+          f: {
+            dir: formatter(sym.folderOpenableIcon, col.specialFaded),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal)
+          },
+          df: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal)
+          }
         },
-        f: {
-          dir: formatter(sym.folderOpenableIcon, col.specialFaded),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal)
-        },
-        df: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal)
+        multi: {
+          d: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon),
+            file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded, "   ", "   ")
+          },
+          f: {
+            dir: formatter(sym.folderOpenableIcon, col.specialFaded, "   ", "   "),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
+          },
+          df: {
+            dir: formatter(sym.folderOpenableIcon, col.specialNormal, "   ", "   "),
+            file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
+          }
         }
-      },
-      multi: {
-        d: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon),
-          file: formatter(sym.fileOpenableIcon, col.specialInactiveFaded, "   ", "   ")
-        },
-        f: {
-          dir: formatter(sym.folderOpenableIcon, col.specialFaded, "   ", "   "),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
-        },
-        df: {
-          dir: formatter(sym.folderOpenableIcon, col.specialNormal, "   ", "   "),
-          file: formatter(sym.fileOpenableIcon, col.specialNormal, selectedIcon, unselectedIcon)
+      }[isMulti ? "multi" : "single"][accepted.join("")];
+      const emptyColumn = [" ".repeat(minWidth), ..." ".repeat(maxItems - 1).split("")];
+      const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
+        const currentParentDir = paths[index];
+        const dirs = (contents == null ? void 0 : contents.dirs) || [];
+        const files = (contents == null ? void 0 : contents.files) || [];
+        const list = [...dirs, ...files];
+        const isScrollbar = list.length > maxItems;
+        const contentWidth = Math.max(...list.map((s) => s.length));
+        const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
+        const highlighted = cursor[index + 1];
+        const highlightedIndex = list.indexOf(highlighted);
+        const isActiveCol = index + 2 === cursor.length;
+        const columnPath = paths[index];
+        const formattedLines = [
+          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
+          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
+        ];
+        if (isScrollbar) {
+          const currentHoverIndex = cursorIndexes[currentParentDir] ?? (highlightedIndex !== -1 ? highlightedIndex : 0);
+          const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
+          const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
+          scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
+          const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
+          return out.utils.joinLines(scrolledItems.items.map((line, index2) => line + scrollbar[index2]));
         }
+        return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
+      });
+      if (cursorType === "f") {
+        allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
       }
-    }[isMulti ? "multi" : "single"][accepted.join("")];
-    const emptyColumn = [" ".repeat(minWidth), ..." ".repeat(maxItems - 1).split("")];
-    const allColumns = paths.map(fsCache.getPathContents).map((contents, index) => {
-      const currentParentDir = paths[index];
-      const dirs = (contents == null ? void 0 : contents.dirs) || [];
-      const files = (contents == null ? void 0 : contents.files) || [];
-      const list = [...dirs, ...files];
-      const isScrollbar = list.length > maxItems;
-      const contentWidth = Math.max(...list.map((s) => s.length));
-      const width = Math.max(minWidth, Math.min(contentWidth, maxWidth)) - (isScrollbar ? 1 : 0);
-      const highlighted = cursor[index + 1];
-      const highlightedIndex = list.indexOf(highlighted);
-      const isActiveCol = index + 2 === cursor.length;
-      const columnPath = paths[index];
-      const formattedLines = [
-        ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
-        ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
-      ];
-      if (isScrollbar) {
-        const [currentHoverIndex] = cursorIndexes[currentParentDir] ?? [highlightedIndex !== -1 ? highlightedIndex : 0];
-        const previousStartIndex = scrollLastStartingIndex[currentParentDir] ?? 0;
-        const scrolledItems = getScrolledItems(formattedLines, currentHoverIndex, previousStartIndex, maxItems, theme.general.scrollMargin);
-        scrollLastStartingIndex[currentParentDir] = scrolledItems.startingIndex;
-        const scrollbar = getScrollbar(formattedLines, scrolledItems, theme);
-        return out.utils.joinLines(scrolledItems.items.map((line, index2) => line + scrollbar[index2]));
-      }
-      return out.utils.joinLines([...formattedLines, ...emptyColumn].slice(0, maxItems));
-    });
-    if (cursorType === "f") {
-      allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
+      const columns = [...allColumns.slice(-maxColumns), ...ArrayTools8.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+      const termWidth = out.utils.getTerminalWidth();
+      const tableLines = table.getLines([columns], void 0, {
+        wrapLinesFn: col.decoration,
+        drawOuter: true,
+        cellPadding: 0,
+        truncate: "",
+        maxWidth: Infinity
+      });
+      const tableOut = out.center(out.limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
+      const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
+      const cursorTypeOut = colr.dim(`(${{ f: txt.file, d: txt.directory }[cursorType]})`);
+      const infoLine = (() => {
+        const loadingOut = loading ? col.specialFaded(txt.loading) : void 0;
+        const count = isMulti ? col.specialFaded(`${col.specialHint("[")} ${txt.selected(multiSelected.size)} ${col.specialHint("]")} `) : "";
+        const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
+        const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
+        return out.center(split, termWidth);
+      })();
+      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+      const actionBar = getFEActionBar(isMulti, pressed, [], isError);
+      let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
+      const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);
+      output += imitated;
+      output += "\n" + infoLine;
+      output += "\n" + tableOut;
+      tempLC.overwrite(output);
+      tempLC.checkpoint("actionBar");
+      let output2 = actionBar;
+      output2 += "\n".repeat(out.utils.getNumLines(imitated));
+      tempLC.overwrite(output2);
+      tempLC.checkpoint("post-display");
     }
-    const columns = [...allColumns.slice(-maxColumns), ...ArrayTools8.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
-    const termWidth = out.utils.getTerminalWidth();
-    const tableLines = table.getLines([columns], void 0, {
-      wrapLinesFn: col.decoration,
-      drawOuter: true,
-      cellPadding: 0,
-      truncate: "",
-      maxWidth: Infinity
-    });
-    const tableOut = out.center(out.limitToLengthStart(tableLines.join("\n"), termWidth - 1), termWidth);
-    const tableWidth = out.getWidth(tableLines[Math.floor(tableLines.length / 2)]);
-    const cursorTypeOut = colr.dim(`(${{ f: txt.file, d: txt.directory }[cursorType]})`);
-    const infoLine = (() => {
-      const loadingOut = loading ? col.specialFaded(txt.loading) : void 0;
-      const count = isMulti ? col.specialFaded(`${col.specialHint("[")} ${txt.selected(multiSelected.size)} ${col.specialHint("]")} `) : "";
-      const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
-      const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
-      return out.center(split, termWidth);
-    })();
-    const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
-    const actionBar = getFEActionBar(isMulti, pressed, [], isError);
-    let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
-    const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);
-    output += imitated;
-    output += "\n" + infoLine;
-    output += "\n" + tableOut;
-    tempLC.log(output.replace(/\n/g, ansi2.erase.lineEnd + "\n"));
-    tempLC.checkpoint("actionBar");
-    let output2 = actionBar;
-    output2 += "\n".repeat(out.utils.getNumLines(imitated));
-    tempLC.log(output2.replace(/\n/g, ansi2.erase.lineEnd + "\n"));
-    tempLC.checkpoint("post-display");
   };
   const userActions = {
     moveVertical: (direction) => {
@@ -3810,8 +3885,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const nextIndex = (list.length + currIndex + direction) % list.length;
       const nextValue = list[nextIndex];
       cursor = [...folds, nextValue];
-      updateCursorIndexes(nextIndex);
-      loadNewItem();
+      operation.updateCursorIndexes(nextIndex);
+      operation.loadNewItem();
     },
     moveRight: () => {
       const current = cursor[cursor.length - 1];
@@ -3822,33 +3897,33 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const nextList = [...nextContents.dirs, ...nextContents.files];
       if (!nextList.length)
         return;
-      const savedIndex = (cursorIndexes[paths[cursor.length - 1]] || [])[0] ?? 0;
+      const savedIndex = cursorIndexes[paths[cursor.length - 1]] ?? 0;
       cursor = [...cursor, nextList[savedIndex] ?? nextList[0]];
-      loadNewDepth();
+      operation.loadNewDepth();
     },
     moveLeft: () => {
       if (cursor.length <= 2)
         return;
       cursor = cursor.slice(0, -1);
-      loadNewDepth();
+      operation.loadNewDepth();
     },
     refresh: async () => {
       if (loading)
         return;
       loading = true;
       locked = true;
-      setPressed("r");
+      operation.setPressed("r");
       const allKeys = Array.from(fsCache.cache.keys());
       const restKeys = new Set(allKeys);
-      await loadEssentials((path) => {
+      await operation.loadEssentials((path) => {
         restKeys.delete(path);
         return forceLoadPathContents(path);
       });
-      display();
+      operation.display();
       loading = false;
       locked = false;
       if (pressed === "r")
-        setPressed(void 0);
+        operation.setPressed(void 0);
       await PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
@@ -3862,11 +3937,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         } else {
           multiSelected.add(currentPath);
         }
-        setPressed("space");
+        operation.setPressed("space");
       }
     },
     takeInput: async (preQuestion, inputFn, postQuestion) => {
-      display();
+      operation.display();
       loading = true;
       kl.stop();
       tempLC.clearToCheckpoint("actionBar");
@@ -3874,7 +3949,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const value = await inputFn();
       const skipDisplay = postQuestion ? await postQuestion(value) ?? false : false;
       if (!skipDisplay)
-        display();
+        operation.display();
       kl.start();
       loading = false;
       locked = false;
@@ -3900,7 +3975,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
             await mkdir2(newFolderPath);
           }
           tempLC.clearToCheckpoint("newFolder");
-          display();
+          operation.display();
           await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
           return;
         }
@@ -3928,7 +4003,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
             col.specialFaded("  " + txt.specialSaveFileSavingFileTo) + col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), out.utils.getTerminalWidth() - 20))
           );
         },
-        () => ask.text(txt.specialSaveFileQuestion(col.specialHighlight), initial, (text2) => runValidation(text2), tempLC),
+        () => ask.text(txt.specialSaveFileQuestion(col.specialHighlight), initial, (text2) => operation.runValidation(text2), tempLC),
         () => {
           tempLC.clearToCheckpoint("saveName");
           return true;
@@ -3939,7 +4014,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       tempLC.clear();
       options.general.lc = originalLC;
       const result = join(basePath, newFileName);
-      ask.imitate(question, result, true, false, lc);
+      ask.imitate(question, result, true, false, void 0, lc);
       process.stdout.write(ansi2.cursor.show);
       return deferred.resolve([result]);
     },
@@ -3947,13 +4022,13 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       if (!accepted.includes(cursorType))
         return;
       submitted = true;
-      setPressed("return");
+      operation.setPressed("return");
       kl.stop();
       tempLC.clear();
       options.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const result = isMulti ? Array.from(multiSelected) : [currentPath];
-      ask.imitate(question, resultOut, true, false, lc);
+      ask.imitate(question, resultOut, true, false, void 0, lc);
       return deferred.resolve(result);
     },
     exit: () => {
@@ -3961,7 +4036,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       tempLC.clear();
       options.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
-      ask.imitate(question, resultOut, false, true, lc);
+      ask.imitate(question, resultOut, false, true, void 0, lc);
       process.stdout.write(ansi2.cursor.show);
       process.exit();
     }
@@ -3995,8 +4070,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         return userActions.submit();
     }
   });
-  loadNewDepth().then(() => {
-    loadInitialPathIndexes();
+  operation.loadNewDepth().then(() => {
+    operation.loadInitialPathIndexes();
   });
   return deferred.promise;
 };
@@ -4035,10 +4110,10 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/datetime.ts
-import { days as days2, getDeferred as getDeferred3, getTimer } from "swiss-ak";
+import { days as days2, getDeferred as getDeferred3 } from "swiss-ak";
 
 // src/utils/dynDates.ts
-import { DAY, MathsTools as MathsTools3, days, sortByMapped as sortByMapped2 } from "swiss-ak";
+import { DAY, MathsTools as MathsTools4, days, sortByMapped as sortByMapped2 } from "swiss-ak";
 var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
 var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
 var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
@@ -4061,9 +4136,9 @@ var getDaysInMonth = (year, month, _dy) => {
 };
 var correctDate = ([inYr, inMo, inDy]) => {
   const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = MathsTools3.clamp(notNaN(inMo), 1, 12);
+  const outMo = MathsTools4.clamp(notNaN(inMo), 1, 12);
   const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = MathsTools3.clamp(notNaN(inDy), 1, daysInMonth);
+  const outDy = MathsTools4.clamp(notNaN(inDy), 1, daysInMonth);
   return [outYr, outMo, outDy];
 };
 var addMonths = ([yr, mo, dy], add = 1) => {
@@ -4239,41 +4314,43 @@ var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, is
     prev: { table: [], coors: [] },
     next: { table: [], coors: [] }
   };
-  const recalc = (skipDisplay = false) => {
-    prevMonth = addMonths(cursors[selected], -1);
-    nextMonth = addMonths(cursors[selected], 1);
-    currMonthDays = getDaysInMonth(...cursors[selected]);
-    if (!skipDisplay) {
-      display();
+  const operation = {
+    recalc: (skipDisplay = false) => {
+      prevMonth = addMonths(cursors[selected], -1);
+      nextMonth = addMonths(cursors[selected], 1);
+      currMonthDays = getDaysInMonth(...cursors[selected]);
+      if (!skipDisplay) {
+        operation.display();
+      }
+    },
+    setCursor: (newCursor, skipDisplay = false) => {
+      cursors[selected] = newCursor;
+      valueChangeCb(isRange ? sortDynDates(cursors) : cursors);
+      operation.recalc(skipDisplay);
+    },
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
+      LOG("dateHandler.display", { isError, errorMessage, cursors, selected, active });
+      const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
+      tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
+      tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
+      tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
+      displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
     }
   };
-  const setCursor = (newCursor, skipDisplay = false) => {
-    cursors[selected] = newCursor;
-    valueChangeCb(isRange ? sortDynDates(cursors) : cursors);
-    recalc(skipDisplay);
-  };
-  const display = () => {
-    const { isError, errorMessage } = getErrorInfo();
-    LOG("dateHandler.display", { isError, errorMessage, cursors, selected, active });
-    const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
-    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
-    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
-    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
-    displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
-  };
   const userActions = {
-    setDate: (date2) => setCursor([cursors[selected][0], cursors[selected][1], date2]),
+    setDate: (date2) => operation.setCursor([cursors[selected][0], cursors[selected][1], date2]),
     switchSelected: () => {
       selected = (selected + 1) % MAX_SELECTED;
-      recalc();
+      operation.recalc();
     },
-    moveMonth: (dir) => setCursor(addMonths(cursors[selected], dir)),
-    moveYear: (dir) => setCursor(addMonths(cursors[selected], dir * 12)),
+    moveMonth: (dir) => operation.setCursor(addMonths(cursors[selected], dir)),
+    moveYear: (dir) => operation.setCursor(addMonths(cursors[selected], dir * 12)),
     moveHor: (dir) => {
       const [yr, mo, dy] = cursors[selected];
       const currWeekday = getWeekday(cursors[selected]);
       if (dir < 0 && currWeekday > 0 || dir > 0 && currWeekday < 6) {
-        return setCursor(addDays(cursors[selected], dir));
+        return operation.setCursor(addDays(cursors[selected], dir));
       }
       const [currCol, currRow] = tables.actv.coors.find(([x, y, val]) => val === dy);
       const newRow = currRow;
@@ -4283,24 +4360,22 @@ var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, is
       const [newYear, newMonth] = addMonths(cursors[selected], dir);
       if (newDay < 0)
         newDay = dir > 0 ? 1 : getDaysInMonth(newYear, newMonth);
-      return setCursor(correctDate([newYear, newMonth, newDay]));
+      return operation.setCursor(correctDate([newYear, newMonth, newDay]));
     },
-    moveVer: (dir) => setCursor(addDays(cursors[selected], dir * 7))
+    moveVer: (dir) => operation.setCursor(addDays(cursors[selected], dir * 7))
   };
-  setCursor(initial[0], true);
+  operation.setCursor(initial[0], true);
   const result = {
     getValue: () => isRange ? sortDynDates(cursors) : cursors,
     setActive: (isActive2) => {
       active = isActive2;
-      display();
+      operation.display();
     },
-    triggerDisplay: () => display(),
+    triggerDisplay: () => operation.display(),
     inputKey: (key, num) => {
       if (num !== void 0)
         return userActions.setDate(num);
       switch (key) {
-        case "esc":
-          return process.exit(0);
         case "tab":
           return userActions.switchSelected();
         case "right":
@@ -4344,46 +4419,46 @@ var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) =>
   let current = [...initial];
   let cursor = 0;
   let active = isActive;
-  const display = () => {
-    const { isError, errorMessage } = getErrorInfo();
-    LOG("timeHandler.display", { isError, errorMessage, current, cursor, active });
-    const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
-    const lines = out.concatLineGroups(...dials);
-    const padded = out.centerLines(lines);
-    displayCb(padded);
+  const operation = {
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
+      LOG("timeHandler.display", { isError, errorMessage, current, cursor, active });
+      const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
+      const lines = out.concatLineGroups(...dials);
+      const padded = out.centerLines(lines);
+      displayCb(padded);
+    }
   };
   const userActions = {
     set: (val) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + val) % max;
       valueChangeCb(current);
-      display();
+      operation.display();
     },
     moveHor: (dir) => {
       cursor = (MAX_COL + cursor + dir) % MAX_COL;
       valueChangeCb(current);
-      display();
+      operation.display();
     },
     moveVer: (dir) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + current[cursor] + dir) % max;
       valueChangeCb(current);
-      display();
+      operation.display();
     }
   };
   const result = {
     getValue: () => current,
     setActive: (isActive2) => {
       active = isActive2;
-      display();
+      operation.display();
     },
-    triggerDisplay: () => display(),
+    triggerDisplay: () => operation.display(),
     inputKey: (key, num) => {
       if (num !== void 0)
         return userActions.set(num);
       switch (key) {
-        case "esc":
-          return process.exit(0);
         case "right":
           return userActions.moveHor(1);
         case "left":
@@ -4399,8 +4474,6 @@ var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) =>
 };
 
 // src/tools/ask/datetime.ts
-var DEBUG_TIMER = getTimer("DEBUG", false, colr.dark.red);
-var IS_DEBUG = false;
 var actionConfig = {
   "tab-section": {
     keys: "tab",
@@ -4478,86 +4551,97 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
   let activeHandler = isDateOn ? "date" : "time";
   let errorInfo = { isError: false, errorMessage: void 0 };
   const getErrorInfo = () => errorInfo;
+  const displayCache = { date: [], time: [] };
   const valueCache = {
     date: initialDate,
     time: initialTime
   };
-  const onValueChange = (key) => (newValue) => {
-    valueCache[key] = newValue;
-    errorInfo = runValidation();
-  };
-  const getResult = (dateData = valueCache.date, timeData = valueCache.time) => convertFn([dateData, timeData]);
-  const runValidation = (dateData = valueCache.date, timeData = valueCache.time) => {
-    const validateResult = validateFn == null ? void 0 : validateFn(getResult(dateData, timeData));
-    const info = getErrorInfoFromValidationResult(validateResult);
-    return info;
-  };
-  const displayCache = { date: [], time: [] };
-  const onDisplay = (key) => (lines) => {
-    DEBUG_TIMER.start("overall display");
-    displayCache[key] = lines;
-    const { date: date2, time: time2 } = displayCache;
-    const { isError, errorMessage } = errorInfo;
-    const sections = [];
-    if (date2.length)
-      sections.push(date2);
-    if (date2.length && time2.length)
-      sections.push(out.centerLines([""], 8));
-    if (time2.length)
-      sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
-    const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
-    const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
-    const outError = getDTErrorLine(errorInfo);
-    let output = "";
-    output += getImitateOutput(questionText, outState, false, isError, void 0);
-    output += "\n";
-    output += "\n" + outMain;
-    output += "\n" + outError;
-    output += "\n" + outAction;
-    tempLC.log(tempLC.ansi.clear() + output);
-    if (IS_DEBUG) {
-      tempLC.add(DEBUG_TIMER.log());
+  const operation = {
+    onValueChange: (key) => (newValue) => {
+      valueCache[key] = newValue;
+      errorInfo = operation.runValidation();
+    },
+    getResult: (dateData = valueCache.date, timeData = valueCache.time) => convertFn([dateData, timeData]),
+    runValidation: (dateData = valueCache.date, timeData = valueCache.time) => {
+      const validateResult = validateFn == null ? void 0 : validateFn(operation.getResult(dateData, timeData));
+      const info = getErrorInfoFromValidationResult(validateResult);
+      return info;
+    },
+    onDisplay: (key) => (lines) => {
+      displayCache[key] = lines;
+      operation.display();
+    },
+    display: () => {
+      const { date: date2, time: time2 } = displayCache;
+      const { isError } = errorInfo;
+      const sections = [];
+      if (date2.length)
+        sections.push(date2);
+      if (date2.length && time2.length)
+        sections.push(out.centerLines([""], 8));
+      if (time2.length)
+        sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
+      const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
+      const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
+      const outError = getDTErrorLine(errorInfo);
+      let output = ansi2.cursor.hide;
+      output += getImitateOutput(questionText, outState, false, isError, void 0);
+      output += "\n";
+      output += "\n" + outMain;
+      output += "\n" + outError;
+      output += "\n" + outAction;
+      tempLC.overwrite(tempLC.ansi.moveHome() + output);
+    },
+    eachHandler: (cb) => Object.entries(handlers).filter(([key, handler]) => handler).forEach(([key, handler]) => cb(key, handler)),
+    switchActive: () => {
+      if (isSwitchable) {
+        activeHandler = activeHandler === "date" ? "time" : "date";
+        operation.eachHandler((key, handler) => handler.setActive(key === activeHandler));
+      }
+    },
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, true);
+      ask.imitate(questionText, outState, false, true, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
+      process.exit();
+    },
+    submit: () => {
+      var _a, _b;
+      const dates = (_a = handlers.date) == null ? void 0 : _a.getValue();
+      const time2 = (_b = handlers.time) == null ? void 0 : _b.getValue();
+      const { isError } = operation.runValidation(dates, time2);
+      if (isError)
+        return;
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
+      kl.stop();
+      tempLC.clear();
+      ask.imitate(questionText, outState, true, false, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
+      deferred.resolve(convertFn([dates, time2]));
     }
-    DEBUG_TIMER.reset();
   };
   const handlers = {
-    date: isDateOn && dateHandler(activeHandler === "date", initialDate, onValueChange("date"), getErrorInfo, onDisplay("date"), isRange) || void 0,
-    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, onValueChange("time"), getErrorInfo, onDisplay("time")) || void 0
-  };
-  const eachHandler = (cb) => Object.entries(handlers).filter(([key, handler]) => handler).forEach(([key, handler]) => cb(key, handler));
-  const switchActive = () => {
-    if (isSwitchable) {
-      activeHandler = activeHandler === "date" ? "time" : "date";
-      eachHandler((key, handler) => handler.setActive(key === activeHandler));
-    }
-  };
-  const submit = () => {
-    var _a, _b;
-    const dates = (_a = handlers.date) == null ? void 0 : _a.getValue();
-    const time2 = (_b = handlers.time) == null ? void 0 : _b.getValue();
-    const { isError } = runValidation(dates, time2);
-    if (isError)
-      return;
-    const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
-    kl.stop();
-    tempLC.clear();
-    ask.imitate(questionText, outState, true, false, lc);
-    deferred.resolve(convertFn([dates, time2]));
+    date: isDateOn && dateHandler(activeHandler === "date", initialDate, operation.onValueChange("date"), getErrorInfo, operation.onDisplay("date"), isRange) || void 0,
+    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, operation.onValueChange("time"), getErrorInfo, operation.onDisplay("time")) || void 0
   };
   const numberInputter = getNumberInputter();
   const kl = getKeyListener((key) => {
-    DEBUG_TIMER.start("since keypress");
     switch (key) {
+      case "exit":
+      case "esc":
+        return operation.exit();
       case "tab":
         numberInputter.reset();
         if (isDateOn && !isTimeOn && isRange && activeHandler === "date") {
           return handlers.date.inputKey(key, void 0);
         }
-        return switchActive();
+        return operation.switchActive();
       case "return":
         numberInputter.reset();
-        return submit();
+        return operation.submit();
       case "0":
       case "1":
       case "2":
@@ -4576,7 +4660,7 @@ var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, 
         return handlers[activeHandler].inputKey(key, void 0);
     }
   });
-  eachHandler((key, handler) => handler.triggerDisplay());
+  operation.eachHandler((key, handler) => handler.triggerDisplay());
   return deferred.promise;
 };
 var getDefaultDate = (isDateOn, isTimeOn, dateOffset = 0) => {
@@ -4669,96 +4753,273 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
 };
 
 // src/tools/ask/table.ts
-import { fn as fn10, getDeferred as getDeferred4, symbols as symbols4 } from "swiss-ak";
-var highlightFn = colr.dark.cyan.underline;
-var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}) => {
+import { fn as fn10, getDeferred as getDeferred4, MathsTools as MathsTools5 } from "swiss-ak";
+var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}, validate, lc) => {
   const questionText = typeof question === "string" ? question : question.get();
-  const lc = getLineCounter();
+  const tempLC = getLineCounter();
   const deferred = getDeferred4();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
+  activeIndex = MathsTools5.clamp(activeIndex, 0, items.length - 1);
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
-  ask.imitate(questionText, `- Use arrow-keys. ${isMulti ? "Space to select. " : ""}Enter to ${isMulti ? "confirm" : "select"}.`, false);
-  lc.checkpoint("AFTER_Q");
-  let lastDrawnRows = [];
-  const drawTable = () => {
-    const tableOpts = {
-      margin: [1, 0, 0, 0],
-      ...tableOptions,
-      format: [
-        { formatFn: highlightFn, isBody: true, isHeader: false, row: activeIndex },
-        ...tableOptions.format || []
-      ]
-    };
-    let body;
-    let header;
-    if (rows) {
-      body = typeof rows === "function" ? items.map(rows) : rows;
-      header = headers;
-    } else {
-      const isHeaderObj = headers && !(headers instanceof Array);
-      const objTable = table.utils.objectsToTable(items, isHeaderObj ? headers : void 0);
-      body = objTable.body;
-      header = isHeaderObj ? objTable.header : headers;
+  let fullOptions = void 0;
+  let bodyRowHeight = 0;
+  let headerHeight = 0;
+  let numRows = Infinity;
+  let colWidths = [];
+  let scrollLastStartingIndex = 0;
+  let calcedTermSize = [0, 0];
+  let errorInfo = getErrorInfoFromValidationResult(true);
+  const operation = {
+    calculateSetup: () => {
+      var _a, _b;
+      calcedTermSize = [process.stdout.columns, process.stdout.rows];
+      const askOptions2 = getAskOptions();
+      const HOR_CHAR = "_";
+      const VER_CHAR = "\u2579";
+      fullOptions = table.utils.getFullOptions(operation.getTableOptions(0));
+      const overrideOptions = {
+        overrideHorChar: HOR_CHAR,
+        overrideCornChar: HOR_CHAR,
+        overrideVerChar: VER_CHAR,
+        drawRowLines: true,
+        drawOuter: true,
+        align: "left"
+      };
+      const { tableLines, body, header } = operation.getTable(items, activeIndex, 0, {}, overrideOptions);
+      const horiLine = fullOptions.drawRowLines === false ? 0 : 1;
+      const indexesOfHoriLines = tableLines.map((line, index) => line.startsWith(HOR_CHAR.repeat(4)) ? index : void 0).filter((i) => i !== void 0);
+      const allRowHeights = indexesOfHoriLines.slice(0, -1).map((num, i) => indexesOfHoriLines[i + 1] - num);
+      const allHeaderHeights = allRowHeights.slice(0, header.length);
+      const allBodyHeights = allRowHeights.slice(header.length);
+      bodyRowHeight = Math.max(...allBodyHeights) - horiLine;
+      const imitatedQuestion = getImitateOutput(questionText, "", false, false, void 0);
+      const questPromptHeight = out.utils.getNumLines(imitatedQuestion);
+      const actionBar = getTableSelectActionBar(isMulti);
+      const actionBarHeight = out.utils.getNumLines(actionBar);
+      const topMargin = ((_a = fullOptions.margin) == null ? void 0 : _a[0]) ?? 0;
+      const bottomMargin = (((_b = fullOptions.margin) == null ? void 0 : _b[2]) ?? topMargin) + 1;
+      headerHeight = horiLine;
+      if (header.length) {
+        const dividerLine = 1;
+        headerHeight = MathsTools5.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
+        headerHeight += dividerLine;
+      }
+      const maxHeight = Math.floor(askOptions2.general.tableSelectMaxHeightPercentage / 100 * calcedTermSize[1]);
+      const availableSpace = maxHeight - questPromptHeight - actionBarHeight - topMargin - bottomMargin;
+      numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
+      numRows = MathsTools5.clamp(numRows, 1, items.length);
+      const mostColumns = Math.max(...body.map((row) => row.length));
+      const typicalLine = tableLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
+      colWidths = typicalLine.split(VER_CHAR).slice(1, -1).map((sect) => out.getWidth(sect)).map((fullWidth) => fullWidth - fullOptions.cellPadding * 2);
+    },
+    getResultsArray: () => (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn10.isTruthy),
+    getDisplayResult: () => isMulti ? operation.getResultsArray() : items[activeIndex],
+    runValidation: () => {
+      if (!validate)
+        return;
+      const results = operation.getResultsArray();
+      const validateResult = validate(results);
+      errorInfo = getErrorInfoFromValidationResult(validateResult);
+    },
+    getTableOptions: (hoveredIndex, styleOptions = {}, overrideOptions = {}) => {
+      const theme = getAskOptionsForState(false, errorInfo.isError);
+      return {
+        ...styleOptions,
+        ...tableOptions,
+        ...overrideOptions,
+        margin: [0, 0, 0, 0],
+        maxWidth: (tableOptions.maxWidth ?? out.utils.getTerminalWidth()) - 2,
+        format: [
+          { formatFn: theme.colours.tableSelectHover, isBody: true, isHeader: false, row: hoveredIndex },
+          ...styleOptions.format || [],
+          ...tableOptions.format || [],
+          ...overrideOptions.format || []
+        ]
+      };
+    },
+    getTable: (showItems, hoveredIndex, startingIndex = 0, styleOptions = {}, overrideOptions = {}) => {
+      const theme = getAskOptionsForState(false, errorInfo.isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
+      const options = operation.getTableOptions(hoveredIndex, styleOptions, overrideOptions);
+      LOG("getTable", { showItems, hoveredIndex, startingIndex, styleOptions, overrideOptions, options });
+      let initialBody;
+      let initialHeader;
+      if (rows) {
+        initialBody = typeof rows === "function" ? showItems.map(rows) : rows;
+        initialHeader = headers;
+      } else {
+        const isHeaderObj = headers && !(headers instanceof Array);
+        const objTable = table.utils.objectsToTable(showItems, isHeaderObj ? headers : void 0);
+        initialBody = objTable.body;
+        initialHeader = isHeaderObj ? objTable.header : headers;
+      }
+      const selectedIcon = colr.reset(col.itemSelectedIcon(sym.itemSelectedIcon));
+      const unselectedIcon = colr.reset(col.itemUnselectedIcon(sym.itemUnselectedIcon));
+      const cursorIcon = colr.reset(col.itemHover(col.itemHoverIcon(sym.itemHoverIcon)));
+      const body = initialBody.map((row, index) => {
+        let firstCell;
+        if (isMulti) {
+          firstCell = selectedIndexes.includes(index + startingIndex) ? selectedIcon : unselectedIcon;
+        } else {
+          firstCell = initialBody.indexOf(row) === hoveredIndex ? cursorIcon : " ";
+        }
+        firstCell += "\n".repeat(Math.max(0, bodyRowHeight - firstCell.split("\n").length));
+        return [firstCell, ...row];
+      });
+      const header = initialHeader.length ? initialHeader.map((row) => ["", ...row]) : [];
+      const tableLines = table.getLines(body, header, options);
+      return { tableLines, body, header, options };
+    },
+    display: () => {
+      if (process.stdout.columns !== calcedTermSize[0] || process.stdout.rows !== calcedTermSize[1]) {
+        operation.calculateSetup();
+      }
+      const theme = getAskOptionsForState(false, errorInfo.isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
+      const isScrollbar = numRows < items.length;
+      let showItems = items;
+      let hoveredIndex = activeIndex;
+      let scrolledItems = void 0;
+      if (isScrollbar) {
+        scrolledItems = getScrolledItems(items, activeIndex, scrollLastStartingIndex, numRows);
+        showItems = scrolledItems.items;
+        scrollLastStartingIndex = scrolledItems.startingIndex;
+        hoveredIndex = scrolledItems.hoveredIndex;
+      }
+      let { body, tableLines } = operation.getTable(
+        showItems,
+        hoveredIndex,
+        (scrolledItems == null ? void 0 : scrolledItems.startingIndex) ?? 0,
+        { wrapLinesFn: col.decoration, wrapBodyLinesFn: col.specialNormal },
+        { colWidths, align: "left" }
+      );
+      if (isScrollbar) {
+        const scrollbar = getScrollbar(items, scrolledItems, theme, tableLines.length - headerHeight + 1, true, fullOptions.drawRowLines);
+        tableLines = tableLines.map((line, index) => `${line} ${scrollbar[index - headerHeight + 1] ?? " "}`);
+        LOG("display", { headerHeight, tableLinesLength: tableLines.length, scrollbarLength: scrollbar.length });
+      }
+      if (tableOptions.align !== void 0 && tableOptions.align !== "left") {
+        tableLines = out.align(tableLines.join("\n"), tableOptions.align).split("\n");
+      }
+      const resultOut = operation.getDisplayResult();
+      let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
+      output += getImitateOutput(questionText, resultOut, false, errorInfo.isError, errorInfo.errorMessage);
+      output += "\n" + tableLines.join("\n");
+      output += "\n" + getTableSelectActionBar(isMulti, void 0, void 0, errorInfo.isError);
+      tempLC.overwrite(output);
     }
-    const finalBody = body.map((row, index) => {
-      let firstCell;
+  };
+  const userActions = {
+    move: (dir) => {
+      activeIndex = (items.length + activeIndex + dir) % items.length;
+      operation.runValidation();
+      operation.display();
+    },
+    toggle: () => {
       if (isMulti) {
-        const selectedSym = symbols4.RADIO_FULL;
-        const unselectedSym = symbols4.RADIO_EMPTY;
-        firstCell = selectedIndexes.includes(index) ? colr.reset(colr.dark.green(selectedSym)) : colr.reset(unselectedSym);
-      } else {
-        firstCell = body.indexOf(row) === activeIndex ? colr.reset(colr.dark.cyan(symbols4.CURSOR)) : " ";
+        if (selectedIndexes.includes(activeIndex)) {
+          selectedIndexes = selectedIndexes.filter((i) => i !== activeIndex);
+        } else {
+          selectedIndexes.push(activeIndex);
+        }
       }
-      return [firstCell, ...row];
-    });
-    const finalHeaders = header.length ? header.map((row) => ["", ...row]) : [];
-    lastDrawnRows = finalBody;
-    lc.clearToCheckpoint("AFTER_Q");
-    lc.add(table.print(finalBody, finalHeaders, tableOpts));
-    lc.checkpoint("AFTER_TABLE");
-  };
-  drawTable();
-  const move = (dir) => {
-    activeIndex = (items.length + activeIndex + dir) % items.length;
-    drawTable();
-  };
-  const toggle = () => {
-    if (isMulti) {
-      if (selectedIndexes.includes(activeIndex)) {
-        selectedIndexes = selectedIndexes.filter((i) => i !== activeIndex);
-      } else {
-        selectedIndexes.push(activeIndex);
+      operation.runValidation();
+      operation.display();
+    },
+    toggleAll: () => {
+      if (isMulti) {
+        const allSelected = items.every((v, i) => selectedIndexes.includes(i));
+        selectedIndexes = allSelected ? [] : items.map((v, i) => i);
+        operation.runValidation();
+        operation.display();
       }
+    },
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      imitate(questionText, "", false, true, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
+      process.exit();
+    },
+    submit: () => {
+      operation.runValidation();
+      if (errorInfo.isError)
+        return;
+      kl.stop();
+      const results = operation.getResultsArray();
+      tempLC.clear();
+      imitate(questionText, isMulti ? results : results[0], true, false, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
+      deferred.resolve(results);
     }
-    drawTable();
-  };
-  const submit = () => {
-    kl.stop();
-    const results = (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn10.isTruthy);
-    lc.clear();
-    ask.imitate(questionText, isMulti ? `${results.length} selected` : results[0], true);
-    deferred.resolve(results);
   };
   const listenCallback = (key) => {
-    switch (key) {
+    switch (key.toLowerCase()) {
+      case "exit":
+      case "esc":
+        return userActions.exit();
       case "up":
-        return move(-1);
+        return userActions.move(-1);
       case "down":
-        return move(1);
+        return userActions.move(1);
+      case "left":
+      case "right":
       case "space":
-        return toggle();
+        return userActions.toggle();
+      case "a":
+        return userActions.toggleAll();
       case "return":
-        return submit();
+        return userActions.submit();
     }
   };
   const kl = getKeyListener(listenCallback, true);
+  operation.calculateSetup();
+  operation.runValidation();
+  operation.display();
   return deferred.promise;
 };
-var select2 = async (question, items, initial, rows, headers, tableOptions) => {
-  const results = await askTableHandler(false, question, items, [initial], rows, headers, tableOptions);
+var keyActionDict2 = {
+  move: {
+    keys: "\u2191 \u2193",
+    label: "Move Cursor"
+  },
+  select: {
+    keys: "space \u2190 \u2192",
+    label: "Toggle"
+  },
+  selectAll: {
+    keys: "a",
+    label: "Toggle all"
+  },
+  return: {
+    keys: "\u2B90 ",
+    label: "Submit"
+  }
+};
+var getTableSelectActionBar = (multi, pressed, disabled = [], isError = false) => {
+  const theme = getAskOptionsForState(false, isError);
+  const keyList = {
+    single: ["move", "return"],
+    multi: ["move", "select", "selectAll", "return"]
+  }[multi ? "multi" : "single"];
+  return theme.colours.specialInfo(getActionBar(keyList, keyActionDict2, pressed, disabled));
+};
+var select2 = async (question, items, settings = {}, initial, validate, lc) => {
+  const validateMulti = validate ? (items2) => validate(items2[0]) : void 0;
+  const results = await askTableHandler(
+    false,
+    question,
+    items,
+    [initial],
+    settings.rows,
+    settings.headers,
+    settings.options,
+    validateMulti,
+    lc
+  );
   return results[0];
 };
-var multiselect2 = (question, items, initial, rows, headers, tableOptions) => askTableHandler(true, question, items, initial, rows, headers, tableOptions);
+var multiselect2 = (question, items, settings = {}, initial, validate, lc) => askTableHandler(true, question, items, initial, settings.rows, settings.headers, settings.options, validate, lc);
 
 // src/tools/ask.ts
 var ask;
@@ -4834,7 +5095,7 @@ var ask;
   ask2.imitate = imitate;
   ask2.prefill = async (question, value, askFn, lc) => {
     if (value !== void 0) {
-      ask2.imitate(question, value, true, false, lc);
+      ask2.imitate(question, value, true, false, void 0, lc);
       return value;
     }
     return askFn(question, lc);

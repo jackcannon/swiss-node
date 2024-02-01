@@ -156,50 +156,52 @@ export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
     next: { table: [], coors: [] }
   };
 
-  const recalc = (skipDisplay: boolean = false) => {
-    prevMonth = addMonths(cursors[selected], -1);
-    nextMonth = addMonths(cursors[selected], 1);
-    currMonthDays = getDaysInMonth(...cursors[selected]);
+  const operation = {
+    recalc: (skipDisplay: boolean = false) => {
+      prevMonth = addMonths(cursors[selected], -1);
+      nextMonth = addMonths(cursors[selected], 1);
+      currMonthDays = getDaysInMonth(...cursors[selected]);
 
-    if (!skipDisplay) {
-      display();
+      if (!skipDisplay) {
+        operation.display();
+      }
+    },
+
+    setCursor: (newCursor: DynDate, skipDisplay: boolean = false) => {
+      cursors[selected] = newCursor;
+      valueChangeCb((isRange ? sortDynDates(cursors) : cursors) as [DynDate, DynDate]);
+      operation.recalc(skipDisplay);
+    },
+
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
+
+      LOG('dateHandler.display', { isError, errorMessage, cursors, selected, active });
+
+      const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
+
+      tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
+      tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
+      tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
+
+      displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
     }
   };
 
-  const setCursor = (newCursor: DynDate, skipDisplay: boolean = false) => {
-    cursors[selected] = newCursor;
-    valueChangeCb((isRange ? sortDynDates(cursors) : cursors) as [DynDate, DynDate]);
-    recalc(skipDisplay);
-  };
-
-  const display = () => {
-    const { isError, errorMessage } = getErrorInfo();
-
-    LOG('dateHandler.display', { isError, errorMessage, cursors, selected, active });
-
-    const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
-
-    tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
-    tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
-    tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
-
-    displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
-  };
-
   const userActions = {
-    setDate: (date: number) => setCursor([cursors[selected][0], cursors[selected][1], date]),
+    setDate: (date: number) => operation.setCursor([cursors[selected][0], cursors[selected][1], date]),
     switchSelected: () => {
       selected = (selected + 1) % MAX_SELECTED;
-      recalc();
+      operation.recalc();
     },
-    moveMonth: (dir: number) => setCursor(addMonths(cursors[selected], dir)),
-    moveYear: (dir: number) => setCursor(addMonths(cursors[selected], dir * 12)),
+    moveMonth: (dir: number) => operation.setCursor(addMonths(cursors[selected], dir)),
+    moveYear: (dir: number) => operation.setCursor(addMonths(cursors[selected], dir * 12)),
     moveHor: (dir: number) => {
       const [yr, mo, dy] = cursors[selected];
       const currWeekday = getWeekday(cursors[selected]);
       if ((dir < 0 && currWeekday > 0) || (dir > 0 && currWeekday < 6)) {
         // move within week
-        return setCursor(addDays(cursors[selected], dir));
+        return operation.setCursor(addDays(cursors[selected], dir));
       }
       // move to next month, on same row
       const [currCol, currRow] = tables.actv.coors.find(([x, y, val]) => val === dy);
@@ -210,25 +212,23 @@ export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
       let [_x, _y, newDay] = newMonthCoors.find(([x, y]) => x === newCol && y === newRow);
       const [newYear, newMonth] = addMonths(cursors[selected], dir);
       if (newDay < 0) newDay = dir > 0 ? 1 : getDaysInMonth(newYear, newMonth);
-      return setCursor(correctDate([newYear, newMonth, newDay]));
+      return operation.setCursor(correctDate([newYear, newMonth, newDay]));
     },
-    moveVer: (dir: number) => setCursor(addDays(cursors[selected], dir * 7))
+    moveVer: (dir: number) => operation.setCursor(addDays(cursors[selected], dir * 7))
   };
 
-  setCursor(initial[0], true); // set initial calced values
+  operation.setCursor(initial[0], true); // set initial calced values
 
   const result: DateTimeHandlerObj<[DynDate, DynDate]> = {
     getValue: () => (isRange ? sortDynDates(cursors) : cursors) as [DynDate, DynDate],
     setActive: (isActive: boolean) => {
       active = isActive;
-      display();
+      operation.display();
     },
-    triggerDisplay: () => display(),
+    triggerDisplay: () => operation.display(),
     inputKey: (key: string, num?: number) => {
       if (num !== undefined) return userActions.setDate(num);
       switch (key) {
-        case 'esc':
-          return process.exit(0);
         case 'tab':
           return userActions.switchSelected();
         case 'right':

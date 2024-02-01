@@ -58,10 +58,11 @@ export const imitate = (
   result?: any,
   isComplete: boolean = true,
   isError: boolean = false,
+  errorMessage?: string,
   lc?: LineCounter
 ): void => {
   const options = getAskOptions();
-  const output = getImitateOutput(question, result, isComplete, isError);
+  const output = getImitateOutput(question, result, isComplete, isError, isError ? errorMessage : undefined);
 
   console.log(output);
 

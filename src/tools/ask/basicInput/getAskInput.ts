@@ -81,14 +81,19 @@ const getPrinter = <V extends unknown, I extends unknown, O extends unknown>(
     // return to the end of last print
     writeOutput += ansi.cursor.down(numLinesAfter - 1);
 
-    // erase previous print
-    writeOutput += ansi.erase.lines(numLinesLastPrint - 1) + ansi.cursor.lineStart + ansi.erase.line;
+    // 'erase' previous print
+    if (numLinesLastPrint > numLinesOutput) {
+      writeOutput += ansi.erase.lines(numLinesLastPrint - numLinesOutput) + ansi.cursor.up(numLinesOutput - 1);
+    } else {
+      writeOutput += ansi.cursor.up(numLinesLastPrint - 1);
+    }
+    writeOutput += ansi.cursor.lineStart;
 
     // reserve the lines (otherwise causes issues with the cursor when at bottom of terminal screen)
     writeOutput += ansi.erase.reserve(numLinesOutput);
 
     // print the new output
-    writeOutput += output;
+    writeOutput += output.replace(/\n/g, ansi.erase.lineEnd + '\n') + ansi.erase.lineEnd;
 
     if (!isComplete && !isExit) {
       writeOutput += ansi.cursor.setShow(baseOptions.showCursor);

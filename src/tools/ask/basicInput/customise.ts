@@ -53,7 +53,10 @@ const populateAskOptions = (): AskOptionsStored => {
       maxItemsOnScreen: 10,
       scrollMargin: 2,
       fileExplorerColumnWidth: 25,
-      fileExplorerMaxItems: 15
+      fileExplorerMaxItems: 15,
+      tableSelectMaxHeightPercentage: 75,
+      timelineSpeed: 1,
+      timelineFastSpeed: 5
     },
     text: {
       boolTrueKeys: 'Yy',
@@ -84,8 +87,10 @@ const populateAskOptions = (): AskOptionsStored => {
     },
     colours: {
       decoration: {
+        // normal: colr.lightBlack,
         normal: colr.grey1,
         error: colr.dark.red.dim,
+        // done: colr.lightBlack
         done: colr.grey1
       },
       questionText: {
@@ -134,8 +139,8 @@ const populateAskOptions = (): AskOptionsStored => {
       },
       itemUnselected: getSetFromSingle(colr.grey4),
       itemUnselectedIcon: getSetFromSingle(colr),
-      scrollbarTrack: getSetFromSingle(colr.lightBlack),
-      scrollbarBar: getSetFromSingle(colr.lightBlackBg.black),
+      scrollbarTrack: getSetFromSingle(colr.reset.lightBlack),
+      scrollbarBar: getSetFromSingle(colr.reset.lightBlack.inverse),
       selectAllText: getSetFromSingle(colr.grey3),
       boolYNText: getSetFromSingle(colr.grey),
       countdown: {
@@ -145,22 +150,15 @@ const populateAskOptions = (): AskOptionsStored => {
       },
       pause: getSetFromSingle(colr.grey4),
 
-      // special is for datetime, fileExplorer, etc
-      // level 1 important
       specialHover: {
         normal: colr.darkBg.yellowBg.black,
         error: colr.redBg.black,
         done: colr.darkBg.yellowBg.black
       },
-      // level 2 important
       specialSelected: getSetFromSingle(colr.darkBg.whiteBg.black),
-      // level 3 important - intermediary dates in a range, etc
       specialHighlight: getSetFromSingle(colr.yellow),
-      // normal regular things
       specialNormal: getSetFromSingle(colr.white), // colr.dark.white
-      // faded for things like dates in a different month
       specialFaded: getSetFromSingle(colr.grey3),
-      // hints for button presses, etc
       specialHint: getSetFromSingle(colr.grey1),
 
       specialInactiveHover: getSetFromSingle(colr.lightBlackBg.black),
@@ -170,9 +168,20 @@ const populateAskOptions = (): AskOptionsStored => {
       specialInactiveFaded: getSetFromSingle(colr.grey2),
       specialInactiveHint: getSetFromSingle(colr.black),
 
-      specialInfo: getSetFromSingle(colr), // the button info bar are the bottom of special prompts
-      specialErrorMsg: getSetFromSingle(colr.red), // The error message display for special prompts
-      specialErrorIcon: getSetFromSingle(colr) // Icon for the error message display for special prompts
+      specialInfo: getSetFromSingle(colr.grey2),
+      specialErrorMsg: getSetFromSingle(colr.red),
+      specialErrorIcon: getSetFromSingle(colr),
+
+      tableSelectHover: {
+        normal: colr.yellow,
+        error: colr.danger,
+        done: colr.yellow
+      },
+
+      timelineTrack: getSetFromSingle(colr.grey1),
+      timelineTrackActive: getSetFromSingle(colr.grey3),
+      timelineHandle: getSetFromSingle(colr.grey4),
+      timelineHandleActive: getSetFromSingle(colr.yellow)
     },
     symbols: {
       specialIcon: {
@@ -198,8 +207,12 @@ const populateAskOptions = (): AskOptionsStored => {
       itemUnselectedIcon: getSetFromSingle(symbols.RADIO_EMPTY),
       scrollUpIcon: getSetFromSingle(symbols.ARROW_UPP),
       scrollDownIcon: getSetFromSingle(symbols.ARROW_DWN),
-      scrollbarTrack: getSetFromSingle('┇'),
+      scrollbarTrack: getSetFromSingle('│'), // ╎ ┇ │ ║
+      scrollbarTrackTrimTop: getSetFromSingle('╷'), // ┰ ┬ ╥
+      scrollbarTrackTrimBottom: getSetFromSingle('╵'), // ┸ ┴ ╨
       scrollbarBar: getSetFromSingle(' '),
+      scrollbarBarTrimTop: getSetFromSingle('▀'),
+      scrollbarBarTrimBottom: getSetFromSingle('▄'),
 
       // ⌄˰˅˄⌃▼▲▽△▾▴▿▵
       separatorLine: getSetFromSingle('┄'),
@@ -210,7 +223,11 @@ const populateAskOptions = (): AskOptionsStored => {
       specialErrorIcon: getSetFromSingle(' ! '),
 
       folderOpenableIcon: getSetFromSingle('›'),
-      fileOpenableIcon: getSetFromSingle(' ')
+      fileOpenableIcon: getSetFromSingle(' '),
+
+      timelineTrack: getSetFromSingle('█'),
+      timelineHandle: getSetFromSingle('┃'),
+      timelineBar: getSetFromSingle('█')
     }
   };
   return askOptions as AskOptionsStored;
@@ -294,7 +311,10 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     maxItemsOnScreen: options?.general?.maxItemsOnScreen ?? askOptions.general.maxItemsOnScreen,
     scrollMargin: options?.general?.scrollMargin ?? askOptions.general.scrollMargin,
     fileExplorerColumnWidth: options?.general?.fileExplorerColumnWidth ?? askOptions.general.fileExplorerColumnWidth,
-    fileExplorerMaxItems: options?.general?.fileExplorerMaxItems ?? askOptions.general.fileExplorerMaxItems
+    fileExplorerMaxItems: options?.general?.fileExplorerMaxItems ?? askOptions.general.fileExplorerMaxItems,
+    tableSelectMaxHeightPercentage: options?.general?.tableSelectMaxHeightPercentage ?? askOptions.general.tableSelectMaxHeightPercentage,
+    timelineSpeed: options?.general?.timelineSpeed ?? askOptions.general.timelineSpeed,
+    timelineFastSpeed: options?.general?.timelineFastSpeed ?? askOptions.general.timelineFastSpeed
   };
 
   askOptions.text = {
@@ -388,7 +408,14 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     specialInactiveHint: processThemeItem(options?.colours?.specialInactiveHint, askOptions.colours.specialInactiveHint),
     specialInfo: processThemeItem(options?.colours?.specialInfo, askOptions.colours.specialInfo),
     specialErrorMsg: processThemeItem(options?.colours?.specialErrorMsg, askOptions.colours.specialErrorMsg),
-    specialErrorIcon: processThemeItem(options?.colours?.specialErrorIcon, askOptions.colours.specialErrorIcon)
+    specialErrorIcon: processThemeItem(options?.colours?.specialErrorIcon, askOptions.colours.specialErrorIcon),
+
+    tableSelectHover: processThemeItem(options?.colours?.tableSelectHover, askOptions.colours.tableSelectHover),
+
+    timelineTrack: processThemeItem(options?.colours?.timelineTrack, askOptions.colours.timelineTrack),
+    timelineTrackActive: processThemeItem(options?.colours?.timelineTrackActive, askOptions.colours.timelineTrackActive),
+    timelineHandle: processThemeItem(options?.colours?.timelineHandle, askOptions.colours.timelineHandle),
+    timelineHandleActive: processThemeItem(options?.colours?.timelineHandleActive, askOptions.colours.timelineHandleActive)
   };
 
   askOptions.symbols = {
@@ -404,7 +431,11 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     scrollUpIcon: processThemeItem(options?.symbols?.scrollUpIcon, askOptions.symbols.scrollUpIcon),
     scrollDownIcon: processThemeItem(options?.symbols?.scrollDownIcon, askOptions.symbols.scrollDownIcon),
     scrollbarTrack: processThemeItem(options?.symbols?.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarTrackTrimTop: processThemeItem(options?.symbols?.scrollbarTrackTrimTop, askOptions.symbols.scrollbarTrackTrimTop),
+    scrollbarTrackTrimBottom: processThemeItem(options?.symbols?.scrollbarTrackTrimBottom, askOptions.symbols.scrollbarTrackTrimBottom),
     scrollbarBar: processThemeItem(options?.symbols?.scrollbarBar, askOptions.symbols.scrollbarBar),
+    scrollbarBarTrimTop: processThemeItem(options?.symbols?.scrollbarBarTrimTop, askOptions.symbols.scrollbarBarTrimTop),
+    scrollbarBarTrimBottom: processThemeItem(options?.symbols?.scrollbarBarTrimBottom, askOptions.symbols.scrollbarBarTrimBottom),
 
     separatorLine: processThemeItem(options?.symbols?.separatorLine, askOptions.symbols.separatorLine),
     separatorNodeDown: processThemeItem(options?.symbols?.separatorNodeDown, askOptions.symbols.separatorNodeDown),
@@ -413,7 +444,11 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
 
     specialErrorIcon: processThemeItem(options?.symbols?.specialErrorIcon, askOptions.symbols.specialErrorIcon),
     folderOpenableIcon: processThemeItem(options?.symbols?.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
-    fileOpenableIcon: processThemeItem(options?.symbols?.fileOpenableIcon, askOptions.symbols.fileOpenableIcon)
+    fileOpenableIcon: processThemeItem(options?.symbols?.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
+
+    timelineTrack: processThemeItem(options?.symbols?.timelineTrack, askOptions.symbols.timelineTrack),
+    timelineHandle: processThemeItem(options?.symbols?.timelineHandle, askOptions.symbols.timelineHandle),
+    timelineBar: processThemeItem(options?.symbols?.timelineBar, askOptions.symbols.timelineBar)
   };
 };
 
@@ -492,7 +527,14 @@ const setThemeColour = <
         normal: colr.darkBg[bgProp].black,
         done: colr.darkBg[bgProp].black
       },
-      specialHighlight: colr[txtProp]
+      specialHighlight: colr[txtProp],
+
+      tableSelectHover: {
+        normal: colr[txtProp],
+        done: colr[txtProp]
+      },
+
+      timelineHandleActive: colr[txtProp]
     }
   });
 };
@@ -565,6 +607,9 @@ export namespace ask {
       scrollMargin?: number;
       fileExplorerColumnWidth?: number;
       fileExplorerMaxItems?: number;
+      tableSelectMaxHeightPercentage?: number;
+      timelineSpeed?: number;
+      timelineFastSpeed?: number;
     };
     text?: {
       boolTrueKeys?: string;
@@ -640,6 +685,13 @@ export namespace ask {
       specialInfo?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialErrorMsg?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
       specialErrorIcon?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+
+      tableSelectHover?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+
+      timelineTrack?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      timelineTrackActive?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      timelineHandle?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
+      timelineHandleActive?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
     };
     symbols?: {
       specialIcon?: string | { normal?: string; error?: string; done?: string };
@@ -654,7 +706,11 @@ export namespace ask {
       scrollUpIcon?: string | { normal?: string; error?: string; done?: string };
       scrollDownIcon?: string | { normal?: string; error?: string; done?: string };
       scrollbarTrack?: string | { normal?: string; error?: string; done?: string };
+      scrollbarTrackTrimTop?: string | { normal?: string; error?: string; done?: string };
+      scrollbarTrackTrimBottom?: string | { normal?: string; error?: string; done?: string };
       scrollbarBar?: string | { normal?: string; error?: string; done?: string };
+      scrollbarBarTrimTop?: string | { normal?: string; error?: string; done?: string };
+      scrollbarBarTrimBottom?: string | { normal?: string; error?: string; done?: string };
 
       separatorLine?: string | { normal?: string; error?: string; done?: string };
       separatorNodeDown?: string | { normal?: string; error?: string; done?: string };
@@ -665,6 +721,10 @@ export namespace ask {
 
       folderOpenableIcon?: string | { normal?: string; error?: string; done?: string };
       fileOpenableIcon?: string | { normal?: string; error?: string; done?: string };
+
+      timelineTrack?: string | { normal?: string; error?: string; done?: string };
+      timelineHandle?: string | { normal?: string; error?: string; done?: string };
+      timelineBar?: string | { normal?: string; error?: string; done?: string };
     };
   }
 }
@@ -704,6 +764,9 @@ interface AskOptionsStoredGeneral {
   scrollMargin: number;
   fileExplorerColumnWidth: number;
   fileExplorerMaxItems: number;
+  tableSelectMaxHeightPercentage: number;
+  timelineSpeed: number;
+  timelineFastSpeed: number;
 }
 
 interface AskOptionsStoredText {
@@ -781,6 +844,13 @@ interface AskOptionsStoredColours {
   specialInfo: AskOptionsItemSet<WrapFn>; // the button info bar are the bottom of special prompts
   specialErrorMsg: AskOptionsItemSet<WrapFn>; // The error message display for special prompts
   specialErrorIcon: AskOptionsItemSet<WrapFn>; // Icon for the error message display for special prompts
+
+  tableSelectHover: AskOptionsItemSet<WrapFn>; // Hover value for the table select prompts (different from the normal hover as it behaves slighly differently)
+
+  timelineTrack: AskOptionsItemSet<WrapFn>;
+  timelineTrackActive: AskOptionsItemSet<WrapFn>;
+  timelineHandle: AskOptionsItemSet<WrapFn>;
+  timelineHandleActive: AskOptionsItemSet<WrapFn>;
 }
 interface AskOptionsStoredSymbols {
   specialIcon: AskOptionsItemSet<string>;
@@ -795,7 +865,11 @@ interface AskOptionsStoredSymbols {
   scrollUpIcon: AskOptionsItemSet<string>;
   scrollDownIcon: AskOptionsItemSet<string>;
   scrollbarTrack: AskOptionsItemSet<string>;
+  scrollbarTrackTrimTop: AskOptionsItemSet<string>;
+  scrollbarTrackTrimBottom: AskOptionsItemSet<string>;
   scrollbarBar: AskOptionsItemSet<string>;
+  scrollbarBarTrimTop: AskOptionsItemSet<string>;
+  scrollbarBarTrimBottom: AskOptionsItemSet<string>;
 
   separatorLine: AskOptionsItemSet<string>;
   separatorNodeDown: AskOptionsItemSet<string>;
@@ -805,6 +879,10 @@ interface AskOptionsStoredSymbols {
   specialErrorIcon: AskOptionsItemSet<string>;
   folderOpenableIcon: AskOptionsItemSet<string>; // used in fileExplorer to show a folder can be opened
   fileOpenableIcon: AskOptionsItemSet<string>; // shown at end of row for files (usually just a space)
+
+  timelineTrack: AskOptionsItemSet<string>;
+  timelineHandle: AskOptionsItemSet<string>;
+  timelineBar: AskOptionsItemSet<string>;
 }
 
 export interface AskOptionsForState {

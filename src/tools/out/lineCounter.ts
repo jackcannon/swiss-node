@@ -27,7 +27,7 @@ export const getLineCounter = (): LineCounter => {
   const checkpoints: { [checkpointID: string]: number } = {};
 
   const log = (...args: any[]): number => {
-    const output = args.map(getLogStr).join(' ');
+    const output = out.wrap(args.map(getLogStr).join(' '));
     const added = out.utils.getNumLines(output);
     lineCount += added;
     console.log(output);
@@ -35,11 +35,8 @@ export const getLineCounter = (): LineCounter => {
   };
 
   const overwrite = (...args: any[]): number => {
-    const output =
-      args
-        .map(getLogStr)
-        .join(' ')
-        .replace(/\n/g, ansi.erase.lineEnd + '\n') + ansi.erase.lineEnd;
+    let output = out.wrap(args.map(getLogStr).join(' '));
+    output = output.replace(/\n/g, ansi.erase.lineEnd + '\n') + ansi.erase.lineEnd;
     const added = out.utils.getNumLines(output);
     lineCount += added;
     console.log(output);
