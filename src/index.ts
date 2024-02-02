@@ -8,5 +8,3 @@ export * from './tools/PathTools';
 export * from './tools/progressBarTools';
 export * from './tools/waiters';
 export * from './tools/keyListener';
-
-export { LOG } from './DELETEME/LOG';

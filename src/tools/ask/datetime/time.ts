@@ -1,5 +1,4 @@
 import { range } from 'swiss-ak';
-import { LOG } from '../../../DELETEME/LOG';
 import { DynTime } from '../../../utils/dynDates';
 import { out } from '../../out';
 import { getAskOptionsForState } from '../basicInput/customise';
@@ -42,8 +41,6 @@ export const timeHandler: DateTimeHandler<DynTime> = (
   const operation = {
     display: () => {
       const { isError, errorMessage } = getErrorInfo();
-
-      LOG('timeHandler.display', { isError, errorMessage, current, cursor, active });
 
       const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
       const lines = out.concatLineGroups(...dials);

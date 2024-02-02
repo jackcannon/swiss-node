@@ -1,5 +1,4 @@
 import { fn } from 'swiss-ak';
-import { LOG } from '../../DELETEME/LOG';
 import { ask } from '../ask';
 import { Breadcrumb, LineCounter } from '../out';
 import { getAskOptions } from './basicInput/customise';
@@ -567,8 +566,6 @@ export const multiselect = async <T = string>(
   const computeItems = (itemsData: AskItemData<T>) => {
     const isAllSelected = getIsAllSelected(itemsData);
 
-    LOG('computeItems', { isAllSelected, itemsData });
-
     if (isAllSelected && !itemsData.selected.includes(0)) itemsData.selected.unshift(0);
     if (!isAllSelected && itemsData.selected.includes(0)) itemsData.selected = itemsData.selected.filter((i) => i !== 0);
   };
@@ -589,7 +586,6 @@ export const multiselect = async <T = string>(
       multiselectActions.exit(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
     },
     key(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
-      LOG('key', rawValue);
       if ('Aa'.includes(rawValue)) {
         toggleAll(!getIsAllSelected(itemsData), itemsData);
         print(false);
@@ -620,11 +616,9 @@ export const multiselect = async <T = string>(
       print(false);
     },
     left(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
-      LOG('left', itemsData);
       multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
     },
     right(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
-      LOG('right', itemsData);
       multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
     },
     return(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit) {
@@ -667,8 +661,6 @@ export const multiselect = async <T = string>(
   initialSelectedIndexes = initialSelectedIndexes.filter(fn.dedupe);
 
   const initialHoveredIndex = initialSelectedIndexes[0] ?? 0;
-
-  LOG('initial', { initialSelectedIndexes });
 
   let result = await getAskInput<string, T, T[]>(
     {

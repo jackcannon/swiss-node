@@ -1,5 +1,4 @@
 import { range } from 'swiss-ak';
-import { LOG } from '../../../DELETEME/LOG';
 import {
   addDays,
   addMonths,
@@ -175,8 +174,6 @@ export const dateHandler: DateTimeHandler<[DynDate, DynDate]> = (
 
     display: () => {
       const { isError, errorMessage } = getErrorInfo();
-
-      LOG('dateHandler.display', { isError, errorMessage, cursors, selected, active });
 
       const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
 

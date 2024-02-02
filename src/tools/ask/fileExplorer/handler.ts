@@ -2,7 +2,6 @@ import { ArrayTools, PromiseTools, fn, getDeferred, milliseconds, wait } from 's
 import { colr } from '../../colr';
 import { Breadcrumb, LineCounter, ansi, getLineCounter, out } from '../../out';
 
-import { LOG } from '../../../DELETEME/LOG';
 import { getPathType, mkdir, openFinder } from '../../../utils/fsUtils';
 import { PathTools } from '../../PathTools';
 import { ask } from '../../ask';
@@ -93,8 +92,6 @@ export const fileExplorerHandler = async (
         const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
 
         cursorIndexes[path] = cursorIndex;
-
-        LOG('loadInitial - D', { cursorIndexes });
       });
     },
 
@@ -104,8 +101,6 @@ export const fileExplorerHandler = async (
 
       const lastKnownIndex = cursorIndexes[currentParentDir];
       if (lastKnownIndex !== newIndex) cursorIndexes[currentParentDir] = newIndex;
-
-      LOG('updateCursorIndexes', { cursorIndexes });
     },
 
     runValidation: (newFileName?: string) => {

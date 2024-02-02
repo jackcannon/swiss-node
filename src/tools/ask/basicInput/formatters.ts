@@ -1,7 +1,6 @@
 import { WrapFn, colr } from '../../colr';
 import { Breadcrumb, ansi, out } from '../../out';
 
-import { LOG } from '../../../DELETEME/LOG';
 import { AskOptionsForState, getAskOptions } from './customise';
 import { PromptChoiceFull } from './getFullChoices';
 import { ScrolledItems, getScrollbar } from './getScrolledItems';
@@ -246,7 +245,6 @@ const standardItemFormatter = <T extends unknown>(
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
 
   const askOptions = getAskOptions();
-  LOG('theme', { theme, itemHover: askOptions.colours.itemHover, itemHoverIcon: askOptions.colours.itemHoverIcon });
 
   const colItemHover = isBlock ? col.itemBlockHover : col.itemHover;
   const colItemHoverIcon = isBlock ? col.itemBlockHoverIcon : col.itemHoverIcon;

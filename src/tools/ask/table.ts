@@ -3,7 +3,6 @@ import { fn, getDeferred, MathsTools, RemapOf } from 'swiss-ak';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 
-import { LOG } from '../../DELETEME/LOG';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { colr } from '../colr';
 import { ansi, LineCounter, out } from '../out';
@@ -146,8 +145,6 @@ const askTableHandler = <T extends unknown>(
 
       // const showItems = items.slice(0, numRows);
 
-      LOG('getTable', { showItems, hoveredIndex, startingIndex, styleOptions, overrideOptions, options });
-
       let initialBody;
       let initialHeader;
       if (rows) {
@@ -214,8 +211,6 @@ const askTableHandler = <T extends unknown>(
       if (isScrollbar) {
         const scrollbar = getScrollbar(items, scrolledItems, theme, tableLines.length - headerHeight + 1, true, fullOptions.drawRowLines);
         tableLines = tableLines.map((line, index) => `${line} ${scrollbar[index - headerHeight + 1] ?? ' '}`);
-
-        LOG('display', { headerHeight, tableLinesLength: tableLines.length, scrollbarLength: scrollbar.length });
       }
 
       if (tableOptions.align !== undefined && tableOptions.align !== 'left') {
