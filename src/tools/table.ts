@@ -1,9 +1,8 @@
-import { Partial, fn, ArrayTools, StringTools } from 'swiss-ak';
-import { getLineCounter } from './out/lineCounter';
-import { out } from './out';
+import { ArrayTools, Partial, StringTools, fn } from 'swiss-ak';
 import { processInput } from '../utils/processTableInput';
 import { CharLookup, getTableCharacters } from '../utils/tableCharacters';
 import { WrapFn, colr } from './colr';
+import { out } from './out';
 
 //<!-- DOCS: 400 -->
 /**<!-- DOCS: table ##! -->

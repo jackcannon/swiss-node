@@ -1,11 +1,11 @@
 import { ObjOfType } from 'swiss-ak';
 import { ask } from '../../ask';
-import { out, ansi, Breadcrumb, LineCounter } from '../../out';
-import { getKeyListener, KeyListener } from '../../keyListener';
-import { getFullChoices, PromptChoiceFull } from './getFullChoices';
-import { getScrolledItems } from './getScrolledItems';
-import { getAskOptions, getAskOptionsForState } from './customise';
+import { KeyListener, getKeyListener } from '../../keyListener';
+import { Breadcrumb, LineCounter, ansi, out } from '../../out';
 import { getErrorInfoFromValidationResult } from '../errorValidation';
+import { getAskOptions, getAskOptionsForState } from './customise';
+import { PromptChoiceFull, getFullChoices } from './getFullChoices';
+import { getScrolledItems } from './getScrolledItems';
 
 const getPrinter = <V extends unknown, I extends unknown, O extends unknown>(
   question: string,

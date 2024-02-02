@@ -1,4 +1,5 @@
 import { range } from 'swiss-ak';
+import { LOG } from '../../../DELETEME/LOG';
 import {
   addDays,
   addMonths,
@@ -10,14 +11,13 @@ import {
   isSameMonth,
   sortDynDates
 } from '../../../utils/dynDates';
+import { colr, WrapFn } from '../../colr';
 import { out } from '../../out';
 import { table } from '../../table';
+import { getAskOptionsForState } from '../basicInput/customise';
+import { ErrorInfo } from '../errorValidation';
 import { getSpecialColours } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
-import { colr, WrapFn } from '../../colr';
-import { ErrorInfo } from '../errorValidation';
-import { LOG } from '../../../DELETEME/LOG';
-import { getAskOptionsForState } from '../basicInput/customise';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];

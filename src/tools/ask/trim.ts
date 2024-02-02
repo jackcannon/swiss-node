@@ -1,15 +1,13 @@
 import { getDeferred, hours, MathsTools, ms, ObjectTools, seconds, symbols } from 'swiss-ak';
 
-import { table } from '../table';
-import { ansi, Breadcrumb, LineCounter, out } from '../out';
+import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
+import { colr } from '../colr';
 import { getKeyListener } from '../keyListener';
+import { ansi, Breadcrumb, LineCounter, out } from '../out';
 import { getLineCounter } from '../out/lineCounter';
 import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
 import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
-import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
-import { LOG } from '../../DELETEME/LOG';
-import { getImitateOutput, imitate, untrackedImitate } from './imitate';
-import { colr } from '../colr';
+import { getImitateOutput, imitate } from './imitate';
 
 //<!-- DOCS: 125 -->
 

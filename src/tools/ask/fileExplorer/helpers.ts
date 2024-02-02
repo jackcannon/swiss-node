@@ -1,13 +1,12 @@
 import * as fsP from 'fs/promises';
 import { MathsTools, StringTools, TimeTools, ms, seconds, sortNumberedText, tryOr } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../../utils/actionBar';
-import { getPathType, scanDir, getBasicFileInfo } from '../../../utils/fsUtils';
-import { PathTools, explodePath } from '../../PathTools';
+import { getBasicFileInfo, getPathType, scanDir } from '../../../utils/fsUtils';
+import { PathTools } from '../../PathTools';
 import { colr } from '../../colr';
 import { out } from '../../out';
-import { PathContents, fsCache } from './cache';
-import { nextTick } from '../../waiters';
 import { getAskOptionsForState } from '../basicInput/customise';
+import { PathContents, fsCache } from './cache';
 
 export const loadPathContents = async (path: string): Promise<PathContents> => {
   if (fsCache.cache.has(path)) {

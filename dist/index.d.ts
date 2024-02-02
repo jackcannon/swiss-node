@@ -4,9 +4,6 @@ interface AnsiEscapeCodes {
     /**<!-- DOCS: out.ansi.cursor #### -->
      * cursor
      *
-     * - `ansi.cursor`
-     * - `out.ansi.cursor`
-     *
      * ANSI escape codes for controlling the cursor in the terminal
      */
     cursor: {
@@ -169,9 +166,6 @@ interface AnsiEscapeCodes {
     /**<!-- DOCS: out.ansi.scroll #### -->
      * scroll
      *
-     * - `ansi.scroll`
-     * - `out.ansi.scroll`
-     *
      * ANSI escape codes for scrolling the terminal
      */
     scroll: {
@@ -202,9 +196,6 @@ interface AnsiEscapeCodes {
     };
     /**<!-- DOCS: out.ansi.erase #### -->
      * erase
-     *
-     * - `ansi.erase`
-     * - `out.ansi.erase`
      *
      * ANSI escape codes for erasing parts of the terminal
      */
@@ -3981,7 +3972,7 @@ declare namespace out {
      * @returns {any}
      */
     export const concatLineGroups: (...groups: string[][]) => string[];
-    /**<!-- DOCS: out.getResponsiveValue ### @ -->
+    /**<!-- DOCS: out.getResponsiveValue ###! @ -->
      * getResponsiveValue
      *
      * - `out.getResponsiveValue`
@@ -4094,10 +4085,6 @@ declare namespace out {
      * - `out.ansi`
      * 
      * ANSI escape codes for terminal manipulation
-     * 
-     * ```typescript
-     * process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
-     * ```
      */
     export const ansi: AnsiEscapeCodes;
     /**<!-- DOCS: out.utils 291 ### -->
@@ -4356,10 +4343,6 @@ declare type LineCounter = LineCounter$1;
  * - `out.ansi`
  * 
  * ANSI escape codes for terminal manipulation
- * 
- * ```typescript
- * process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
- * ```
  */
 declare const ansi: AnsiEscapeCodes;
 
@@ -4398,430 +4381,739 @@ interface BoxSymbols {
     separatorRight: string;
 }
 declare type OptionsState = 'normal' | 'error' | 'done';
+/**
+ * AskOptionsItemSet<T>
+ *
+ * Set of options, one for each state (normal, error, done)
+ */
 declare type AskOptionsItemSet<T> = {
     [key in OptionsState]: T;
 };
 declare namespace ask$1 {
-    /**<!-- DOCS: ask.AskOptions ### 198 -->
+    /**<!-- DOCS: ask.AskOptions ###! 198 -->
      * AskOptions
      *
      * - `ask.AskOptions`
      *
      * Options to customise the behaviour/appearance of the `ask` prompts.
      *
-     * TODO tables
+     * Use with `ask.customise` to set these options.
      */
     interface AskOptions {
+        /**<!-- DOCS: ask.AskOptions.general #### 198 -->
+         * `general` Options
+         *
+         * - `ask.AskOptions.general`
+         *
+         * General options for customising ask prompts
+         *
+         * | Name                           | Type               | Description                                                        |
+         * |--------------------------------|--------------------|--------------------------------------------------------------------|
+         * | themeColour                    | `string` (Colour)  | Set the main theme colour                                          |
+         * | lc                             | `LineCounter`      | A line counter that all ask prompts will add to when complete      |
+         * | boxType                        | `'thin' | 'thick'` | What type of box drawing lines to use                              |
+         * | maxItemsOnScreen               | `number`           | How many select/multiselect items to have on screen at most        |
+         * | scrollMargin                   | `number`           | How much space to leaving when 'scrolling' lists of items          |
+         * | fileExplorerColumnWidth        | `number`           | How wide to make each panel of the fileExplorer interface          |
+         * | fileExplorerMaxItems           | `number`           | How many items to show in each panel of the fileExplorer interface |
+         * | tableSelectMaxHeightPercentage | `number`           | Percent of terminal height to use at max for table selects         |
+         * | timelineSpeed                  | `number`           | How many frames to move on a timeline at a time                    |
+         * | timelineFastSpeed              | `number`           | How many frames to move on a timeline at a time (fast mode)        |
+         */
         general?: {
+            /** Set the main theme colour */
             themeColour?: 'white' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'darkWhite' | 'lightBlack' | 'darkRed' | 'darkGreen' | 'darkYellow' | 'darkBlue' | 'darkMagenta' | 'darkCyan' | 'grey' | 'gray';
+            /** A line counter that all ask prompts will add to when complete */
             lc?: LineCounter;
+            /** What type of box drawing lines to use */
             boxType?: 'thin' | 'thick';
+            /** How many select/multiselect items to have on screen at most */
             maxItemsOnScreen?: number;
+            /** How much space to leaving when 'scrolling' lists of items */
             scrollMargin?: number;
+            /** How wide to make each panel of the fileExplorer interface */
             fileExplorerColumnWidth?: number;
+            /** How many items to show in each panel of the fileExplorer interface */
             fileExplorerMaxItems?: number;
+            /** Percent of terminal height to use at max for table selects */
             tableSelectMaxHeightPercentage?: number;
+            /** How many frames to move on a timeline at a time */
             timelineSpeed?: number;
+            /** How many frames to move on a timeline at a time (fast mode) */
             timelineFastSpeed?: number;
         };
+        /**<!-- DOCS: ask.AskOptions.text #### 198 -->
+         * `text` Options
+         *
+         * - `ask.AskOptions.text`
+         *
+         * English natural-language elements that you may wish to localise
+         *
+         * | Name                               | Type                       | Description                                                 |
+         * |------------------------------------|----------------------------|-------------------------------------------------------------|
+         * | boolTrueKeys                       | `string`                   | What buttons to use to indicate `true` for boolean prompts  |
+         * | boolFalseKeys                      | `string`                   | What buttons to use to indicate `false` for boolean prompts |
+         * | boolYes                            | `string`                   | 'Yes'                                                       |
+         * | boolNo                             | `string`                   | 'No'                                                        |
+         * | boolYesNoSeparator                 | `string`                   | '/'                                                         |
+         * | boolYN                             | `string`                   | '(Y/n)'                                                     |
+         * | selectAll                          | `string`                   | '[Select All]'                                              |
+         * | done                               | `string`                   | 'done'                                                      |
+         * | items                              | `(num: number) => string`  | '[X items]'                                                 |
+         * | countdown                          | `(secs: number) => string` | 'Starting in Xs...'                                         |
+         * | file                               | `string`                   | 'File'                                                      |
+         * | directory                          | `string`                   | 'Directory'                                                 |
+         * | loading                            | `string`                   | 'Loading...'                                                |
+         * | selected                           | `(num: number) => string`  | 'X selected'                                                |
+         * | specialNewFolderEnterNothingCancel | `string`                   | 'Enter nothing to cancel'                                   |
+         * | specialNewFolderAddingFolderTo     | `string`                   | 'Adding folder to '                                         |
+         * | specialNewFolderQuestion           | `(hl: any) => string`      | 'What do you want to name the new folder?'                  |
+         * | specialSaveFileSavingFileTo        | `string`                   | 'Saving file to '                                           |
+         * | specialSaveFileQuestion            | `(hl: any) => string`      | 'What do you want to name the file?'                        |
+         */
         text?: {
+            /** What buttons to use to indicate `true` for boolean prompts */
             boolTrueKeys?: string;
+            /** What buttons to use to indicate `false` for boolean prompts */
             boolFalseKeys?: string;
+            /** 'Yes' */
             boolYes?: string;
+            /** 'No' */
             boolNo?: string;
+            /** '/' */
             boolYesNoSeparator?: string;
+            /** '(Y/n)' */
             boolYN?: string;
+            /** '[Select All]' */
             selectAll?: string;
+            /** 'done' */
             done?: string;
+            /** '[X items]' */
             items?: (count: number) => string;
+            /** 'Starting in Xs...' */
             countdown?: (secondsRemaining: number) => string;
+            /** 'File' */
             file?: string;
+            /** 'Directory' */
             directory?: string;
+            /** 'Loading...' */
             loading?: string;
+            /** 'X selected' */
             selected?: (count: number) => string;
+            /** 'Enter nothing to cancel' */
             specialNewFolderEnterNothingCancel?: string;
+            /** 'Adding folder to ' */
             specialNewFolderAddingFolderTo?: string;
+            /** 'What do you want to name the new folder?' */
             specialNewFolderQuestion?: (hl: any) => string;
+            /** 'Saving file to ' */
             specialSaveFileSavingFileTo?: string;
+            /** 'What do you want to name the file?' */
             specialSaveFileQuestion?: (hl: any) => string;
         };
+        /**<!-- DOCS: ask.AskOptions.formatters ####! 198 -->
+         * `formatters` Options
+         *
+         * - `ask.AskOptions.formatters`
+         *
+         * Functions for formatting how the prompts should display
+         */
         formatters?: {
+            /**<!-- DOCS: ask.AskOptions.formatters.formatPrompt ##### 198 -->
+             * `formatPrompt`
+             *
+             * - `ask.AskOptions.formatters.formatPrompt`
+             *
+             * How to format the prompts
+             *
+             * Presets: `oneLine`, `halfBox`, `halfBoxClosed`, `fullBox`, `fullBoxClosed`
+             *
+             * Type:
+             * ```typescript
+             * (
+             *   question: string | Breadcrumb,
+             *   value: string,
+             *   items: string | undefined,
+             *   errorMessage: string | undefined,
+             *   theme: AskOptionsForState,
+             *   isComplete: boolean,
+             *   isExit: boolean
+             * ) => string;
+             * ```
+             */
             formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
+            /**<!-- DOCS: ask.AskOptions.formatters.formatItems ##### 198 -->
+             * `formatItems`
+             *
+             * - `ask.AskOptions.formatters.formatItems`
+             *
+             * How to format lists of items
+             *
+             * Presets: `block`, `blockAlt`, `simple`, `simpleAlt`
+             *
+             * Type:
+             * ```typescript
+             * <T extends unknown>(
+             *   allItems: PromptChoiceFull<T>[],
+             *   scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
+             *   selected: number[] | undefined,
+             *   type: 'single' | 'multi',
+             *   theme: AskOptionsForState,
+             *   isExit: boolean
+             * ) => string;
+             * ```
+             */
             formatItems?: 'block' | 'blockAlt' | 'simple' | 'simpleAlt' | FormatItemsFn;
         };
+        /**<!-- DOCS: ask.AskOptions.colours #### 198 -->
+         * `colours` Options
+         *
+         * - `ask.AskOptions.colours`
+         *
+         * Colours for all the different elements
+         *
+         * All colours can be a single `WrapFn` value, or a set of `WrapFn` values, one for each state (normal, error, done)
+         * When single value, it is used for all states. When only a few states are set, the others will remain unchanged.
+         *
+         * | Name                     | Description                                                                                     |
+         * |--------------------------|-------------------------------------------------------------------------------------------------|
+         * | decoration               | General decoration and cosmetics                                                                |
+         * | questionText             | The text of the question of the prompt                                                          |
+         * | specialIcon              | Special icon for the 'state'                                                                    |
+         * | openingIcon              | The initial/opening icon                                                                        |
+         * | promptIcon               | The icon that indicates where you are typing                                                    |
+         * | result                   | General result                                                                                  |
+         * | resultText               | String results                                                                                  |
+         * | resultNumber             | Number results                                                                                  |
+         * | resultBoolean            | Boolean results                                                                                 |
+         * | resultArray              | Array results                                                                                   |
+         * | resultDate               | Date results                                                                                    |
+         * | loadingIcon              | Icon for ask.loading                                                                            |
+         * | errorMsg                 | The error message (if there is one)                                                             |
+         * | item                     | A normal item in a list                                                                         |
+         * | itemIcon                 | Icon for a normal item in a list                                                                |
+         * | itemHover                | A hovered item in a list                                                                        |
+         * | itemHoverIcon            | Icon for a hovered item in a list                                                               |
+         * | itemBlockHover           | A hovered item in a list (block mode)                                                           |
+         * | itemBlockHoverIcon       | Icon for a hovered item in a list (block mode)                                                  |
+         * | itemSelected             | A selected item in a list                                                                       |
+         * | itemSelectedIcon         | Icon for a selected item in a list                                                              |
+         * | itemUnselected           | An unselected item in a list                                                                    |
+         * | itemUnselectedIcon       | Icon for an unselected item in a list                                                           |
+         * | scrollbarTrack           | The track for the scrollbar                                                                     |
+         * | scrollbarBar             | The bar for the scrollbar                                                                       |
+         * | selectAllText            | 'Select All' item in a multi-select                                                             |
+         * | boolYNText               | The '(Y/n)' bit for the booleanYN prompt                                                        |
+         * | countdown                | ask.countdown                                                                                   |
+         * | pause                    | ask.pause                                                                                       |
+         * | specialHover             | The focus of what the user is controlling (for dates, fileExplorer, etc)                        |
+         * | specialSelected          | Something that has been selected (for dates, fileExplorer, etc)                                 |
+         * | specialHighlight         | More important that normal (e.g. date within a range) (for dates, fileExplorer, etc)            |
+         * | specialNormal            | Normal items (for dates, fileExplorer, etc)                                                     |
+         * | specialFaded             | Not important (for dates, fileExplorer, etc)                                                    |
+         * | specialHint              | Hints/tips/advice (for dates, fileExplorer, etc)                                                |
+         * | specialInactiveHover     | The focus of what the user is controlling (Inactive) (for dates, fileExplorer, etc)             |
+         * | specialInactiveSelected  | Something that has been selected (Inactive) (for dates, fileExplorer, etc)                      |
+         * | specialInactiveHighlight | More important that normal (e.g. date within a range) (Inactive) (for dates, fileExplorer, etc) |
+         * | specialInactiveNormal    | Normal items (Inactive) (for dates, fileExplorer, etc)                                          |
+         * | specialInactiveFaded     | Not important (Inactive) (for dates, fileExplorer, etc)                                         |
+         * | specialInactiveHint      | Hints/tips/advice (Inactive) (for dates, fileExplorer, etc)                                     |
+         * | specialInfo              | Action bar at bottom (for dates, fileExplorer, etc)                                             |
+         * | specialErrorMsg          | Error messages (for dates, fileExplorer, etc)                                                   |
+         * | specialErrorIcon         | Icon for errors (for dates, fileExplorer, etc)                                                  |
+         * | tableSelectHover         | Hover for table selects only (shouldn't be 'block'/bg styles)                                   |
+         * | timelineTrack            | The (inactive) track of a timeline                                                              |
+         * | timelineTrackActive      | The active track of a timeline                                                                  |
+         * | timelineHandle           | The (inactive) control handle on a timeline                                                     |
+         * | timelineHandleActive     | The active control handle on a timeline                                                         |
+         */
         colours?: {
+            /** General decoration and cosmetics */
             decoration?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The text of the question of the prompt */
             questionText?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Special icon for the 'state' */
             specialIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The initial/opening icon */
             openingIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The icon that indicates where you are typing */
             promptIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** General result */
             result?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** String results */
             resultText?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Number results */
             resultNumber?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Boolean results */
             resultBoolean?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Array results */
             resultArray?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Date results */
             resultDate?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for ask.loading */
             loadingIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The error message (if there is one) */
             errorMsg?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** A normal item in a list */
             item?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for a normal item in a list */
             itemIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** A hovered item in a list */
             itemHover?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for a hovered item in a list */
             itemHoverIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** A hovered item in a list (block mode) */
             itemBlockHover?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for a hovered item in a list (block mode) */
             itemBlockHoverIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** A selected item in a list */
             itemSelected?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for a selected item in a list */
             itemSelectedIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** An unselected item in a list */
             itemUnselected?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for an unselected item in a list */
             itemUnselectedIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The track for the scrollbar */
             scrollbarTrack?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The bar for the scrollbar */
             scrollbarBar?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** 'Select All' item in a multi-select */
             selectAllText?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The '(Y/n)' bit for the booleanYN prompt */
             boolYNText?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** ask.countdown */
             countdown?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** ask.pause */
             pause?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The focus of what the user is controlling (for dates, fileExplorer, etc) */
             specialHover?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Something that has been selected (for dates, fileExplorer, etc) */
             specialSelected?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** More important that normal (e.g. date within a range) (for dates, fileExplorer, etc) */
             specialHighlight?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Normal items (for dates, fileExplorer, etc) */
             specialNormal?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Not important (for dates, fileExplorer, etc) */
             specialFaded?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Hints/tips/advice (for dates, fileExplorer, etc) */
             specialHint?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The focus of what the user is controlling (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveHover?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Something that has been selected (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveSelected?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** More important that normal (e.g. date within a range) (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveHighlight?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Normal items (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveNormal?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Not important (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveFaded?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Hints/tips/advice (Inactive) (for dates, fileExplorer, etc) */
             specialInactiveHint?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Action bar at bottom (for dates, fileExplorer, etc) */
             specialInfo?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Error messages (for dates, fileExplorer, etc) */
             specialErrorMsg?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Icon for errors (for dates, fileExplorer, etc) */
             specialErrorIcon?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** Hover for table selects only (shouldn't be 'block'/bg styles) */
             tableSelectHover?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The (inactive) track of a timeline */
             timelineTrack?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The active track of a timeline */
             timelineTrackActive?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The (inactive) control handle on a timeline */
             timelineHandle?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
+            /** The active control handle on a timeline */
             timelineHandleActive?: WrapFn | {
                 normal?: WrapFn;
                 error?: WrapFn;
                 done?: WrapFn;
             };
         };
+        /**<!-- DOCS: ask.AskOptions.symbols #### 198 -->
+         * `symbols` Options
+         *
+         * - `ask.AskOptions.symbols`
+         *
+         * Variety of symbols and 'icons' for different aspects of the display
+         *
+         * All symbols can be a single `string` value, or a set of `string` values, one for each state (normal, error, done)
+         * When single value, it is used for all states. When only a few states are set, the others will remain unchanged.
+         *
+         * | Name                     | Description                                                               |
+         * |--------------------------|---------------------------------------------------------------------------|
+         * | specialIcon              | Special icon for the 'state'                                              |
+         * | openingIcon              | The initial/opening icon                                                  |
+         * | promptIcon               | The icon that indicates where you are typing                              |
+         * | errorMsgPrefix           | Icon shown before error messages                                          |
+         * | itemIcon                 | Icon for a normal item in a list                                          |
+         * | itemHoverIcon            | Icon for a hovered item in a list                                         |
+         * | itemSelectedIcon         | Icon for a selected item in a list                                        |
+         * | itemUnselectedIcon       | Icon for an unselected item in a list                                     |
+         * | scrollUpIcon             | Used to indicate you can scroll up                                        |
+         * | scrollDownIcon           | Used to indicate you can scroll down                                      |
+         * | scrollbarTrack           | The track part of the scrollbar                                           |
+         * | scrollbarTrackTrimTop    | The trimmed top of the track (half height)                                |
+         * | scrollbarTrackTrimBottom | The trimmed bottom of the track (half height)                             |
+         * | scrollbarBar             | The bar part of the scrollbar                                             |
+         * | scrollbarBarTrimTop      | The trimmed top of the bar (half height)                                  |
+         * | scrollbarBarTrimBottom   | The trimmed bottom of the bar (half height)                               |
+         * | separatorLine            | Line added by ask.separator                                               |
+         * | separatorNodeDown        | Node is ask.separator line that indicates 'down'                          |
+         * | separatorNodeNone        | Node is ask.separator line that breaks up the pattern                     |
+         * | separatorNodeUp          | Node is ask.separator line that indicates 'up'                            |
+         * | specialErrorIcon         | Icon for errors (for dates, fileExplorer, etc)                            |
+         * | folderOpenableIcon       | Shown at end of line for folders to show they can be opened (right-wards) |
+         * | fileOpenableIcon         | File version of folderOpenableIcon. Typically empty                       |
+         * | timelineTrack            | The track of a timeline                                                   |
+         * | timelineHandle           | The control handle on a timeline                                          |
+         * | timelineBar              | The 'bar' (active portion) of a timeline                                  |
+         */
         symbols?: {
+            /** Special icon for the 'state' */
             specialIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The initial/opening icon */
             openingIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The icon that indicates where you are typing */
             promptIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon shown before error messages */
             errorMsgPrefix?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon for a normal item in a list */
             itemIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon for a hovered item in a list */
             itemHoverIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon for a selected item in a list */
             itemSelectedIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon for an unselected item in a list */
             itemUnselectedIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Used to indicate you can scroll up */
             scrollUpIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Used to indicate you can scroll down */
             scrollDownIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The track part of the scrollbar */
             scrollbarTrack?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The trimmed top of the track (half height) */
             scrollbarTrackTrimTop?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The trimmed bottom of the track (half height) */
             scrollbarTrackTrimBottom?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The bar part of the scrollbar */
             scrollbarBar?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The trimmed top of the bar (half height) */
             scrollbarBarTrimTop?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The trimmed bottom of the bar (half height) */
             scrollbarBarTrimBottom?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Line added by ask.separator */
             separatorLine?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Node is ask.separator line that indicates 'down' */
             separatorNodeDown?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Node is ask.separator line that breaks up the pattern */
             separatorNodeNone?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Node is ask.separator line that indicates 'up' */
             separatorNodeUp?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Icon for errors (for dates, fileExplorer, etc)  */
             specialErrorIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** Shown at end of line for folders to show they can be opened (right-wards) */
             folderOpenableIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** File version of folderOpenableIcon. Typically empty */
             fileOpenableIcon?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The track of a timeline */
             timelineTrack?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The control handle on a timeline */
             timelineHandle?: string | {
                 normal?: string;
                 error?: string;
                 done?: string;
             };
+            /** The 'bar' (active portion) of a timeline */
             timelineBar?: string | {
                 normal?: string;
                 error?: string;
@@ -5497,6 +5789,11 @@ declare namespace ask {
      * @returns {any}
      */
     const wizard: <T extends unknown>(startObj?: Partial<T>) => Wizard<T>;
+    /**
+     * Wizard<T>
+     *
+     * Returned by `ask.wizard`
+     */
     interface Wizard<T> {
         add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
         addPartial(partial: Partial<T>): void;

@@ -1,12 +1,10 @@
-import { ArrayTools } from 'swiss-ak';
-
-import { out, Breadcrumb, ansi } from '../../out';
 import { WrapFn, colr } from '../../colr';
+import { Breadcrumb, ansi, out } from '../../out';
 
+import { LOG } from '../../../DELETEME/LOG';
+import { AskOptionsForState, getAskOptions } from './customise';
 import { PromptChoiceFull } from './getFullChoices';
 import { ScrolledItems, getScrollbar } from './getScrolledItems';
-import { AskOptionsForState, getAskOptions } from './customise';
-import { LOG } from '../../../DELETEME/LOG';
 
 const SELECT_ALL = Symbol.for('SWISS.NODE.ASK.SELECT.ALL');
 

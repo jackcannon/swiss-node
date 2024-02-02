@@ -1,11 +1,11 @@
 import { range } from 'swiss-ak';
+import { LOG } from '../../../DELETEME/LOG';
 import { DynTime } from '../../../utils/dynDates';
 import { out } from '../../out';
+import { getAskOptionsForState } from '../basicInput/customise';
+import { ErrorInfo } from '../errorValidation';
 import { getSpecialColours } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
-import { ErrorInfo } from '../errorValidation';
-import { LOG } from '../../../DELETEME/LOG';
-import { getAskOptionsForState } from '../basicInput/customise';
 
 const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: boolean, max: number, label: string, isError: boolean) => {
   const theme = getAskOptionsForState(false, isError);

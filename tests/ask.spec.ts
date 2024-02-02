@@ -52,10 +52,10 @@ describe('ask', () => {
     });
   });
 
-  describe('booleanAlt', () => {
-    singleTest(swissnode.ask.booleanAlt, 'ask.booleanAlt', (booleanAlt, name) => {
+  describe('booleanYN', () => {
+    singleTest(swissnode.ask.booleanYN, 'ask.booleanYN', (booleanYN, name) => {
       it(should` exist as ${name}`, () => {
-        expect(booleanAlt).toBeDefined();
+        expect(booleanYN).toBeDefined();
       });
 
       // TODO tests
@@ -80,30 +80,6 @@ describe('ask', () => {
     singleTest(swissnode.ask.multiselect, 'ask.multiselect', (multiselect, name) => {
       it(should` exist as ${name}`, () => {
         expect(multiselect).toBeDefined();
-      });
-
-      // TODO tests
-      // TODO add arg safety
-      // TODO kitchenSink
-    });
-  });
-
-  describe('crud', () => {
-    singleTest(swissnode.ask.crud, 'ask.crud', (crud, name) => {
-      it(should` exist as ${name}`, () => {
-        expect(crud).toBeDefined();
-      });
-
-      // TODO tests
-      // TODO add arg safety
-      // TODO kitchenSink
-    });
-  });
-
-  describe('validate', () => {
-    singleTest(swissnode.ask.validate, 'ask.validate', (validate, name) => {
-      it(should` exist as ${name}`, () => {
-        expect(validate).toBeDefined();
       });
 
       // TODO tests

@@ -1,10 +1,8 @@
-import { count } from 'console';
 import { safe } from 'swiss-ak';
 
 // ANSI
-// TODO docs
 // TODO tests
-// TODO safe
+// TODO examples
 
 //<!-- DOCS: 240 -->
 /**<!-- DOCS: out.ansi ###! -->
@@ -14,10 +12,6 @@ import { safe } from 'swiss-ak';
  * - `out.ansi`
  *
  * ANSI escape codes for terminal manipulation
- *
- * ```typescript
- * process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
- * ```
  */
 export const ansi: AnsiEscapeCodes = {
   /**<!-- DOCS-ALIAS: out.ansi.cursor -->*/
@@ -219,9 +213,6 @@ export interface AnsiEscapeCodes {
   /**<!-- DOCS: out.ansi.cursor #### -->
    * cursor
    *
-   * - `ansi.cursor`
-   * - `out.ansi.cursor`
-   *
    * ANSI escape codes for controlling the cursor in the terminal
    */
   cursor: {
@@ -398,9 +389,6 @@ export interface AnsiEscapeCodes {
   /**<!-- DOCS: out.ansi.scroll #### -->
    * scroll
    *
-   * - `ansi.scroll`
-   * - `out.ansi.scroll`
-   *
    * ANSI escape codes for scrolling the terminal
    */
   scroll: {
@@ -433,9 +421,6 @@ export interface AnsiEscapeCodes {
 
   /**<!-- DOCS: out.ansi.erase #### -->
    * erase
-   *
-   * - `ansi.erase`
-   * - `out.ansi.erase`
    *
    * ANSI escape codes for erasing parts of the terminal
    */

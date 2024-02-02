@@ -1,17 +1,17 @@
-import { second, seconds, wait, fn, symbols, StringTools } from 'swiss-ak';
+import { second, seconds, wait } from 'swiss-ak';
 
+import { getKeyListener } from './keyListener';
 import { LineCounter, ansi, out } from './out';
 import { Breadcrumb } from './out/breadcrumb';
-import { getKeyListener } from './keyListener';
 
 import * as basicInput from './ask/basicInput';
 import * as customiseOptions from './ask/basicInput/customise';
-import { trim as trimAsk } from './ask/trim';
-import * as fileExplorerAsk from './ask/fileExplorer';
 import * as dateAsk from './ask/datetime';
+import * as fileExplorerAsk from './ask/fileExplorer';
+import * as imitateAsk from './ask/imitate';
 import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
-import * as imitateAsk from './ask/imitate';
+import { trim as trimAsk } from './ask/trim';
 
 export { AskTableDisplaySettings } from './ask/table';
 
@@ -317,6 +317,11 @@ export namespace ask {
     };
   };
 
+  /**
+   * Wizard<T>
+   *
+   * Returned by `ask.wizard`
+   */
   export interface Wizard<T> {
     add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
     addPartial(partial: Partial<T>): void;

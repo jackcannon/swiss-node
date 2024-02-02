@@ -1,6 +1,5 @@
 import { ArrayTools } from 'swiss-ak';
 import { AskOptionsForState } from './customise';
-import { PromptChoiceFull } from './getFullChoices';
 
 export interface ScrolledItems<T> {
   items: T[];

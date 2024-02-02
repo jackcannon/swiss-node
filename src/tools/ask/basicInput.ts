@@ -1,11 +1,11 @@
 import { fn } from 'swiss-ak';
+import { LOG } from '../../DELETEME/LOG';
 import { ask } from '../ask';
 import { Breadcrumb, LineCounter } from '../out';
-import { AskItemData, AskValueData, KeyPressActions, getAskInput } from './basicInput/getAskInput';
-import { getSearchSuggestions } from './basicInput/getSearchSuggestions';
-import { PromptChoiceFull } from './basicInput/getFullChoices';
 import { getAskOptions } from './basicInput/customise';
-import { LOG } from '../../DELETEME/LOG';
+import { AskItemData, AskValueData, KeyPressActions, getAskInput } from './basicInput/getAskInput';
+import { PromptChoiceFull } from './basicInput/getFullChoices';
+import { getSearchSuggestions } from './basicInput/getSearchSuggestions';
 import { valueDisplays } from './basicInput/valueDisplays';
 
 //<!-- DOCS: 101 -->

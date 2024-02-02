@@ -60,7 +60,7 @@ A collection of functions to ask the user for input.
       - [separator](#separator)
     - [**utils**](#ask_utils)
       - [itemsToPromptObjects](#itemstopromptobjects)
-    - [AskOptions](#askoptions)
+    - [**AskOptions**](#askoptions)
     - [PromptChoice](#promptchoice)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
@@ -918,9 +918,241 @@ ask.AskOptions;
 
 Options to customise the behaviour/appearance of the `ask` prompts.
 
-TODO tables
+Use with `ask.customise` to set these options.
+
+  - [**AskOptions**](#askoptions)
+    - [`general` Options](#general-options)
+    - [`text` Options](#text-options)
+    - [**`formatters` Options**](#formatters-options)
+    - [`colours` Options](#colours-options)
+    - [`symbols` Options](#symbols-options)
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### `general` Options
+
+```typescript
+ask.AskOptions.general;
+```
+
+General options for customising ask prompts
+
+| Name                           | Type               | Description                                                        |
+|--------------------------------|--------------------|--------------------------------------------------------------------|
+| themeColour                    | `string` (Colour)  | Set the main theme colour                                          |
+| lc                             | `LineCounter`      | A line counter that all ask prompts will add to when complete      |
+| boxType                        | `'thin' | 'thick'` | What type of box drawing lines to use                              |
+| maxItemsOnScreen               | `number`           | How many select/multiselect items to have on screen at most        |
+| scrollMargin                   | `number`           | How much space to leaving when 'scrolling' lists of items          |
+| fileExplorerColumnWidth        | `number`           | How wide to make each panel of the fileExplorer interface          |
+| fileExplorerMaxItems           | `number`           | How many items to show in each panel of the fileExplorer interface |
+| tableSelectMaxHeightPercentage | `number`           | Percent of terminal height to use at max for table selects         |
+| timelineSpeed                  | `number`           | How many frames to move on a timeline at a time                    |
+| timelineFastSpeed              | `number`           | How many frames to move on a timeline at a time (fast mode)        |
+
+<p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
+
+#### `text` Options
+
+```typescript
+ask.AskOptions.text;
+```
+
+English natural-language elements that you may wish to localise
+
+| Name                               | Type                       | Description                                                 |
+|------------------------------------|----------------------------|-------------------------------------------------------------|
+| boolTrueKeys                       | `string`                   | What buttons to use to indicate `true` for boolean prompts  |
+| boolFalseKeys                      | `string`                   | What buttons to use to indicate `false` for boolean prompts |
+| boolYes                            | `string`                   | 'Yes'                                                       |
+| boolNo                             | `string`                   | 'No'                                                        |
+| boolYesNoSeparator                 | `string`                   | '/'                                                         |
+| boolYN                             | `string`                   | '(Y/n)'                                                     |
+| selectAll                          | `string`                   | '[Select All]'                                              |
+| done                               | `string`                   | 'done'                                                      |
+| items                              | `(num: number) => string`  | '[X items]'                                                 |
+| countdown                          | `(secs: number) => string` | 'Starting in Xs...'                                         |
+| file                               | `string`                   | 'File'                                                      |
+| directory                          | `string`                   | 'Directory'                                                 |
+| loading                            | `string`                   | 'Loading...'                                                |
+| selected                           | `(num: number) => string`  | 'X selected'                                                |
+| specialNewFolderEnterNothingCancel | `string`                   | 'Enter nothing to cancel'                                   |
+| specialNewFolderAddingFolderTo     | `string`                   | 'Adding folder to '                                         |
+| specialNewFolderQuestion           | `(hl: any) => string`      | 'What do you want to name the new folder?'                  |
+| specialSaveFileSavingFileTo        | `string`                   | 'Saving file to '                                           |
+| specialSaveFileQuestion            | `(hl: any) => string`      | 'What do you want to name the file?'                        |
+
+<p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
+
+#### `formatters` Options
+
+```typescript
+ask.AskOptions.formatters;
+```
+
+Functions for formatting how the prompts should display
+
+  - [**`formatters` Options**](#formatters-options)
+    - [`formatPrompt`](#formatprompt)
+    - [`formatItems`](#formatitems)
+
+<p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
+
+##### `formatPrompt`
+
+```typescript
+ask.AskOptions.formatters.formatPrompt;
+```
+
+How to format the prompts
+
+Presets: `oneLine`, `halfBox`, `halfBoxClosed`, `fullBox`, `fullBoxClosed`
+
+Type:
+```typescript
+(
+  question: string | Breadcrumb,
+  value: string,
+  items: string | undefined,
+  errorMessage: string | undefined,
+  theme: AskOptionsForState,
+  isComplete: boolean,
+  isExit: boolean
+) => string;
+```
+
+<p style="text-align: right" align="right"><a href="#formatters-options"> [↑ Back to <b>`formatters` Options</b> ↑] </a></p>
+
+##### `formatItems`
+
+```typescript
+ask.AskOptions.formatters.formatItems;
+```
+
+How to format lists of items
+
+Presets: `block`, `blockAlt`, `simple`, `simpleAlt`
+
+Type:
+```typescript
+<T extends unknown>(
+  allItems: PromptChoiceFull<T>[],
+  scrolledItems: ScrolledItems<PromptChoiceFull<T>>,
+  selected: number[] | undefined,
+  type: 'single' | 'multi',
+  theme: AskOptionsForState,
+  isExit: boolean
+) => string;
+```
+
+<p style="text-align: right" align="right"><a href="#formatters-options"> [↑ Back to <b>`formatters` Options</b> ↑] </a></p>
+
+#### `colours` Options
+
+```typescript
+ask.AskOptions.colours;
+```
+
+Colours for all the different elements
+
+All colours can be a single `WrapFn` value, or a set of `WrapFn` values, one for each state (normal, error, done)
+When single value, it is used for all states. When only a few states are set, the others will remain unchanged.
+
+| Name                     | Description                                                                                     |
+|--------------------------|-------------------------------------------------------------------------------------------------|
+| decoration               | General decoration and cosmetics                                                                |
+| questionText             | The text of the question of the prompt                                                          |
+| specialIcon              | Special icon for the 'state'                                                                    |
+| openingIcon              | The initial/opening icon                                                                        |
+| promptIcon               | The icon that indicates where you are typing                                                    |
+| result                   | General result                                                                                  |
+| resultText               | String results                                                                                  |
+| resultNumber             | Number results                                                                                  |
+| resultBoolean            | Boolean results                                                                                 |
+| resultArray              | Array results                                                                                   |
+| resultDate               | Date results                                                                                    |
+| loadingIcon              | Icon for ask.loading                                                                            |
+| errorMsg                 | The error message (if there is one)                                                             |
+| item                     | A normal item in a list                                                                         |
+| itemIcon                 | Icon for a normal item in a list                                                                |
+| itemHover                | A hovered item in a list                                                                        |
+| itemHoverIcon            | Icon for a hovered item in a list                                                               |
+| itemBlockHover           | A hovered item in a list (block mode)                                                           |
+| itemBlockHoverIcon       | Icon for a hovered item in a list (block mode)                                                  |
+| itemSelected             | A selected item in a list                                                                       |
+| itemSelectedIcon         | Icon for a selected item in a list                                                              |
+| itemUnselected           | An unselected item in a list                                                                    |
+| itemUnselectedIcon       | Icon for an unselected item in a list                                                           |
+| scrollbarTrack           | The track for the scrollbar                                                                     |
+| scrollbarBar             | The bar for the scrollbar                                                                       |
+| selectAllText            | 'Select All' item in a multi-select                                                             |
+| boolYNText               | The '(Y/n)' bit for the booleanYN prompt                                                        |
+| countdown                | ask.countdown                                                                                   |
+| pause                    | ask.pause                                                                                       |
+| specialHover             | The focus of what the user is controlling (for dates, fileExplorer, etc)                        |
+| specialSelected          | Something that has been selected (for dates, fileExplorer, etc)                                 |
+| specialHighlight         | More important that normal (e.g. date within a range) (for dates, fileExplorer, etc)            |
+| specialNormal            | Normal items (for dates, fileExplorer, etc)                                                     |
+| specialFaded             | Not important (for dates, fileExplorer, etc)                                                    |
+| specialHint              | Hints/tips/advice (for dates, fileExplorer, etc)                                                |
+| specialInactiveHover     | The focus of what the user is controlling (Inactive) (for dates, fileExplorer, etc)             |
+| specialInactiveSelected  | Something that has been selected (Inactive) (for dates, fileExplorer, etc)                      |
+| specialInactiveHighlight | More important that normal (e.g. date within a range) (Inactive) (for dates, fileExplorer, etc) |
+| specialInactiveNormal    | Normal items (Inactive) (for dates, fileExplorer, etc)                                          |
+| specialInactiveFaded     | Not important (Inactive) (for dates, fileExplorer, etc)                                         |
+| specialInactiveHint      | Hints/tips/advice (Inactive) (for dates, fileExplorer, etc)                                     |
+| specialInfo              | Action bar at bottom (for dates, fileExplorer, etc)                                             |
+| specialErrorMsg          | Error messages (for dates, fileExplorer, etc)                                                   |
+| specialErrorIcon         | Icon for errors (for dates, fileExplorer, etc)                                                  |
+| tableSelectHover         | Hover for table selects only (shouldn't be 'block'/bg styles)                                   |
+| timelineTrack            | The (inactive) track of a timeline                                                              |
+| timelineTrackActive      | The active track of a timeline                                                                  |
+| timelineHandle           | The (inactive) control handle on a timeline                                                     |
+| timelineHandleActive     | The active control handle on a timeline                                                         |
+
+<p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
+
+#### `symbols` Options
+
+```typescript
+ask.AskOptions.symbols;
+```
+
+Variety of symbols and 'icons' for different aspects of the display
+
+All symbols can be a single `string` value, or a set of `string` values, one for each state (normal, error, done)
+When single value, it is used for all states. When only a few states are set, the others will remain unchanged.
+
+| Name                     | Description                                                               |
+|--------------------------|---------------------------------------------------------------------------|
+| specialIcon              | Special icon for the 'state'                                              |
+| openingIcon              | The initial/opening icon                                                  |
+| promptIcon               | The icon that indicates where you are typing                              |
+| errorMsgPrefix           | Icon shown before error messages                                          |
+| itemIcon                 | Icon for a normal item in a list                                          |
+| itemHoverIcon            | Icon for a hovered item in a list                                         |
+| itemSelectedIcon         | Icon for a selected item in a list                                        |
+| itemUnselectedIcon       | Icon for an unselected item in a list                                     |
+| scrollUpIcon             | Used to indicate you can scroll up                                        |
+| scrollDownIcon           | Used to indicate you can scroll down                                      |
+| scrollbarTrack           | The track part of the scrollbar                                           |
+| scrollbarTrackTrimTop    | The trimmed top of the track (half height)                                |
+| scrollbarTrackTrimBottom | The trimmed bottom of the track (half height)                             |
+| scrollbarBar             | The bar part of the scrollbar                                             |
+| scrollbarBarTrimTop      | The trimmed top of the bar (half height)                                  |
+| scrollbarBarTrimBottom   | The trimmed bottom of the bar (half height)                               |
+| separatorLine            | Line added by ask.separator                                               |
+| separatorNodeDown        | Node is ask.separator line that indicates 'down'                          |
+| separatorNodeNone        | Node is ask.separator line that breaks up the pattern                     |
+| separatorNodeUp          | Node is ask.separator line that indicates 'up'                            |
+| specialErrorIcon         | Icon for errors (for dates, fileExplorer, etc)                            |
+| folderOpenableIcon       | Shown at end of line for folders to show they can be opened (right-wards) |
+| fileOpenableIcon         | File version of folderOpenableIcon. Typically empty                       |
+| timelineTrack            | The track of a timeline                                                   |
+| timelineHandle           | The control handle on a timeline                                          |
+| timelineBar              | The 'bar' (active portion) of a timeline                                  |
+
+<p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
 
 ### PromptChoice
 
@@ -959,36 +1191,9 @@ A collection of functions to print to the console
     - [truncateStart](#truncatestart)
     - [concatLineGroups](#concatlinegroups)
     - [**getResponsiveValue**](#getresponsivevalue)
-      - [ResponsiveOption<T>](#responsiveoptiont)
     - [**ansi**](#ansi)
     - [**getBreadcrumb**](#getbreadcrumb)
-      - [Breadcrumb](#breadcrumb)
     - [**getLineCounter**](#getlinecounter)
-      - [**LineCounter**](#linecounter)
-        - [lc.log](#lclog)
-        - [lc.overwrite](#lcoverwrite)
-        - [lc.wrap](#lcwrap)
-        - [lc.add](#lcadd)
-        - [lc.get](#lcget)
-        - [lc.getSince](#lcgetsince)
-        - [lc.moveCursor](#lcmovecursor)
-        - [lc.moveHome](#lcmovehome)
-        - [lc.moveToCheckpoint](#lcmovetocheckpoint)
-        - [lc.clear](#lcclear)
-        - [lc.clearBack](#lcclearback)
-        - [lc.clearDown](#lccleardown)
-        - [lc.checkpoint](#lccheckpoint)
-        - [lc.clearToCheckpoint](#lccleartocheckpoint)
-        - [**lc.ansi**](#lcansi)
-          - [lc.ansi.moveCursor](#lcansimovecursor)
-          - [lc.ansi.moveHome](#lcansimovehome)
-          - [lc.ansi.moveToCheckpoint](#lcansimovetocheckpoint)
-          - [lc.ansi.clear](#lcansiclear)
-          - [lc.ansi.clearBack](#lcansiclearback)
-          - [lc.ansi.clearDown](#lcansicleardown)
-          - [lc.ansi.clearToCheckpoint](#lcansicleartocheckpoint)
-          - [lc.ansi.save](#lcansisave)
-          - [lc.ansi.restore](#lcansirestore)
     - [**utils**](#out_utils)
       - [getTerminalWidth](#getterminalwidth)
       - [getLines](#out_utils_getlines)
@@ -1563,6 +1768,9 @@ out.getResponsiveValue([
 ]) // c
 ```
 
+  - [**getResponsiveValue**](#getresponsivevalue)
+    - [ResponsiveOption<T>](#responsiveoptiont)
+
 |  #  | Parameter Name | Required | Type                    |
 |:---:|:---------------|:---------|:------------------------|
 | *0* | `options`      | **Yes**  | `ResponsiveOption<T>[]` |
@@ -1583,7 +1791,7 @@ Configuration for a responsive value (see `getResponsiveValue`)
 
 See getResponsiveValue for an example
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getresponsivevalue"> [↑ Back to <b>getResponsiveValue</b> ↑] </a></p>
 
 ### ansi
 
@@ -1593,10 +1801,6 @@ out.ansi;
 ```
 
 ANSI escape codes for terminal manipulation
-
-```typescript
-process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
-```
 
   - [**ansi**](#ansi)
     - [**cursor**](#cursor)
@@ -1633,12 +1837,6 @@ process.out.write(ansi.cursor.to(0, 0) + ansi.cursor.hide);
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
 #### cursor
-
-```typescript
-ansi.cursor;
-out.ansi.cursor;
-```
-
 ANSI escape codes for controlling the cursor in the terminal
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
@@ -1872,12 +2070,6 @@ ANSI escape code to restore a previously saved cursor position (saved with `curs
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 #### scroll
-
-```typescript
-ansi.scroll;
-out.ansi.scroll;
-```
-
 ANSI escape codes for scrolling the terminal
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
@@ -1921,12 +2113,6 @@ Scroll the terminal down a specific amount
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 #### erase
-
-```typescript
-ansi.erase;
-out.ansi.erase;
-```
-
 ANSI escape codes for erasing parts of the terminal
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
@@ -2112,6 +2298,9 @@ subsub(); // 'a › b › c › d'
 subsub('e'); // 'a › b › c › d › e'
 ```
 
+  - [**getBreadcrumb**](#getbreadcrumb)
+    - [Breadcrumb](#breadcrumb)
+
 |  #   | Parameter Name | Required | Type       |
 |:----:|:---------------|:---------|:-----------|
 | *0…* | `baseNames`    | *No*     | `string[]` |
@@ -2131,7 +2320,7 @@ Breadcrumb;
 
 Return type for getBreadcrumb
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getbreadcrumb"> [↑ Back to <b>getBreadcrumb</b> ↑] </a></p>
 
 ### getLineCounter
 
@@ -2150,6 +2339,33 @@ lc.add(1);
 lc.get(); // 3
 lc.clear();
 ```
+
+  - [**getLineCounter**](#getlinecounter)
+    - [**LineCounter**](#linecounter)
+      - [lc.log](#lclog)
+      - [lc.overwrite](#lcoverwrite)
+      - [lc.wrap](#lcwrap)
+      - [lc.add](#lcadd)
+      - [lc.get](#lcget)
+      - [lc.getSince](#lcgetsince)
+      - [lc.moveCursor](#lcmovecursor)
+      - [lc.moveHome](#lcmovehome)
+      - [lc.moveToCheckpoint](#lcmovetocheckpoint)
+      - [lc.clear](#lcclear)
+      - [lc.clearBack](#lcclearback)
+      - [lc.clearDown](#lccleardown)
+      - [lc.checkpoint](#lccheckpoint)
+      - [lc.clearToCheckpoint](#lccleartocheckpoint)
+      - [**lc.ansi**](#lcansi)
+        - [lc.ansi.moveCursor](#lcansimovecursor)
+        - [lc.ansi.moveHome](#lcansimovehome)
+        - [lc.ansi.moveToCheckpoint](#lcansimovetocheckpoint)
+        - [lc.ansi.clear](#lcansiclear)
+        - [lc.ansi.clearBack](#lcansiclearback)
+        - [lc.ansi.clearDown](#lcansicleardown)
+        - [lc.ansi.clearToCheckpoint](#lcansicleartocheckpoint)
+        - [lc.ansi.save](#lcansisave)
+        - [lc.ansi.restore](#lcansirestore)
 
 | Return Type   |
 |---------------|
@@ -2175,7 +2391,7 @@ lc.get(); // 3
 lc.clear();
 ```
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.log
 Same as console.log, but adds to the lc counter
@@ -2193,7 +2409,7 @@ lc.log('hello'); // 1
 |-------------|-----------------------|
 | `number`    | number of lines added |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.overwrite
 Similar to lc.log, but designed for overwriting lines that have already been printed on the screen
@@ -2215,7 +2431,7 @@ lc.overwrite('hello'); // 1
 |-------------|-----------------------|
 | `number`    | number of lines added |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.wrap
 Wraps a function, and adds a given number to the line counter
@@ -2235,7 +2451,7 @@ lc.wrap(1, () => console.log('a single line')); // 1
 |-------------|------------------------|
 | `T`         | result of the function |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.add
 Adds a given number to the line counter
@@ -2253,7 +2469,7 @@ lc.add(1);
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.get
 returns the line counter
@@ -2270,7 +2486,7 @@ lc.get(); // 3
 |-------------|--------------|
 | `number`    | line counter |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.getSince
 Returns the number of lines since a given checkpoint
@@ -2294,7 +2510,7 @@ lc.getSince('test-b'); // 1
 |-------------|--------------------------------------|
 | `number`    | number of lines since the checkpoint |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.moveCursor
 Move the cursor without clearing/erasing lines.
@@ -2309,7 +2525,7 @@ Updates the line count in the process.
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.moveHome
 Move the cursor to the start of the line count without clearing/erasing lines.
@@ -2322,7 +2538,7 @@ Updates the line count in the process.
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.moveToCheckpoint
 Move the cursor to a previously recorded checkpoint
@@ -2339,7 +2555,7 @@ Updates the line count in the process.
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.clear
 clears the line counter, and moves the cursor up by the value of the line counter
@@ -2354,7 +2570,7 @@ lc.clear();
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.clearBack
 Clears a given number of lines, and updates the line counter
@@ -2377,7 +2593,7 @@ lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.clearDown
 Moves the cursor down by a given number of lines
@@ -2394,7 +2610,7 @@ Can be negative to move up (clearing lines)
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.checkpoint
 Records a 'checkpoint' that can be returned to later
@@ -2418,7 +2634,7 @@ lc.getSince('test-b'); // 1
 |-------------|--------------|
 | `string`    | checkpointID |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.clearToCheckpoint
 Clear lines up to a previously recorded checkpoint
@@ -2441,12 +2657,12 @@ lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 |-------------|
 | `void`      |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ##### lc.ansi
 Get ansi codes for clear/erase functions, and update the line counter in the process.
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.moveCursor
 Move the cursor without clearing/erasing lines.
@@ -2463,7 +2679,7 @@ Updates the line count in the process.
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.moveHome
 Move the cursor to the start of the line count without clearing/erasing lines.
@@ -2478,7 +2694,7 @@ Updates the line count in the process.
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.moveToCheckpoint
 Move the cursor to a previously recorded checkpoint
@@ -2497,7 +2713,7 @@ Updates the line count in the process.
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.clear
 Clears the line counter, and moves the cursor up by the value of the line counter
@@ -2514,7 +2730,7 @@ process.stdout.write(lc.ansi.clear());
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.clearBack
 Clears a given number of lines, and updates the line counter
@@ -2539,7 +2755,7 @@ process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleare
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.clearDown
 Moves the cursor down by a given number of lines
@@ -2558,7 +2774,7 @@ Can be negative to move up (clearing lines)
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.clearToCheckpoint
 Clear lines up to a previously recorded checkpoint
@@ -2583,21 +2799,21 @@ process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 
 |-------------|
 | `string`    |
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.save
 Saves the current cursor position and also tracks the line count
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.restore
 Restores to the previously saved cursor position and also tracks the line count
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
-<p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
+<p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ### <span id="out_utils">utils</span>
 

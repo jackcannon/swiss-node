@@ -2,18 +2,18 @@ import { ArrayTools, PromiseTools, fn, getDeferred, milliseconds, wait } from 's
 import { colr } from '../../colr';
 import { Breadcrumb, LineCounter, ansi, getLineCounter, out } from '../../out';
 
+import { LOG } from '../../../DELETEME/LOG';
 import { getPathType, mkdir, openFinder } from '../../../utils/fsUtils';
 import { PathTools } from '../../PathTools';
 import { ask } from '../../ask';
 import { getKeyListener } from '../../keyListener';
 import { table } from '../../table';
+import { getAskOptions, getAskOptionsForState } from '../basicInput/customise';
+import { getScrollbar, getScrolledItems } from '../basicInput/getScrolledItems';
+import { getErrorInfoFromValidationResult } from '../errorValidation';
+import { getImitateOutput } from '../imitate';
 import { PathContents, fsCache } from './cache';
 import { forceLoadPathContents, getFEActionBar, getFilePanel, join, loadPathContents } from './helpers';
-import { getImitateOutput } from '../imitate';
-import { getAskOptions, getAskOptionsForState } from '../basicInput/customise';
-import { LOG } from '../../../DELETEME/LOG';
-import { getErrorInfoFromValidationResult } from '../errorValidation';
-import { getScrollbar, getScrolledItems } from '../basicInput/getScrolledItems';
 
 export const fileExplorerHandler = async (
   isMulti: boolean = false,

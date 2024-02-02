@@ -1,8 +1,8 @@
 import { ArrayTools } from 'swiss-ak';
-import { getLineCounter, LineCounter } from '../out/lineCounter';
+import { ask } from '../ask';
 import { out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
-import { ask } from '../ask';
+import { getLineCounter, LineCounter } from '../out/lineCounter';
 import { getAskOptionsForState } from './basicInput/customise';
 
 //<!-- DOCS: 150 -->

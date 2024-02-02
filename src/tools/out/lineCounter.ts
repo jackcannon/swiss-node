@@ -4,7 +4,7 @@ import { out } from '../out';
 import { ansi } from './ansi';
 //<!-- DOCS: 260 -->
 
-/**<!-- DOCS: out.getLineCounter ### -->
+/**<!-- DOCS: out.getLineCounter ###! -->
  * getLineCounter
  *
  * - `out.getLineCounter`

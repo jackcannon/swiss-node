@@ -684,7 +684,7 @@ export namespace out {
     return zipMax(...aligned).map((line) => line.join(''));
   };
 
-  /**<!-- DOCS: out.getResponsiveValue ### @ -->
+  /**<!-- DOCS: out.getResponsiveValue ###! @ -->
    * getResponsiveValue
    *
    * - `out.getResponsiveValue`

@@ -3,16 +3,16 @@ import { fn, getDeferred, MathsTools, RemapOf } from 'swiss-ak';
 import { getKeyListener } from '../keyListener';
 import { getLineCounter } from '../out/lineCounter';
 
-import { table } from '../table';
-import { Breadcrumb } from '../out/breadcrumb';
-import { colr } from '../colr';
 import { LOG } from '../../DELETEME/LOG';
-import { getImitateOutput, imitate } from './imitate';
-import { ansi, LineCounter, out } from '../out';
-import { getScrollbar, getScrolledItems, ScrolledItems } from './basicInput/getScrolledItems';
-import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
-import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
+import { colr } from '../colr';
+import { ansi, LineCounter, out } from '../out';
+import { Breadcrumb } from '../out/breadcrumb';
+import { table } from '../table';
+import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
+import { getScrollbar, getScrolledItems, ScrolledItems } from './basicInput/getScrolledItems';
+import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
+import { getImitateOutput, imitate } from './imitate';
 
 //<!-- DOCS: 120 -->
 
