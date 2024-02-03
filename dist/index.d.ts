@@ -3750,7 +3750,6 @@ declare namespace out {
      * out.getWidth('↓←→↑'); // 4
      * out.getWidth(colr.red('this is red')); // 11
      * ```
-     *
      * @param {string} text
      * @returns {number}
      */
