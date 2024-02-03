@@ -33,8 +33,8 @@ A collection of functions to ask the user for input.
     - [number](#number)
     - [boolean](#boolean)
     - [booleanYN](#booleanyn)
-    - [select](#ask_select)
-    - [multiselect](#ask_multiselect)
+    - [select](#select)
+    - [multiselect](#multiselect)
     - [date](#date)
     - [time](#time)
     - [datetime](#datetime)
@@ -44,8 +44,8 @@ A collection of functions to ask the user for input.
       - [multiFileExplorer](#multifileexplorer)
       - [saveFileExplorer](#savefileexplorer)
     - [**table**](#ask_table)
-      - [select](#ask_table_select)
-      - [multiselect](#ask_table_multiselect)
+      - [table.select](#tableselect)
+      - [table.multiselect](#tablemultiselect)
       - [AskTableDisplaySettings<T>](#asktabledisplaysettingst)
     - [trim](#trim)
     - [**Extra**](#extra)
@@ -192,7 +192,7 @@ const isCool = await ask.booleanYN('Is this cool?'); // true
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### <span id="ask_select">select</span>
+### select
 
 ```typescript
 ask.select(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | number, validate: (item: T, index: number) => Error | string | boolean | void, lc: LineCounter): Promise<T>
@@ -218,7 +218,7 @@ const colour = await ask.select('Whats your favourite colour?', ['red', 'green',
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-### <span id="ask_multiselect">multiselect</span>
+### multiselect
 
 ```typescript
 ask.multiselect(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[], validate: (items: T[], indexes: number[]) => Error | string | boolean | void, lc: LineCounter): Promise<T[]>
@@ -448,7 +448,7 @@ A collection of functions for asking questions with tables.
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### <span id="ask_table_select">select</span>
+#### table.select
 
 ```typescript
 ask.table.select(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T | number, validate: (item: T) => Error | string | boolean | void, lc: LineCounter): Promise<T>
@@ -493,7 +493,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
-#### <span id="ask_table_multiselect">multiselect</span>
+#### table.multiselect
 
 ```typescript
 ask.table.multiselect(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T[] | number[], validate: (items: T[]) => Error | string | boolean | void, lc: LineCounter): Promise<T[]>
@@ -593,10 +593,14 @@ These are ask functions that don't prompt the user, but can help manage or organ
 ask.customise(options: Partial<ask.AskOptions>): void
 ```
 
-TODO docs
+Customise the behaviour/appearance of the `ask` prompts.
+
+See `ask.AskOptions` for the options available.
 
 ```typescript
-TODO example
+ask.customise({ general: { themeColour: 'magenta' } }); // change the theme colour to magenta
+ask.customise({ general: { lc } }); // set a line counter for that all prompts will add to when complete
+ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
 ```
 
 |  #  | Parameter Name | Required | Type                      |
@@ -937,18 +941,19 @@ ask.AskOptions.general;
 
 General options for customising ask prompts
 
-| Name                           | Type               | Description                                                        |
-|--------------------------------|--------------------|--------------------------------------------------------------------|
-| themeColour                    | `string` (Colour)  | Set the main theme colour                                          |
-| lc                             | `LineCounter`      | A line counter that all ask prompts will add to when complete      |
-| boxType                        | `'thin' | 'thick'` | What type of box drawing lines to use                              |
-| maxItemsOnScreen               | `number`           | How many select/multiselect items to have on screen at most        |
-| scrollMargin                   | `number`           | How much space to leaving when 'scrolling' lists of items          |
-| fileExplorerColumnWidth        | `number`           | How wide to make each panel of the fileExplorer interface          |
-| fileExplorerMaxItems           | `number`           | How many items to show in each panel of the fileExplorer interface |
-| tableSelectMaxHeightPercentage | `number`           | Percent of terminal height to use at max for table selects         |
-| timelineSpeed                  | `number`           | How many frames to move on a timeline at a time                    |
-| timelineFastSpeed              | `number`           | How many frames to move on a timeline at a time (fast mode)        |
+| Name                           | Type                | Description                                                        |
+|--------------------------------|---------------------|--------------------------------------------------------------------|
+| themeColour                    | `string` (Colour)   | Set the main theme colour                                          |
+| lc                             | `LineCounter`       | A line counter that all ask prompts will add to when complete      |
+| boxType                        | `'thin' \| 'thick'` | What type of box drawing lines to use                              |
+| beeps                          | `boolean`           | Whether to make an audio beeps when appropriate                    |
+| maxItemsOnScreen               | `number`            | How many select/multiselect items to have on screen at most        |
+| scrollMargin                   | `number`            | How much space to leaving when 'scrolling' lists of items          |
+| fileExplorerColumnWidth        | `number`            | How wide to make each panel of the fileExplorer interface          |
+| fileExplorerMaxItems           | `number`            | How many items to show in each panel of the fileExplorer interface |
+| tableSelectMaxHeightPercentage | `number`            | Percent of terminal height to use at max for table selects         |
+| timelineSpeed                  | `number`            | How many frames to move on a timeline at a time                    |
+| timelineFastSpeed              | `number`            | How many frames to move on a timeline at a time (fast mode)        |
 
 <p style="text-align: right" align="right"><a href="#askoptions"> [↑ Back to <b>AskOptions</b> ↑] </a></p>
 
@@ -1220,6 +1225,12 @@ A rough approximation of the width of the given text (as it would appear in the 
 Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
 
 > __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
+
+```typescript
+out.getWidth('FOO BAR'); // 7
+out.getWidth('↓←→↑'); // 4
+out.getWidth(colr.red('this is red')); // 11
+```
 
 |  #  | Parameter Name | Required | Type     |
 |:---:|:---------------|:---------|:---------|
@@ -1850,6 +1861,10 @@ out.ansi.cursor.to(x: number, y: number): string
 
 Move the cursor to a specific position
 
+```typescript
+process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description                          |
 |:---:|:---------------|:---------|:---------|:--------|:-------------------------------------|
 | *0* | `x`            | *No*     | `number` | `0`     | The x position to move the cursor to |
@@ -1869,6 +1884,11 @@ out.ansi.cursor.move(x: number, y: number): string
 ```
 
 Move the cursor a specific amount of spaces
+
+```typescript
+process.stdout.write(ansi.cursor.move(5, 10)); // moves the cursor down 5 lines and right 10 spaces
+process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines and left 10 spaces
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                                                                 |
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------------------------------------------|
@@ -1890,6 +1910,11 @@ out.ansi.cursor.up(count: number): string
 
 Move the cursor up a specific amount of spaces
 
+```typescript
+process.stdout.write(ansi.cursor.up(5)); // moves the cursor up 5 lines
+process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description                           |
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor up |
@@ -1908,6 +1933,11 @@ out.ansi.cursor.down(count: number): string
 ```
 
 Move the cursor down a specific amount of spaces
+
+```typescript
+process.stdout.write(ansi.cursor.down(5)); // moves the cursor down 5 lines
+process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                             |
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
@@ -1928,6 +1958,11 @@ out.ansi.cursor.left(count: number): string
 
 Move the cursor left (backward) a specific amount of spaces
 
+```typescript
+process.stdout.write(ansi.cursor.left(5)); // moves the cursor left 5 spaces
+process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description                             |
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor left |
@@ -1946,6 +1981,11 @@ out.ansi.cursor.right(count: number): string
 ```
 
 Move the cursor right (forward) a specific amount of spaces
+
+```typescript
+process.stdout.write(ansi.cursor.right(5)); // moves the cursor right 5 spaces
+process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                              |
 |:---:|:---------------|:---------|:---------|:--------|:-----------------------------------------|
@@ -1966,6 +2006,11 @@ out.ansi.cursor.nextLine(count: number): string
 
 Move the cursor to the beginning of the next line
 
+```typescript
+process.stdout.write(ansi.cursor.nextLine()); // moves the cursor to the beginning of the next line
+process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines and to the beginning of the next line
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description                            |
 |:---:|:---------------|:---------|:---------|:--------|:---------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to move the cursor down |
@@ -1984,6 +2029,11 @@ out.ansi.cursor.prevLine(count: number): string
 ```
 
 Move the cursor to the beginning of the previous line
+
+```typescript
+process.stdout.write(ansi.cursor.prevLine()); // moves the cursor to the beginning of the previous line
+process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines and to the beginning of the previous line
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                          |
 |:---:|:---------------|:---------|:---------|:--------|:-------------------------------------|
@@ -2004,6 +2054,10 @@ out.ansi.cursor.lineStart;
 
 ANSI escape code to move the cursor to the beginning of the current line
 
+```typescript
+process.stdout.write(ansi.cursor.lineStart); // moves the cursor to the beginning of the current line
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### setShow
@@ -2014,6 +2068,11 @@ out.ansi.cursor.setShow(isShow: boolean): string
 ```
 
 Set whether or not the cursor is shown
+
+```typescript
+process.stdout.write(ansi.cursor.setShow(true)); // shows the cursor
+process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
+```
 
 |  #  | Parameter Name | Required | Type      | Description                               |
 |:---:|:---------------|:---------|:----------|:------------------------------------------|
@@ -2034,6 +2093,10 @@ out.ansi.cursor.show;
 
 ANSI escape code to show the cursor
 
+```typescript
+process.stdout.write(ansi.cursor.show); // shows the cursor
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### hide
@@ -2044,6 +2107,10 @@ out.ansi.cursor.hide;
 ```
 
 ANSI escape code to hide the cursor
+
+```typescript
+process.stdout.write(ansi.cursor.hide); // hides the cursor
+```
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2056,6 +2123,12 @@ out.ansi.cursor.save;
 
 ANSI escape code to save the current cursor position (can be restored with `cursor.restore`)
 
+```typescript
+process.stdout.write(ansi.cursor.save); // saves the current cursor position
+// ...
+process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### restore
@@ -2066,6 +2139,12 @@ out.ansi.cursor.restore;
 ```
 
 ANSI escape code to restore a previously saved cursor position (saved with `cursor.save`)
+
+```typescript
+process.stdout.write(ansi.cursor.save); // saves the current cursor position
+// ...
+process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+```
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2082,6 +2161,11 @@ out.ansi.scroll.up(count: number): string
 ```
 
 Scroll the terminal up a specific amount
+
+```typescript
+process.stdout.write(ansi.scroll.up(5)); // scrolls the terminal up 5 lines
+process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                           |
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
@@ -2101,6 +2185,11 @@ out.ansi.scroll.down(count: number): string
 ```
 
 Scroll the terminal down a specific amount
+
+```typescript
+process.stdout.write(ansi.scroll.down(5)); // scrolls the terminal down 5 lines
+process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description                             |
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
@@ -2126,6 +2215,10 @@ out.ansi.erase.screen;
 
 ANSI escape code to erase the entire terminal screen
 
+```typescript
+process.stdout.write(ansi.erase.screen); // erases the entire terminal screen
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### <span id="out_ansi_erase_up">up</span>
@@ -2136,6 +2229,11 @@ out.ansi.erase.up(count: number): string
 ```
 
 Erase the terminal above the cursor
+
+```typescript
+process.stdout.write(ansi.erase.up(5)); // erases the terminal above the cursor by 5 lines
+process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor by 5 lines
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description             |
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
@@ -2156,6 +2254,11 @@ out.ansi.erase.down(count: number): string
 
 Erase the terminal below the cursor
 
+```typescript
+process.stdout.write(ansi.erase.down(5)); // erases the terminal below the cursor by 5 lines
+process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the cursor by 5 lines
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description             |
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
@@ -2175,6 +2278,10 @@ out.ansi.erase.line;
 
 ANSI escape code to erase the current line
 
+```typescript
+process.stdout.write(ansi.erase.line); // erases the current line
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### lineEnd
@@ -2185,6 +2292,10 @@ out.ansi.erase.lineEnd;
 ```
 
 ANSI escape code to erase the current line from the cursor to the end
+
+```typescript
+process.stdout.write(ansi.erase.lineEnd); // erases the current line from the cursor to the end
+```
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2197,6 +2308,10 @@ out.ansi.erase.lineStart;
 
 ANSI escape code to erase the current line from the cursor to the start
 
+```typescript
+process.stdout.write(ansi.erase.lineStart); // erases the current line from the cursor to the start
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 ##### lines
@@ -2207,6 +2322,10 @@ out.ansi.erase.lines(count: number): string
 ```
 
 Erase a specific number of lines upwards from the cursor
+
+```typescript
+process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cursor
+```
 
 |  #  | Parameter Name | Required | Type     | Default | Description             |
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
@@ -2229,6 +2348,10 @@ Make sure the next couple of lines are blank and on the screen
 
 > __Note:__ Erases the current line and returns to it afterwards
 
+```typescript
+process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are blank and on the screen
+```
+
 |  #  | Parameter Name | Required | Type     | Default | Description               |
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to reserve |
@@ -2248,6 +2371,10 @@ out.ansi.clear;
 
 ANSI escape code to clear the terminal screen
 
+```typescript
+process.stdout.write(ansi.clear); // clears the terminal screen
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 #### beep
@@ -2259,6 +2386,10 @@ out.ansi.beep;
 
 ANSI escape code to make the terminal beep
 
+```typescript
+process.stdout.write(ansi.beep); // makes the terminal beep
+```
+
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
 #### null
@@ -2269,6 +2400,10 @@ out.ansi.null;
 ```
 
 ANSI escape code for the NULL character. Can be used as a hidden marker.
+
+```typescript
+process.stdout.write(ansi.null); // writes the NULL character
+```
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 

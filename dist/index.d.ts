@@ -15,6 +15,10 @@ interface AnsiEscapeCodes {
          *
          * Move the cursor to a specific position
          *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
+         * ```
+         *
          * @param {number} [x=0] The x position to move the cursor to
          * @param {number} [y=0] The y position to move the cursor to
          * @returns {string} ANSI escape codes
@@ -27,6 +31,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.move`
          *
          * Move the cursor a specific amount of spaces
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.move(5, 10)); // moves the cursor down 5 lines and right 10 spaces
+         * process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines and left 10 spaces
+         * ```
          *
          * @param {number} [x=0] How many spaces to move the cursor horizontally (negative values move left)
          * @param {number} [y=0] How many spaces to move the cursor vertically (negative values move up)
@@ -41,6 +50,11 @@ interface AnsiEscapeCodes {
          *
          * Move the cursor up a specific amount of spaces
          *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.up(5)); // moves the cursor up 5 lines
+         * process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
+         * ```
+         *
          * @param {number} [count=1] How many spaces to move the cursor up
          * @returns {string} ANSI escape codes
          */
@@ -52,6 +66,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.down`
          *
          * Move the cursor down a specific amount of spaces
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.down(5)); // moves the cursor down 5 lines
+         * process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
+         * ```
          *
          * @param {number} [count=1] How many spaces to move the cursor down
          * @returns {string} ANSI escape codes
@@ -65,6 +84,11 @@ interface AnsiEscapeCodes {
          *
          * Move the cursor left (backward) a specific amount of spaces
          *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.left(5)); // moves the cursor left 5 spaces
+         * process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
+         * ```
+         *
          * @param {number} [count=1] How many spaces to move the cursor left
          * @returns {string} ANSI escape codes
          */
@@ -76,6 +100,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.right`
          *
          * Move the cursor right (forward) a specific amount of spaces
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.right(5)); // moves the cursor right 5 spaces
+         * process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
+         * ```
          *
          * @param {number} [count=1] How many spaces to move the cursor right
          * @returns {string} ANSI escape codes
@@ -89,6 +118,11 @@ interface AnsiEscapeCodes {
          *
          * Move the cursor to the beginning of the next line
          *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.nextLine()); // moves the cursor to the beginning of the next line
+         * process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines and to the beginning of the next line
+         * ```
+         *
          * @param {number} [count=1] How many lines to move the cursor down
          * @returns {string} ANSI escape codes
          */
@@ -101,6 +135,11 @@ interface AnsiEscapeCodes {
          *
          * Move the cursor to the beginning of the previous line
          *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.prevLine()); // moves the cursor to the beginning of the previous line
+         * process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines and to the beginning of the previous line
+         * ```
+         *
          * @param {number} [count=1] How many lines to move the cursor up
          * @returns {string} ANSI escape codes
          */
@@ -112,6 +151,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.lineStart`
          *
          * ANSI escape code to move the cursor to the beginning of the current line
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.lineStart); // moves the cursor to the beginning of the current line
+         * ```
+         *
+         * @type {string}
          */
         lineStart: string;
         /**<!-- DOCS: out.ansi.cursor.setShow ##### -->
@@ -121,6 +166,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.setShow`
          *
          * Set whether or not the cursor is shown
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.setShow(true)); // shows the cursor
+         * process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
+         * ```
          *
          * @param {boolean} isShow Whether or not the cursor should be shown
          * @returns {string} ANSI escape code
@@ -133,6 +183,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.show`
          *
          * ANSI escape code to show the cursor
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.show); // shows the cursor
+         * ```
+         *
+         * @type {string}
          */
         show: string;
         /**<!-- DOCS: out.ansi.cursor.hide ##### -->
@@ -142,6 +198,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.hide`
          *
          * ANSI escape code to hide the cursor
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.hide); // hides the cursor
+         * ```
+         *
+         * @type {string}
          */
         hide: string;
         /**<!-- DOCS: out.ansi.cursor.save ##### -->
@@ -151,6 +213,14 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.save`
          *
          * ANSI escape code to save the current cursor position (can be restored with `cursor.restore`)
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.save); // saves the current cursor position
+         * // ...
+         * process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+         * ```
+         *
+         * @type {string}
          */
         save: string;
         /**<!-- DOCS: out.ansi.cursor.restore ##### -->
@@ -160,6 +230,14 @@ interface AnsiEscapeCodes {
          * - `out.ansi.cursor.restore`
          *
          * ANSI escape code to restore a previously saved cursor position (saved with `cursor.save`)
+         *
+         * ```typescript
+         * process.stdout.write(ansi.cursor.save); // saves the current cursor position
+         * // ...
+         * process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+         * ```
+         *
+         * @type {string}
          */
         restore: string;
     };
@@ -177,6 +255,11 @@ interface AnsiEscapeCodes {
          *
          * Scroll the terminal up a specific amount
          *
+         * ```typescript
+         * process.stdout.write(ansi.scroll.up(5)); // scrolls the terminal up 5 lines
+         * process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
+         * ```
+         *
          * @param {number} [count=1] How much to scroll the terminal up by
          * @returns {string} ANSI escape codes
          */
@@ -188,6 +271,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.scroll.down`
          *
          * Scroll the terminal down a specific amount
+         *
+         * ```typescript
+         * process.stdout.write(ansi.scroll.down(5)); // scrolls the terminal down 5 lines
+         * process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
+         * ```
          *
          * @param {number} [count=1] How much to scroll the terminal down by
          * @returns {string} ANSI escape codes
@@ -207,6 +295,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.screen`
          *
          * ANSI escape code to erase the entire terminal screen
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.screen); // erases the entire terminal screen
+         * ```
+         *
+         * @type {string}
          */
         screen: string;
         /**<!-- DOCS: out.ansi.erase.up ##### -->
@@ -216,6 +310,11 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.up`
          *
          * Erase the terminal above the cursor
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.up(5)); // erases the terminal above the cursor by 5 lines
+         * process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor by 5 lines
+         * ```
          *
          * @param {number} [count=1] How many lines to erase
          * @returns {string} ANSI escape codes
@@ -229,6 +328,11 @@ interface AnsiEscapeCodes {
          *
          * Erase the terminal below the cursor
          *
+         * ```typescript
+         * process.stdout.write(ansi.erase.down(5)); // erases the terminal below the cursor by 5 lines
+         * process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the cursor by 5 lines
+         * ```
+         *
          * @param {number} [count=1] How many lines to erase
          * @returns {string} ANSI escape codes
          */
@@ -240,6 +344,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.line`
          *
          * ANSI escape code to erase the current line
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.line); // erases the current line
+         * ```
+         *
+         * @type {string}
          */
         line: string;
         /**<!-- DOCS: out.ansi.erase.lineEnd ##### -->
@@ -249,6 +359,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.lineEnd`
          *
          * ANSI escape code to erase the current line from the cursor to the end
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.lineEnd); // erases the current line from the cursor to the end
+         * ```
+         *
+         * @type {string}
          */
         lineEnd: string;
         /**<!-- DOCS: out.ansi.erase.lineStart ##### -->
@@ -258,6 +374,12 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.lineStart`
          *
          * ANSI escape code to erase the current line from the cursor to the start
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.lineStart); // erases the current line from the cursor to the start
+         * ```
+         *
+         * @type {string}
          */
         lineStart: string;
         /**<!-- DOCS: out.ansi.erase.lines ##### -->
@@ -267,6 +389,10 @@ interface AnsiEscapeCodes {
          * - `out.ansi.erase.lines`
          *
          * Erase a specific number of lines upwards from the cursor
+         *
+         * ```typescript
+         * process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cursor
+         * ```
          *
          * @param {number} [count=1] How many lines to erase
          * @returns {string} ANSI escape codes
@@ -282,6 +408,10 @@ interface AnsiEscapeCodes {
          *
          * > __Note:__ Erases the current line and returns to it afterwards
          *
+         * ```typescript
+         * process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are blank and on the screen
+         * ```
+         *
          * @param {number} [count=1] How many lines to reserve
          * @returns {string} ANSI escape codes
          */
@@ -294,6 +424,12 @@ interface AnsiEscapeCodes {
      * - `out.ansi.clear`
      *
      * ANSI escape code to clear the terminal screen
+     *
+     * ```typescript
+     * process.stdout.write(ansi.clear); // clears the terminal screen
+     * ```
+     *
+     * @type {string}
      */
     clear: string;
     /**<!-- DOCS: out.ansi.beep #### -->
@@ -303,6 +439,12 @@ interface AnsiEscapeCodes {
      * - `out.ansi.beep`
      *
      * ANSI escape code to make the terminal beep
+     *
+     * ```typescript
+     * process.stdout.write(ansi.beep); // makes the terminal beep
+     * ```
+     *
+     * @type {string}
      */
     beep: string;
     /**<!-- DOCS: out.ansi.null #### -->
@@ -312,6 +454,12 @@ interface AnsiEscapeCodes {
      * - `out.ansi.null`
      *
      * ANSI escape code for the NULL character. Can be used as a hidden marker.
+     *
+     * ```typescript
+     * process.stdout.write(ansi.null); // writes the NULL character
+     * ```
+     *
+     * @type {string}
      */
     null: string;
 }
@@ -3596,6 +3744,13 @@ declare namespace out {
      * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
      *
      * > __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
+     *
+     * ```typescript
+     * out.getWidth('FOO BAR'); // 7
+     * out.getWidth('↓←→↑'); // 4
+     * out.getWidth(colr.red('this is red')); // 11
+     * ```
+     *
      * @param {string} text
      * @returns {number}
      */
@@ -4407,18 +4562,19 @@ declare namespace ask$1 {
          *
          * General options for customising ask prompts
          *
-         * | Name                           | Type               | Description                                                        |
-         * |--------------------------------|--------------------|--------------------------------------------------------------------|
-         * | themeColour                    | `string` (Colour)  | Set the main theme colour                                          |
-         * | lc                             | `LineCounter`      | A line counter that all ask prompts will add to when complete      |
-         * | boxType                        | `'thin' | 'thick'` | What type of box drawing lines to use                              |
-         * | maxItemsOnScreen               | `number`           | How many select/multiselect items to have on screen at most        |
-         * | scrollMargin                   | `number`           | How much space to leaving when 'scrolling' lists of items          |
-         * | fileExplorerColumnWidth        | `number`           | How wide to make each panel of the fileExplorer interface          |
-         * | fileExplorerMaxItems           | `number`           | How many items to show in each panel of the fileExplorer interface |
-         * | tableSelectMaxHeightPercentage | `number`           | Percent of terminal height to use at max for table selects         |
-         * | timelineSpeed                  | `number`           | How many frames to move on a timeline at a time                    |
-         * | timelineFastSpeed              | `number`           | How many frames to move on a timeline at a time (fast mode)        |
+         * | Name                           | Type                | Description                                                        |
+         * |--------------------------------|---------------------|--------------------------------------------------------------------|
+         * | themeColour                    | `string` (Colour)   | Set the main theme colour                                          |
+         * | lc                             | `LineCounter`       | A line counter that all ask prompts will add to when complete      |
+         * | boxType                        | `'thin' \| 'thick'` | What type of box drawing lines to use                              |
+         * | beeps                          | `boolean`           | Whether to make an audio beeps when appropriate                    |
+         * | maxItemsOnScreen               | `number`            | How many select/multiselect items to have on screen at most        |
+         * | scrollMargin                   | `number`            | How much space to leaving when 'scrolling' lists of items          |
+         * | fileExplorerColumnWidth        | `number`            | How wide to make each panel of the fileExplorer interface          |
+         * | fileExplorerMaxItems           | `number`            | How many items to show in each panel of the fileExplorer interface |
+         * | tableSelectMaxHeightPercentage | `number`            | Percent of terminal height to use at max for table selects         |
+         * | timelineSpeed                  | `number`            | How many frames to move on a timeline at a time                    |
+         * | timelineFastSpeed              | `number`            | How many frames to move on a timeline at a time (fast mode)        |
          */
         general?: {
             /** Set the main theme colour */
@@ -4427,6 +4583,8 @@ declare namespace ask$1 {
             lc?: LineCounter;
             /** What type of box drawing lines to use */
             boxType?: 'thin' | 'thick';
+            /** Whether to make an audio beeps when appropriate */
+            beeps?: boolean;
             /** How many select/multiselect items to have on screen at most */
             maxItemsOnScreen?: number;
             /** How much space to leaving when 'scrolling' lists of items */
@@ -5126,6 +5284,7 @@ interface AskOptionsStoredGeneral {
     themeColour: 'white' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'darkWhite' | 'lightBlack' | 'darkRed' | 'darkGreen' | 'darkYellow' | 'darkBlue' | 'darkMagenta' | 'darkCyan' | 'grey' | 'gray';
     lc: LineCounter;
     boxType: 'thin' | 'thick';
+    beeps: boolean;
     maxItemsOnScreen: number;
     scrollMargin: number;
     fileExplorerColumnWidth: number;
@@ -5499,7 +5658,7 @@ declare namespace ask {
      * @param {(path: string) => Error | string | boolean | void} [validate]
      * @returns {Promise<string>}
      */
-    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (path: string) => string | boolean | void | Error) => Promise<string>;
+    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => string | boolean | void | Error) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
      * multiFileExplorer
      * 
@@ -5521,7 +5680,7 @@ declare namespace ask {
      * @param {(paths: string[]) => Error | string | boolean | void} [validate]
      * @returns {Promise<string[]>}
      */
-    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "f" | "d", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error) => Promise<string[]>;
+    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
      * saveFileExplorer
      * 
@@ -5548,7 +5707,7 @@ declare namespace ask {
      */
     namespace table {
         /**<!-- DOCS-ALIAS: ask.table.select -->
-         * select
+         * table.select
          * 
          * - `ask.table.select`
          * 
@@ -5585,7 +5744,7 @@ declare namespace ask {
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
-         * multiselect
+         * table.multiselect
          * 
          * - `ask.table.multiselect`
          * 
@@ -5650,10 +5809,14 @@ declare namespace ask {
      * 
      * - `ask.customise`
      * 
-     * TODO docs
+     * Customise the behaviour/appearance of the `ask` prompts.
+     * 
+     * See `ask.AskOptions` for the options available.
      * 
      * ```typescript
-     * TODO example
+     * ask.customise({ general: { themeColour: 'magenta' } }); // change the theme colour to magenta
+     * ask.customise({ general: { lc } }); // set a line counter for that all prompts will add to when complete
+     * ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
      * ```
      * @param {Partial<ask.AskOptions>} options
      * @returns {void}
@@ -6469,6 +6632,4 @@ interface KeyListener {
     stop(): void;
 }
 
-declare const LOG: (...args: any[]) => Promise<void>;
-
-export { AskTableDisplaySettings, Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LOG, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };
+export { AskTableDisplaySettings, Breadcrumb, ColrFn, ColrSet, DefaultLogger, ExplodedPath, KeyListener, LineCounter, LogConfig, LogOptions, LogTools, Logger, PathTools, WrapFn, WrapSet, ansi, ask, colr, createLogger, explodePath, getBreadcrumb, getKeyListener, getLineCounter, getLog, getLogStr, log, nextTick, out, processLogContents, progressBarTools, table, waiters };

@@ -1,8 +1,6 @@
 import { safe } from 'swiss-ak';
 
 // ANSI
-// TODO tests
-// TODO examples
 
 //<!-- DOCS: 240 -->
 /**<!-- DOCS: out.ansi ###! -->
@@ -17,7 +15,7 @@ export const ansi: AnsiEscapeCodes = {
   /**<!-- DOCS-ALIAS: out.ansi.cursor -->*/
   cursor: {
     /**<!-- DOCS-ALIAS: out.ansi.cursor.to -->*/
-    to: (x: number = 0, y: number = 0) => {
+    to: (x: number = 0, y: number = 0): string => {
       const args = {
         x: safe.num(x, true, 0),
         y: safe.num(y, true, 0)
@@ -27,7 +25,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.move -->*/
-    move: (x: number = 0, y: number = 0) => {
+    move: (x: number = 0, y: number = 0): string => {
       const args = {
         x: safe.num(x, true, undefined, undefined, 0),
         y: safe.num(y, true, undefined, undefined, 0)
@@ -45,7 +43,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.up -->*/
-    up: (count: number = 1) => {
+    up: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -55,7 +53,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.down -->*/
-    down: (count: number = 1) => {
+    down: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -65,7 +63,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.left -->*/
-    left: (count: number = 1) => {
+    left: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -75,7 +73,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.right -->*/
-    right: (count: number = 1) => {
+    right: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -85,7 +83,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.nextLine -->*/
-    nextLine: (count: number = 1) => {
+    nextLine: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -95,7 +93,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.prevLine -->*/
-    prevLine: (count: number = 1) => {
+    prevLine: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true)
       };
@@ -108,7 +106,7 @@ export const ansi: AnsiEscapeCodes = {
     lineStart: `\x1B[G`,
 
     /**<!-- DOCS-ALIAS: out.ansi.cursor.setShow -->*/
-    setShow: (isShow: boolean) => {
+    setShow: (isShow: boolean): string => {
       const args = {
         isShow: safe.bool(isShow, true)
       };
@@ -131,18 +129,22 @@ export const ansi: AnsiEscapeCodes = {
   /**<!-- DOCS-ALIAS: out.ansi.scroll -->*/
   scroll: {
     /**<!-- DOCS-ALIAS: out.ansi.scroll.up -->*/
-    up: (count: number = 1) => {
+    up: (count: number = 1): string => {
       const args = {
-        count: safe.num(count, true, 0)
+        count: safe.num(count, true)
       };
+      if (args.count === 0) return '';
+      if (args.count < 0) return ansi.scroll.down(-args.count);
       return `\x1B[S`.repeat(args.count);
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.scroll.down -->*/
-    down: (count: number = 1) => {
+    down: (count: number = 1): string => {
       const args = {
-        count: safe.num(count, true, 0)
+        count: safe.num(count, true)
       };
+      if (args.count === 0) return '';
+      if (args.count < 0) return ansi.scroll.up(-args.count);
       return `\x1B[T`.repeat(args.count);
     }
   },
@@ -153,18 +155,22 @@ export const ansi: AnsiEscapeCodes = {
     screen: `\x1B[2J`,
 
     /**<!-- DOCS-ALIAS: out.ansi.erase.up -->*/
-    up: (count: number = 1) => {
+    up: (count: number = 1): string => {
       const args = {
-        count: safe.num(count, true, 0)
+        count: safe.num(count, true)
       };
+      if (args.count === 0) return '';
+      if (args.count < 0) return ansi.erase.down(-args.count);
       return `\x1B[1J`.repeat(args.count);
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.erase.down -->*/
-    down: (count: number = 1) => {
+    down: (count: number = 1): string => {
       const args = {
-        count: safe.num(count, true, 0)
+        count: safe.num(count, true)
       };
+      if (args.count === 0) return '';
+      if (args.count < 0) return ansi.erase.up(-args.count);
       return `\x1B[J`.repeat(args.count);
     },
 
@@ -178,7 +184,7 @@ export const ansi: AnsiEscapeCodes = {
     lineStart: `\x1B[1K`,
 
     /**<!-- DOCS-ALIAS: out.ansi.erase.lines -->*/
-    lines: (count: number = 1) => {
+    lines: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true, 0)
       };
@@ -191,7 +197,7 @@ export const ansi: AnsiEscapeCodes = {
     },
 
     /**<!-- DOCS-ALIAS: out.ansi.erase.reserve -->*/
-    reserve: (count: number = 1) => {
+    reserve: (count: number = 1): string => {
       const args = {
         count: safe.num(count, true, 0)
       };
@@ -224,6 +230,10 @@ export interface AnsiEscapeCodes {
      *
      * Move the cursor to a specific position
      *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
+     * ```
+     *
      * @param {number} [x=0] The x position to move the cursor to
      * @param {number} [y=0] The y position to move the cursor to
      * @returns {string} ANSI escape codes
@@ -237,6 +247,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.move`
      *
      * Move the cursor a specific amount of spaces
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.move(5, 10)); // moves the cursor down 5 lines and right 10 spaces
+     * process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines and left 10 spaces
+     * ```
      *
      * @param {number} [x=0] How many spaces to move the cursor horizontally (negative values move left)
      * @param {number} [y=0] How many spaces to move the cursor vertically (negative values move up)
@@ -252,6 +267,11 @@ export interface AnsiEscapeCodes {
      *
      * Move the cursor up a specific amount of spaces
      *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.up(5)); // moves the cursor up 5 lines
+     * process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
+     * ```
+     *
      * @param {number} [count=1] How many spaces to move the cursor up
      * @returns {string} ANSI escape codes
      */
@@ -264,6 +284,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.down`
      *
      * Move the cursor down a specific amount of spaces
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.down(5)); // moves the cursor down 5 lines
+     * process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
+     * ```
      *
      * @param {number} [count=1] How many spaces to move the cursor down
      * @returns {string} ANSI escape codes
@@ -278,6 +303,11 @@ export interface AnsiEscapeCodes {
      *
      * Move the cursor left (backward) a specific amount of spaces
      *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.left(5)); // moves the cursor left 5 spaces
+     * process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
+     * ```
+     *
      * @param {number} [count=1] How many spaces to move the cursor left
      * @returns {string} ANSI escape codes
      */
@@ -290,6 +320,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.right`
      *
      * Move the cursor right (forward) a specific amount of spaces
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.right(5)); // moves the cursor right 5 spaces
+     * process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
+     * ```
      *
      * @param {number} [count=1] How many spaces to move the cursor right
      * @returns {string} ANSI escape codes
@@ -304,6 +339,11 @@ export interface AnsiEscapeCodes {
      *
      * Move the cursor to the beginning of the next line
      *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.nextLine()); // moves the cursor to the beginning of the next line
+     * process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines and to the beginning of the next line
+     * ```
+     *
      * @param {number} [count=1] How many lines to move the cursor down
      * @returns {string} ANSI escape codes
      */
@@ -317,6 +357,11 @@ export interface AnsiEscapeCodes {
      *
      * Move the cursor to the beginning of the previous line
      *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.prevLine()); // moves the cursor to the beginning of the previous line
+     * process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines and to the beginning of the previous line
+     * ```
+     *
      * @param {number} [count=1] How many lines to move the cursor up
      * @returns {string} ANSI escape codes
      */
@@ -329,6 +374,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.lineStart`
      *
      * ANSI escape code to move the cursor to the beginning of the current line
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.lineStart); // moves the cursor to the beginning of the current line
+     * ```
+     *
+     * @type {string}
      */
     lineStart: string;
 
@@ -339,6 +390,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.setShow`
      *
      * Set whether or not the cursor is shown
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.setShow(true)); // shows the cursor
+     * process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
+     * ```
      *
      * @param {boolean} isShow Whether or not the cursor should be shown
      * @returns {string} ANSI escape code
@@ -352,6 +408,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.show`
      *
      * ANSI escape code to show the cursor
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.show); // shows the cursor
+     * ```
+     *
+     * @type {string}
      */
     show: string;
 
@@ -362,6 +424,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.hide`
      *
      * ANSI escape code to hide the cursor
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.hide); // hides the cursor
+     * ```
+     *
+     * @type {string}
      */
     hide: string;
 
@@ -372,6 +440,14 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.save`
      *
      * ANSI escape code to save the current cursor position (can be restored with `cursor.restore`)
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.save); // saves the current cursor position
+     * // ...
+     * process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+     * ```
+     *
+     * @type {string}
      */
     save: string;
 
@@ -382,6 +458,14 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.cursor.restore`
      *
      * ANSI escape code to restore a previously saved cursor position (saved with `cursor.save`)
+     *
+     * ```typescript
+     * process.stdout.write(ansi.cursor.save); // saves the current cursor position
+     * // ...
+     * process.stdout.write(ansi.cursor.restore); // restores the saved cursor position
+     * ```
+     *
+     * @type {string}
      */
     restore: string;
   };
@@ -400,6 +484,11 @@ export interface AnsiEscapeCodes {
      *
      * Scroll the terminal up a specific amount
      *
+     * ```typescript
+     * process.stdout.write(ansi.scroll.up(5)); // scrolls the terminal up 5 lines
+     * process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
+     * ```
+     *
      * @param {number} [count=1] How much to scroll the terminal up by
      * @returns {string} ANSI escape codes
      */
@@ -412,6 +501,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.scroll.down`
      *
      * Scroll the terminal down a specific amount
+     *
+     * ```typescript
+     * process.stdout.write(ansi.scroll.down(5)); // scrolls the terminal down 5 lines
+     * process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
+     * ```
      *
      * @param {number} [count=1] How much to scroll the terminal down by
      * @returns {string} ANSI escape codes
@@ -432,6 +526,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.screen`
      *
      * ANSI escape code to erase the entire terminal screen
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.screen); // erases the entire terminal screen
+     * ```
+     *
+     * @type {string}
      */
     screen: string;
 
@@ -442,6 +542,11 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.up`
      *
      * Erase the terminal above the cursor
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.up(5)); // erases the terminal above the cursor by 5 lines
+     * process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor by 5 lines
+     * ```
      *
      * @param {number} [count=1] How many lines to erase
      * @returns {string} ANSI escape codes
@@ -456,6 +561,11 @@ export interface AnsiEscapeCodes {
      *
      * Erase the terminal below the cursor
      *
+     * ```typescript
+     * process.stdout.write(ansi.erase.down(5)); // erases the terminal below the cursor by 5 lines
+     * process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the cursor by 5 lines
+     * ```
+     *
      * @param {number} [count=1] How many lines to erase
      * @returns {string} ANSI escape codes
      */
@@ -468,6 +578,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.line`
      *
      * ANSI escape code to erase the current line
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.line); // erases the current line
+     * ```
+     *
+     * @type {string}
      */
     line: string;
 
@@ -478,6 +594,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.lineEnd`
      *
      * ANSI escape code to erase the current line from the cursor to the end
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.lineEnd); // erases the current line from the cursor to the end
+     * ```
+     *
+     * @type {string}
      */
     lineEnd: string;
 
@@ -488,6 +610,12 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.lineStart`
      *
      * ANSI escape code to erase the current line from the cursor to the start
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.lineStart); // erases the current line from the cursor to the start
+     * ```
+     *
+     * @type {string}
      */
     lineStart: string;
 
@@ -498,6 +626,10 @@ export interface AnsiEscapeCodes {
      * - `out.ansi.erase.lines`
      *
      * Erase a specific number of lines upwards from the cursor
+     *
+     * ```typescript
+     * process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cursor
+     * ```
      *
      * @param {number} [count=1] How many lines to erase
      * @returns {string} ANSI escape codes
@@ -514,6 +646,10 @@ export interface AnsiEscapeCodes {
      *
      * > __Note:__ Erases the current line and returns to it afterwards
      *
+     * ```typescript
+     * process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are blank and on the screen
+     * ```
+     *
      * @param {number} [count=1] How many lines to reserve
      * @returns {string} ANSI escape codes
      */
@@ -527,6 +663,12 @@ export interface AnsiEscapeCodes {
    * - `out.ansi.clear`
    *
    * ANSI escape code to clear the terminal screen
+   *
+   * ```typescript
+   * process.stdout.write(ansi.clear); // clears the terminal screen
+   * ```
+   *
+   * @type {string}
    */
   clear: string;
 
@@ -537,6 +679,12 @@ export interface AnsiEscapeCodes {
    * - `out.ansi.beep`
    *
    * ANSI escape code to make the terminal beep
+   *
+   * ```typescript
+   * process.stdout.write(ansi.beep); // makes the terminal beep
+   * ```
+   *
+   * @type {string}
    */
   beep: string;
 
@@ -547,6 +695,12 @@ export interface AnsiEscapeCodes {
    * - `out.ansi.null`
    *
    * ANSI escape code for the NULL character. Can be used as a hidden marker.
+   *
+   * ```typescript
+   * process.stdout.write(ansi.null); // writes the NULL character
+   * ```
+   *
+   * @type {string}
    */
   null: string;
 }

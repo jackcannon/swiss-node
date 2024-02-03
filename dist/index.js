@@ -1,6 +1,67 @@
 // src/tools/ask.ts
 import { seconds as seconds4, wait as wait3 } from "swiss-ak";
 
+// src/tools/keyListener.ts
+var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
+  const listenFn = (key) => {
+    if (isDebugLog) {
+      console.log(JSON.stringify(key));
+    }
+    if (key == "\x7F") {
+      return callback("backspace", key);
+    }
+    if (key == "\x1B[3~") {
+      return callback("delete", key);
+    }
+    if (key == "\r") {
+      return callback("return", key);
+    }
+    if (key == "	") {
+      return callback("tab", key);
+    }
+    if (key == "\x1B[A") {
+      return callback("up", key);
+    }
+    if (key == "\x1B[C") {
+      return callback("right", key);
+    }
+    if (key == "\x1B[B") {
+      return callback("down", key);
+    }
+    if (key == "\x1B[D") {
+      return callback("left", key);
+    }
+    if (key == " ") {
+      return callback("space", key);
+    }
+    if (key === "\x1B") {
+      return callback("esc", key);
+    }
+    if (key == "") {
+      callback("exit", key);
+      return process.exit();
+    }
+    return callback(key, key);
+  };
+  const start = () => {
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.setEncoding("utf8");
+    process.stdin.on("data", listenFn);
+  };
+  const stop = () => {
+    process.stdin.setRawMode(false);
+    process.stdin.pause();
+    process.stdin.off("data", listenFn);
+  };
+  if (isStart)
+    start();
+  return {
+    start,
+    stop
+  };
+};
+
 // src/tools/out.ts
 import { wait, fn as fn2, ArrayTools as ArrayTools2, zipMax, sortByMapped, safe as safe3 } from "swiss-ak";
 
@@ -552,14 +613,22 @@ var ansi = {
   scroll: {
     up: (count = 1) => {
       const args = {
-        count: safe2.num(count, true, 0)
+        count: safe2.num(count, true)
       };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.scroll.down(-args.count);
       return `\x1B[S`.repeat(args.count);
     },
     down: (count = 1) => {
       const args = {
-        count: safe2.num(count, true, 0)
+        count: safe2.num(count, true)
       };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.scroll.up(-args.count);
       return `\x1B[T`.repeat(args.count);
     }
   },
@@ -567,14 +636,22 @@ var ansi = {
     screen: `\x1B[2J`,
     up: (count = 1) => {
       const args = {
-        count: safe2.num(count, true, 0)
+        count: safe2.num(count, true)
       };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.erase.down(-args.count);
       return `\x1B[1J`.repeat(args.count);
     },
     down: (count = 1) => {
       const args = {
-        count: safe2.num(count, true, 0)
+        count: safe2.num(count, true)
       };
+      if (args.count === 0)
+        return "";
+      if (args.count < 0)
+        return ansi.erase.up(-args.count);
       return `\x1B[J`.repeat(args.count);
     },
     line: `\x1B[2K`,
@@ -933,7 +1010,7 @@ var out;
   const loadingChars = ArrayTools2.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) => colr.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
-  out2.loading = (action = loadingDefault, lines = 1, symbols5 = loadingChars) => {
+  out2.loading = (action = loadingDefault, lines = 1, symbols4 = loadingChars) => {
     let stopped = false;
     let count = 0;
     let previousLinesDrawn = 0;
@@ -942,7 +1019,7 @@ var out;
         return;
       if (count)
         process.stdout.write(out2.ansi.cursor.up(previousLinesDrawn));
-      const output = action(symbols5[count++ % symbols5.length]);
+      const output = action(symbols4[count++ % symbols4.length]);
       previousLinesDrawn = lines;
       if (output !== void 0) {
         console.log(output);
@@ -1052,77 +1129,11 @@ var getBreadcrumb2 = getBreadcrumb;
 var getLineCounter2 = getLineCounter;
 var ansi2 = out.ansi;
 
-// src/tools/keyListener.ts
-var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
-  const listenFn = (key) => {
-    if (isDebugLog) {
-      console.log(JSON.stringify(key));
-    }
-    if (key == "\x7F") {
-      return callback("backspace", key);
-    }
-    if (key == "\x1B[3~") {
-      return callback("delete", key);
-    }
-    if (key == "\r") {
-      return callback("return", key);
-    }
-    if (key == "	") {
-      return callback("tab", key);
-    }
-    if (key == "\x1B[A") {
-      return callback("up", key);
-    }
-    if (key == "\x1B[C") {
-      return callback("right", key);
-    }
-    if (key == "\x1B[B") {
-      return callback("down", key);
-    }
-    if (key == "\x1B[D") {
-      return callback("left", key);
-    }
-    if (key == " ") {
-      return callback("space", key);
-    }
-    if (key === "\x1B") {
-      return callback("esc", key);
-    }
-    if (key == "") {
-      callback("exit", key);
-      return process.exit();
-    }
-    return callback(key, key);
-  };
-  const start = () => {
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.setEncoding("utf8");
-    process.stdin.on("data", listenFn);
-  };
-  const stop = () => {
-    process.stdin.setRawMode(false);
-    process.stdin.pause();
-    process.stdin.off("data", listenFn);
-  };
-  if (isStart)
-    start();
-  return {
-    start,
-    stop
-  };
-};
-
 // src/tools/ask/basicInput.ts
 import { fn as fn4 } from "swiss-ak";
 
-// src/tools/ask/basicInput/getFullChoices.ts
-var getFullChoices = (choices) => choices.map((choice) => typeof choice === "string" ? { value: choice } : choice).map((choice, index) => ({
-  title: choice.title || "" + choice.value,
-  value: choice.value,
-  preselected: choice.selected || false,
-  index
-}));
+// src/tools/ask/basicInput/customise.ts
+import { ObjectTools as ObjectTools2, symbols as symbols2 } from "swiss-ak";
 
 // src/tools/ask/basicInput/getScrolledItems.ts
 import { ArrayTools as ArrayTools3 } from "swiss-ak";
@@ -1178,20 +1189,6 @@ var getScrollbar = (allItems, scrolledItems, theme, height = scrolledItems.items
     result[result.length - 1] = trackEndHeight === 0 ? barTrimBottomIcon : trackTrimBottomIcon;
   }
   return result;
-};
-
-// src/tools/ask/basicInput/customise.ts
-import { ObjectTools as ObjectTools2, symbols as symbols2 } from "swiss-ak";
-
-// src/DELETEME/LOG.ts
-import fsP from "fs/promises";
-import { queue } from "swiss-ak";
-import util from "util";
-var logItems = [];
-var logFile = "/Users/jackcannon/Projects/swiss-node/debug/LOG.txt";
-var LOG = async (...args) => {
-  logItems.push(args.map((arg) => util.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
-  await queue.add("log", () => fsP.writeFile(logFile, logItems.join("\n")));
 };
 
 // src/tools/ask/basicInput/formatters.ts
@@ -1319,7 +1316,6 @@ ${bottomLine}`;
 var standardItemFormatter = (allItems, scrolledItems, selected, type, theme, isExit, isBlock, itemOutputTemplate) => {
   const { colours: col, symbols: sym, boxSymbols: box } = theme;
   const askOptions2 = getAskOptions();
-  LOG("theme", { theme, itemHover: askOptions2.colours.itemHover, itemHoverIcon: askOptions2.colours.itemHoverIcon });
   const colItemHover = isBlock ? col.itemBlockHover : col.itemHover;
   const colItemHoverIcon = isBlock ? col.itemBlockHoverIcon : col.itemHoverIcon;
   const itemSelectedIcon = col.itemSelectedIcon(out.left(sym.itemSelectedIcon, 2));
@@ -1424,6 +1420,7 @@ var populateAskOptions = () => {
       themeColour: "yellow",
       lc: getLineCounter2(),
       boxType: "thick",
+      beeps: true,
       maxItemsOnScreen: 10,
       scrollMargin: 2,
       fileExplorerColumnWidth: 25,
@@ -1647,41 +1644,42 @@ var processThemeItem = (item, defaultItem) => {
   return defaultItem;
 };
 var applyPartialOptionsToAskOptions = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
     themeColour: ((_a = options == null ? void 0 : options.general) == null ? void 0 : _a.themeColour) ?? askOptions.general.themeColour,
     lc: ((_b = options == null ? void 0 : options.general) == null ? void 0 : _b.lc) ?? askOptions.general.lc,
     boxType: ((_c = options == null ? void 0 : options.general) == null ? void 0 : _c.boxType) ?? askOptions.general.boxType,
-    maxItemsOnScreen: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
-    scrollMargin: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.scrollMargin) ?? askOptions.general.scrollMargin,
-    fileExplorerColumnWidth: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.fileExplorerColumnWidth) ?? askOptions.general.fileExplorerColumnWidth,
-    fileExplorerMaxItems: ((_g = options == null ? void 0 : options.general) == null ? void 0 : _g.fileExplorerMaxItems) ?? askOptions.general.fileExplorerMaxItems,
-    tableSelectMaxHeightPercentage: ((_h = options == null ? void 0 : options.general) == null ? void 0 : _h.tableSelectMaxHeightPercentage) ?? askOptions.general.tableSelectMaxHeightPercentage,
-    timelineSpeed: ((_i = options == null ? void 0 : options.general) == null ? void 0 : _i.timelineSpeed) ?? askOptions.general.timelineSpeed,
-    timelineFastSpeed: ((_j = options == null ? void 0 : options.general) == null ? void 0 : _j.timelineFastSpeed) ?? askOptions.general.timelineFastSpeed
+    beeps: ((_d = options == null ? void 0 : options.general) == null ? void 0 : _d.beeps) ?? askOptions.general.beeps,
+    maxItemsOnScreen: ((_e = options == null ? void 0 : options.general) == null ? void 0 : _e.maxItemsOnScreen) ?? askOptions.general.maxItemsOnScreen,
+    scrollMargin: ((_f = options == null ? void 0 : options.general) == null ? void 0 : _f.scrollMargin) ?? askOptions.general.scrollMargin,
+    fileExplorerColumnWidth: ((_g = options == null ? void 0 : options.general) == null ? void 0 : _g.fileExplorerColumnWidth) ?? askOptions.general.fileExplorerColumnWidth,
+    fileExplorerMaxItems: ((_h = options == null ? void 0 : options.general) == null ? void 0 : _h.fileExplorerMaxItems) ?? askOptions.general.fileExplorerMaxItems,
+    tableSelectMaxHeightPercentage: ((_i = options == null ? void 0 : options.general) == null ? void 0 : _i.tableSelectMaxHeightPercentage) ?? askOptions.general.tableSelectMaxHeightPercentage,
+    timelineSpeed: ((_j = options == null ? void 0 : options.general) == null ? void 0 : _j.timelineSpeed) ?? askOptions.general.timelineSpeed,
+    timelineFastSpeed: ((_k = options == null ? void 0 : options.general) == null ? void 0 : _k.timelineFastSpeed) ?? askOptions.general.timelineFastSpeed
   };
   askOptions.text = {
-    boolTrueKeys: ((_k = options == null ? void 0 : options.text) == null ? void 0 : _k.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
-    boolFalseKeys: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
-    boolYes: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.boolYes) ?? askOptions.text.boolYes,
-    boolNo: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.boolNo) ?? askOptions.text.boolNo,
-    boolYesNoSeparator: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
-    boolYN: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.boolYN) ?? askOptions.text.boolYN,
-    selectAll: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.selectAll) ?? askOptions.text.selectAll,
-    done: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.done) ?? askOptions.text.done,
-    items: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.items) ?? askOptions.text.items,
-    countdown: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.countdown) ?? askOptions.text.countdown,
-    file: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.file) ?? askOptions.text.file,
-    directory: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.directory) ?? askOptions.text.directory,
-    loading: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.loading) ?? askOptions.text.loading,
-    selected: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.selected) ?? askOptions.text.selected,
-    specialNewFolderEnterNothingCancel: ((_y = options == null ? void 0 : options.text) == null ? void 0 : _y.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
-    specialNewFolderAddingFolderTo: ((_z = options == null ? void 0 : options.text) == null ? void 0 : _z.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
-    specialNewFolderQuestion: ((_A = options == null ? void 0 : options.text) == null ? void 0 : _A.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
-    specialSaveFileSavingFileTo: ((_B = options == null ? void 0 : options.text) == null ? void 0 : _B.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
-    specialSaveFileQuestion: ((_C = options == null ? void 0 : options.text) == null ? void 0 : _C.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
+    boolTrueKeys: ((_l = options == null ? void 0 : options.text) == null ? void 0 : _l.boolTrueKeys) ?? askOptions.text.boolTrueKeys,
+    boolFalseKeys: ((_m = options == null ? void 0 : options.text) == null ? void 0 : _m.boolFalseKeys) ?? askOptions.text.boolFalseKeys,
+    boolYes: ((_n = options == null ? void 0 : options.text) == null ? void 0 : _n.boolYes) ?? askOptions.text.boolYes,
+    boolNo: ((_o = options == null ? void 0 : options.text) == null ? void 0 : _o.boolNo) ?? askOptions.text.boolNo,
+    boolYesNoSeparator: ((_p = options == null ? void 0 : options.text) == null ? void 0 : _p.boolYesNoSeparator) ?? askOptions.text.boolYesNoSeparator,
+    boolYN: ((_q = options == null ? void 0 : options.text) == null ? void 0 : _q.boolYN) ?? askOptions.text.boolYN,
+    selectAll: ((_r = options == null ? void 0 : options.text) == null ? void 0 : _r.selectAll) ?? askOptions.text.selectAll,
+    done: ((_s = options == null ? void 0 : options.text) == null ? void 0 : _s.done) ?? askOptions.text.done,
+    items: ((_t = options == null ? void 0 : options.text) == null ? void 0 : _t.items) ?? askOptions.text.items,
+    countdown: ((_u = options == null ? void 0 : options.text) == null ? void 0 : _u.countdown) ?? askOptions.text.countdown,
+    file: ((_v = options == null ? void 0 : options.text) == null ? void 0 : _v.file) ?? askOptions.text.file,
+    directory: ((_w = options == null ? void 0 : options.text) == null ? void 0 : _w.directory) ?? askOptions.text.directory,
+    loading: ((_x = options == null ? void 0 : options.text) == null ? void 0 : _x.loading) ?? askOptions.text.loading,
+    selected: ((_y = options == null ? void 0 : options.text) == null ? void 0 : _y.selected) ?? askOptions.text.selected,
+    specialNewFolderEnterNothingCancel: ((_z = options == null ? void 0 : options.text) == null ? void 0 : _z.specialNewFolderEnterNothingCancel) ?? askOptions.text.specialNewFolderEnterNothingCancel,
+    specialNewFolderAddingFolderTo: ((_A = options == null ? void 0 : options.text) == null ? void 0 : _A.specialNewFolderAddingFolderTo) ?? askOptions.text.specialNewFolderAddingFolderTo,
+    specialNewFolderQuestion: ((_B = options == null ? void 0 : options.text) == null ? void 0 : _B.specialNewFolderQuestion) ?? askOptions.text.specialNewFolderQuestion,
+    specialSaveFileSavingFileTo: ((_C = options == null ? void 0 : options.text) == null ? void 0 : _C.specialSaveFileSavingFileTo) ?? askOptions.text.specialSaveFileSavingFileTo,
+    specialSaveFileQuestion: ((_D = options == null ? void 0 : options.text) == null ? void 0 : _D.specialSaveFileQuestion) ?? askOptions.text.specialSaveFileQuestion
   };
   askOptions.formatters = {
     formatPrompt: (() => {
@@ -1710,83 +1708,83 @@ var applyPartialOptionsToAskOptions = (options) => {
     })()
   };
   askOptions.colours = {
-    decoration: processThemeItem((_D = options == null ? void 0 : options.colours) == null ? void 0 : _D.decoration, askOptions.colours.decoration),
-    questionText: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.questionText, askOptions.colours.questionText),
-    specialIcon: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.specialIcon, askOptions.colours.specialIcon),
-    openingIcon: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.openingIcon, askOptions.colours.openingIcon),
-    promptIcon: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.promptIcon, askOptions.colours.promptIcon),
-    result: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.result, askOptions.colours.result),
-    resultText: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.resultText, askOptions.colours.resultText),
-    resultNumber: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.resultNumber, askOptions.colours.resultNumber),
-    resultBoolean: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.resultBoolean, askOptions.colours.resultBoolean),
-    resultArray: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.resultArray, askOptions.colours.resultArray),
-    resultDate: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.resultDate, askOptions.colours.resultDate),
-    loadingIcon: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.loadingIcon, askOptions.colours.loadingIcon),
-    errorMsg: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.errorMsg, askOptions.colours.errorMsg),
-    item: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.item, askOptions.colours.item),
-    itemIcon: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.itemIcon, askOptions.colours.itemIcon),
-    itemHover: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemHover, askOptions.colours.itemHover),
-    itemHoverIcon: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemHoverIcon, askOptions.colours.itemHoverIcon),
-    itemBlockHover: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemBlockHover, askOptions.colours.itemBlockHover),
-    itemBlockHoverIcon: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
-    itemSelected: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.itemSelected, askOptions.colours.itemSelected),
-    itemSelectedIcon: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
-    itemUnselected: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.itemUnselected, askOptions.colours.itemUnselected),
-    itemUnselectedIcon: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
-    scrollbarTrack: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.scrollbarTrack, askOptions.colours.scrollbarTrack),
-    scrollbarBar: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.scrollbarBar, askOptions.colours.scrollbarBar),
-    selectAllText: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.selectAllText, askOptions.colours.selectAllText),
-    boolYNText: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.boolYNText, askOptions.colours.boolYNText),
-    countdown: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.countdown, askOptions.colours.countdown),
-    pause: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.pause, askOptions.colours.pause),
-    specialHover: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.specialHover, askOptions.colours.specialHover),
-    specialSelected: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialSelected, askOptions.colours.specialSelected),
-    specialHighlight: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialHighlight, askOptions.colours.specialHighlight),
-    specialNormal: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialNormal, askOptions.colours.specialNormal),
-    specialFaded: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialFaded, askOptions.colours.specialFaded),
-    specialHint: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialHint, askOptions.colours.specialHint),
-    specialInactiveHover: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialInactiveHover, askOptions.colours.specialInactiveHover),
-    specialInactiveSelected: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
-    specialInactiveHighlight: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
-    specialInactiveNormal: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
-    specialInactiveFaded: processThemeItem((_oa = options == null ? void 0 : options.colours) == null ? void 0 : _oa.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
-    specialInactiveHint: processThemeItem((_pa = options == null ? void 0 : options.colours) == null ? void 0 : _pa.specialInactiveHint, askOptions.colours.specialInactiveHint),
-    specialInfo: processThemeItem((_qa = options == null ? void 0 : options.colours) == null ? void 0 : _qa.specialInfo, askOptions.colours.specialInfo),
-    specialErrorMsg: processThemeItem((_ra = options == null ? void 0 : options.colours) == null ? void 0 : _ra.specialErrorMsg, askOptions.colours.specialErrorMsg),
-    specialErrorIcon: processThemeItem((_sa = options == null ? void 0 : options.colours) == null ? void 0 : _sa.specialErrorIcon, askOptions.colours.specialErrorIcon),
-    tableSelectHover: processThemeItem((_ta = options == null ? void 0 : options.colours) == null ? void 0 : _ta.tableSelectHover, askOptions.colours.tableSelectHover),
-    timelineTrack: processThemeItem((_ua = options == null ? void 0 : options.colours) == null ? void 0 : _ua.timelineTrack, askOptions.colours.timelineTrack),
-    timelineTrackActive: processThemeItem((_va = options == null ? void 0 : options.colours) == null ? void 0 : _va.timelineTrackActive, askOptions.colours.timelineTrackActive),
-    timelineHandle: processThemeItem((_wa = options == null ? void 0 : options.colours) == null ? void 0 : _wa.timelineHandle, askOptions.colours.timelineHandle),
-    timelineHandleActive: processThemeItem((_xa = options == null ? void 0 : options.colours) == null ? void 0 : _xa.timelineHandleActive, askOptions.colours.timelineHandleActive)
+    decoration: processThemeItem((_E = options == null ? void 0 : options.colours) == null ? void 0 : _E.decoration, askOptions.colours.decoration),
+    questionText: processThemeItem((_F = options == null ? void 0 : options.colours) == null ? void 0 : _F.questionText, askOptions.colours.questionText),
+    specialIcon: processThemeItem((_G = options == null ? void 0 : options.colours) == null ? void 0 : _G.specialIcon, askOptions.colours.specialIcon),
+    openingIcon: processThemeItem((_H = options == null ? void 0 : options.colours) == null ? void 0 : _H.openingIcon, askOptions.colours.openingIcon),
+    promptIcon: processThemeItem((_I = options == null ? void 0 : options.colours) == null ? void 0 : _I.promptIcon, askOptions.colours.promptIcon),
+    result: processThemeItem((_J = options == null ? void 0 : options.colours) == null ? void 0 : _J.result, askOptions.colours.result),
+    resultText: processThemeItem((_K = options == null ? void 0 : options.colours) == null ? void 0 : _K.resultText, askOptions.colours.resultText),
+    resultNumber: processThemeItem((_L = options == null ? void 0 : options.colours) == null ? void 0 : _L.resultNumber, askOptions.colours.resultNumber),
+    resultBoolean: processThemeItem((_M = options == null ? void 0 : options.colours) == null ? void 0 : _M.resultBoolean, askOptions.colours.resultBoolean),
+    resultArray: processThemeItem((_N = options == null ? void 0 : options.colours) == null ? void 0 : _N.resultArray, askOptions.colours.resultArray),
+    resultDate: processThemeItem((_O = options == null ? void 0 : options.colours) == null ? void 0 : _O.resultDate, askOptions.colours.resultDate),
+    loadingIcon: processThemeItem((_P = options == null ? void 0 : options.colours) == null ? void 0 : _P.loadingIcon, askOptions.colours.loadingIcon),
+    errorMsg: processThemeItem((_Q = options == null ? void 0 : options.colours) == null ? void 0 : _Q.errorMsg, askOptions.colours.errorMsg),
+    item: processThemeItem((_R = options == null ? void 0 : options.colours) == null ? void 0 : _R.item, askOptions.colours.item),
+    itemIcon: processThemeItem((_S = options == null ? void 0 : options.colours) == null ? void 0 : _S.itemIcon, askOptions.colours.itemIcon),
+    itemHover: processThemeItem((_T = options == null ? void 0 : options.colours) == null ? void 0 : _T.itemHover, askOptions.colours.itemHover),
+    itemHoverIcon: processThemeItem((_U = options == null ? void 0 : options.colours) == null ? void 0 : _U.itemHoverIcon, askOptions.colours.itemHoverIcon),
+    itemBlockHover: processThemeItem((_V = options == null ? void 0 : options.colours) == null ? void 0 : _V.itemBlockHover, askOptions.colours.itemBlockHover),
+    itemBlockHoverIcon: processThemeItem((_W = options == null ? void 0 : options.colours) == null ? void 0 : _W.itemBlockHoverIcon, askOptions.colours.itemBlockHoverIcon),
+    itemSelected: processThemeItem((_X = options == null ? void 0 : options.colours) == null ? void 0 : _X.itemSelected, askOptions.colours.itemSelected),
+    itemSelectedIcon: processThemeItem((_Y = options == null ? void 0 : options.colours) == null ? void 0 : _Y.itemSelectedIcon, askOptions.colours.itemSelectedIcon),
+    itemUnselected: processThemeItem((_Z = options == null ? void 0 : options.colours) == null ? void 0 : _Z.itemUnselected, askOptions.colours.itemUnselected),
+    itemUnselectedIcon: processThemeItem((__ = options == null ? void 0 : options.colours) == null ? void 0 : __.itemUnselectedIcon, askOptions.colours.itemUnselectedIcon),
+    scrollbarTrack: processThemeItem((_$ = options == null ? void 0 : options.colours) == null ? void 0 : _$.scrollbarTrack, askOptions.colours.scrollbarTrack),
+    scrollbarBar: processThemeItem((_aa = options == null ? void 0 : options.colours) == null ? void 0 : _aa.scrollbarBar, askOptions.colours.scrollbarBar),
+    selectAllText: processThemeItem((_ba = options == null ? void 0 : options.colours) == null ? void 0 : _ba.selectAllText, askOptions.colours.selectAllText),
+    boolYNText: processThemeItem((_ca = options == null ? void 0 : options.colours) == null ? void 0 : _ca.boolYNText, askOptions.colours.boolYNText),
+    countdown: processThemeItem((_da = options == null ? void 0 : options.colours) == null ? void 0 : _da.countdown, askOptions.colours.countdown),
+    pause: processThemeItem((_ea = options == null ? void 0 : options.colours) == null ? void 0 : _ea.pause, askOptions.colours.pause),
+    specialHover: processThemeItem((_fa = options == null ? void 0 : options.colours) == null ? void 0 : _fa.specialHover, askOptions.colours.specialHover),
+    specialSelected: processThemeItem((_ga = options == null ? void 0 : options.colours) == null ? void 0 : _ga.specialSelected, askOptions.colours.specialSelected),
+    specialHighlight: processThemeItem((_ha = options == null ? void 0 : options.colours) == null ? void 0 : _ha.specialHighlight, askOptions.colours.specialHighlight),
+    specialNormal: processThemeItem((_ia = options == null ? void 0 : options.colours) == null ? void 0 : _ia.specialNormal, askOptions.colours.specialNormal),
+    specialFaded: processThemeItem((_ja = options == null ? void 0 : options.colours) == null ? void 0 : _ja.specialFaded, askOptions.colours.specialFaded),
+    specialHint: processThemeItem((_ka = options == null ? void 0 : options.colours) == null ? void 0 : _ka.specialHint, askOptions.colours.specialHint),
+    specialInactiveHover: processThemeItem((_la = options == null ? void 0 : options.colours) == null ? void 0 : _la.specialInactiveHover, askOptions.colours.specialInactiveHover),
+    specialInactiveSelected: processThemeItem((_ma = options == null ? void 0 : options.colours) == null ? void 0 : _ma.specialInactiveSelected, askOptions.colours.specialInactiveSelected),
+    specialInactiveHighlight: processThemeItem((_na = options == null ? void 0 : options.colours) == null ? void 0 : _na.specialInactiveHighlight, askOptions.colours.specialInactiveHighlight),
+    specialInactiveNormal: processThemeItem((_oa = options == null ? void 0 : options.colours) == null ? void 0 : _oa.specialInactiveNormal, askOptions.colours.specialInactiveNormal),
+    specialInactiveFaded: processThemeItem((_pa = options == null ? void 0 : options.colours) == null ? void 0 : _pa.specialInactiveFaded, askOptions.colours.specialInactiveFaded),
+    specialInactiveHint: processThemeItem((_qa = options == null ? void 0 : options.colours) == null ? void 0 : _qa.specialInactiveHint, askOptions.colours.specialInactiveHint),
+    specialInfo: processThemeItem((_ra = options == null ? void 0 : options.colours) == null ? void 0 : _ra.specialInfo, askOptions.colours.specialInfo),
+    specialErrorMsg: processThemeItem((_sa = options == null ? void 0 : options.colours) == null ? void 0 : _sa.specialErrorMsg, askOptions.colours.specialErrorMsg),
+    specialErrorIcon: processThemeItem((_ta = options == null ? void 0 : options.colours) == null ? void 0 : _ta.specialErrorIcon, askOptions.colours.specialErrorIcon),
+    tableSelectHover: processThemeItem((_ua = options == null ? void 0 : options.colours) == null ? void 0 : _ua.tableSelectHover, askOptions.colours.tableSelectHover),
+    timelineTrack: processThemeItem((_va = options == null ? void 0 : options.colours) == null ? void 0 : _va.timelineTrack, askOptions.colours.timelineTrack),
+    timelineTrackActive: processThemeItem((_wa = options == null ? void 0 : options.colours) == null ? void 0 : _wa.timelineTrackActive, askOptions.colours.timelineTrackActive),
+    timelineHandle: processThemeItem((_xa = options == null ? void 0 : options.colours) == null ? void 0 : _xa.timelineHandle, askOptions.colours.timelineHandle),
+    timelineHandleActive: processThemeItem((_ya = options == null ? void 0 : options.colours) == null ? void 0 : _ya.timelineHandleActive, askOptions.colours.timelineHandleActive)
   };
   askOptions.symbols = {
-    specialIcon: processThemeItem((_ya = options == null ? void 0 : options.symbols) == null ? void 0 : _ya.specialIcon, askOptions.symbols.specialIcon),
-    openingIcon: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.openingIcon, askOptions.symbols.openingIcon),
-    promptIcon: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.promptIcon, askOptions.symbols.promptIcon),
-    errorMsgPrefix: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
-    itemIcon: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.itemIcon, askOptions.symbols.itemIcon),
-    itemHoverIcon: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.itemHoverIcon, askOptions.symbols.itemHoverIcon),
-    itemSelectedIcon: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
-    itemUnselectedIcon: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
-    scrollUpIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.scrollUpIcon, askOptions.symbols.scrollUpIcon),
-    scrollDownIcon: processThemeItem((_Ha = options == null ? void 0 : options.symbols) == null ? void 0 : _Ha.scrollDownIcon, askOptions.symbols.scrollDownIcon),
-    scrollbarTrack: processThemeItem((_Ia = options == null ? void 0 : options.symbols) == null ? void 0 : _Ia.scrollbarTrack, askOptions.symbols.scrollbarTrack),
-    scrollbarTrackTrimTop: processThemeItem((_Ja = options == null ? void 0 : options.symbols) == null ? void 0 : _Ja.scrollbarTrackTrimTop, askOptions.symbols.scrollbarTrackTrimTop),
-    scrollbarTrackTrimBottom: processThemeItem((_Ka = options == null ? void 0 : options.symbols) == null ? void 0 : _Ka.scrollbarTrackTrimBottom, askOptions.symbols.scrollbarTrackTrimBottom),
-    scrollbarBar: processThemeItem((_La = options == null ? void 0 : options.symbols) == null ? void 0 : _La.scrollbarBar, askOptions.symbols.scrollbarBar),
-    scrollbarBarTrimTop: processThemeItem((_Ma = options == null ? void 0 : options.symbols) == null ? void 0 : _Ma.scrollbarBarTrimTop, askOptions.symbols.scrollbarBarTrimTop),
-    scrollbarBarTrimBottom: processThemeItem((_Na = options == null ? void 0 : options.symbols) == null ? void 0 : _Na.scrollbarBarTrimBottom, askOptions.symbols.scrollbarBarTrimBottom),
-    separatorLine: processThemeItem((_Oa = options == null ? void 0 : options.symbols) == null ? void 0 : _Oa.separatorLine, askOptions.symbols.separatorLine),
-    separatorNodeDown: processThemeItem((_Pa = options == null ? void 0 : options.symbols) == null ? void 0 : _Pa.separatorNodeDown, askOptions.symbols.separatorNodeDown),
-    separatorNodeNone: processThemeItem((_Qa = options == null ? void 0 : options.symbols) == null ? void 0 : _Qa.separatorNodeNone, askOptions.symbols.separatorNodeNone),
-    separatorNodeUp: processThemeItem((_Ra = options == null ? void 0 : options.symbols) == null ? void 0 : _Ra.separatorNodeUp, askOptions.symbols.separatorNodeUp),
-    specialErrorIcon: processThemeItem((_Sa = options == null ? void 0 : options.symbols) == null ? void 0 : _Sa.specialErrorIcon, askOptions.symbols.specialErrorIcon),
-    folderOpenableIcon: processThemeItem((_Ta = options == null ? void 0 : options.symbols) == null ? void 0 : _Ta.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
-    fileOpenableIcon: processThemeItem((_Ua = options == null ? void 0 : options.symbols) == null ? void 0 : _Ua.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
-    timelineTrack: processThemeItem((_Va = options == null ? void 0 : options.symbols) == null ? void 0 : _Va.timelineTrack, askOptions.symbols.timelineTrack),
-    timelineHandle: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.timelineHandle, askOptions.symbols.timelineHandle),
-    timelineBar: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineBar, askOptions.symbols.timelineBar)
+    specialIcon: processThemeItem((_za = options == null ? void 0 : options.symbols) == null ? void 0 : _za.specialIcon, askOptions.symbols.specialIcon),
+    openingIcon: processThemeItem((_Aa = options == null ? void 0 : options.symbols) == null ? void 0 : _Aa.openingIcon, askOptions.symbols.openingIcon),
+    promptIcon: processThemeItem((_Ba = options == null ? void 0 : options.symbols) == null ? void 0 : _Ba.promptIcon, askOptions.symbols.promptIcon),
+    errorMsgPrefix: processThemeItem((_Ca = options == null ? void 0 : options.symbols) == null ? void 0 : _Ca.errorMsgPrefix, askOptions.symbols.errorMsgPrefix),
+    itemIcon: processThemeItem((_Da = options == null ? void 0 : options.symbols) == null ? void 0 : _Da.itemIcon, askOptions.symbols.itemIcon),
+    itemHoverIcon: processThemeItem((_Ea = options == null ? void 0 : options.symbols) == null ? void 0 : _Ea.itemHoverIcon, askOptions.symbols.itemHoverIcon),
+    itemSelectedIcon: processThemeItem((_Fa = options == null ? void 0 : options.symbols) == null ? void 0 : _Fa.itemSelectedIcon, askOptions.symbols.itemSelectedIcon),
+    itemUnselectedIcon: processThemeItem((_Ga = options == null ? void 0 : options.symbols) == null ? void 0 : _Ga.itemUnselectedIcon, askOptions.symbols.itemUnselectedIcon),
+    scrollUpIcon: processThemeItem((_Ha = options == null ? void 0 : options.symbols) == null ? void 0 : _Ha.scrollUpIcon, askOptions.symbols.scrollUpIcon),
+    scrollDownIcon: processThemeItem((_Ia = options == null ? void 0 : options.symbols) == null ? void 0 : _Ia.scrollDownIcon, askOptions.symbols.scrollDownIcon),
+    scrollbarTrack: processThemeItem((_Ja = options == null ? void 0 : options.symbols) == null ? void 0 : _Ja.scrollbarTrack, askOptions.symbols.scrollbarTrack),
+    scrollbarTrackTrimTop: processThemeItem((_Ka = options == null ? void 0 : options.symbols) == null ? void 0 : _Ka.scrollbarTrackTrimTop, askOptions.symbols.scrollbarTrackTrimTop),
+    scrollbarTrackTrimBottom: processThemeItem((_La = options == null ? void 0 : options.symbols) == null ? void 0 : _La.scrollbarTrackTrimBottom, askOptions.symbols.scrollbarTrackTrimBottom),
+    scrollbarBar: processThemeItem((_Ma = options == null ? void 0 : options.symbols) == null ? void 0 : _Ma.scrollbarBar, askOptions.symbols.scrollbarBar),
+    scrollbarBarTrimTop: processThemeItem((_Na = options == null ? void 0 : options.symbols) == null ? void 0 : _Na.scrollbarBarTrimTop, askOptions.symbols.scrollbarBarTrimTop),
+    scrollbarBarTrimBottom: processThemeItem((_Oa = options == null ? void 0 : options.symbols) == null ? void 0 : _Oa.scrollbarBarTrimBottom, askOptions.symbols.scrollbarBarTrimBottom),
+    separatorLine: processThemeItem((_Pa = options == null ? void 0 : options.symbols) == null ? void 0 : _Pa.separatorLine, askOptions.symbols.separatorLine),
+    separatorNodeDown: processThemeItem((_Qa = options == null ? void 0 : options.symbols) == null ? void 0 : _Qa.separatorNodeDown, askOptions.symbols.separatorNodeDown),
+    separatorNodeNone: processThemeItem((_Ra = options == null ? void 0 : options.symbols) == null ? void 0 : _Ra.separatorNodeNone, askOptions.symbols.separatorNodeNone),
+    separatorNodeUp: processThemeItem((_Sa = options == null ? void 0 : options.symbols) == null ? void 0 : _Sa.separatorNodeUp, askOptions.symbols.separatorNodeUp),
+    specialErrorIcon: processThemeItem((_Ta = options == null ? void 0 : options.symbols) == null ? void 0 : _Ta.specialErrorIcon, askOptions.symbols.specialErrorIcon),
+    folderOpenableIcon: processThemeItem((_Ua = options == null ? void 0 : options.symbols) == null ? void 0 : _Ua.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
+    fileOpenableIcon: processThemeItem((_Va = options == null ? void 0 : options.symbols) == null ? void 0 : _Va.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
+    timelineTrack: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.timelineTrack, askOptions.symbols.timelineTrack),
+    timelineHandle: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineHandle, askOptions.symbols.timelineHandle),
+    timelineBar: processThemeItem((_Ya = options == null ? void 0 : options.symbols) == null ? void 0 : _Ya.timelineBar, askOptions.symbols.timelineBar)
   };
 };
 var setThemeColour = (colour) => {
@@ -1862,6 +1860,9 @@ var customise = (options) => {
   getAskOptionsForState(true, false);
 };
 
+// src/tools/ask/basicInput/getAskInput.ts
+import { getDeferred } from "swiss-ak";
+
 // src/tools/ask/errorValidation.ts
 var getErrorInfoFromValidationResult = (validateResult) => {
   const isError = validateResult instanceof Error || (validateResult == null ? void 0 : validateResult.message) !== void 0 || typeof validateResult === "string" || validateResult === false;
@@ -1880,6 +1881,14 @@ var getErrorInfoFromValidationResult = (validateResult) => {
     errorMessage
   };
 };
+
+// src/tools/ask/basicInput/getFullChoices.ts
+var getFullChoices = (choices) => choices.map((choice) => typeof choice === "string" ? { value: choice } : choice).map((choice, index) => ({
+  title: choice.title || "" + choice.value,
+  value: choice.value,
+  preselected: choice.selected || false,
+  index
+}));
 
 // src/tools/ask/basicInput/getAskInput.ts
 var getPrinter = (question, baseOptions, valueOptions, itemsOptions) => {
@@ -1939,7 +1948,9 @@ var getPrinter = (question, baseOptions, valueOptions, itemsOptions) => {
   };
   return print;
 };
-var getAskInput = (baseOptions, valueOptions, itemsOptions) => new Promise((resolve, reject) => {
+var getAskInput = (baseOptions, valueOptions, itemsOptions) => {
+  const deferred = getDeferred();
+  const askOptions2 = getAskOptions();
   const valueData = {
     value: valueOptions ? valueOptions.initialValue : void 0,
     cursorOffset: 0
@@ -1952,68 +1963,78 @@ var getAskInput = (baseOptions, valueOptions, itemsOptions) => new Promise((reso
     selected: itemsOptions ? itemsOptions.initialSelectedIndexes ?? [] : []
   };
   const questionText = typeof baseOptions.question === "string" ? baseOptions.question : baseOptions.question.get();
-  const validate = (newValue) => {
-    const testValueData = {
-      ...valueData,
-      value: newValue ?? valueData.value
-    };
-    const validateResult = baseOptions.validate(testValueData, itemsData);
-    return getErrorInfoFromValidationResult(validateResult);
-  };
-  const submit = (output, newValue = output) => {
-    valueData.value = newValue;
-    if (!validate().isError) {
-      print(true);
-      process.stdout.write("\n");
-      kl.stop();
-      const transformedValue = (valueOptions == null ? void 0 : valueOptions.submitTransformer(newValue)) ?? output;
-      return resolve(transformedValue);
-    } else {
-      print(false);
-    }
-  };
-  const exit = async (forceNewValue) => {
-    if (forceNewValue) {
-      valueData.value = forceNewValue;
-    }
-    print(false, true);
-    process.stdout.write("\n" + ansi2.cursor.show);
-    kl.stop();
-    process.exit();
-  };
   const printer = getPrinter(questionText, baseOptions, valueOptions, itemsOptions);
-  const print = (isComplete, isExit = false) => {
-    let valueText;
-    let itemsOut;
-    let { isError, errorMessage } = validate();
-    if (!errorMessage && isExit)
-      errorMessage = "";
-    if (valueOptions) {
-      valueText = valueOptions.displayTransformer(valueData.value, isError, errorMessage, isComplete, isExit);
-    }
-    if (itemsOptions) {
-      if (isComplete || isExit) {
-        valueText = valueData.value;
+  const operation = {
+    setup: () => {
+      if (baseOptions.actions.initial) {
+        baseOptions.actions.initial("", "", valueData, itemsData, kl, operation.validate, operation.display, userActions.submit, userActions.exit);
       }
-      if (!isComplete || isExit) {
-        itemsOut = itemsData;
+    },
+    validate: (newValue) => {
+      const testValueData = {
+        ...valueData,
+        value: newValue ?? valueData.value
+      };
+      const validateResult = baseOptions.validate(testValueData, itemsData);
+      return getErrorInfoFromValidationResult(validateResult);
+    },
+    display: (isComplete, isExit = false) => {
+      let valueText;
+      let itemsOut;
+      let { isError, errorMessage } = operation.validate();
+      if (!errorMessage && isExit)
+        errorMessage = "";
+      if (valueOptions) {
+        valueText = valueOptions.displayTransformer(valueData.value, isError, errorMessage, isComplete, isExit);
       }
+      if (itemsOptions) {
+        if (isComplete || isExit) {
+          valueText = valueData.value;
+        }
+        if (!isComplete || isExit) {
+          itemsOut = itemsData;
+        }
+      }
+      printer(valueText, itemsOut, valueData.cursorOffset, errorMessage, isComplete, isExit);
     }
-    printer(valueText, itemsOut, valueData.cursorOffset, errorMessage, isComplete, isExit);
+  };
+  const userActions = {
+    submit: (output, newValue = output) => {
+      valueData.value = newValue;
+      if (!operation.validate().isError) {
+        operation.display(true);
+        process.stdout.write("\n");
+        kl.stop();
+        const transformedValue = (valueOptions == null ? void 0 : valueOptions.submitTransformer(newValue)) ?? output;
+        return deferred.resolve(transformedValue);
+      } else {
+        if (askOptions2.general.beeps)
+          process.stdout.write(ansi2.beep);
+        operation.display(false);
+      }
+    },
+    exit: async (forceNewValue) => {
+      if (forceNewValue) {
+        valueData.value = forceNewValue;
+      }
+      operation.display(false, true);
+      process.stdout.write("\n" + ansi2.cursor.show);
+      kl.stop();
+      process.exit();
+    }
   };
   const kl = getKeyListener((keyName, rawValue) => {
     if (keyName === rawValue)
       keyName = "key";
     if (baseOptions.actions[keyName]) {
       const actionFn = baseOptions.actions[keyName];
-      actionFn(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
+      actionFn(rawValue, keyName, valueData, itemsData, kl, operation.validate, operation.display, userActions.submit, userActions.exit);
     }
   });
-  if (baseOptions.actions.initial) {
-    baseOptions.actions.initial("", "", valueData, itemsData, kl, validate, print, submit, exit);
-  }
-  print(false);
-});
+  operation.setup();
+  operation.display(false);
+  return deferred.promise;
+};
 
 // src/tools/ask/basicInput/getSearchSuggestions.ts
 import { ArrayTools as ArrayTools4, MathsTools, fn as fn3 } from "swiss-ak";
@@ -2523,7 +2544,6 @@ var multiselect = async (question, choices, initial, validate, lc) => {
   const getIsAllSelected = (itemsData) => itemsData.items.filter((item) => item.value !== SELECT_ALL2).every((item, index) => itemsData.selected.includes(index + 1));
   const computeItems = (itemsData) => {
     const isAllSelected = getIsAllSelected(itemsData);
-    LOG("computeItems", { isAllSelected, itemsData });
     if (isAllSelected && !itemsData.selected.includes(0))
       itemsData.selected.unshift(0);
     if (!isAllSelected && itemsData.selected.includes(0))
@@ -2545,7 +2565,6 @@ var multiselect = async (question, choices, initial, validate, lc) => {
       multiselectActions.exit(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
     },
     key(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
-      LOG("key", rawValue);
       if ("Aa".includes(rawValue)) {
         toggleAll(!getIsAllSelected(itemsData), itemsData);
         print(false);
@@ -2574,11 +2593,9 @@ var multiselect = async (question, choices, initial, validate, lc) => {
       print(false);
     },
     left(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
-      LOG("left", itemsData);
       multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
     },
     right(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
-      LOG("right", itemsData);
       multiselectActions.space(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit);
     },
     return(rawValue, keyName, valueData, itemsData, kl, validate2, print, submit, exit) {
@@ -2611,7 +2628,6 @@ var multiselect = async (question, choices, initial, validate, lc) => {
   }
   initialSelectedIndexes = initialSelectedIndexes.filter(fn4.dedupe);
   const initialHoveredIndex = initialSelectedIndexes[0] ?? 0;
-  LOG("initial", { initialSelectedIndexes });
   let result = await getAskInput(
     {
       lc,
@@ -2639,14 +2655,14 @@ var multiselect = async (question, choices, initial, validate, lc) => {
   return result;
 };
 
-// src/tools/ask/trim.ts
-import { getDeferred, hours, MathsTools as MathsTools2, ObjectTools as ObjectTools3, seconds, symbols as symbols3 } from "swiss-ak";
+// src/tools/ask/datetime.ts
+import { days as days2, getDeferred as getDeferred2 } from "swiss-ak";
 
 // src/utils/actionBar.ts
 import { fn as fn7 } from "swiss-ak";
 
 // src/tools/table.ts
-import { fn as fn6, ArrayTools as ArrayTools7, StringTools as StringTools3 } from "swiss-ak";
+import { ArrayTools as ArrayTools7, StringTools as StringTools3, fn as fn6 } from "swiss-ak";
 
 // src/utils/processTableInput.ts
 import { zip, fn as fn5, ArrayTools as ArrayTools5 } from "swiss-ak";
@@ -3071,6 +3087,347 @@ var getActionBar = (ids, config, pressedId, disabledIds = []) => {
   );
 };
 
+// src/utils/dynDates.ts
+import { DAY, MathsTools as MathsTools2, days, sortByMapped as sortByMapped2 } from "swiss-ak";
+var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
+var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
+var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
+var dateToDynDate = (date2) => {
+  const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
+  return [dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate()];
+};
+var dateToDynTime = (date2) => {
+  const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
+  return [dateObj.getHours(), dateObj.getMinutes()];
+};
+var sortDynDates = (dates) => sortByMapped2(dates, (value) => Number(dynDateToDate(value)));
+var isSameMonth = (aDate, bDate) => aDate[0] === bDate[0] && aDate[1] === bDate[1];
+var isEqualDynDate = (aDate, bDate) => isSameMonth(aDate, bDate) && aDate[2] === bDate[2];
+var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / DAY) + 3) % 7;
+var getDaysInMonth = (year, month, _dy) => {
+  if (month !== 2)
+    return [0, 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 29 : 28;
+};
+var correctDate = ([inYr, inMo, inDy]) => {
+  const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
+  const outMo = MathsTools2.clamp(notNaN(inMo), 1, 12);
+  const daysInMonth = getDaysInMonth(outYr, outMo);
+  const outDy = MathsTools2.clamp(notNaN(inDy), 1, daysInMonth);
+  return [outYr, outMo, outDy];
+};
+var addMonths = ([yr, mo, dy], add = 1) => {
+  const total = yr * 12 + (mo - 1) + add;
+  return correctDate([Math.floor(total / 12), total % 12 + 1, dy]);
+};
+var addDays = ([yr, mo, dy], add = 1) => {
+  const date2 = dynDateToDate([yr, mo, dy]);
+  const newDate = date2.getTime() + days(add);
+  return dateToDynDate(newDate);
+};
+var getIntermediaryDates = (aDate, bDate) => {
+  const [start, end] = sortDynDates([aDate, bDate]);
+  const inter = [];
+  const addAnother = (previous) => {
+    const next = addDays(previous, 1);
+    if (!isEqualDynDate(end, next)) {
+      inter.push(next);
+      addAnother(next);
+    }
+  };
+  if (!isEqualDynDate(start, end))
+    addAnother(start);
+  return inter;
+};
+
+// src/utils/numberInputter.ts
+import { seconds } from "swiss-ak";
+var getNumberInputter = (timeout = seconds(1.5)) => {
+  let lastKeyTimecode = 0;
+  let logged = [];
+  const get = () => Number(logged.join(""));
+  return {
+    input: (num) => {
+      const now = Date.now();
+      if (now - lastKeyTimecode > timeout)
+        logged = [];
+      lastKeyTimecode = now;
+      logged.push(num);
+      return get();
+    },
+    reset: () => {
+      const now = Date.now();
+      lastKeyTimecode = now;
+      logged = [];
+      return get();
+    },
+    backspace: () => {
+      const now = Date.now();
+      lastKeyTimecode = now;
+      logged = logged.slice(0, -1);
+      return get();
+    },
+    get
+  };
+};
+
+// src/tools/ask/datetime/date.ts
+import { range } from "swiss-ak";
+
+// src/tools/ask/datetime/styles.ts
+var getSpecialColours = (isActive, isComplete, isError) => {
+  const { colours: col } = getAskOptionsForState(isComplete, isError);
+  return {
+    hover: isActive ? col.specialHover : col.specialInactiveHover,
+    selected: isActive ? col.specialSelected : col.specialInactiveSelected,
+    highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
+    normal: isActive ? col.specialNormal : col.specialInactiveNormal,
+    faded: isActive ? col.specialFaded : col.specialInactiveFaded,
+    hint: isActive ? col.specialHint : col.specialInactiveHint,
+    info: col.specialInfo
+  };
+};
+
+// src/tools/ask/datetime/date.ts
+var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+var NUM_OF_ROWS = 6;
+var getMonthCells = (year, month, _dy) => {
+  const startWeekDay = getWeekday([year, month, 1]);
+  const thisMonthMax = getDaysInMonth(year, month);
+  const prevMonthMax = getDaysInMonth(...addMonths([year, month, 1], -1));
+  const thisMonth = range(thisMonthMax, 1, 1);
+  const prevMonth = range(prevMonthMax, -1, -1);
+  const nextMonth = range(28, -1, -1);
+  const allCells = [...startWeekDay ? prevMonth.slice(-startWeekDay) : [], ...thisMonth, ...nextMonth];
+  const byRow = range(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
+  return byRow;
+};
+var combineWraps = (...wraps) => (s) => wraps.reduce((acc, wrap) => wrap(acc), s);
+var getMonthTable = (active, cursors, selected, isRange, slice, isError, year, month, _dy) => {
+  const theme = getAskOptionsForState(false, isError);
+  const col = getSpecialColours(active, false, isError);
+  const selCursor = cursors[selected];
+  const monthCells = getMonthCells(year, month);
+  const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
+  const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
+  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
+  const formatDim = [...formatNonMonth, table.utils.getFormat(col.normal, void 0, void 0, true)];
+  const formatCursor = [];
+  if (isSameMonth([year, month, 1], selCursor)) {
+    const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
+    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat(combineWraps(col.hover, colr.reset), y, x)));
+  }
+  if (isRange) {
+    const otherCursor = cursors[selected === 0 ? 1 : 0];
+    if (isSameMonth([year, month, 1], otherCursor)) {
+      const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
+      formatCursor.push(table.utils.getFormat(combineWraps(col.selected, colr.reset), otherCursorCoor[1], otherCursorCoor[0]));
+    }
+    const inter = getIntermediaryDates(cursors[0], cursors[1]);
+    const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
+    const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
+    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(combineWraps(col.highlight, colr.reset), y, x));
+    formatCursor.push(...formatInter);
+  }
+  const body = monthCells.map((row) => row.map((val) => ` ${(Math.abs(val) + "").padStart(2)} `)).map((row) => row.slice(...slice));
+  const headers = [daysOfWeek.slice(...slice)];
+  const lines = table.getLines(body, headers, {
+    drawOuter: false,
+    drawColLines: false,
+    drawRowLines: false,
+    alignCols: ["right"],
+    format: [...formatCursor, ...formatDim],
+    wrapLinesFn: theme.colours.decoration,
+    overrideHorChar: "\u2500",
+    cellPadding: 0
+  });
+  const monthWidth = out.getWidth(lines[0]);
+  const dispYear = out.getWidth(lines[0]) > 20 ? ` ${year}` : "";
+  const dispMonth = monthNames[month - 1].slice(0, out.getWidth(lines[0]) - 2);
+  const getTitle = (text2, prefix, suffix) => {
+    const resPrefix = active ? col.hint(prefix) : "";
+    const resSuffix = active ? col.hint(suffix) : "";
+    const resText = out.center(col.normal(text2), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
+    return `${resPrefix}${resText}${resSuffix}`;
+  };
+  const titleYear = getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ");
+  const titleMonth = getTitle(dispMonth, "  \u25C0 A", "D \u25B6  ");
+  return {
+    table: [titleYear, titleMonth, ...lines],
+    coors
+  };
+};
+var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, isRange = false) => {
+  const MAX_SELECTED = isRange ? 2 : 1;
+  let selected = 0;
+  let cursors = [...initial];
+  let active = isActive;
+  let prevMonth;
+  let nextMonth;
+  let currMonthDays;
+  const tables = {
+    actv: { table: [], coors: [] },
+    prev: { table: [], coors: [] },
+    next: { table: [], coors: [] }
+  };
+  const operation = {
+    recalc: (skipDisplay = false) => {
+      prevMonth = addMonths(cursors[selected], -1);
+      nextMonth = addMonths(cursors[selected], 1);
+      currMonthDays = getDaysInMonth(...cursors[selected]);
+      if (!skipDisplay) {
+        operation.display();
+      }
+    },
+    setCursor: (newCursor, skipDisplay = false) => {
+      cursors[selected] = newCursor;
+      valueChangeCb(isRange ? sortDynDates(cursors) : cursors);
+      operation.recalc(skipDisplay);
+    },
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
+      const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
+      tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
+      tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
+      tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
+      displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
+    }
+  };
+  const userActions = {
+    setDate: (date2) => operation.setCursor([cursors[selected][0], cursors[selected][1], date2]),
+    switchSelected: () => {
+      selected = (selected + 1) % MAX_SELECTED;
+      operation.recalc();
+    },
+    moveMonth: (dir) => operation.setCursor(addMonths(cursors[selected], dir)),
+    moveYear: (dir) => operation.setCursor(addMonths(cursors[selected], dir * 12)),
+    moveHor: (dir) => {
+      const [yr, mo, dy] = cursors[selected];
+      const currWeekday = getWeekday(cursors[selected]);
+      if (dir < 0 && currWeekday > 0 || dir > 0 && currWeekday < 6) {
+        return operation.setCursor(addDays(cursors[selected], dir));
+      }
+      const [currCol, currRow] = tables.actv.coors.find(([x, y, val]) => val === dy);
+      const newRow = currRow;
+      const newCol = (7 + currCol + dir) % 7;
+      const newMonthCoors = [tables.prev.coors, tables.next.coors][Number(dir > 0)];
+      let [_x, _y, newDay] = newMonthCoors.find(([x, y]) => x === newCol && y === newRow);
+      const [newYear, newMonth] = addMonths(cursors[selected], dir);
+      if (newDay < 0)
+        newDay = dir > 0 ? 1 : getDaysInMonth(newYear, newMonth);
+      return operation.setCursor(correctDate([newYear, newMonth, newDay]));
+    },
+    moveVer: (dir) => operation.setCursor(addDays(cursors[selected], dir * 7))
+  };
+  operation.setCursor(initial[0], true);
+  const result = {
+    getValue: () => isRange ? sortDynDates(cursors) : cursors,
+    setActive: (isActive2) => {
+      active = isActive2;
+      operation.display();
+    },
+    triggerDisplay: () => operation.display(),
+    inputKey: (key, num) => {
+      if (num !== void 0)
+        return userActions.setDate(num);
+      switch (key) {
+        case "tab":
+          return userActions.switchSelected();
+        case "right":
+          return userActions.moveHor(1);
+        case "left":
+          return userActions.moveHor(-1);
+        case "up":
+          return userActions.moveVer(-1);
+        case "down":
+          return userActions.moveVer(1);
+        case "a":
+          return userActions.moveMonth(-1);
+        case "d":
+          return userActions.moveMonth(1);
+        case "q":
+          return userActions.moveYear(-1);
+        case "e":
+          return userActions.moveYear(1);
+      }
+    }
+  };
+  return result;
+};
+
+// src/tools/ask/datetime/time.ts
+import { range as range2 } from "swiss-ak";
+var getSingleTimeDial = (value, sectionActive, dialActive, max, label, isError) => {
+  const theme = getAskOptionsForState(false, isError);
+  const col = getSpecialColours(sectionActive, false, isError);
+  const wrapFns = [col.faded, col.normal, dialActive ? col.hover : col.selected];
+  const showExtra = wrapFns.length - 1;
+  const dialNums = range2(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
+  const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
+  const lines = out.centerLines([col.normal(label), theme.colours.decoration("\u25E2\u25E3"), ...dial, theme.colours.decoration("\u25E5\u25E4")], 4);
+  return lines;
+};
+var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) => {
+  const MAX_COL = 2;
+  const MAX_VALUES = [24, 60, 60];
+  const labels = ["hh", "mm", "ss"];
+  let current = [...initial];
+  let cursor = 0;
+  let active = isActive;
+  const operation = {
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
+      const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
+      const lines = out.concatLineGroups(...dials);
+      const padded = out.centerLines(lines);
+      displayCb(padded);
+    }
+  };
+  const userActions = {
+    set: (val) => {
+      const max = MAX_VALUES[cursor];
+      current[cursor] = (max + val) % max;
+      valueChangeCb(current);
+      operation.display();
+    },
+    moveHor: (dir) => {
+      cursor = (MAX_COL + cursor + dir) % MAX_COL;
+      valueChangeCb(current);
+      operation.display();
+    },
+    moveVer: (dir) => {
+      const max = MAX_VALUES[cursor];
+      current[cursor] = (max + current[cursor] + dir) % max;
+      valueChangeCb(current);
+      operation.display();
+    }
+  };
+  const result = {
+    getValue: () => current,
+    setActive: (isActive2) => {
+      active = isActive2;
+      operation.display();
+    },
+    triggerDisplay: () => operation.display(),
+    inputKey: (key, num) => {
+      if (num !== void 0)
+        return userActions.set(num);
+      switch (key) {
+        case "right":
+          return userActions.moveHor(1);
+        case "left":
+          return userActions.moveHor(-1);
+        case "up":
+          return userActions.moveVer(-1);
+        case "down":
+          return userActions.moveVer(1);
+      }
+    }
+  };
+  return result;
+};
+
 // src/tools/ask/imitate.ts
 var getImitateOutput = (question, result, isComplete = true, isError = false, errorMsg = isError ? "" : void 0, lc) => {
   const theme = getAskOptionsForState(isComplete, isError);
@@ -3093,238 +3450,240 @@ var imitate = (question, result, isComplete = true, isError = false, errorMessag
     lc.add(lines.length);
 };
 
-// src/tools/ask/trim.ts
-var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
-  const frLength = out.getWidth(frameRate + "");
-  const toSecs = seconds(Math.floor(frame / frameRate));
-  const remaining = frame % frameRate;
-  let cut = includeHours ? 11 : 14;
-  if (!includeMinutes)
-    cut = 17;
-  const time2 = new Date(toSecs).toISOString().slice(cut, 19);
-  return `${time2}.${(remaining + "").padStart(frLength, "0")}`;
+// src/tools/ask/datetime.ts
+var actionConfig = {
+  "tab-section": {
+    keys: "tab",
+    label: "switch section"
+  },
+  "tab-range": {
+    keys: "tab",
+    label: "switch start/end"
+  },
+  "nums-date": {
+    keys: "0-9",
+    label: "enter date"
+  },
+  "nums-time": {
+    keys: "0-9",
+    label: "enter numbers"
+  },
+  "move-date": {
+    keys: "\u2191 \u2193 \u2190 \u2192",
+    label: "move cursor"
+  },
+  "move-time-ver": {
+    keys: "\u2191 \u2193",
+    label: "change value"
+  },
+  "move-time-hor": {
+    keys: "\u2190 \u2192",
+    label: "switch hour/min"
+  },
+  "qead-date": {
+    keys: "Q / E / A / D",
+    label: "change year/month"
+  }
 };
-var getNextHandle = (tool) => {
-  const all = ["start", "end"];
-  return all[(all.indexOf(tool) + 1) % all.length];
+var getDTActionBar = (isDateOn, isTimeOn, isRange, active, isError) => {
+  const theme = getAskOptionsForState(false, isError);
+  const keys = [
+    isDateOn && !isTimeOn && isRange ? "tab-range" : void 0,
+    isDateOn && isTimeOn && !isRange ? "tab-section" : void 0,
+    ...active === "date" ? ["nums-date", "move-date", "qead-date"] : [],
+    ...active === "time" ? ["nums-time", "move-time-ver", "move-time-hor"] : []
+  ].filter((id) => id && actionConfig[id]);
+  return theme.colours.specialInfo(getActionBar(keys, actionConfig));
 };
-var getTrimActionBar = () => {
-  const { general: gen } = getAskOptions();
-  const actionBarConfig = {
-    move: {
-      keys: "\u2190 \u2192",
-      label: `Move ${gen.timelineSpeed} frame${gen.timelineSpeed > 1 ? "s" : ""}`
-    },
-    moveFast: {
-      keys: "\u2191 \u2193",
-      label: `Move ${gen.timelineFastSpeed} frame${gen.timelineFastSpeed > 1 ? "s" : ""}`
-    },
-    switch: {
-      keys: "tab",
-      label: "Switch Handle"
-    },
-    return: {
-      keys: "\u2B90 ",
-      label: "Submit"
-    }
-  };
-  return getActionBar(["move", "moveFast", "switch", "return"], actionBarConfig);
+var getDTErrorLine = ({ isError, errorMessage }) => {
+  if (!isError)
+    return "";
+  const theme = getAskOptionsForState(false, isError);
+  const maxWidth = out.utils.getTerminalWidth() - (out.getWidth(theme.symbols.specialErrorIcon) + 2) * 2;
+  const icon = theme.colours.specialErrorIcon(theme.symbols.specialErrorIcon);
+  const msg = out.truncate(errorMessage, maxWidth);
+  const text2 = `${icon} ${msg} ${icon}`;
+  return out.center(theme.colours.specialErrorMsg(text2));
 };
-var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) => {
-  const opts = getAskOptions();
+var getCurrDynDate = () => dateToDynDate(new Date());
+var getCurrDynTime = () => {
+  const now = new Date();
+  return [now.getHours(), now.getMinutes()];
+};
+var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange, isComplete, isError) => {
+  const theme = getAskOptionsForState(isComplete, isError);
+  const [start, end] = isDateOn ? handlers.date.getValue() : [[1970, 1, 1]];
+  const time2 = isTimeOn ? handlers.time.getValue() : void 0;
+  if (isRange) {
+    const [startOut, endOut] = [start, end].map((d) => valueDisplays.date(dynDateToDate(d, time2), isComplete, isError, isDateOn, isTimeOn));
+    const separator2 = theme.colours.decoration(" \u2192 ");
+    return `${startOut}${separator2}${endOut}`;
+  }
+  return valueDisplays.date(dynDateToDate(start, time2), isComplete, isError, isDateOn, isTimeOn);
+};
+var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime(), convertFn, validateFn, lc) => {
+  const deferred = getDeferred2();
   const tempLC = getLineCounter();
-  const deferred = getDeferred();
-  const totalLength = seconds(Math.floor(totalFrames / frameRate));
-  const showHours = totalLength > hours(1);
-  let errorInfo = getErrorInfoFromValidationResult(true);
-  let activeHandle = "start";
-  const handles = {
-    start: (initial == null ? void 0 : initial.start) !== void 0 ? MathsTools2.clamp(initial.start, 0, totalFrames - 1) : 0,
-    end: (initial == null ? void 0 : initial.end) !== void 0 ? MathsTools2.clamp(initial.end, 0, totalFrames - 1) : totalFrames - 1
+  const askOptions2 = getAskOptions();
+  const isSwitchable = isDateOn && isTimeOn;
+  let activeHandler = isDateOn ? "date" : "time";
+  let errorInfo = { isError: false, errorMessage: void 0 };
+  const getErrorInfo = () => errorInfo;
+  const displayCache = { date: [], time: [] };
+  const valueCache = {
+    date: initialDate,
+    time: initialTime
   };
-  let cacheTermSize = [0, 0];
-  let cacheActionBar = "";
   const operation = {
-    calc: () => {
-      const termSize = [process.stdout.columns, process.stdout.rows];
-      if (termSize[0] != cacheTermSize[0] || termSize[1] != cacheTermSize[1]) {
-        cacheTermSize = termSize;
-        cacheActionBar = getTrimActionBar();
-      }
+    onValueChange: (key) => (newValue) => {
+      valueCache[key] = newValue;
+      errorInfo = operation.runValidation();
     },
-    validate: () => {
-      if (!validate)
-        return;
-      const result = operation.getResult();
-      const validationResult = validate(result);
-      errorInfo = getErrorInfoFromValidationResult(validationResult);
+    getResult: (dateData = valueCache.date, timeData = valueCache.time) => convertFn([dateData, timeData]),
+    runValidation: (dateData = valueCache.date, timeData = valueCache.time) => {
+      const validateResult = validateFn == null ? void 0 : validateFn(operation.getResult(dateData, timeData));
+      const info = getErrorInfoFromValidationResult(validateResult);
+      return info;
     },
-    getResult: () => ({ start: handles.start, end: handles.end }),
-    getResultOutput: (isComplete = false) => {
-      const { colours: col } = getAskOptionsForState(false, errorInfo.isError);
-      const result = operation.getResult();
-      const startOut = col.resultNumber(result.start + colr.dim(` (${toTimeCode(result.start, frameRate, showHours)})`));
-      const endOut = col.resultNumber(result.end + colr.dim(` (${toTimeCode(result.end, frameRate, showHours)})`));
-      return `${startOut} ${col.decoration(symbols3.ARROW_RGT)} ${endOut}`;
+    onDisplay: (key) => (lines) => {
+      displayCache[key] = lines;
+      operation.display();
     },
     display: () => {
-      operation.calc();
-      const width = out.utils.getTerminalWidth();
-      const theme = getAskOptionsForState(false, errorInfo.isError);
-      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
-      const totalSpace = width - 2;
-      const handlePositions = ObjectTools3.mapValues(
-        handles,
-        (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
-      );
-      const befSpace = Math.max(0, handlePositions.start);
-      const barSpace = Math.max(0, handlePositions.end - handlePositions.start);
-      const aftSpace = Math.max(0, totalSpace - handlePositions.end);
-      const actvHand = col.timelineHandleActive(sym.timelineHandle);
-      const inactvHand = col.timelineHandle(sym.timelineHandle);
-      const handStart = activeHandle == "start" ? actvHand : inactvHand;
-      const handEnd = activeHandle == "end" ? actvHand : inactvHand;
-      const getHandleLabels = () => {
-        const handleLabelsRaw = ObjectTools3.mapValues(handles, (_k, value) => [
-          ` ${toTimeCode(value, frameRate, showHours)} `,
-          ""
-        ]);
-        const handleLabelWidths = ObjectTools3.mapValues(
-          handleLabelsRaw,
-          (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
-        );
-        const handleAligns = {
-          start: handleLabelWidths.start > befSpace ? "left" : "right",
-          end: handleLabelWidths.end > aftSpace ? "right" : "left"
-        };
-        const handleLabels = ObjectTools3.mapValues(
-          handleLabelsRaw,
-          (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
-        );
-        const strtBef = handleAligns.start === "right";
-        const endBef = handleAligns.end === "right";
-        const potentialMaxLabelSpace = handlePositions.end - handlePositions.start;
-        if (!strtBef && potentialMaxLabelSpace < handleLabelWidths.start) {
-          handleLabels.start = handleLabels.start.map((s) => s.slice(0, Math.max(0, potentialMaxLabelSpace - 1)));
-          handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => out.getWidth(s)));
-        }
-        if (endBef && potentialMaxLabelSpace < handleLabelWidths.end) {
-          handleLabels.end = handleLabels.end.map((s) => s.slice(s.length - Math.max(0, potentialMaxLabelSpace - 1)));
-          handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => out.getWidth(s)));
-        }
-        const befLabelSpace = Math.max(0, befSpace - (strtBef ? handleLabelWidths.start : 0));
-        const barLabelSpace = Math.max(0, barSpace - (!strtBef ? handleLabelWidths.start : 0) - (endBef ? handleLabelWidths.end : 0));
-        const aftLabelSpace = Math.max(0, aftSpace - (!endBef ? handleLabelWidths.end : 0));
-        const bef = " ".repeat(befLabelSpace);
-        const bar = " ".repeat(barLabelSpace);
-        const aft = " ".repeat(aftLabelSpace);
-        const handle1 = `${bef}${strtBef ? handleLabels.start[0] : ""}${handStart}${!strtBef ? handleLabels.start[0] : ""}${bar}${endBef ? handleLabels.end[0] : ""}${handEnd}${!endBef ? handleLabels.end[0] : ""}${aft}`;
-        const handle2 = `${bef}${strtBef ? handleLabels.start[1] : ""}${handStart}${!strtBef ? handleLabels.start[1] : ""}${bar}${endBef ? handleLabels.end[1] : ""}${handEnd}${!endBef ? handleLabels.end[1] : ""}${aft}`;
-        return handle1 + "\n" + handle2;
-      };
-      const getBar = () => {
-        const actvHand2 = col.timelineHandleActive(sym.timelineBar);
-        const inactvHand2 = col.timelineHandle(sym.timelineBar);
-        const handStart2 = activeHandle == "start" ? actvHand2 : inactvHand2;
-        const handEnd2 = activeHandle == "end" ? actvHand2 : inactvHand2;
-        const bef = col.timelineTrack(sym.timelineTrack.repeat(befSpace));
-        const bar = col.timelineTrackActive(sym.timelineBar.repeat(barSpace));
-        const aft = col.timelineTrack(sym.timelineTrack.repeat(aftSpace));
-        return `${bef}${handStart2}${bar}${handEnd2}${aft}`;
-      };
-      const getBottomLabels = () => {
-        const startVideoLabel = `[${toTimeCode(0, frameRate, showHours)}]`;
-        const endVideoLabel = `[${toTimeCode(totalFrames - 1, frameRate, showHours)}]`;
-        const trimmedVideoLabel = toTimeCode(handles.end - handles.start, frameRate, showHours);
-        const availSpace = width - (out.getWidth(startVideoLabel) + out.getWidth(endVideoLabel) + out.getWidth(trimmedVideoLabel));
-        const centerPosition = handlePositions.start + Math.floor((handlePositions.end - handlePositions.start) / 2);
-        const centerInSpace = centerPosition - out.getWidth(startVideoLabel) - Math.floor(out.getWidth(trimmedVideoLabel) / 2) + 1;
-        const bef = " ".repeat(Math.max(0, Math.min(availSpace, centerInSpace)));
-        const aft = " ".repeat(Math.max(0, Math.min(availSpace, availSpace - centerInSpace)));
-        return `${startVideoLabel}${bef}${trimmedVideoLabel}${aft}${endVideoLabel}`;
-      };
-      const getInstructions = () => col.specialInfo(cacheActionBar);
-      let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
-      output += getImitateOutput(question, operation.getResultOutput(false), false, errorInfo.isError, errorInfo.errorMessage);
+      const { date: date2, time: time2 } = displayCache;
+      const { isError } = errorInfo;
+      const sections = [];
+      if (date2.length)
+        sections.push(date2);
+      if (date2.length && time2.length)
+        sections.push(out.centerLines([""], 8));
+      if (time2.length)
+        sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
+      const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
+      const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
+      const outError = getDTErrorLine(errorInfo);
+      let output = ansi2.cursor.hide;
+      output += getImitateOutput(questionText, outState, false, isError, void 0);
       output += "\n";
-      output += "\n" + getHandleLabels();
-      output += "\n" + getBar();
-      output += "\n" + getBottomLabels();
-      output += "\n";
-      output += "\n" + getInstructions();
-      tempLC.overwrite(output);
-    }
-  };
-  const userActions = {
-    swapHandle: () => activeHandle = getNextHandle(activeHandle),
-    adjustHandle: (amount) => {
-      handles[activeHandle] += amount;
-      if (handles[activeHandle] < 0)
-        handles[activeHandle] = 0;
-      if (handles[activeHandle] > totalFrames - 1)
-        handles[activeHandle] = totalFrames - 1;
-      if (handles.end <= handles.start) {
-        const oldStart = handles.start;
-        const oldEnd = handles.end;
-        handles.end = oldStart;
-        handles.start = oldEnd;
-        userActions.swapHandle();
+      output += "\n" + outMain;
+      output += "\n" + outError;
+      output += "\n" + outAction;
+      tempLC.overwrite(tempLC.ansi.moveHome() + output);
+    },
+    eachHandler: (cb) => Object.entries(handlers).filter(([key, handler]) => handler).forEach(([key, handler]) => cb(key, handler)),
+    switchActive: () => {
+      if (isSwitchable) {
+        activeHandler = activeHandler === "date" ? "time" : "date";
+        operation.eachHandler((key, handler) => handler.setActive(key === activeHandler));
       }
-      operation.validate();
     },
     exit: () => {
       kl.stop();
       tempLC.clear();
-      imitate(question, operation.getResultOutput(true), false, true, void 0, lc);
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, true);
+      ask.imitate(questionText, outState, false, true, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
       process.exit();
     },
     submit: () => {
-      operation.validate();
-      if (errorInfo.isError)
+      var _a, _b;
+      const dates = (_a = handlers.date) == null ? void 0 : _a.getValue();
+      const time2 = (_b = handlers.time) == null ? void 0 : _b.getValue();
+      const { isError } = operation.runValidation(dates, time2);
+      if (isError) {
+        if (askOptions2.general.beeps)
+          process.stdout.write(ansi2.beep);
         return;
+      }
+      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
       kl.stop();
       tempLC.clear();
-      const fixedHandles = operation.getResult();
-      imitate(question, operation.getResultOutput(true), true, false, void 0, lc);
-      deferred.resolve(fixedHandles);
+      ask.imitate(questionText, outState, true, false, void 0, lc);
+      process.stdout.write(ansi2.cursor.show);
+      deferred.resolve(convertFn([dates, time2]));
     }
   };
-  const kl = getKeyListener((keyName) => {
-    switch (keyName) {
+  const handlers = {
+    date: isDateOn && dateHandler(activeHandler === "date", initialDate, operation.onValueChange("date"), getErrorInfo, operation.onDisplay("date"), isRange) || void 0,
+    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, operation.onValueChange("time"), getErrorInfo, operation.onDisplay("time")) || void 0
+  };
+  const numberInputter = getNumberInputter();
+  const kl = getKeyListener((key) => {
+    switch (key) {
       case "exit":
       case "esc":
-        return userActions.exit();
-      case "return":
-        return userActions.submit();
+        return operation.exit();
       case "tab":
-        userActions.swapHandle();
-        break;
-      case "left":
-        userActions.adjustHandle(-opts.general.timelineSpeed);
-        break;
-      case "right":
-        userActions.adjustHandle(opts.general.timelineSpeed);
-        break;
-      case "up":
-        userActions.adjustHandle(opts.general.timelineFastSpeed);
-        break;
-      case "down":
-        userActions.adjustHandle(-opts.general.timelineFastSpeed);
-        break;
+        numberInputter.reset();
+        if (isDateOn && !isTimeOn && isRange && activeHandler === "date") {
+          return handlers.date.inputKey(key, void 0);
+        }
+        return operation.switchActive();
+      case "return":
+        numberInputter.reset();
+        return operation.submit();
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        return handlers[activeHandler].inputKey(void 0, numberInputter.input(Number(key)));
+      case "backspace":
+        return handlers[activeHandler].inputKey(void 0, numberInputter.backspace());
+      default:
+        numberInputter.reset();
+        return handlers[activeHandler].inputKey(key, void 0);
     }
-    operation.display();
-  }, true);
-  operation.validate();
-  operation.display();
+  });
+  operation.eachHandler((key, handler) => handler.triggerDisplay());
   return deferred.promise;
+};
+var getDefaultDate = (isDateOn, isTimeOn, dateOffset = 0) => {
+  let [date2, time2] = new Date(Date.now() + days2(dateOffset)).toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
+  if (!isTimeOn)
+    time2 = "00:00";
+  return new Date(date2 + " " + time2);
+};
+var date = async (questionText, initial, validate, lc) => {
+  const initDateObj = initial || getDefaultDate(true, false);
+  const initDate = dateToDynDate(initDateObj);
+  const convertToDateObj = ([[ddate]]) => dynDateToDate(ddate);
+  return overallHandler(questionText, true, false, false, [initDate, initDate], void 0, convertToDateObj, validate, lc);
+};
+var time = async (questionText, initial, validate, lc) => {
+  const initDateObj = initial || getDefaultDate(false, true);
+  const initDate = dateToDynDate(initDateObj);
+  const initTime = dateToDynTime(initDateObj);
+  const convertToDateObj = ([_d, dtime]) => dynDateToDate(dateToDynDate(initDateObj), dtime);
+  return overallHandler(questionText, false, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
+};
+var datetime = async (questionText, initial, validate, lc) => {
+  const initDateObj = initial || getDefaultDate(true, true);
+  const initDate = dateToDynDate(initDateObj);
+  const initTime = dateToDynTime(initDateObj);
+  const convertToDateObj = ([[ddate], dtime]) => dynDateToDate(ddate, dtime);
+  return overallHandler(questionText, true, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
+};
+var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => {
+  const initDateObj1 = initialStart || getDefaultDate(true, false);
+  const initDateObj2 = initialEnd || getDefaultDate(true, false, 1);
+  const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)];
+  const convertToDateObjs = ([[ddate1, ddate2]]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)];
+  return overallHandler(questionText, true, false, true, initDate, void 0, convertToDateObjs, validate, lc);
 };
 
 // src/tools/ask/fileExplorer/handler.ts
-import { ArrayTools as ArrayTools8, PromiseTools, fn as fn8, getDeferred as getDeferred2, milliseconds, wait as wait2 } from "swiss-ak";
+import { ArrayTools as ArrayTools8, PromiseTools, fn as fn9, getDeferred as getDeferred3, milliseconds, wait as wait2 } from "swiss-ak";
 
 // src/utils/fsUtils.ts
 import { exec } from "child_process";
-import * as fsP3 from "fs/promises";
+import * as fsP2 from "fs/promises";
 import { tryOr as tryOr2 } from "swiss-ak";
 
 // src/tools/PathTools.ts
@@ -3349,7 +3708,7 @@ var PathTools;
 var explodePath = PathTools.explodePath;
 
 // src/tools/ask/fileExplorer/helpers.ts
-import * as fsP2 from "fs/promises";
+import * as fsP from "fs/promises";
 import { MathsTools as MathsTools3, StringTools as StringTools4, TimeTools, seconds as seconds2, sortNumberedText, tryOr } from "swiss-ak";
 
 // src/tools/ask/fileExplorer/cache.ts
@@ -3376,7 +3735,7 @@ var forceLoadPathContents = async (path) => {
     }
     if (pathType === "f") {
       const [stat3, info] = await Promise.all([
-        tryOr(void 0, () => fsP2.stat(path)),
+        tryOr(void 0, () => fsP.stat(path)),
         tryOr(void 0, () => getBasicFileInfo(path))
       ]);
       contents = { ...contents, info: { stat: stat3, info } };
@@ -3524,7 +3883,6 @@ var getFilePanel = (path, panelWidth, maxLines) => {
 // src/utils/fsUtils.ts
 var execute = (command) => {
   return new Promise((resolve, reject) => {
-    LOG("EXECUTE", command);
     exec(command, (error, stdout, stderr) => {
       if (error) {
         reject(error);
@@ -3549,10 +3907,8 @@ var getBasicFileInfo = async (file) => {
   return { width: void 0, height: void 0, duration: void 0, framerate: void 0 };
 };
 var getFileInfo = async (file) => {
-  const start = Date.now();
   const stdout = (await tryOr2("", async () => await execute(`file ${file}`))).toString();
   const [width, height] = (stdout.match(/([0-9]{2,})x([0-9]{2,})/g) || [""])[0].split("x").map(Number).filter((n) => n);
-  LOG("TIME - getFileInfo", Date.now() - start);
   return {
     width,
     height,
@@ -3561,14 +3917,12 @@ var getFileInfo = async (file) => {
   };
 };
 var getFFProbe = async (file) => {
-  const start = Date.now();
   const stdout = await tryOr2("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
     stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
   );
   const asNumber = (val) => Number.isNaN(Number(val)) ? 0 : Number(val);
   const framerate = asNumber(props.avg_frame_rate.split("/")[0]) / asNumber(props.avg_frame_rate.split("/")[1]);
-  LOG("TIME - getProbe", Date.now() - start);
   return {
     width: asNumber(props.width),
     height: asNumber(props.height),
@@ -3577,15 +3931,12 @@ var getFFProbe = async (file) => {
   };
 };
 var mkdir2 = async (dir) => {
-  const start = Date.now();
-  const result = await fsP3.mkdir(dir, { recursive: true });
-  LOG("TIME - mkdir", Date.now() - start);
+  const result = await fsP2.mkdir(dir, { recursive: true });
   return result;
 };
 var scanDir = async (dir = ".") => {
-  const start = Date.now();
   try {
-    const found = await fsP3.readdir(dir, { withFileTypes: true });
+    const found = await fsP2.readdir(dir, { withFileTypes: true });
     const files = [];
     const dirs = [];
     for (const file of found) {
@@ -3595,15 +3946,12 @@ var scanDir = async (dir = ".") => {
         files.push(file.name);
       }
     }
-    LOG("TIME - scanDir", Date.now() - start);
     return { files, dirs };
   } catch (err) {
-    LOG("ERROR", err);
     return { files: [], dirs: [] };
   }
 };
 var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
-  const start = Date.now();
   try {
     await execute(`open ${revealFlag ? "-R " : ""}"${file}"`);
   } catch (err) {
@@ -3618,31 +3966,27 @@ var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
     }
     return openFinder(exploded.dir, "d", true, count + 1);
   }
-  LOG("TIME - open", Date.now() - start);
 };
 var getPathType = async (path) => {
-  const start = Date.now();
   try {
-    const stat3 = await fsP3.stat(path);
+    const stat3 = await fsP2.stat(path);
     const type = stat3.isFile() ? "f" : stat3.isDirectory() ? "d" : void 0;
-    LOG("TIME - getPathType", Date.now() - start);
     return type;
   } catch (err) {
-    LOG("TIME - getPathType", Date.now() - start);
     return void 0;
   }
 };
 
 // src/tools/ask/fileExplorer/handler.ts
 var fileExplorerHandler = async (isMulti = false, isSave = false, question, selectType = "f", startPath = process.cwd(), suggestedFileName = "", validateFn, lc) => {
-  const options = getAskOptions();
-  const minWidth = options.general.fileExplorerColumnWidth;
-  const maxWidth = options.general.fileExplorerColumnWidth;
-  const maxItems = options.general.fileExplorerMaxItems;
+  const askOptions2 = getAskOptions();
+  const minWidth = askOptions2.general.fileExplorerColumnWidth;
+  const maxWidth = askOptions2.general.fileExplorerColumnWidth;
+  const maxItems = askOptions2.general.fileExplorerMaxItems;
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const tempLC = getLineCounter2();
-  const deferred = getDeferred2();
+  const deferred = getDeferred3();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
@@ -3656,8 +4000,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   let submitted = false;
   let loading = false;
   let locked = false;
-  const originalLC = options.general.lc;
-  options.general.lc = getLineCounter2();
+  const originalLC = askOptions2.general.lc;
+  askOptions2.general.lc = getLineCounter2();
   const operation = {
     recalc: () => {
       var _a;
@@ -3680,7 +4024,6 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const contents = fsCache.getPathContents(path);
         const cursorIndex = [...contents.dirs, ...contents.files].indexOf(cursorItem);
         cursorIndexes[path] = cursorIndex;
-        LOG("loadInitial - D", { cursorIndexes });
       });
     },
     updateCursorIndexes: (newIndex) => {
@@ -3689,7 +4032,6 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const lastKnownIndex = cursorIndexes[currentParentDir];
       if (lastKnownIndex !== newIndex)
         cursorIndexes[currentParentDir] = newIndex;
-      LOG("updateCursorIndexes", { cursorIndexes });
     },
     runValidation: (newFileName) => {
       const currentDir = cursorType === "f" ? paths[paths.length - 2] : currentPath;
@@ -3763,7 +4105,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const template = (text2) => `${prefix}${text2} ${symbol} `;
         const extraChars = out.getWidth(template(""));
         const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-        let wrapFn = fn8.noact;
+        let wrapFn = fn9.noact;
         if (isHighlighted) {
           if (isActiveColumn) {
             wrapFn = col.specialHover;
@@ -3985,8 +4327,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       await openFinder(currentPath, cursorType);
     },
     submit: () => {
-      if (isError)
+      if (isError) {
+        if (askOptions2.general.beeps)
+          process.stdout.write(ansi2.beep);
         return;
+      }
       return isSave ? userActions.submitSave() : userActions.submitSelect();
     },
     submitSave: async () => {
@@ -4012,7 +4357,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       submitted = true;
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions2.general.lc = originalLC;
       const result = join(basePath, newFileName);
       ask.imitate(question, result, true, false, void 0, lc);
       process.stdout.write(ansi2.cursor.show);
@@ -4025,7 +4370,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       operation.setPressed("return");
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions2.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const result = isMulti ? Array.from(multiSelected) : [currentPath];
       ask.imitate(question, resultOut, true, false, void 0, lc);
@@ -4034,7 +4379,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     exit: () => {
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions2.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       ask.imitate(question, resultOut, false, true, void 0, lc);
       process.stdout.write(ansi2.cursor.show);
@@ -4109,594 +4454,6 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
   return arr[0];
 };
 
-// src/tools/ask/datetime.ts
-import { days as days2, getDeferred as getDeferred3 } from "swiss-ak";
-
-// src/utils/dynDates.ts
-import { DAY, MathsTools as MathsTools4, days, sortByMapped as sortByMapped2 } from "swiss-ak";
-var notNaN = (num) => typeof num !== "number" || Number.isNaN(num) ? 0 : num;
-var padNum = (num, width = 2) => String(num + "").padStart(width, "0");
-var dynDateToDate = ([yr, mo, dy], [hr, mi] = [12, 0]) => new Date(`${padNum(yr, 4)}-${padNum(mo)}-${padNum(dy)} ${padNum(hr)}:${padNum(mi)}:00 Z+0`);
-var dateToDynDate = (date2) => {
-  const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
-  return [dateObj.getFullYear(), dateObj.getMonth() + 1, dateObj.getDate()];
-};
-var dateToDynTime = (date2) => {
-  const dateObj = typeof date2 === "number" ? new Date(date2) : date2;
-  return [dateObj.getHours(), dateObj.getMinutes()];
-};
-var sortDynDates = (dates) => sortByMapped2(dates, (value) => Number(dynDateToDate(value)));
-var isSameMonth = (aDate, bDate) => aDate[0] === bDate[0] && aDate[1] === bDate[1];
-var isEqualDynDate = (aDate, bDate) => isSameMonth(aDate, bDate) && aDate[2] === bDate[2];
-var getWeekday = (date2) => (Math.floor(dynDateToDate(date2).getTime() / DAY) + 3) % 7;
-var getDaysInMonth = (year, month, _dy) => {
-  if (month !== 2)
-    return [0, 31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
-  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 29 : 28;
-};
-var correctDate = ([inYr, inMo, inDy]) => {
-  const outYr = Math.abs(notNaN(inYr)) === 0 ? 1 : inYr;
-  const outMo = MathsTools4.clamp(notNaN(inMo), 1, 12);
-  const daysInMonth = getDaysInMonth(outYr, outMo);
-  const outDy = MathsTools4.clamp(notNaN(inDy), 1, daysInMonth);
-  return [outYr, outMo, outDy];
-};
-var addMonths = ([yr, mo, dy], add = 1) => {
-  const total = yr * 12 + (mo - 1) + add;
-  return correctDate([Math.floor(total / 12), total % 12 + 1, dy]);
-};
-var addDays = ([yr, mo, dy], add = 1) => {
-  const date2 = dynDateToDate([yr, mo, dy]);
-  const newDate = date2.getTime() + days(add);
-  return dateToDynDate(newDate);
-};
-var getIntermediaryDates = (aDate, bDate) => {
-  const [start, end] = sortDynDates([aDate, bDate]);
-  const inter = [];
-  const addAnother = (previous) => {
-    const next = addDays(previous, 1);
-    if (!isEqualDynDate(end, next)) {
-      inter.push(next);
-      addAnother(next);
-    }
-  };
-  if (!isEqualDynDate(start, end))
-    addAnother(start);
-  return inter;
-};
-
-// src/utils/numberInputter.ts
-import { seconds as seconds3 } from "swiss-ak";
-var getNumberInputter = (timeout = seconds3(1.5)) => {
-  let lastKeyTimecode = 0;
-  let logged = [];
-  const get = () => Number(logged.join(""));
-  return {
-    input: (num) => {
-      const now = Date.now();
-      if (now - lastKeyTimecode > timeout)
-        logged = [];
-      lastKeyTimecode = now;
-      logged.push(num);
-      return get();
-    },
-    reset: () => {
-      const now = Date.now();
-      lastKeyTimecode = now;
-      logged = [];
-      return get();
-    },
-    backspace: () => {
-      const now = Date.now();
-      lastKeyTimecode = now;
-      logged = logged.slice(0, -1);
-      return get();
-    },
-    get
-  };
-};
-
-// src/tools/ask/datetime/date.ts
-import { range } from "swiss-ak";
-
-// src/tools/ask/datetime/styles.ts
-var sectionStyles = {
-  sectActive: {
-    dark: colr.grey1,
-    mid: colr.grey3,
-    normal: colr.dark.white,
-    tertiary: colr.yellow,
-    secondary: colr.darkBg.whiteBg.black,
-    primary: colr.darkBg.yellowBg.black
-  },
-  sectInactive: {
-    dark: colr.grey1,
-    mid: colr.grey2,
-    normal: colr.grey3,
-    tertiary: colr.dark.yellow,
-    secondary: colr.greyBg.black,
-    primary: colr.darkBg.whiteBg.black
-  }
-};
-var getSpecialColours = (isActive, isComplete, isError) => {
-  const { colours: col } = getAskOptionsForState(isComplete, isError);
-  return {
-    hover: isActive ? col.specialHover : col.specialInactiveHover,
-    selected: isActive ? col.specialSelected : col.specialInactiveSelected,
-    highlight: isActive ? col.specialHighlight : col.specialInactiveHighlight,
-    normal: isActive ? col.specialNormal : col.specialInactiveNormal,
-    faded: isActive ? col.specialFaded : col.specialInactiveFaded,
-    hint: isActive ? col.specialHint : col.specialInactiveHint,
-    info: col.specialInfo
-  };
-};
-
-// src/tools/ask/datetime/date.ts
-var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-var NUM_OF_ROWS = 6;
-var getMonthCells = (year, month, _dy) => {
-  const startWeekDay = getWeekday([year, month, 1]);
-  const thisMonthMax = getDaysInMonth(year, month);
-  const prevMonthMax = getDaysInMonth(...addMonths([year, month, 1], -1));
-  const thisMonth = range(thisMonthMax, 1, 1);
-  const prevMonth = range(prevMonthMax, -1, -1);
-  const nextMonth = range(28, -1, -1);
-  const allCells = [...startWeekDay ? prevMonth.slice(-startWeekDay) : [], ...thisMonth, ...nextMonth];
-  const byRow = range(NUM_OF_ROWS, 7).map((start) => allCells.slice(start, start + 7));
-  return byRow;
-};
-var combineWraps = (...wraps) => (s) => wraps.reduce((acc, wrap) => wrap(acc), s);
-var getMonthTable = (active, cursors, selected, isRange, slice, isError, year, month, _dy) => {
-  const theme = getAskOptionsForState(false, isError);
-  const col = getSpecialColours(active, false, isError);
-  const selCursor = cursors[selected];
-  const monthCells = getMonthCells(year, month);
-  const coors = monthCells.map((row, y) => row.map((val, x) => [x, y, val])).flat();
-  const nonMonthCoors = coors.filter(([x, y, val]) => val < 0);
-  const formatNonMonth = nonMonthCoors.map(([x, y]) => table.utils.getFormat(col.faded, y, x));
-  const formatDim = [...formatNonMonth, table.utils.getFormat(col.normal, void 0, void 0, true)];
-  const formatCursor = [];
-  if (isSameMonth([year, month, 1], selCursor)) {
-    const selCursorCoor = [coors.find(([x, y, val]) => val === selCursor[2])];
-    formatCursor.push(...selCursorCoor.map(([x, y]) => table.utils.getFormat(combineWraps(col.hover, colr.reset), y, x)));
-  }
-  if (isRange) {
-    const otherCursor = cursors[selected === 0 ? 1 : 0];
-    if (isSameMonth([year, month, 1], otherCursor)) {
-      const otherCursorCoor = coors.find(([x, y, val]) => val === otherCursor[2]);
-      formatCursor.push(table.utils.getFormat(combineWraps(col.selected, colr.reset), otherCursorCoor[1], otherCursorCoor[0]));
-    }
-    const inter = getIntermediaryDates(cursors[0], cursors[1]);
-    const interNums = inter.filter((i) => isSameMonth([year, month, 1], i)).map(([yr, mo, dy]) => dy);
-    const interCoors = coors.filter(([x, y, val]) => interNums.includes(val));
-    const formatInter = interCoors.map(([x, y]) => table.utils.getFormat(combineWraps(col.highlight, colr.reset), y, x));
-    formatCursor.push(...formatInter);
-  }
-  const body = monthCells.map((row) => row.map((val) => ` ${(Math.abs(val) + "").padStart(2)} `)).map((row) => row.slice(...slice));
-  const headers = [daysOfWeek.slice(...slice)];
-  const lines = table.getLines(body, headers, {
-    drawOuter: false,
-    drawColLines: false,
-    drawRowLines: false,
-    alignCols: ["right"],
-    format: [...formatCursor, ...formatDim],
-    wrapLinesFn: theme.colours.decoration,
-    overrideHorChar: "\u2500",
-    cellPadding: 0
-  });
-  const monthWidth = out.getWidth(lines[0]);
-  const dispYear = out.getWidth(lines[0]) > 20 ? ` ${year}` : "";
-  const dispMonth = monthNames[month - 1].slice(0, out.getWidth(lines[0]) - 2);
-  const getTitle = (text2, prefix, suffix) => {
-    const resPrefix = active ? col.hint(prefix) : "";
-    const resSuffix = active ? col.hint(suffix) : "";
-    const resText = out.center(col.normal(text2), monthWidth - (out.getWidth(resPrefix) + out.getWidth(resSuffix)));
-    return `${resPrefix}${resText}${resSuffix}`;
-  };
-  const titleYear = getTitle(dispYear, "     \u25C0 Q", "E \u25B6     ");
-  const titleMonth = getTitle(dispMonth, "  \u25C0 A", "D \u25B6  ");
-  return {
-    table: [titleYear, titleMonth, ...lines],
-    coors
-  };
-};
-var dateHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb, isRange = false) => {
-  const MAX_SELECTED = isRange ? 2 : 1;
-  let selected = 0;
-  let cursors = [...initial];
-  let active = isActive;
-  let prevMonth;
-  let nextMonth;
-  let currMonthDays;
-  const tables = {
-    actv: { table: [], coors: [] },
-    prev: { table: [], coors: [] },
-    next: { table: [], coors: [] }
-  };
-  const operation = {
-    recalc: (skipDisplay = false) => {
-      prevMonth = addMonths(cursors[selected], -1);
-      nextMonth = addMonths(cursors[selected], 1);
-      currMonthDays = getDaysInMonth(...cursors[selected]);
-      if (!skipDisplay) {
-        operation.display();
-      }
-    },
-    setCursor: (newCursor, skipDisplay = false) => {
-      cursors[selected] = newCursor;
-      valueChangeCb(isRange ? sortDynDates(cursors) : cursors);
-      operation.recalc(skipDisplay);
-    },
-    display: () => {
-      const { isError, errorMessage } = getErrorInfo();
-      LOG("dateHandler.display", { isError, errorMessage, cursors, selected, active });
-      const sliceAmount = out.getResponsiveValue([{ minColumns: 130, value: 7 }, { minColumns: 100, value: 3 }, { value: 0 }]);
-      tables.actv = getMonthTable(active, cursors, selected, isRange, [0, 10], isError, ...cursors[selected]);
-      tables.prev = getMonthTable(false, cursors, selected, isRange, [7 - sliceAmount, 10], isError, ...prevMonth);
-      tables.next = getMonthTable(false, cursors, selected, isRange, [0, sliceAmount], isError, ...nextMonth);
-      displayCb(out.concatLineGroups(tables.prev.table, tables.actv.table, tables.next.table));
-    }
-  };
-  const userActions = {
-    setDate: (date2) => operation.setCursor([cursors[selected][0], cursors[selected][1], date2]),
-    switchSelected: () => {
-      selected = (selected + 1) % MAX_SELECTED;
-      operation.recalc();
-    },
-    moveMonth: (dir) => operation.setCursor(addMonths(cursors[selected], dir)),
-    moveYear: (dir) => operation.setCursor(addMonths(cursors[selected], dir * 12)),
-    moveHor: (dir) => {
-      const [yr, mo, dy] = cursors[selected];
-      const currWeekday = getWeekday(cursors[selected]);
-      if (dir < 0 && currWeekday > 0 || dir > 0 && currWeekday < 6) {
-        return operation.setCursor(addDays(cursors[selected], dir));
-      }
-      const [currCol, currRow] = tables.actv.coors.find(([x, y, val]) => val === dy);
-      const newRow = currRow;
-      const newCol = (7 + currCol + dir) % 7;
-      const newMonthCoors = [tables.prev.coors, tables.next.coors][Number(dir > 0)];
-      let [_x, _y, newDay] = newMonthCoors.find(([x, y]) => x === newCol && y === newRow);
-      const [newYear, newMonth] = addMonths(cursors[selected], dir);
-      if (newDay < 0)
-        newDay = dir > 0 ? 1 : getDaysInMonth(newYear, newMonth);
-      return operation.setCursor(correctDate([newYear, newMonth, newDay]));
-    },
-    moveVer: (dir) => operation.setCursor(addDays(cursors[selected], dir * 7))
-  };
-  operation.setCursor(initial[0], true);
-  const result = {
-    getValue: () => isRange ? sortDynDates(cursors) : cursors,
-    setActive: (isActive2) => {
-      active = isActive2;
-      operation.display();
-    },
-    triggerDisplay: () => operation.display(),
-    inputKey: (key, num) => {
-      if (num !== void 0)
-        return userActions.setDate(num);
-      switch (key) {
-        case "tab":
-          return userActions.switchSelected();
-        case "right":
-          return userActions.moveHor(1);
-        case "left":
-          return userActions.moveHor(-1);
-        case "up":
-          return userActions.moveVer(-1);
-        case "down":
-          return userActions.moveVer(1);
-        case "a":
-          return userActions.moveMonth(-1);
-        case "d":
-          return userActions.moveMonth(1);
-        case "q":
-          return userActions.moveYear(-1);
-        case "e":
-          return userActions.moveYear(1);
-      }
-    }
-  };
-  return result;
-};
-
-// src/tools/ask/datetime/time.ts
-import { range as range2 } from "swiss-ak";
-var getSingleTimeDial = (value, sectionActive, dialActive, max, label, isError) => {
-  const theme = getAskOptionsForState(false, isError);
-  const col = getSpecialColours(sectionActive, false, isError);
-  const wrapFns = [col.faded, col.normal, dialActive ? col.hover : col.selected];
-  const showExtra = wrapFns.length - 1;
-  const dialNums = range2(showExtra * 2 + 1, void 0, value - showExtra).map((v) => (v + max) % max);
-  const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + "").padStart(2)} `)));
-  const lines = out.centerLines([col.normal(label), theme.colours.decoration("\u25E2\u25E3"), ...dial, theme.colours.decoration("\u25E5\u25E4")], 4);
-  return lines;
-};
-var timeHandler = (isActive, initial, valueChangeCb, getErrorInfo, displayCb) => {
-  const MAX_COL = 2;
-  const MAX_VALUES = [24, 60, 60];
-  const labels = ["hh", "mm", "ss"];
-  let current = [...initial];
-  let cursor = 0;
-  let active = isActive;
-  const operation = {
-    display: () => {
-      const { isError, errorMessage } = getErrorInfo();
-      LOG("timeHandler.display", { isError, errorMessage, current, cursor, active });
-      const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
-      const lines = out.concatLineGroups(...dials);
-      const padded = out.centerLines(lines);
-      displayCb(padded);
-    }
-  };
-  const userActions = {
-    set: (val) => {
-      const max = MAX_VALUES[cursor];
-      current[cursor] = (max + val) % max;
-      valueChangeCb(current);
-      operation.display();
-    },
-    moveHor: (dir) => {
-      cursor = (MAX_COL + cursor + dir) % MAX_COL;
-      valueChangeCb(current);
-      operation.display();
-    },
-    moveVer: (dir) => {
-      const max = MAX_VALUES[cursor];
-      current[cursor] = (max + current[cursor] + dir) % max;
-      valueChangeCb(current);
-      operation.display();
-    }
-  };
-  const result = {
-    getValue: () => current,
-    setActive: (isActive2) => {
-      active = isActive2;
-      operation.display();
-    },
-    triggerDisplay: () => operation.display(),
-    inputKey: (key, num) => {
-      if (num !== void 0)
-        return userActions.set(num);
-      switch (key) {
-        case "right":
-          return userActions.moveHor(1);
-        case "left":
-          return userActions.moveHor(-1);
-        case "up":
-          return userActions.moveVer(-1);
-        case "down":
-          return userActions.moveVer(1);
-      }
-    }
-  };
-  return result;
-};
-
-// src/tools/ask/datetime.ts
-var actionConfig = {
-  "tab-section": {
-    keys: "tab",
-    label: "switch section"
-  },
-  "tab-range": {
-    keys: "tab",
-    label: "switch start/end"
-  },
-  "nums-date": {
-    keys: "0-9",
-    label: "enter date"
-  },
-  "nums-time": {
-    keys: "0-9",
-    label: "enter numbers"
-  },
-  "move-date": {
-    keys: "\u2191 \u2193 \u2190 \u2192",
-    label: "move cursor"
-  },
-  "move-time-ver": {
-    keys: "\u2191 \u2193",
-    label: "change value"
-  },
-  "move-time-hor": {
-    keys: "\u2190 \u2192",
-    label: "switch hour/min"
-  },
-  "qead-date": {
-    keys: "Q / E / A / D",
-    label: "change year/month"
-  }
-};
-var getDTActionBar = (isDateOn, isTimeOn, isRange, active, isError) => {
-  const theme = getAskOptionsForState(false, isError);
-  const keys = [
-    isDateOn && !isTimeOn && isRange ? "tab-range" : void 0,
-    isDateOn && isTimeOn && !isRange ? "tab-section" : void 0,
-    ...active === "date" ? ["nums-date", "move-date", "qead-date"] : [],
-    ...active === "time" ? ["nums-time", "move-time-ver", "move-time-hor"] : []
-  ].filter((id) => id && actionConfig[id]);
-  return theme.colours.specialInfo(getActionBar(keys, actionConfig));
-};
-var getDTErrorLine = ({ isError, errorMessage }) => {
-  if (!isError)
-    return "";
-  const theme = getAskOptionsForState(false, isError);
-  const maxWidth = out.utils.getTerminalWidth() - (out.getWidth(theme.symbols.specialErrorIcon) + 2) * 2;
-  const icon = theme.colours.specialErrorIcon(theme.symbols.specialErrorIcon);
-  const msg = out.truncate(errorMessage, maxWidth);
-  const text2 = `${icon} ${msg} ${icon}`;
-  return out.center(theme.colours.specialErrorMsg(text2));
-};
-var getCurrDynDate = () => dateToDynDate(new Date());
-var getCurrDynTime = () => {
-  const now = new Date();
-  return [now.getHours(), now.getMinutes()];
-};
-var getStateDisplay = (handlers, isDateOn, isTimeOn, isRange, isComplete, isError) => {
-  const theme = getAskOptionsForState(isComplete, isError);
-  const [start, end] = isDateOn ? handlers.date.getValue() : [[1970, 1, 1]];
-  const time2 = isTimeOn ? handlers.time.getValue() : void 0;
-  if (isRange) {
-    const [startOut, endOut] = [start, end].map((d) => valueDisplays.date(dynDateToDate(d, time2), isComplete, isError, isDateOn, isTimeOn));
-    const separator2 = theme.colours.decoration(" \u2192 ");
-    return `${startOut}${separator2}${endOut}`;
-  }
-  return valueDisplays.date(dynDateToDate(start, time2), isComplete, isError, isDateOn, isTimeOn);
-};
-var overallHandler = (questionText = "Please pick a date:", isDateOn, isTimeOn, isRange, initialDate = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()], initialTime = getCurrDynTime(), convertFn, validateFn, lc) => {
-  const tempLC = getLineCounter();
-  const deferred = getDeferred3();
-  const isSwitchable = isDateOn && isTimeOn;
-  let activeHandler = isDateOn ? "date" : "time";
-  let errorInfo = { isError: false, errorMessage: void 0 };
-  const getErrorInfo = () => errorInfo;
-  const displayCache = { date: [], time: [] };
-  const valueCache = {
-    date: initialDate,
-    time: initialTime
-  };
-  const operation = {
-    onValueChange: (key) => (newValue) => {
-      valueCache[key] = newValue;
-      errorInfo = operation.runValidation();
-    },
-    getResult: (dateData = valueCache.date, timeData = valueCache.time) => convertFn([dateData, timeData]),
-    runValidation: (dateData = valueCache.date, timeData = valueCache.time) => {
-      const validateResult = validateFn == null ? void 0 : validateFn(operation.getResult(dateData, timeData));
-      const info = getErrorInfoFromValidationResult(validateResult);
-      return info;
-    },
-    onDisplay: (key) => (lines) => {
-      displayCache[key] = lines;
-      operation.display();
-    },
-    display: () => {
-      const { date: date2, time: time2 } = displayCache;
-      const { isError } = errorInfo;
-      const sections = [];
-      if (date2.length)
-        sections.push(date2);
-      if (date2.length && time2.length)
-        sections.push(out.centerLines([""], 8));
-      if (time2.length)
-        sections.push(date2.length ? out.centerLines(["", "", ...time2]) : time2);
-      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, false, isError);
-      const outMain = out.center(out.utils.joinLines(sections.length ? out.concatLineGroups(...sections) : sections[0]), void 0, void 0, false);
-      const outAction = getDTActionBar(isDateOn, isTimeOn, isRange, activeHandler, isError);
-      const outError = getDTErrorLine(errorInfo);
-      let output = ansi2.cursor.hide;
-      output += getImitateOutput(questionText, outState, false, isError, void 0);
-      output += "\n";
-      output += "\n" + outMain;
-      output += "\n" + outError;
-      output += "\n" + outAction;
-      tempLC.overwrite(tempLC.ansi.moveHome() + output);
-    },
-    eachHandler: (cb) => Object.entries(handlers).filter(([key, handler]) => handler).forEach(([key, handler]) => cb(key, handler)),
-    switchActive: () => {
-      if (isSwitchable) {
-        activeHandler = activeHandler === "date" ? "time" : "date";
-        operation.eachHandler((key, handler) => handler.setActive(key === activeHandler));
-      }
-    },
-    exit: () => {
-      kl.stop();
-      tempLC.clear();
-      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, true);
-      ask.imitate(questionText, outState, false, true, void 0, lc);
-      process.stdout.write(ansi2.cursor.show);
-      process.exit();
-    },
-    submit: () => {
-      var _a, _b;
-      const dates = (_a = handlers.date) == null ? void 0 : _a.getValue();
-      const time2 = (_b = handlers.time) == null ? void 0 : _b.getValue();
-      const { isError } = operation.runValidation(dates, time2);
-      if (isError)
-        return;
-      const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
-      kl.stop();
-      tempLC.clear();
-      ask.imitate(questionText, outState, true, false, void 0, lc);
-      process.stdout.write(ansi2.cursor.show);
-      deferred.resolve(convertFn([dates, time2]));
-    }
-  };
-  const handlers = {
-    date: isDateOn && dateHandler(activeHandler === "date", initialDate, operation.onValueChange("date"), getErrorInfo, operation.onDisplay("date"), isRange) || void 0,
-    time: isTimeOn && timeHandler(activeHandler === "time", initialTime, operation.onValueChange("time"), getErrorInfo, operation.onDisplay("time")) || void 0
-  };
-  const numberInputter = getNumberInputter();
-  const kl = getKeyListener((key) => {
-    switch (key) {
-      case "exit":
-      case "esc":
-        return operation.exit();
-      case "tab":
-        numberInputter.reset();
-        if (isDateOn && !isTimeOn && isRange && activeHandler === "date") {
-          return handlers.date.inputKey(key, void 0);
-        }
-        return operation.switchActive();
-      case "return":
-        numberInputter.reset();
-        return operation.submit();
-      case "0":
-      case "1":
-      case "2":
-      case "3":
-      case "4":
-      case "5":
-      case "6":
-      case "7":
-      case "8":
-      case "9":
-        return handlers[activeHandler].inputKey(void 0, numberInputter.input(Number(key)));
-      case "backspace":
-        return handlers[activeHandler].inputKey(void 0, numberInputter.backspace());
-      default:
-        numberInputter.reset();
-        return handlers[activeHandler].inputKey(key, void 0);
-    }
-  });
-  operation.eachHandler((key, handler) => handler.triggerDisplay());
-  return deferred.promise;
-};
-var getDefaultDate = (isDateOn, isTimeOn, dateOffset = 0) => {
-  let [date2, time2] = new Date(Date.now() + days2(dateOffset)).toISOString().match(/([0-9]{4}-[0-9]{2}-[0-9]{2})|(?!T)([0-9]{2}:[0-9]{2})/g);
-  if (!isTimeOn)
-    time2 = "00:00";
-  return new Date(date2 + " " + time2);
-};
-var date = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || getDefaultDate(true, false);
-  const initDate = dateToDynDate(initDateObj);
-  const convertToDateObj = ([[ddate]]) => dynDateToDate(ddate);
-  return overallHandler(questionText, true, false, false, [initDate, initDate], void 0, convertToDateObj, validate, lc);
-};
-var time = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || getDefaultDate(false, true);
-  const initDate = dateToDynDate(initDateObj);
-  const initTime = dateToDynTime(initDateObj);
-  const convertToDateObj = ([_d, dtime]) => dynDateToDate(dateToDynDate(initDateObj), dtime);
-  return overallHandler(questionText, false, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
-};
-var datetime = async (questionText, initial, validate, lc) => {
-  const initDateObj = initial || getDefaultDate(true, true);
-  const initDate = dateToDynDate(initDateObj);
-  const initTime = dateToDynTime(initDateObj);
-  const convertToDateObj = ([[ddate], dtime]) => dynDateToDate(ddate, dtime);
-  return overallHandler(questionText, true, true, false, [initDate, initDate], initTime, convertToDateObj, validate, lc);
-};
-var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => {
-  const initDateObj1 = initialStart || getDefaultDate(true, false);
-  const initDateObj2 = initialEnd || getDefaultDate(true, false, 1);
-  const initDate = [dateToDynDate(initDateObj1), dateToDynDate(initDateObj2)];
-  const convertToDateObjs = ([[ddate1, ddate2]]) => [dynDateToDate(ddate1), dynDateToDate(ddate2)];
-  return overallHandler(questionText, true, false, true, initDate, void 0, convertToDateObjs, validate, lc);
-};
-
 // src/tools/ask/section.ts
 import { ArrayTools as ArrayTools9 } from "swiss-ak";
 var section = async (question, sectionHeader, ...questionFns) => {
@@ -4753,13 +4510,14 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
 };
 
 // src/tools/ask/table.ts
-import { fn as fn10, getDeferred as getDeferred4, MathsTools as MathsTools5 } from "swiss-ak";
+import { fn as fn10, getDeferred as getDeferred4, MathsTools as MathsTools4 } from "swiss-ak";
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}, validate, lc) => {
-  const questionText = typeof question === "string" ? question : question.get();
-  const tempLC = getLineCounter();
   const deferred = getDeferred4();
+  const tempLC = getLineCounter();
+  const askOptions2 = getAskOptions();
+  const questionText = typeof question === "string" ? question : question.get();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
-  activeIndex = MathsTools5.clamp(activeIndex, 0, items.length - 1);
+  activeIndex = MathsTools4.clamp(activeIndex, 0, items.length - 1);
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
   let fullOptions = void 0;
   let bodyRowHeight = 0;
@@ -4773,7 +4531,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     calculateSetup: () => {
       var _a, _b;
       calcedTermSize = [process.stdout.columns, process.stdout.rows];
-      const askOptions2 = getAskOptions();
+      const askOptions3 = getAskOptions();
       const HOR_CHAR = "_";
       const VER_CHAR = "\u2579";
       fullOptions = table.utils.getFullOptions(operation.getTableOptions(0));
@@ -4801,13 +4559,13 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       headerHeight = horiLine;
       if (header.length) {
         const dividerLine = 1;
-        headerHeight = MathsTools5.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
+        headerHeight = MathsTools4.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
         headerHeight += dividerLine;
       }
-      const maxHeight = Math.floor(askOptions2.general.tableSelectMaxHeightPercentage / 100 * calcedTermSize[1]);
+      const maxHeight = Math.floor(askOptions3.general.tableSelectMaxHeightPercentage / 100 * calcedTermSize[1]);
       const availableSpace = maxHeight - questPromptHeight - actionBarHeight - topMargin - bottomMargin;
       numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
-      numRows = MathsTools5.clamp(numRows, 1, items.length);
+      numRows = MathsTools4.clamp(numRows, 1, items.length);
       const mostColumns = Math.max(...body.map((row) => row.length));
       const typicalLine = tableLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
       colWidths = typicalLine.split(VER_CHAR).slice(1, -1).map((sect) => out.getWidth(sect)).map((fullWidth) => fullWidth - fullOptions.cellPadding * 2);
@@ -4841,7 +4599,6 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       const theme = getAskOptionsForState(false, errorInfo.isError);
       const { colours: col, symbols: sym, general: gen, text: txt } = theme;
       const options = operation.getTableOptions(hoveredIndex, styleOptions, overrideOptions);
-      LOG("getTable", { showItems, hoveredIndex, startingIndex, styleOptions, overrideOptions, options });
       let initialBody;
       let initialHeader;
       if (rows) {
@@ -4896,7 +4653,6 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       if (isScrollbar) {
         const scrollbar = getScrollbar(items, scrolledItems, theme, tableLines.length - headerHeight + 1, true, fullOptions.drawRowLines);
         tableLines = tableLines.map((line, index) => `${line} ${scrollbar[index - headerHeight + 1] ?? " "}`);
-        LOG("display", { headerHeight, tableLinesLength: tableLines.length, scrollbarLength: scrollbar.length });
       }
       if (tableOptions.align !== void 0 && tableOptions.align !== "left") {
         tableLines = out.align(tableLines.join("\n"), tableOptions.align).split("\n");
@@ -4943,8 +4699,11 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
     },
     submit: () => {
       operation.runValidation();
-      if (errorInfo.isError)
+      if (errorInfo.isError) {
+        if (askOptions2.general.beeps)
+          process.stdout.write(ansi2.beep);
         return;
+      }
       kl.stop();
       const results = operation.getResultsArray();
       tempLC.clear();
@@ -5020,6 +4779,236 @@ var select2 = async (question, items, settings = {}, initial, validate, lc) => {
   return results[0];
 };
 var multiselect2 = (question, items, settings = {}, initial, validate, lc) => askTableHandler(true, question, items, initial, settings.rows, settings.headers, settings.options, validate, lc);
+
+// src/tools/ask/trim.ts
+import { getDeferred as getDeferred5, hours, MathsTools as MathsTools5, ObjectTools as ObjectTools3, seconds as seconds3, symbols as symbols3 } from "swiss-ak";
+var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
+  const frLength = out.getWidth(frameRate + "");
+  const toSecs = seconds3(Math.floor(frame / frameRate));
+  const remaining = frame % frameRate;
+  let cut = includeHours ? 11 : 14;
+  if (!includeMinutes)
+    cut = 17;
+  const time2 = new Date(toSecs).toISOString().slice(cut, 19);
+  return `${time2}.${(remaining + "").padStart(frLength, "0")}`;
+};
+var getNextHandle = (tool) => {
+  const all = ["start", "end"];
+  return all[(all.indexOf(tool) + 1) % all.length];
+};
+var getTrimActionBar = () => {
+  const { general: gen } = getAskOptions();
+  const actionBarConfig = {
+    move: {
+      keys: "\u2190 \u2192",
+      label: `Move ${gen.timelineSpeed} frame${gen.timelineSpeed > 1 ? "s" : ""}`
+    },
+    moveFast: {
+      keys: "\u2191 \u2193",
+      label: `Move ${gen.timelineFastSpeed} frame${gen.timelineFastSpeed > 1 ? "s" : ""}`
+    },
+    switch: {
+      keys: "tab",
+      label: "Switch Handle"
+    },
+    return: {
+      keys: "\u2B90 ",
+      label: "Submit"
+    }
+  };
+  return getActionBar(["move", "moveFast", "switch", "return"], actionBarConfig);
+};
+var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) => {
+  const deferred = getDeferred5();
+  const askOptions2 = getAskOptions();
+  const tempLC = getLineCounter();
+  const totalLength = seconds3(Math.floor(totalFrames / frameRate));
+  const showHours = totalLength > hours(1);
+  let errorInfo = getErrorInfoFromValidationResult(true);
+  let activeHandle = "start";
+  const handles = {
+    start: (initial == null ? void 0 : initial.start) !== void 0 ? MathsTools5.clamp(initial.start, 0, totalFrames - 1) : 0,
+    end: (initial == null ? void 0 : initial.end) !== void 0 ? MathsTools5.clamp(initial.end, 0, totalFrames - 1) : totalFrames - 1
+  };
+  let cacheTermSize = [0, 0];
+  let cacheActionBar = "";
+  const operation = {
+    calc: () => {
+      const termSize = [process.stdout.columns, process.stdout.rows];
+      if (termSize[0] != cacheTermSize[0] || termSize[1] != cacheTermSize[1]) {
+        cacheTermSize = termSize;
+        cacheActionBar = getTrimActionBar();
+      }
+    },
+    validate: () => {
+      if (!validate)
+        return;
+      const result = operation.getResult();
+      const validationResult = validate(result);
+      errorInfo = getErrorInfoFromValidationResult(validationResult);
+    },
+    getResult: () => ({ start: handles.start, end: handles.end }),
+    getResultOutput: (isComplete = false) => {
+      const { colours: col } = getAskOptionsForState(false, errorInfo.isError);
+      const result = operation.getResult();
+      const startOut = col.resultNumber(result.start + colr.dim(` (${toTimeCode(result.start, frameRate, showHours)})`));
+      const endOut = col.resultNumber(result.end + colr.dim(` (${toTimeCode(result.end, frameRate, showHours)})`));
+      return `${startOut} ${col.decoration(symbols3.ARROW_RGT)} ${endOut}`;
+    },
+    display: () => {
+      operation.calc();
+      const width = out.utils.getTerminalWidth();
+      const theme = getAskOptionsForState(false, errorInfo.isError);
+      const { colours: col, symbols: sym, general: gen, text: txt } = theme;
+      const totalSpace = width - 2;
+      const handlePositions = ObjectTools3.mapValues(
+        handles,
+        (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
+      );
+      const befSpace = Math.max(0, handlePositions.start);
+      const barSpace = Math.max(0, handlePositions.end - handlePositions.start);
+      const aftSpace = Math.max(0, totalSpace - handlePositions.end);
+      const actvHand = col.timelineHandleActive(sym.timelineHandle);
+      const inactvHand = col.timelineHandle(sym.timelineHandle);
+      const handStart = activeHandle == "start" ? actvHand : inactvHand;
+      const handEnd = activeHandle == "end" ? actvHand : inactvHand;
+      const getHandleLabels = () => {
+        const handleLabelsRaw = ObjectTools3.mapValues(handles, (_k, value) => [
+          ` ${toTimeCode(value, frameRate, showHours)} `,
+          ""
+        ]);
+        const handleLabelWidths = ObjectTools3.mapValues(
+          handleLabelsRaw,
+          (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
+        );
+        const handleAligns = {
+          start: handleLabelWidths.start > befSpace ? "left" : "right",
+          end: handleLabelWidths.end > aftSpace ? "right" : "left"
+        };
+        const handleLabels = ObjectTools3.mapValues(
+          handleLabelsRaw,
+          (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
+        );
+        const strtBef = handleAligns.start === "right";
+        const endBef = handleAligns.end === "right";
+        const potentialMaxLabelSpace = handlePositions.end - handlePositions.start;
+        if (!strtBef && potentialMaxLabelSpace < handleLabelWidths.start) {
+          handleLabels.start = handleLabels.start.map((s) => s.slice(0, Math.max(0, potentialMaxLabelSpace - 1)));
+          handleLabelWidths.start = Math.max(...handleLabels.start.map((s) => out.getWidth(s)));
+        }
+        if (endBef && potentialMaxLabelSpace < handleLabelWidths.end) {
+          handleLabels.end = handleLabels.end.map((s) => s.slice(s.length - Math.max(0, potentialMaxLabelSpace - 1)));
+          handleLabelWidths.end = Math.max(...handleLabels.end.map((s) => out.getWidth(s)));
+        }
+        const befLabelSpace = Math.max(0, befSpace - (strtBef ? handleLabelWidths.start : 0));
+        const barLabelSpace = Math.max(0, barSpace - (!strtBef ? handleLabelWidths.start : 0) - (endBef ? handleLabelWidths.end : 0));
+        const aftLabelSpace = Math.max(0, aftSpace - (!endBef ? handleLabelWidths.end : 0));
+        const bef = " ".repeat(befLabelSpace);
+        const bar = " ".repeat(barLabelSpace);
+        const aft = " ".repeat(aftLabelSpace);
+        const handle1 = `${bef}${strtBef ? handleLabels.start[0] : ""}${handStart}${!strtBef ? handleLabels.start[0] : ""}${bar}${endBef ? handleLabels.end[0] : ""}${handEnd}${!endBef ? handleLabels.end[0] : ""}${aft}`;
+        const handle2 = `${bef}${strtBef ? handleLabels.start[1] : ""}${handStart}${!strtBef ? handleLabels.start[1] : ""}${bar}${endBef ? handleLabels.end[1] : ""}${handEnd}${!endBef ? handleLabels.end[1] : ""}${aft}`;
+        return handle1 + "\n" + handle2;
+      };
+      const getBar = () => {
+        const actvHand2 = col.timelineHandleActive(sym.timelineBar);
+        const inactvHand2 = col.timelineHandle(sym.timelineBar);
+        const handStart2 = activeHandle == "start" ? actvHand2 : inactvHand2;
+        const handEnd2 = activeHandle == "end" ? actvHand2 : inactvHand2;
+        const bef = col.timelineTrack(sym.timelineTrack.repeat(befSpace));
+        const bar = col.timelineTrackActive(sym.timelineBar.repeat(barSpace));
+        const aft = col.timelineTrack(sym.timelineTrack.repeat(aftSpace));
+        return `${bef}${handStart2}${bar}${handEnd2}${aft}`;
+      };
+      const getBottomLabels = () => {
+        const startVideoLabel = `[${toTimeCode(0, frameRate, showHours)}]`;
+        const endVideoLabel = `[${toTimeCode(totalFrames - 1, frameRate, showHours)}]`;
+        const trimmedVideoLabel = toTimeCode(handles.end - handles.start, frameRate, showHours);
+        const availSpace = width - (out.getWidth(startVideoLabel) + out.getWidth(endVideoLabel) + out.getWidth(trimmedVideoLabel));
+        const centerPosition = handlePositions.start + Math.floor((handlePositions.end - handlePositions.start) / 2);
+        const centerInSpace = centerPosition - out.getWidth(startVideoLabel) - Math.floor(out.getWidth(trimmedVideoLabel) / 2) + 1;
+        const bef = " ".repeat(Math.max(0, Math.min(availSpace, centerInSpace)));
+        const aft = " ".repeat(Math.max(0, Math.min(availSpace, availSpace - centerInSpace)));
+        return `${startVideoLabel}${bef}${trimmedVideoLabel}${aft}${endVideoLabel}`;
+      };
+      const getInstructions = () => col.specialInfo(cacheActionBar);
+      let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
+      output += getImitateOutput(question, operation.getResultOutput(false), false, errorInfo.isError, errorInfo.errorMessage);
+      output += "\n";
+      output += "\n" + getHandleLabels();
+      output += "\n" + getBar();
+      output += "\n" + getBottomLabels();
+      output += "\n";
+      output += "\n" + getInstructions();
+      tempLC.overwrite(output);
+    }
+  };
+  const userActions = {
+    swapHandle: () => activeHandle = getNextHandle(activeHandle),
+    adjustHandle: (amount) => {
+      handles[activeHandle] += amount;
+      if (handles[activeHandle] < 0)
+        handles[activeHandle] = 0;
+      if (handles[activeHandle] > totalFrames - 1)
+        handles[activeHandle] = totalFrames - 1;
+      if (handles.end <= handles.start) {
+        const oldStart = handles.start;
+        const oldEnd = handles.end;
+        handles.end = oldStart;
+        handles.start = oldEnd;
+        userActions.swapHandle();
+      }
+      operation.validate();
+    },
+    exit: () => {
+      kl.stop();
+      tempLC.clear();
+      imitate(question, operation.getResultOutput(true), false, true, void 0, lc);
+      process.exit();
+    },
+    submit: () => {
+      operation.validate();
+      if (errorInfo.isError) {
+        if (askOptions2.general.beeps)
+          process.stdout.write(ansi2.beep);
+        return;
+      }
+      kl.stop();
+      tempLC.clear();
+      const fixedHandles = operation.getResult();
+      imitate(question, operation.getResultOutput(true), true, false, void 0, lc);
+      deferred.resolve(fixedHandles);
+    }
+  };
+  const kl = getKeyListener((keyName) => {
+    switch (keyName) {
+      case "exit":
+      case "esc":
+        return userActions.exit();
+      case "return":
+        return userActions.submit();
+      case "tab":
+        userActions.swapHandle();
+        break;
+      case "left":
+        userActions.adjustHandle(-askOptions2.general.timelineSpeed);
+        break;
+      case "right":
+        userActions.adjustHandle(askOptions2.general.timelineSpeed);
+        break;
+      case "up":
+        userActions.adjustHandle(askOptions2.general.timelineFastSpeed);
+        break;
+      case "down":
+        userActions.adjustHandle(-askOptions2.general.timelineFastSpeed);
+        break;
+    }
+    operation.display();
+  }, true);
+  operation.validate();
+  operation.display();
+  return deferred.promise;
+};
 
 // src/tools/ask.ts
 var ask;
@@ -5136,7 +5125,7 @@ var ask;
 })(ask || (ask = {}));
 
 // src/tools/log.ts
-import util2 from "util";
+import util from "util";
 import { ObjectTools as ObjectTools4 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -5186,7 +5175,7 @@ var defaultConfigs = {
 var getStr = (enableColours) => (item) => {
   const inspect2 = ["object", "boolean", "number"];
   if (inspect2.includes(typeof item) && !(item instanceof Date)) {
-    return util2.inspect(item, { colors: enableColours, depth: null });
+    return util.inspect(item, { colors: enableColours, depth: null });
   } else {
     return item + "";
   }
@@ -5266,7 +5255,6 @@ var waiters;
 })(waiters || (waiters = {}));
 var nextTick = waiters.nextTick;
 export {
-  LOG,
   LogTools,
   PathTools,
   ansi2 as ansi,

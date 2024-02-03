@@ -27,11 +27,17 @@ export namespace out {
    * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
    *
    * > __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
+   *
+   * ```typescript
+   * out.getWidth('FOO BAR'); // 7
+   * out.getWidth('↓←→↑'); // 4
+   * out.getWidth(colr.red('this is red')); // 11
+   * ```
+   *
    * @param {string} text
    * @returns {number}
    */
   export const getWidth = (text: string): number => {
-    // TODO examples
     const args = {
       text: safe.str(text)
     };

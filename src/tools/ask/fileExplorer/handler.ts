@@ -32,11 +32,11 @@ export const fileExplorerHandler = async (
   lc?: LineCounter
 ): Promise<string[]> => {
   // options
-  const options = getAskOptions();
+  const askOptions = getAskOptions();
 
-  const minWidth = options.general.fileExplorerColumnWidth;
-  const maxWidth = options.general.fileExplorerColumnWidth;
-  const maxItems = options.general.fileExplorerMaxItems;
+  const minWidth = askOptions.general.fileExplorerColumnWidth;
+  const maxWidth = askOptions.general.fileExplorerColumnWidth;
+  const maxItems = askOptions.general.fileExplorerMaxItems;
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
 
   // pre-calced values
@@ -65,8 +65,8 @@ export const fileExplorerHandler = async (
   let locked: boolean = false; // prevent multiple keypresses
 
   // remove general line counter
-  const originalLC = options.general.lc;
-  options.general.lc = getLineCounter(); // we don't use this one
+  const originalLC = askOptions.general.lc;
+  askOptions.general.lc = getLineCounter(); // we don't use this one
 
   const operation = {
     recalc: () => {
@@ -461,7 +461,10 @@ export const fileExplorerHandler = async (
       await openFinder(currentPath, cursorType);
     },
     submit: () => {
-      if (isError) return;
+      if (isError) {
+        if (askOptions.general.beeps) process.stdout.write(ansi.beep);
+        return;
+      }
       return isSave ? userActions.submitSave() : userActions.submitSelect();
     },
     submitSave: async () => {
@@ -492,7 +495,7 @@ export const fileExplorerHandler = async (
       submitted = true;
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions.general.lc = originalLC;
 
       const result = join(basePath, newFileName);
       ask.imitate(question, result, true, false, undefined, lc);
@@ -506,7 +509,7 @@ export const fileExplorerHandler = async (
       operation.setPressed('return');
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions.general.lc = originalLC;
 
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const result = isMulti ? Array.from(multiSelected) : [currentPath];
@@ -516,7 +519,7 @@ export const fileExplorerHandler = async (
     exit: () => {
       kl.stop();
       tempLC.clear();
-      options.general.lc = originalLC;
+      askOptions.general.lc = originalLC;
 
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       ask.imitate(question, resultOut, false, true, undefined, lc);

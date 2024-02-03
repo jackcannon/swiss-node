@@ -1,4 +1,4 @@
-import { ObjOfType } from 'swiss-ak';
+import { ObjOfType, getDeferred } from 'swiss-ak';
 import { ask } from '../../ask';
 import { KeyListener, getKeyListener } from '../../keyListener';
 import { Breadcrumb, LineCounter, ansi, out } from '../../out';
@@ -116,62 +116,47 @@ export const getAskInput = <V extends unknown, I extends unknown, O extends unkn
   baseOptions: AskItemisedInputOptionsBase<V, I, O>,
   valueOptions?: AskItemisedInputOptionsValues<V, I, O>,
   itemsOptions?: AskItemisedInputOptionsItems<V, I, O>
-): Promise<O> =>
-  new Promise((resolve, reject) => {
-    const valueData: AskValueData<V> = {
-      value: valueOptions ? valueOptions.initialValue : (undefined as V),
-      cursorOffset: 0
-    };
+): Promise<O> => {
+  const deferred = getDeferred<O>();
+  const askOptions = getAskOptions();
 
-    const fullChoices = itemsOptions ? getFullChoices<I>(itemsOptions.items) : [];
-    const itemsData: AskItemData<I> = {
-      items: fullChoices,
-      originalItems: [...fullChoices],
-      hovered: itemsOptions ? itemsOptions.initialHoveredIndex ?? 0 : 0,
-      selected: itemsOptions ? itemsOptions.initialSelectedIndexes ?? [] : []
-    };
+  const valueData: AskValueData<V> = {
+    value: valueOptions ? valueOptions.initialValue : (undefined as V),
+    cursorOffset: 0
+  };
 
-    const questionText = typeof baseOptions.question === 'string' ? baseOptions.question : baseOptions.question.get();
+  const fullChoices = itemsOptions ? getFullChoices<I>(itemsOptions.items) : [];
+  const itemsData: AskItemData<I> = {
+    items: fullChoices,
+    originalItems: [...fullChoices],
+    hovered: itemsOptions ? itemsOptions.initialHoveredIndex ?? 0 : 0,
+    selected: itemsOptions ? itemsOptions.initialSelectedIndexes ?? [] : []
+  };
 
-    const validate = (newValue?: V) => {
+  const questionText = typeof baseOptions.question === 'string' ? baseOptions.question : baseOptions.question.get();
+
+  const printer = getPrinter<V, I, O>(questionText, baseOptions, valueOptions, itemsOptions);
+
+  const operation = {
+    setup: () => {
+      if (baseOptions.actions.initial) {
+        baseOptions.actions.initial('', '', valueData, itemsData, kl, operation.validate, operation.display, userActions.submit, userActions.exit);
+      }
+    },
+    validate: (newValue?: V) => {
       const testValueData: AskValueData<V> = {
         ...valueData,
         value: newValue ?? valueData.value
       };
       const validateResult = baseOptions.validate(testValueData, itemsData);
       return getErrorInfoFromValidationResult(validateResult);
-    };
+    },
 
-    const submit = (output: O, newValue: V = output as unknown as V) => {
-      valueData.value = newValue;
-      if (!validate().isError) {
-        print(true);
-        process.stdout.write('\n');
-        kl.stop();
-        const transformedValue = valueOptions?.submitTransformer(newValue) ?? output;
-        return resolve(transformedValue);
-      } else {
-        print(false);
-      }
-    };
-
-    const exit = async (forceNewValue?: string) => {
-      if (forceNewValue) {
-        valueData.value = forceNewValue as unknown as V;
-      }
-      print(false, true);
-      process.stdout.write('\n' + ansi.cursor.show);
-      kl.stop();
-      process.exit();
-    };
-
-    const printer = getPrinter<V, I, O>(questionText, baseOptions, valueOptions, itemsOptions);
-
-    const print = (isComplete: boolean, isExit: boolean = false) => {
+    display: (isComplete: boolean, isExit: boolean = false) => {
       let valueText;
       let itemsOut;
 
-      let { isError, errorMessage } = validate();
+      let { isError, errorMessage } = operation.validate();
       if (!errorMessage && isExit) errorMessage = '';
 
       if (valueOptions) {
@@ -188,23 +173,48 @@ export const getAskInput = <V extends unknown, I extends unknown, O extends unkn
       }
 
       printer(valueText, itemsOut, valueData.cursorOffset, errorMessage, isComplete, isExit);
-    };
-
-    const kl = getKeyListener((keyName: string, rawValue: string) => {
-      if (keyName === rawValue) keyName = 'key';
-      if (baseOptions.actions[keyName]) {
-        const actionFn: KeyPressAction<V, I, O> = baseOptions.actions[keyName];
-        actionFn(rawValue, keyName, valueData, itemsData, kl, validate, print, submit, exit);
-      }
-    });
-
-    // initial action if present
-    if (baseOptions.actions.initial) {
-      baseOptions.actions.initial('', '', valueData, itemsData, kl, validate, print, submit, exit);
     }
+  };
 
-    print(false);
+  const userActions = {
+    submit: (output: O, newValue: V = output as unknown as V) => {
+      valueData.value = newValue;
+      if (!operation.validate().isError) {
+        operation.display(true);
+        process.stdout.write('\n');
+        kl.stop();
+        const transformedValue = valueOptions?.submitTransformer(newValue) ?? output;
+        return deferred.resolve(transformedValue);
+      } else {
+        if (askOptions.general.beeps) process.stdout.write(ansi.beep);
+        operation.display(false);
+      }
+    },
+
+    exit: async (forceNewValue?: string) => {
+      if (forceNewValue) {
+        valueData.value = forceNewValue as unknown as V;
+      }
+      operation.display(false, true);
+      process.stdout.write('\n' + ansi.cursor.show);
+      kl.stop();
+      process.exit();
+    }
+  };
+
+  const kl = getKeyListener((keyName: string, rawValue: string) => {
+    if (keyName === rawValue) keyName = 'key';
+    if (baseOptions.actions[keyName]) {
+      const actionFn: KeyPressAction<V, I, O> = baseOptions.actions[keyName];
+      actionFn(rawValue, keyName, valueData, itemsData, kl, operation.validate, operation.display, userActions.submit, userActions.exit);
+    }
   });
+
+  operation.setup();
+  operation.display(false);
+
+  return deferred.promise;
+};
 
 // Config types
 

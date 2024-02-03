@@ -50,6 +50,7 @@ const populateAskOptions = (): AskOptionsStored => {
       themeColour: 'yellow',
       lc: getLineCounter(),
       boxType: 'thick',
+      beeps: true,
       maxItemsOnScreen: 10,
       scrollMargin: 2,
       fileExplorerColumnWidth: 25,
@@ -308,6 +309,7 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     themeColour: options?.general?.themeColour ?? askOptions.general.themeColour,
     lc: options?.general?.lc ?? askOptions.general.lc,
     boxType: options?.general?.boxType ?? askOptions.general.boxType,
+    beeps: options?.general?.beeps ?? askOptions.general.beeps,
     maxItemsOnScreen: options?.general?.maxItemsOnScreen ?? askOptions.general.maxItemsOnScreen,
     scrollMargin: options?.general?.scrollMargin ?? askOptions.general.scrollMargin,
     fileExplorerColumnWidth: options?.general?.fileExplorerColumnWidth ?? askOptions.general.fileExplorerColumnWidth,
@@ -544,10 +546,14 @@ const setThemeColour = <
  *
  * - `ask.customise`
  *
- * TODO docs
+ * Customise the behaviour/appearance of the `ask` prompts.
+ *
+ * See `ask.AskOptions` for the options available.
  *
  * ```typescript
- * TODO example
+ * ask.customise({ general: { themeColour: 'magenta' } }); // change the theme colour to magenta
+ * ask.customise({ general: { lc } }); // set a line counter for that all prompts will add to when complete
+ * ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
  * ```
  * @param {Partial<ask.AskOptions>} options
  * @returns {void}
@@ -603,18 +609,19 @@ export namespace ask {
      *
      * General options for customising ask prompts
      *
-     * | Name                           | Type               | Description                                                        |
-     * |--------------------------------|--------------------|--------------------------------------------------------------------|
-     * | themeColour                    | `string` (Colour)  | Set the main theme colour                                          |
-     * | lc                             | `LineCounter`      | A line counter that all ask prompts will add to when complete      |
-     * | boxType                        | `'thin' | 'thick'` | What type of box drawing lines to use                              |
-     * | maxItemsOnScreen               | `number`           | How many select/multiselect items to have on screen at most        |
-     * | scrollMargin                   | `number`           | How much space to leaving when 'scrolling' lists of items          |
-     * | fileExplorerColumnWidth        | `number`           | How wide to make each panel of the fileExplorer interface          |
-     * | fileExplorerMaxItems           | `number`           | How many items to show in each panel of the fileExplorer interface |
-     * | tableSelectMaxHeightPercentage | `number`           | Percent of terminal height to use at max for table selects         |
-     * | timelineSpeed                  | `number`           | How many frames to move on a timeline at a time                    |
-     * | timelineFastSpeed              | `number`           | How many frames to move on a timeline at a time (fast mode)        |
+     * | Name                           | Type                | Description                                                        |
+     * |--------------------------------|---------------------|--------------------------------------------------------------------|
+     * | themeColour                    | `string` (Colour)   | Set the main theme colour                                          |
+     * | lc                             | `LineCounter`       | A line counter that all ask prompts will add to when complete      |
+     * | boxType                        | `'thin' \| 'thick'` | What type of box drawing lines to use                              |
+     * | beeps                          | `boolean`           | Whether to make an audio beeps when appropriate                    |
+     * | maxItemsOnScreen               | `number`            | How many select/multiselect items to have on screen at most        |
+     * | scrollMargin                   | `number`            | How much space to leaving when 'scrolling' lists of items          |
+     * | fileExplorerColumnWidth        | `number`            | How wide to make each panel of the fileExplorer interface          |
+     * | fileExplorerMaxItems           | `number`            | How many items to show in each panel of the fileExplorer interface |
+     * | tableSelectMaxHeightPercentage | `number`            | Percent of terminal height to use at max for table selects         |
+     * | timelineSpeed                  | `number`            | How many frames to move on a timeline at a time                    |
+     * | timelineFastSpeed              | `number`            | How many frames to move on a timeline at a time (fast mode)        |
      */
     general?: {
       /** Set the main theme colour */
@@ -641,6 +648,8 @@ export namespace ask {
       lc?: LineCounter;
       /** What type of box drawing lines to use */
       boxType?: 'thin' | 'thick';
+      /** Whether to make an audio beeps when appropriate */
+      beeps?: boolean;
       /** How many select/multiselect items to have on screen at most */
       maxItemsOnScreen?: number;
       /** How much space to leaving when 'scrolling' lists of items */
@@ -1078,6 +1087,7 @@ interface AskOptionsStoredGeneral {
     | 'gray';
   lc: LineCounter;
   boxType: 'thin' | 'thick';
+  beeps: boolean;
   maxItemsOnScreen: number;
   scrollMargin: number;
   fileExplorerColumnWidth: number;

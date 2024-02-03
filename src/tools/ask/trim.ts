@@ -77,10 +77,9 @@ export const trim = async (
   validate?: (handles: Handles<number>) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<Handles<number>> => {
-  const opts = getAskOptions();
-  const tempLC = getLineCounter();
-
   const deferred = getDeferred<Handles<number>>();
+  const askOptions = getAskOptions();
+  const tempLC = getLineCounter();
 
   const totalLength: ms = seconds(Math.floor(totalFrames / frameRate));
   const showHours = totalLength > hours(1);
@@ -261,7 +260,10 @@ export const trim = async (
 
     submit: () => {
       operation.validate();
-      if (errorInfo.isError) return;
+      if (errorInfo.isError) {
+        if (askOptions.general.beeps) process.stdout.write(ansi.beep);
+        return;
+      }
       kl.stop();
       tempLC.clear();
       const fixedHandles: Handles<number> = operation.getResult();
@@ -281,16 +283,16 @@ export const trim = async (
         userActions.swapHandle();
         break;
       case 'left':
-        userActions.adjustHandle(-opts.general.timelineSpeed);
+        userActions.adjustHandle(-askOptions.general.timelineSpeed);
         break;
       case 'right':
-        userActions.adjustHandle(opts.general.timelineSpeed);
+        userActions.adjustHandle(askOptions.general.timelineSpeed);
         break;
       case 'up':
-        userActions.adjustHandle(opts.general.timelineFastSpeed);
+        userActions.adjustHandle(askOptions.general.timelineFastSpeed);
         break;
       case 'down':
-        userActions.adjustHandle(-opts.general.timelineFastSpeed);
+        userActions.adjustHandle(-askOptions.general.timelineFastSpeed);
         break;
     }
 

@@ -7,7 +7,7 @@ import { getKeyListener } from '../keyListener';
 import { LineCounter, ansi, out } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { getLineCounter } from '../out/lineCounter';
-import { getAskOptionsForState } from './basicInput/customise';
+import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
 import { valueDisplays } from './basicInput/valueDisplays';
 import { dateHandler } from './datetime/date';
 import { timeHandler } from './datetime/time';
@@ -121,9 +121,9 @@ const overallHandler = <T extends unknown>(
   validateFn?: (result: T) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<T> => {
-  const tempLC = getLineCounter();
-
   const deferred = getDeferred<T>();
+  const tempLC = getLineCounter();
+  const askOptions = getAskOptions();
 
   const isSwitchable = isDateOn && isTimeOn;
   let activeHandler: DateTimeSection = isDateOn ? 'date' : 'time';
@@ -208,7 +208,10 @@ const overallHandler = <T extends unknown>(
       const time = handlers.time?.getValue();
 
       const { isError } = operation.runValidation(dates, time);
-      if (isError) return;
+      if (isError) {
+        if (askOptions.general.beeps) process.stdout.write(ansi.beep);
+        return;
+      }
 
       const outState = getStateDisplay(handlers, isDateOn, isTimeOn, isRange, true, isError);
       kl.stop();

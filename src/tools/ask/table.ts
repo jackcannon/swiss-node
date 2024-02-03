@@ -28,11 +28,11 @@ const askTableHandler = <T extends unknown>(
   validate?: (items: T[]) => Error | string | boolean | void,
   lc?: LineCounter
 ): Promise<T[]> => {
-  const questionText = typeof question === 'string' ? question : question.get();
-
-  const tempLC = getLineCounter();
-
   const deferred = getDeferred<T[]>();
+  const tempLC = getLineCounter();
+  const askOptions = getAskOptions();
+
+  const questionText = typeof question === 'string' ? question : question.get();
 
   let activeIndex: number = initial[0] !== undefined ? (typeof initial[0] === 'number' ? initial[0] : items.indexOf(initial[0] as T)) : 0;
   activeIndex = MathsTools.clamp(activeIndex, 0, items.length - 1);
@@ -263,7 +263,10 @@ const askTableHandler = <T extends unknown>(
     },
     submit: () => {
       operation.runValidation();
-      if (errorInfo.isError) return;
+      if (errorInfo.isError) {
+        if (askOptions.general.beeps) process.stdout.write(ansi.beep);
+        return;
+      }
       kl.stop();
       const results = operation.getResultsArray();
       tempLC.clear();
@@ -336,7 +339,7 @@ const getTableSelectActionBar = (multi: boolean, pressed?: string, disabled: str
  */
 
 /**<!-- DOCS: ask.table.select #### @ -->
- * select
+ * table.select
  *
  * - `ask.table.select`
  *
@@ -395,7 +398,7 @@ export const select = async <T extends unknown>(
 };
 
 /**<!-- DOCS: ask.table.multiselect #### @ -->
- * multiselect
+ * table.multiselect
  *
  * - `ask.table.multiselect`
  *
