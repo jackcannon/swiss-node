@@ -3,6 +3,7 @@ import { getLogStr } from './LogTools';
 import { Text } from '../utils/processTableInput';
 import { getLineCounter as getLineCounterOut, LineCounter as LineCounterOut } from './out/lineCounter';
 import { getBreadcrumb as getBreadcrumbOut, Breadcrumb as BreadcrumbOut } from './out/breadcrumb';
+import { ansi as ansiOut } from './out/ansi';
 import { colr } from './colr';
 
 //<!-- DOCS: 200 -->
@@ -25,12 +26,17 @@ export namespace out {
    *
    * Removes all ansi escape codes, and attempts to count emojis as 2 characters wide
    *
-   * Note: Many special characters may not be counted correctly. Emoji support is also not perfect.
+   * > __Note:__ Many special characters may not be counted correctly. Emoji support is also not perfect.
+   *
+   * ```typescript
+   * out.getWidth('FOO BAR'); // 7
+   * out.getWidth('↓←→↑'); // 4
+   * out.getWidth(colr.red('this is red')); // 11
+   * ```
    * @param {string} text
    * @returns {number}
    */
   export const getWidth = (text: string): number => {
-    // TODO examples
     const args = {
       text: safe.str(text)
     };
@@ -43,6 +49,9 @@ export namespace out {
     // replace emojis with 2 spaces as they are 2 characters wide
     // This is a very rough approximation
     result = result.replace(out.utils.getEmojiRegex('gu'), '  ');
+
+    // remove Emoji_Modifier and 'high surrogate' characters
+    result = result.replace(/\uD83C[\uDFFB-\uDFFF]|[\uD800-\uDBFF]/g, '');
 
     return result.length;
   };
@@ -395,22 +404,35 @@ export namespace out {
    * @param {boolean} [forceWidth=false]
    * @returns {string}
    */
-  export const wrap = (item: any, width: number = out.utils.getTerminalWidth(), alignment?: AlignType, forceWidth: boolean = false): string =>
-    utils
-      .getLogLines(item)
+  export const wrap = (item: any, width: number = out.utils.getTerminalWidth(), alignment?: AlignType, forceWidth: boolean = false): string => {
+    const args = {
+      item,
+      width: safe.num(width, true, 0),
+      alignment: safe.str(alignment, false, null) as AlignType,
+      forceWidth: safe.bool(forceWidth, false)
+    };
+
+    const lines = utils.getLogLines(args.item);
+
+    if (args.width === 0) return '\n'.repeat(lines.length - 1);
+
+    return lines
       .map((line) => {
-        if (out.getWidth(line) > width) {
+        if (out.getWidth(line) > args.width) {
           let words: string[] = line.split(/(?<=#?[ -]+)/g);
           const rows: string[][] = [];
 
           words = words
             .map((orig: string) => {
-              if (out.getWidth(orig.replace(/\s$/, '')) > width) {
+              if (out.getWidth(orig.replace(/\s$/, '')) > args.width) {
                 let remaining = orig;
                 let result = [];
-                while (out.getWidth(remaining) > width - 1) {
-                  result.push(remaining.slice(0, width - 1) + '-');
-                  remaining = remaining.slice(width - 1);
+
+                if (args.width <= 1) return remaining.slice(0, args.width);
+
+                while (out.getWidth(remaining) > args.width - 1) {
+                  result.push(remaining.slice(0, args.width - 1) + '-');
+                  remaining = remaining.slice(args.width - 1);
                 }
                 result.push(remaining);
                 return result;
@@ -427,7 +449,7 @@ export namespace out {
             const candidateRow = words.slice(rowStartIndex, Math.max(0, Number(wIndex)));
             const candText = candidateRow.join('');
 
-            if (out.getWidth(candText) + out.getWidth(word) > width) {
+            if (out.getWidth(candText) + out.getWidth(word) > args.width) {
               rows.push(candidateRow);
               rowStartIndex = Number(wIndex);
             }
@@ -439,13 +461,14 @@ export namespace out {
           return rows
             .map((row) => row.join(''))
             .map((row) => row.replace(/\s$/, ''))
-            .map((row) => (alignment ? align(row, alignment, width, undefined, forceWidth) : row));
+            .map((row) => (args.alignment || args.forceWidth ? align(row, args.alignment || 'left', args.width, undefined, args.forceWidth) : row));
         }
 
         return line;
       })
       .flat()
       .join(NEW_LINE);
+  };
 
   /**<!-- DOCS: out.moveUp ### @ -->
    * moveUp
@@ -498,24 +521,34 @@ export namespace out {
    *
    * Display an animated loading indicator
    *
+   * If the given action returns a string, it will be printed. Otherwise, it will assume the action prints to output itself (and clears the number of lines given as the second argument)
+   *
    * ```typescript
    * const loader = out.loading();
    * // ...
    * loader.stop();
    * ```
-   * @param {(s: string) => any} [action=loadingDefault]
+   * @param {(s: string) => string | void} [action=loadingDefault]
    * @param {number} [lines=1]
    * @param {string[]} [symbols=loadingChars]
    * @returns {{ stop: () => void; }}
    */
-  export const loading = (action: (s: string) => any = loadingDefault, lines: number = 1, symbols: string[] = loadingChars) => {
+  export const loading = (action: (s: string) => string | void = loadingDefault, lines: number = 1, symbols: string[] = loadingChars) => {
     let stopped = false;
 
     let count = 0;
+    let previousLinesDrawn = 0;
     const runLoop = async () => {
       if (stopped) return;
-      if (count) moveUp(lines);
-      action(symbols[count++ % symbols.length]);
+      if (count) process.stdout.write(ansi.cursor.up(previousLinesDrawn));
+      const output = action(symbols[count++ % symbols.length]);
+
+      previousLinesDrawn = lines;
+      if (output !== undefined) {
+        console.log(output);
+        previousLinesDrawn = utils.getNumLines(output + '');
+      }
+
       await wait(150);
       return runLoop();
     };
@@ -656,7 +689,7 @@ export namespace out {
     return zipMax(...aligned).map((line) => line.join(''));
   };
 
-  /**<!-- DOCS: out.getResponsiveValue ### @ -->
+  /**<!-- DOCS: out.getResponsiveValue ###! @ -->
    * getResponsiveValue
    *
    * - `out.getResponsiveValue`
@@ -706,6 +739,9 @@ export namespace out {
 
   /**<!-- DOCS-ALIAS: out.LineCounter -->*/
   export type LineCounter = LineCounterOut;
+
+  /**<!-- DOCS-ALIAS: out.ansi -->*/
+  export const ansi = ansiOut;
 
   /**<!-- DOCS: out.utils 291 ### -->
    * utils
@@ -882,11 +918,12 @@ export namespace out {
       const args = {
         text: safe.str(text)
       };
-      const pattern = [
-        '[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
-        '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntqry=><~]))'
-      ].join('|');
-      const regex = new RegExp(pattern, 'g');
+
+      const prefix = '[\\u001B\\u009B][[\\]()#;?]*';
+      const pattern1 = '(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)';
+      const pattern2 = '(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PR-TZcf-ntpqry=><~])';
+
+      const regex = new RegExp(`${prefix}(?:${pattern1}|${pattern2})`, 'g');
       return args.text.replace(regex, '');
     };
 
@@ -908,7 +945,7 @@ export namespace out {
 
       // generated using scripts/generate-emoji-regex.ts (in swiss-node repo)
       return new RegExp(
-        /[\u2139\u231A\u231B\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]|\uD83C[\uDFFB-\uDFFF]|[\u261D\u26F9\u270A-\u270D]|\uD83C[\uDF85\uDFC2-\uDFC4\uDFC7\uDFCA-\uDFCC]|\uD83D[\uDC42\uDC43\uDC46-\uDC50\uDC66-\uDC78\uDC7C\uDC81-\uDC83\uDC85-\uDC87\uDC8F\uDC91\uDCAA\uDD74\uDD75\uDD7A\uDD90\uDD95\uDD96\uDE45-\uDE47\uDE4B-\uDE4F\uDEA3\uDEB4-\uDEB6\uDEC0\uDECC]|\uD83E[\uDD0C\uDD0F\uDD18-\uDD1F\uDD26\uDD30-\uDD39\uDD3C-\uDD3E\uDD77\uDDB5\uDDB6\uDDB8\uDDB9\uDDBB\uDDCD-\uDDCF\uDDD1-\uDDDD\uDEC3-\uDEC5\uDEF0-\uDEF8]|[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]|\uD83C[\uDC04\uDCCF\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE1A\uDE2F\uDE32-\uDE36\uDE38-\uDE3A\uDE50\uDE51\uDF00-\uDF20\uDF2D-\uDF35\uDF37-\uDF7C\uDF7E-\uDF93\uDFA0-\uDFCA\uDFCF-\uDFD3\uDFE0-\uDFF0\uDFF4\uDFF8-\uDFFF]|\uD83D[\uDC00-\uDC3E\uDC40\uDC42-\uDCFC\uDCFF-\uDD3D\uDD4B-\uDD4E\uDD50-\uDD67\uDD7A\uDD95\uDD96\uDDA4\uDDFB-\uDE4F\uDE80-\uDEC5\uDECC\uDED0-\uDED2\uDED5-\uDED7\uDEDC-\uDEDF\uDEEB\uDEEC\uDEF4-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]/,
+        /[\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FB-\u25FE\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7-\u26FA\u26FD\u2702\u2705\u2708-\u270D\u270F\u2712\u271D\u2721\u2728\u2733\u2734\u2744\u2747\u274C\u274E\u2753-\u2755\u2757\u2763\u2764\u2795-\u2797\u27A1\u27B0\u27BF\u2934\u2935\u2B05-\u2B07\u2B1B\u2B1C\u2B50\u2B55\u3030\u303D\u3297\u3299]|\uD83C[\uDC04\uDCCF\uDD70\uDD71\uDD7E\uDD7F\uDD8E\uDD91-\uDD9A\uDDE6-\uDDFF\uDE01\uDE02\uDE1A\uDE2F\uDE32-\uDE3A\uDE50\uDE51\uDF00-\uDF21\uDF24-\uDF93\uDF96\uDF97\uDF99-\uDF9B\uDF9E-\uDFF0\uDFF3-\uDFF5\uDFF7-\uDFFF]|\uD83D[\uDC00-\uDCFD\uDCFF-\uDD3D\uDD49-\uDD4E\uDD50-\uDD67\uDD6F\uDD70\uDD73-\uDD7A\uDD87\uDD8A-\uDD8D\uDD90\uDD95\uDD96\uDDA4\uDDA5\uDDA8\uDDB1\uDDB2\uDDBC\uDDC2-\uDDC4\uDDD1-\uDDD3\uDDDC-\uDDDE\uDDE1\uDDE3\uDDE8\uDDEF\uDDF3\uDDFA-\uDE4F\uDE80-\uDEC5\uDECB-\uDED2\uDED5-\uDED7\uDEDC-\uDEE5\uDEE9\uDEEB\uDEEC\uDEF0\uDEF3-\uDEFC\uDFE0-\uDFEB\uDFF0]|\uD83E[\uDD0C-\uDD3A\uDD3C-\uDD45\uDD47-\uDDFF\uDE70-\uDE7C\uDE80-\uDE88\uDE90-\uDEBD\uDEBF-\uDEC5\uDECE-\uDEDB\uDEE0-\uDEE8\uDEF0-\uDEF8]|[\u200D\u20E3\uFE0F]|\uD83C[\uDDE6-\uDDFF\uDFFB-\uDFFF]|\uD83E[\uDDB0-\uDDB3]|\uDB40[\uDC20-\uDC7F]/,
         args.flags
       );
     };
@@ -926,3 +963,6 @@ export const getLineCounter = getLineCounterOut;
 
 /**<!-- DOCS-ALIAS: out.LineCounter -->*/
 export type LineCounter = LineCounterOut;
+
+/**<!-- DOCS-ALIAS: out.ansi -->*/
+export const ansi = out.ansi;

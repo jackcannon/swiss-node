@@ -292,6 +292,8 @@ describe('out', () => {
     );
   });
 
+  // ansi is tested in ansi.spec.ts
+
   describe('utils', () => {
     it(should` exist as 'out.utils'`, () => {
       expect(swissnode.out.utils).toBeDefined();

@@ -674,6 +674,13 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
+"@types/ws@*":
+  version "8.5.10"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.10.tgz#4acfb517970853fa6574a3a6886791d04a396787"
+  integrity sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==
+  dependencies:
+    "@types/node" "*"
+
 "@types/yargs-parser@*":
   version "21.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-21.0.0.tgz#0c60e537fa790f5f9472ed2776c2b71ec117351b"
@@ -880,6 +887,15 @@ buffer-from@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
   integrity sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==
+
+bun-types@^1.0.25:
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/bun-types/-/bun-types-1.0.25.tgz#ef38ac40e9c9e2db188061474081426934a464a7"
+  integrity sha512-9lxeUR/OJsvlZH4GOWteiAdx7ikrSxCUX7Rr0JJux+DrR3LejouVLxIZnTeQ3UPAZovvSgKivWeHPJ2wlo7/Kg==
+  dependencies:
+    "@types/node" "*"
+    "@types/ws" "*"
+    undici-types "^5.26.4"
 
 bundle-require@^3.0.2:
   version "3.0.4"
@@ -2537,10 +2553,15 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-swiss-ak@^2.11.0, swiss-ak@^2.11.1:
+swiss-ak@^2.11.0:
   version "2.11.1"
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.11.1.tgz#ea4579a671a7cc83708ddabc338c77eb942e6b01"
   integrity sha512-PIWkWLE9r0FURucrBrLI1st/UQnQwGdu3nQriZRd6aKsPmbbvG+eIXM3PoIyo/F6FtJSygN2w73zWkLZNcwDmA==
+
+swiss-ak@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.13.0.tgz#1f33c3222bc8ee136dfef99f2ac267343e9a7a4a"
+  integrity sha512-tX22fguFo5+ceywZXuHtRqGbTL2+h0L/p07eAgf1i34zbJLoIEsQEEQekVFQZMOojnfZV2DmNAOv1JxOUcIfQQ==
 
 swiss-ak@^2.6.0:
   version "2.6.0"
@@ -2689,6 +2710,11 @@ typescript@^4.7.4:
   version "4.7.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
+undici-types@^5.26.4:
+  version "5.28.2"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.28.2.tgz#6d86278547d81c2cad72425cf275e8dfbaa8bc42"
+  integrity sha512-W71OLwDqzIO0d3k07qg1xc7d4cX8SsSwuCO4bQ4V7ITwduXXie/lcImofabP5VV+NvuvSe8ovKvHVJcizVc1JA==
 
 update-browserslist-db@^1.0.11:
   version "1.0.11"

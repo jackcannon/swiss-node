@@ -57,7 +57,7 @@ export namespace LogTools {
   export const getLogStr = (item: any): string => {
     const inspectList = ['object', 'boolean', 'number'];
     if (inspectList.includes(typeof item) && !(item instanceof Date)) {
-      return inspect(item, { colors: false, depth: null });
+      return inspect(item, { colors: true, depth: 3, compact: false });
     } else {
       return item + '';
     }

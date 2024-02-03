@@ -1,11 +1,11 @@
 import { symbols } from 'swiss-ak';
+import { WrapFn, colr } from '../colr';
 import { out } from '../out';
-import { ColrFn, WrapFn, colr } from '../colr';
 
 const seperatorChar = ` ${colr.grey2(symbols.CHEV_RGT)} `;
 
 //<!-- DOCS: 250 -->
-/**<!-- DOCS: out.getBreadcrumb ### @ -->
+/**<!-- DOCS: out.getBreadcrumb ###! @ -->
  * getBreadcrumb
  *
  * - `out.getBreadcrumb`

@@ -1,7 +1,8 @@
 import { exec } from 'child_process';
 import * as fsP from 'fs/promises';
-import { fn, tryOr } from 'swiss-ak';
-import { PathTools } from '../tools/PathTools';
+import { tryOr } from 'swiss-ak';
+import { explodePath } from '../tools/PathTools';
+import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
 
 const execute = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -18,16 +19,44 @@ const execute = (command: string): Promise<string> => {
     });
   });
 };
-const intoLines = (out: string) => out.toString().split('\n').filter(fn.isTruthy);
 
-export interface MiniProbeResult {
+export interface BasicFileInfo {
   width: number;
   height: number;
   duration: number;
   framerate: number;
 }
 
-export const getProbe = async (file: string): Promise<MiniProbeResult> => {
+export const getBasicFileInfo = async (file: string): Promise<BasicFileInfo> => {
+  const ext = explodePath(file).ext;
+  if (FILE_CATEGORIES.video.includes(ext.toLowerCase())) {
+    return getFFProbe(file);
+  }
+  if (FILE_CATEGORIES.image.includes(ext.toLowerCase())) {
+    return getFileInfo(file);
+  }
+  return { width: undefined, height: undefined, duration: undefined, framerate: undefined };
+};
+
+// Uses the file command - For images
+const getFileInfo = async (file: string): Promise<BasicFileInfo> => {
+  const stdout = (await tryOr('', async () => await execute(`file ${file}`))).toString();
+
+  const [width, height] = (stdout.match(/([0-9]{2,})x([0-9]{2,})/g) || [''])[0]
+    .split('x')
+    .map(Number)
+    .filter((n) => n);
+
+  return {
+    width,
+    height,
+    duration: undefined,
+    framerate: undefined
+  };
+};
+
+// Uses the ffprobe command - For videos
+const getFFProbe = async (file: string): Promise<BasicFileInfo> => {
   const stdout = await tryOr('', async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
     stdout
@@ -47,46 +76,55 @@ export const getProbe = async (file: string): Promise<MiniProbeResult> => {
   };
 };
 
-export const mkdir = (dir: string): Promise<string> => {
-  return fsP.mkdir(dir, { recursive: true });
+export const mkdir = async (dir: string): Promise<string> => {
+  const result = await fsP.mkdir(dir, { recursive: true });
+  return result;
 };
 
-export const findDirs = async (dir: string = '.'): Promise<string[]> => {
-  const newDir = PathTools.trailSlash(dir);
-  const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type d -maxdepth 1 -execdir echo {} ';'`));
-  const lines = intoLines(stdout);
-  return lines;
-};
-
-export const findFiles = async (dir: string = '.'): Promise<string[]> => {
-  const newDir = PathTools.trailSlash(dir);
-  const stdout = await tryOr('', async () => await execute(`find -EsL "${newDir}" -type f -maxdepth 1 -execdir echo {} ';'`));
-  const lines = intoLines(stdout);
-  return lines;
-};
-
-export const open = async (file: string): Promise<void> => {
+export const scanDir = async (dir: string = '.') => {
   try {
-    await execute(`open "${file}"`);
+    const found = await fsP.readdir(dir, { withFileTypes: true });
+    const files: string[] = [];
+    const dirs: string[] = [];
+
+    for (const file of found) {
+      if (file.isDirectory()) {
+        dirs.push(file.name);
+      } else if (file.isFile()) {
+        files.push(file.name);
+      }
+    }
+
+    return { files, dirs };
   } catch (err) {
-    // do nothing
+    return { files: [], dirs: [] };
   }
 };
 
-export const isFileExist = async (file: string) => {
+// Tries opening in finder. If fails will progressively try to open the parent directory in the best way possible (prefers using -R flag)
+export const openFinder = async (file: string, pathType: 'f' | 'd', revealFlag: boolean = true, count: number = 0): Promise<void> => {
   try {
-    await execute(`[[ -f "${file}" ]]`);
-    return true;
-  } catch (e) {
-    return false;
+    await execute(`open ${revealFlag ? '-R ' : ''}"${file}"`);
+  } catch (err) {
+    if (count > 6) return undefined;
+    const exploded = explodePath(file);
+
+    if (pathType === 'f') {
+      return openFinder(exploded.dir, 'd', true, count + 1);
+    }
+    if (revealFlag) {
+      return openFinder(file, pathType, false, count + 1);
+    }
+    return openFinder(exploded.dir, 'd', true, count + 1);
   }
 };
 
-export const isDirExist = async (file: string) => {
+export const getPathType = async (path: string): Promise<'d' | 'f'> => {
   try {
-    await execute(`[[ -d "${file}" ]]`);
-    return true;
-  } catch (e) {
-    return false;
+    const stat = await fsP.stat(path);
+    const type = stat.isFile() ? 'f' : stat.isDirectory() ? 'd' : undefined;
+    return type;
+  } catch (err) {
+    return undefined;
   }
 };

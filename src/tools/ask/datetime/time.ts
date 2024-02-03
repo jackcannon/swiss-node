@@ -1,20 +1,23 @@
 import { range } from 'swiss-ak';
 import { DynTime } from '../../../utils/dynDates';
 import { out } from '../../out';
-import { getStyles } from './styles';
+import { getAskOptionsForState } from '../basicInput/customise';
+import { ErrorInfo } from '../errorValidation';
+import { getSpecialColours } from './styles';
 import { DateTimeHandler, DateTimeHandlerObj } from './types';
 
-const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: boolean, max: number, label: string) => {
-  const wrappers = getStyles(sectionActive);
+const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: boolean, max: number, label: string, isError: boolean) => {
+  const theme = getAskOptionsForState(false, isError);
+  const col = getSpecialColours(sectionActive, false, isError);
 
-  const wrapFns = [wrappers.mid, wrappers.normal, dialActive ? wrappers.primary : wrappers.secondary];
+  const wrapFns = [col.faded, col.normal, dialActive ? col.hover : col.selected];
   const showExtra = wrapFns.length - 1;
 
   const dialNums = range(showExtra * 2 + 1, undefined, value - showExtra).map((v) => (v + max) % max);
 
   const dial = out.rightLines(dialNums.map((v, i) => wrapFns[Math.min(i, dialNums.length - i - 1)](` ${(v + '').padStart(2)} `)));
 
-  const lines = out.centerLines([wrappers.normal(label), wrappers.dark('◢◣'), ...dial, wrappers.dark('◥◤')], 4);
+  const lines = out.centerLines([col.normal(label), theme.colours.decoration('◢◣'), ...dial, theme.colours.decoration('◥◤')], 4);
 
   return lines;
 };
@@ -22,6 +25,8 @@ const getSingleTimeDial = (value: number, sectionActive: boolean, dialActive: bo
 export const timeHandler: DateTimeHandler<DynTime> = (
   isActive: boolean,
   initial: DynTime,
+  valueChangeCb: (value: DynTime) => void,
+  getErrorInfo: () => ErrorInfo,
   displayCb: (lines: string[]) => any
 ): DateTimeHandlerObj<DynTime> => {
   const MAX_COL = 2; // note: maybe add seconds later
@@ -33,29 +38,36 @@ export const timeHandler: DateTimeHandler<DynTime> = (
   let cursor: number = 0; // 0 = hour, 1 = minute, 2 = second
   let active: boolean = isActive;
 
-  const display = () => {
-    const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i]));
-    const lines = out.concatLineGroups(...dials);
+  const operation = {
+    display: () => {
+      const { isError, errorMessage } = getErrorInfo();
 
-    const padded = out.centerLines(lines);
+      const dials = current.map((v, i) => getSingleTimeDial(v, active, active && i === cursor, MAX_VALUES[i], labels[i], isError));
+      const lines = out.concatLineGroups(...dials);
 
-    displayCb(padded);
+      const padded = out.centerLines(lines);
+
+      displayCb(padded);
+    }
   };
 
   const userActions = {
     set: (val: number) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + val) % max;
-      display();
+      valueChangeCb(current);
+      operation.display();
     },
     moveHor: (dir: number) => {
       cursor = (MAX_COL + cursor + dir) % MAX_COL;
-      display();
+      valueChangeCb(current);
+      operation.display();
     },
     moveVer: (dir: number) => {
       const max = MAX_VALUES[cursor];
       current[cursor] = (max + current[cursor] + dir) % max;
-      display();
+      valueChangeCb(current);
+      operation.display();
     }
   };
 
@@ -63,9 +75,9 @@ export const timeHandler: DateTimeHandler<DynTime> = (
     getValue: () => current,
     setActive: (isActive: boolean) => {
       active = isActive;
-      display();
+      operation.display();
     },
-    triggerDisplay: () => display(),
+    triggerDisplay: () => operation.display(),
     inputKey: (key: string, num?: number) => {
       if (num !== undefined) return userActions.set(num);
       switch (key) {
