@@ -201,7 +201,7 @@ export const autotext = async <T = string>(
     {
       initialValue: typeof initial === 'string' ? initial : '',
       displayTransformer: (v) => v,
-      submitTransformer: (v) => v as unknown as T // not actually used
+      submitTransformer: (v) => undefined
     },
     {
       selectType: 'single',

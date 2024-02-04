@@ -1,7 +1,7 @@
-import { second, seconds, wait } from 'swiss-ak';
+import { getDeferred, second, seconds, wait } from 'swiss-ak';
 
 import { getKeyListener } from './keyListener';
-import { LineCounter, ansi, out } from './out';
+import { LineCounter, ansi, getLineCounter, out } from './out';
 import { Breadcrumb } from './out/breadcrumb';
 
 import * as basicInput from './ask/basicInput';
@@ -165,23 +165,49 @@ export namespace ask {
    * @param {boolean} [isError]
    * @returns {Promise<void>}
    */
-  export const countdown = async (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
+  export const countdown = (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
+    const deferred = getDeferred<void>();
     const theme = customiseOptions.getAskOptionsForState(isComplete, isError);
     console.log();
 
+    let finished = false;
+
     const textTemplate = template || theme.text.countdown;
-
     let lines = textTemplate(totalSeconds).split('\n').length;
-    for (let s = totalSeconds; s > 0; s--) {
-      const textValue = textTemplate(s);
 
-      process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.hide);
+    const operation = {
+      runLoop: async (secsRemaining: number) => {
+        if (finished || secsRemaining <= 0) {
+          return operation.finish();
+        }
+        const textValue = textTemplate(secsRemaining);
 
-      lines = textValue.split('\n').length;
-      console.log(theme.colours.countdown(textValue));
-      await wait(seconds(1));
-    }
-    process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.show);
+        process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.hide);
+
+        lines = textValue.split('\n').length;
+        console.log(theme.colours.countdown(textValue));
+        await wait(seconds(1));
+        operation.runLoop(secsRemaining - 1);
+      },
+      finish: () => {
+        if (finished) return;
+        finished = true;
+        kl.stop();
+        process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.show);
+        deferred.resolve();
+      }
+    };
+
+    const kl = getKeyListener((key) => {
+      switch (key) {
+        case 'esc':
+          return operation.finish();
+      }
+    });
+
+    operation.runLoop(totalSeconds);
+
+    return deferred.promise;
   };
 
   /**<!-- DOCS: ask.pause #### @ -->
@@ -212,6 +238,7 @@ export namespace ask {
 
       const kl = getKeyListener((key) => {
         switch (key) {
+          case 'esc':
           case 'return':
             return finish();
         }
