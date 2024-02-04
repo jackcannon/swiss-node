@@ -360,7 +360,7 @@ const range = await ask.dateRange('When is the festival?');
 #### <span id="ask_fileexplorer">fileExplorer</span>
 
 ```typescript
-ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (path: string) => Error | string | boolean | void): Promise<string>
+ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (path: string) => Error | string | boolean | void, lc: LineCounter): Promise<string>
 ```
 
 Get a file or folder path from the user.
@@ -379,6 +379,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 | *1* | `selectType`   | *No*     | `'d' \| 'f'`                                           | `'f'`           |
 | *2* | `startPath`    | *No*     | `string`                                               | `process.cwd()` |
 | *3* | `validate`     | *No*     | `(path: string) => Error \| string \| boolean \| void` |                 |
+| *4* | `lc`           | *No*     | `LineCounter`                                          |                 |
 
 | Return Type       |
 |-------------------|
@@ -389,7 +390,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 #### multiFileExplorer
 
 ```typescript
-ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (paths: string[]) => Error | string | boolean | void): Promise<string[]>
+ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (paths: string[]) => Error | string | boolean | void, lc: LineCounter): Promise<string[]>
 ```
 
 Get multiple file or folder paths from the user.
@@ -409,6 +410,7 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 | *1* | `selectType`   | *No*     | `'d' \| 'f'`                                              | `'f'`           |
 | *2* | `startPath`    | *No*     | `string`                                                  | `process.cwd()` |
 | *3* | `validate`     | *No*     | `(paths: string[]) => Error \| string \| boolean \| void` |                 |
+| *4* | `lc`           | *No*     | `LineCounter`                                             |                 |
 
 | Return Type         |
 |---------------------|

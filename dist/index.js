@@ -4422,7 +4422,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
 };
 
 // src/tools/ask/fileExplorer.ts
-var fileExplorer = async (questionText, selectType = "f", startPath = process.cwd(), validate) => {
+var fileExplorer = async (questionText, selectType = "f", startPath = process.cwd(), validate, lc) => {
   const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {
     if (!validate)
       return true;
@@ -4431,17 +4431,17 @@ var fileExplorer = async (questionText, selectType = "f", startPath = process.cw
     const result = validate(currentCursor);
     return result;
   };
-  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath, void 0, vFn);
+  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath, void 0, vFn, lc);
   return arr[0];
 };
-var multiFileExplorer = (questionText, selectType = "f", startPath = process.cwd(), validate) => {
+var multiFileExplorer = (questionText, selectType = "f", startPath = process.cwd(), validate, lc) => {
   const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {
     if (!validate)
       return true;
     const result = validate(selected);
     return result;
   };
-  return fileExplorerHandler(true, false, questionText, selectType, startPath, void 0, vFn);
+  return fileExplorerHandler(true, false, questionText, selectType, startPath, void 0, vFn, lc);
 };
 var saveFileExplorer = async (questionText, startPath = process.cwd(), suggestedFileName = "", validate) => {
   const vFn = (cursorType, currentCursor, currentDir, currentFileName, selected, newFileName) => {

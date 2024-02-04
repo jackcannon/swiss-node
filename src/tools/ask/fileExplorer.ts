@@ -1,3 +1,4 @@
+import { LineCounter } from '../out';
 import { Breadcrumb } from '../out/breadcrumb';
 import { fileExplorerHandler } from './fileExplorer/handler';
 
@@ -25,13 +26,15 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
  * @param {(path: string) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<string>}
  */
 export const fileExplorer = async (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
   startPath: string = process.cwd(),
-  validate?: (path: string) => Error | string | boolean | void
+  validate?: (path: string) => Error | string | boolean | void,
+  lc?: LineCounter
 ): Promise<string> => {
   const vFn = (
     cursorType: 'd' | 'f',
@@ -47,7 +50,7 @@ export const fileExplorer = async (
     const result = validate(currentCursor);
     return result;
   };
-  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath, undefined, vFn);
+  const arr = await fileExplorerHandler(false, false, questionText, selectType, startPath, undefined, vFn, lc);
   return arr[0];
 };
 
@@ -70,13 +73,15 @@ export const fileExplorer = async (
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
  * @param {(paths: string[]) => Error | string | boolean | void} [validate]
+ * @param {LineCounter} [lc]
  * @returns {Promise<string[]>}
  */
 export const multiFileExplorer = (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
   startPath: string = process.cwd(),
-  validate?: (paths: string[]) => Error | string | boolean | void
+  validate?: (paths: string[]) => Error | string | boolean | void,
+  lc?: LineCounter
 ): Promise<string[]> => {
   const vFn = (
     cursorType: 'd' | 'f',
@@ -90,7 +95,7 @@ export const multiFileExplorer = (
     const result = validate(selected);
     return result;
   };
-  return fileExplorerHandler(true, false, questionText, selectType, startPath, undefined, vFn);
+  return fileExplorerHandler(true, false, questionText, selectType, startPath, undefined, vFn, lc);
 };
 
 /**<!-- DOCS: ask.saveFileExplorer #### @ -->

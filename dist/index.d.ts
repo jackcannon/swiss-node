@@ -5655,9 +5655,10 @@ declare namespace ask {
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
      * @param {(path: string) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<string>}
      */
-    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => string | boolean | void | Error) => Promise<string>;
+    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
      * multiFileExplorer
      * 
@@ -5677,9 +5678,10 @@ declare namespace ask {
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
      * @param {(paths: string[]) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
      * @returns {Promise<string[]>}
      */
-    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error) => Promise<string[]>;
+    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
      * saveFileExplorer
      * 

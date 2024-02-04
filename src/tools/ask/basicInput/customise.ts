@@ -88,10 +88,8 @@ const populateAskOptions = (): AskOptionsStored => {
     },
     colours: {
       decoration: {
-        // normal: colr.lightBlack,
         normal: colr.grey1,
         error: colr.dark.red.dim,
-        // done: colr.lightBlack
         done: colr.grey1
       },
       questionText: {
@@ -158,7 +156,7 @@ const populateAskOptions = (): AskOptionsStored => {
       },
       specialSelected: getSetFromSingle(colr.darkBg.whiteBg.black),
       specialHighlight: getSetFromSingle(colr.yellow),
-      specialNormal: getSetFromSingle(colr.white), // colr.dark.white
+      specialNormal: getSetFromSingle(colr.white),
       specialFaded: getSetFromSingle(colr.grey3),
       specialHint: getSetFromSingle(colr.grey1),
 
