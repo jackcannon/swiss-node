@@ -1,5 +1,5 @@
 // src/tools/ask.ts
-import { seconds as seconds4, wait as wait3 } from "swiss-ak";
+import { getDeferred as getDeferred6, seconds as seconds4, wait as wait3 } from "swiss-ak";
 
 // src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
@@ -2304,7 +2304,7 @@ var autotext = async (question, choices, initial, validate, lc) => {
     {
       initialValue: typeof initial === "string" ? initial : "",
       displayTransformer: (v) => v,
-      submitTransformer: (v) => v
+      submitTransformer: (v) => void 0
     },
     {
       selectType: "single",
@@ -5051,19 +5051,42 @@ var ask;
     process.stdout.write(ansi2.cursor.show);
     return loader;
   };
-  ask2.countdown = async (totalSeconds, template, isComplete, isError) => {
+  ask2.countdown = (totalSeconds, template, isComplete, isError) => {
+    const deferred = getDeferred6();
     const theme = getAskOptionsForState(isComplete, isError);
     console.log();
+    let finished = false;
     const textTemplate = template || theme.text.countdown;
     let lines = textTemplate(totalSeconds).split("\n").length;
-    for (let s = totalSeconds; s > 0; s--) {
-      const textValue = textTemplate(s);
-      process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.hide);
-      lines = textValue.split("\n").length;
-      console.log(theme.colours.countdown(textValue));
-      await wait3(seconds4(1));
-    }
-    process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.show);
+    const operation = {
+      runLoop: async (secsRemaining) => {
+        if (finished || secsRemaining <= 0) {
+          return operation.finish();
+        }
+        const textValue = textTemplate(secsRemaining);
+        process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.hide);
+        lines = textValue.split("\n").length;
+        console.log(theme.colours.countdown(textValue));
+        await wait3(seconds4(1));
+        operation.runLoop(secsRemaining - 1);
+      },
+      finish: () => {
+        if (finished)
+          return;
+        finished = true;
+        kl.stop();
+        process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.show);
+        deferred.resolve();
+      }
+    };
+    const kl = getKeyListener((key) => {
+      switch (key) {
+        case "esc":
+          return operation.finish();
+      }
+    });
+    operation.runLoop(totalSeconds);
+    return deferred.promise;
   };
   ask2.pause = async (text3 = "Press enter to continue...") => {
     const theme = getAskOptionsForState(false, false);
@@ -5077,6 +5100,7 @@ var ask;
       };
       const kl = getKeyListener((key) => {
         switch (key) {
+          case "esc":
           case "return":
             return finish();
         }
