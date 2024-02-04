@@ -5012,6 +5012,7 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
     exit: () => {
       kl.stop();
       tempLC.clear();
+      process.stdout.write(ansi2.cursor.show);
       imitate(question, operation.getResultOutput(true), false, true, void 0, lc);
       process.exit();
     },
@@ -5024,6 +5025,7 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
       }
       kl.stop();
       tempLC.clear();
+      process.stdout.write(ansi2.cursor.show);
       const fixedHandles = operation.getResult();
       imitate(question, operation.getResultOutput(true), true, false, void 0, lc);
       deferred.resolve(fixedHandles);
@@ -5162,6 +5164,40 @@ var ask;
         return obj;
       }
     };
+  };
+  ask2.menu = async (question, items, initial, validate, lc) => {
+    const options = getAskOptions();
+    const originalFormatItems = options.formatters.formatItems;
+    options.formatters.formatItems = [itemsFormatters.simpleAlt, itemsFormatters.blockAlt].includes(originalFormatItems) ? itemsFormatters.simpleAlt : itemsFormatters.simple;
+    let initialIndex = 0;
+    if (initial !== void 0) {
+      const found = items.findIndex((item) => item.value === initial || item === initial);
+      if (found !== -1) {
+        initialIndex = found;
+      } else if (typeof initial === "number") {
+        initialIndex = initial;
+      }
+    }
+    const hasIcons = items.some((item) => item.icon !== void 0);
+    const choices = items.map((item, index) => {
+      const title = item.title || item.value + "";
+      let icon = "";
+      if (hasIcons) {
+        icon = ` ${item.icon || ""} `;
+        if (item.colour) {
+          const wrapFn = typeof item.colour === "function" ? item.colour : item.colour.bg;
+          icon = wrapFn(icon);
+        }
+        icon += " ";
+      }
+      return {
+        title: `${icon}${title}`,
+        value: item.value
+      };
+    });
+    const result = await select(question, choices, initialIndex, validate, lc);
+    options.formatters.formatItems = originalFormatItems;
+    return result;
   };
   ask2.section = section;
   ask2.separator = separator;

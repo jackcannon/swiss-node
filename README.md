@@ -56,6 +56,7 @@ A collection of functions to ask the user for input.
       - [imitate](#imitate)
       - [prefill](#prefill)
       - [wizard](#wizard)
+      - [menu](#menu)
       - [section](#section)
       - [separator](#separator)
     - [**utils**](#ask_utils)
@@ -756,7 +757,7 @@ const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
 #### wizard
 
 ```typescript
-ask.wizard(startObj: Partial<T>): any
+ask.wizard(startObj: Partial<T>): ask.Wizard<T>
 ```
 
 Create a wizard object that can be used to build up a complex object
@@ -785,9 +786,44 @@ const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
 |:---:|:---------------|:---------|:-------------|:--------|
 | *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    |
 
-| Return Type |
-|-------------|
-| `any`       |
+| Return Type     |
+|-----------------|
+| `ask.Wizard<T>` |
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+#### menu
+
+```typescript
+ask.menu(question: string | Breadcrumb, items: MenuItem<T>[], initial: MenuItem<T> | T | number, validate: (value: T, index: number) => Error | string | boolean | void, lc: LineCounter): Promise<T>
+```
+
+Wrapper for `ask.select` that styles the output as a menu, with icons and colours
+
+```typescript
+const menuItems: ask.MenuItem<string>[] = [
+  { value: 'done', title: colr.dim(`[ Finished ]`), icon: '✔', colour: colr.dark.green.bold },
+  { value: 'create', title: `${colr.bold('Create')} a new thing`, icon: '+', colour: colr.black.greenBg },
+  { value: 'duplicate', title: `${colr.bold('Duplicate')} a thing`, icon: '⌥', colour: colr.black.cyanBg },
+  { value: 'edit', title: `${colr.bold('Edit')} a thing`, icon: '↻', colour: colr.black.yellowBg },
+  { value: 'delete', title: `${colr.bold('Remove')} thing(s)`, icon: '×', colour: colr.black.redBg },
+  { value: 'delete-all', title: colr.bold(`Remove all`), icon: '✖', colour: colr.black.darkBg.redBg }
+];
+
+const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
+```
+
+|  #  | Parameter Name | Required | Type                                                              |
+|:---:|:---------------|:---------|:------------------------------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                            |
+| *1* | `items`        | **Yes**  | `MenuItem<T>[]`                                                   |
+| *2* | `initial`      | *No*     | `MenuItem<T> \| T \| number`                                      |
+| *3* | `validate`     | *No*     | `(value: T, index: number) => Error \| string \| boolean \| void` |
+| *4* | `lc`           | *No*     | `LineCounter`                                                     |
+
+| Return Type  |
+|--------------|
+| `Promise<T>` |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 

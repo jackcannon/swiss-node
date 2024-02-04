@@ -12,6 +12,8 @@ import * as imitateAsk from './ask/imitate';
 import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
 import { trim as trimAsk } from './ask/trim';
+import { WrapFn, WrapSet } from './colr';
+import { itemsFormatters } from './ask/basicInput/formatters';
 
 export { AskTableDisplaySettings } from './ask/table';
 
@@ -261,7 +263,7 @@ export namespace ask {
     return askFn(question, lc);
   };
 
-  /**<!-- DOCS: ask.wizard #### @ -->
+  /**<!-- DOCS: ask.wizard #### -->
    * wizard
    *
    * - `ask.wizard`
@@ -288,7 +290,7 @@ export namespace ask {
    * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
    * ```
    * @param {Partial<T>} [startObj={}]
-   * @returns {any}
+   * @returns {ask.Wizard<T>}
    */
   export const wizard = <T extends unknown>(startObj: Partial<T> = {}): ask.Wizard<T> => {
     let obj: Partial<T> = { ...startObj };
@@ -314,7 +316,7 @@ export namespace ask {
       get(): T {
         return obj as T;
       }
-    };
+    } as ask.Wizard<T>;
   };
 
   /**
@@ -327,6 +329,93 @@ export namespace ask {
     addPartial(partial: Partial<T>): void;
     getPartial(): Partial<T>;
     get(): T;
+  }
+
+  /**<!-- DOCS: ask.menu #### @ -->
+   * menu
+   *
+   * - `ask.menu`
+   *
+   * Wrapper for `ask.select` that styles the output as a menu, with icons and colours
+   *
+   * ```typescript
+   * const menuItems: ask.MenuItem<string>[] = [
+   *   { value: 'done', title: colr.dim(`[ Finished ]`), icon: '✔', colour: colr.dark.green.bold },
+   *   { value: 'create', title: `${colr.bold('Create')} a new thing`, icon: '+', colour: colr.black.greenBg },
+   *   { value: 'duplicate', title: `${colr.bold('Duplicate')} a thing`, icon: '⌥', colour: colr.black.cyanBg },
+   *   { value: 'edit', title: `${colr.bold('Edit')} a thing`, icon: '↻', colour: colr.black.yellowBg },
+   *   { value: 'delete', title: `${colr.bold('Remove')} thing(s)`, icon: '×', colour: colr.black.redBg },
+   *   { value: 'delete-all', title: colr.bold(`Remove all`), icon: '✖', colour: colr.black.darkBg.redBg }
+   * ];
+   *
+   * const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
+   * ```
+   * @param {string | Breadcrumb} question
+   * @param {MenuItem<T>[]} items
+   * @param {MenuItem<T> | T | number} [initial]
+   * @param {(value: T, index: number) => Error | string | boolean | void} [validate]
+   * @param {LineCounter} [lc]
+   * @returns {Promise<T>}
+   */
+  export const menu = async <T extends unknown>(
+    question: string | Breadcrumb,
+    items: MenuItem<T>[],
+    initial?: MenuItem<T> | T | number,
+    validate?: (value: T, index: number) => Error | string | boolean | void,
+    lc?: LineCounter
+  ): Promise<T> => {
+    const options = customiseOptions.getAskOptions();
+
+    // override the items formatter to use simple (or simpleAlt if using an 'alt' formatter already)
+    const originalFormatItems = options.formatters.formatItems;
+    options.formatters.formatItems = [itemsFormatters.simpleAlt, itemsFormatters.blockAlt].includes(originalFormatItems)
+      ? itemsFormatters.simpleAlt
+      : itemsFormatters.simple;
+
+    let initialIndex = 0;
+    if (initial !== undefined) {
+      const found = items.findIndex((item) => item.value === initial || item === initial);
+      if (found !== -1) {
+        initialIndex = found;
+      } else if (typeof initial === 'number') {
+        initialIndex = initial;
+      }
+    }
+
+    const hasIcons = items.some((item) => item.icon !== undefined);
+
+    const choices = items.map((item, index) => {
+      const title = item.title || item.value + '';
+      let icon = '';
+      if (hasIcons) {
+        icon = ` ${item.icon || ''} `;
+        if (item.colour) {
+          const wrapFn = typeof item.colour === 'function' ? item.colour : (item.colour as WrapSet).bg;
+          icon = wrapFn(icon);
+        }
+        icon += ' ';
+      }
+      return {
+        title: `${icon}${title}`,
+        value: item.value
+      };
+    });
+
+    const result = await basicInput.select<T>(question, choices, initialIndex, validate, lc);
+    options.formatters.formatItems = originalFormatItems;
+    return result;
+  };
+
+  /**
+   * MenuItem<T>
+   *
+   * Used by `ask.menu`
+   */
+  export interface MenuItem<T> {
+    icon?: string;
+    title?: string;
+    colour?: WrapSet | WrapFn;
+    value: T;
   }
 
   //<!-- DOCS: 150 -->

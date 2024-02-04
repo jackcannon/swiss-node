@@ -5923,7 +5923,7 @@ declare namespace ask {
      * @returns {Promise<T>}
      */
     const prefill: <T extends unknown = string>(question: string | Breadcrumb$1, value: T, askFn: (question: string | Breadcrumb$1, lc: LineCounter) => T | Promise<T>, lc?: LineCounter) => Promise<T>;
-    /**<!-- DOCS: ask.wizard #### @ -->
+    /**<!-- DOCS: ask.wizard #### -->
      * wizard
      *
      * - `ask.wizard`
@@ -5950,7 +5950,7 @@ declare namespace ask {
      * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
      * ```
      * @param {Partial<T>} [startObj={}]
-     * @returns {any}
+     * @returns {ask.Wizard<T>}
      */
     const wizard: <T extends unknown>(startObj?: Partial<T>) => Wizard<T>;
     /**
@@ -5963,6 +5963,44 @@ declare namespace ask {
         addPartial(partial: Partial<T>): void;
         getPartial(): Partial<T>;
         get(): T;
+    }
+    /**<!-- DOCS: ask.menu #### @ -->
+     * menu
+     *
+     * - `ask.menu`
+     *
+     * Wrapper for `ask.select` that styles the output as a menu, with icons and colours
+     *
+     * ```typescript
+     * const menuItems: ask.MenuItem<string>[] = [
+     *   { value: 'done', title: colr.dim(`[ Finished ]`), icon: '✔', colour: colr.dark.green.bold },
+     *   { value: 'create', title: `${colr.bold('Create')} a new thing`, icon: '+', colour: colr.black.greenBg },
+     *   { value: 'duplicate', title: `${colr.bold('Duplicate')} a thing`, icon: '⌥', colour: colr.black.cyanBg },
+     *   { value: 'edit', title: `${colr.bold('Edit')} a thing`, icon: '↻', colour: colr.black.yellowBg },
+     *   { value: 'delete', title: `${colr.bold('Remove')} thing(s)`, icon: '×', colour: colr.black.redBg },
+     *   { value: 'delete-all', title: colr.bold(`Remove all`), icon: '✖', colour: colr.black.darkBg.redBg }
+     * ];
+     *
+     * const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
+     * ```
+     * @param {string | Breadcrumb} question
+     * @param {MenuItem<T>[]} items
+     * @param {MenuItem<T> | T | number} [initial]
+     * @param {(value: T, index: number) => Error | string | boolean | void} [validate]
+     * @param {LineCounter} [lc]
+     * @returns {Promise<T>}
+     */
+    const menu: <T extends unknown>(question: string | Breadcrumb$1, items: MenuItem<T>[], initial?: number | T | MenuItem<T>, validate?: (value: T, index: number) => Error | string | boolean | void, lc?: LineCounter) => Promise<T>;
+    /**
+     * MenuItem<T>
+     *
+     * Used by `ask.menu`
+     */
+    interface MenuItem<T> {
+        icon?: string;
+        title?: string;
+        colour?: WrapSet | WrapFn;
+        value: T;
     }
     /**<!-- DOCS-ALIAS: ask.section -->
      * section
