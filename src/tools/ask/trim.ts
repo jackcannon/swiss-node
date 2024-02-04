@@ -254,6 +254,7 @@ export const trim = async (
     exit: () => {
       kl.stop();
       tempLC.clear();
+      process.stdout.write(ansi.cursor.show);
       imitate(question, operation.getResultOutput(true), false, true, undefined, lc);
       process.exit();
     },
@@ -266,6 +267,7 @@ export const trim = async (
       }
       kl.stop();
       tempLC.clear();
+      process.stdout.write(ansi.cursor.show);
       const fixedHandles: Handles<number> = operation.getResult();
       imitate(question, operation.getResultOutput(true), true, false, undefined, lc);
       deferred.resolve(fixedHandles);
