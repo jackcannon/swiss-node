@@ -12,9 +12,9 @@ import { getImitateOutput, imitate } from './imitate';
 //<!-- DOCS: 125 -->
 
 const toTimeCode = (frame: number, frameRate: number = 60, includeHours: boolean = false, includeMinutes: boolean = true) => {
-  const frLength = out.getWidth(frameRate + '');
+  const frLength = out.getWidth(Math.round(frameRate) + '');
   const toSecs: ms = seconds(Math.floor(frame / frameRate));
-  const remaining = frame % frameRate;
+  const remaining = Math.round(frame % frameRate);
 
   let cut = includeHours ? 11 : 14;
   if (!includeMinutes) cut = 17;

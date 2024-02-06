@@ -168,7 +168,7 @@ export namespace ask {
   export const countdown = (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
     const deferred = getDeferred<void>();
     const theme = customiseOptions.getAskOptionsForState(isComplete, isError);
-    console.log();
+    const tempLC = getLineCounter();
 
     let finished = false;
 
@@ -182,10 +182,9 @@ export namespace ask {
         }
         const textValue = textTemplate(secsRemaining);
 
-        process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.hide);
-
         lines = textValue.split('\n').length;
-        console.log(theme.colours.countdown(textValue));
+        const output = theme.colours.countdown(textValue);
+        tempLC.overwrite(tempLC.ansi.moveHome() + ansi.cursor.hide + output);
         await wait(seconds(1));
         operation.runLoop(secsRemaining - 1);
       },
@@ -193,7 +192,8 @@ export namespace ask {
         if (finished) return;
         finished = true;
         kl.stop();
-        process.stdout.write(ansi.erase.lines(lines) + ansi.cursor.show);
+        tempLC.clear();
+        process.stdout.write(ansi.cursor.show);
         deferred.resolve();
       }
     };

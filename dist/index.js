@@ -51,7 +51,9 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
   };
   const stop = () => {
     process.stdin.setRawMode(false);
-    process.stdin.pause();
+    if (!process.versions.bun) {
+      process.stdin.pause();
+    }
     process.stdin.off("data", listenFn);
   };
   if (isStart)
@@ -4783,9 +4785,9 @@ var multiselect2 = (question, items, settings = {}, initial, validate, lc) => as
 // src/tools/ask/trim.ts
 import { getDeferred as getDeferred5, hours, MathsTools as MathsTools5, ObjectTools as ObjectTools3, seconds as seconds3, symbols as symbols3 } from "swiss-ak";
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
-  const frLength = out.getWidth(frameRate + "");
+  const frLength = out.getWidth(Math.round(frameRate) + "");
   const toSecs = seconds3(Math.floor(frame / frameRate));
-  const remaining = frame % frameRate;
+  const remaining = Math.round(frame % frameRate);
   let cut = includeHours ? 11 : 14;
   if (!includeMinutes)
     cut = 17;
@@ -5054,7 +5056,7 @@ var ask;
   ask2.countdown = (totalSeconds, template, isComplete, isError) => {
     const deferred = getDeferred6();
     const theme = getAskOptionsForState(isComplete, isError);
-    console.log();
+    const tempLC = getLineCounter2();
     let finished = false;
     const textTemplate = template || theme.text.countdown;
     let lines = textTemplate(totalSeconds).split("\n").length;
@@ -5064,9 +5066,9 @@ var ask;
           return operation.finish();
         }
         const textValue = textTemplate(secsRemaining);
-        process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.hide);
         lines = textValue.split("\n").length;
-        console.log(theme.colours.countdown(textValue));
+        const output = theme.colours.countdown(textValue);
+        tempLC.overwrite(tempLC.ansi.moveHome() + ansi2.cursor.hide + output);
         await wait3(seconds4(1));
         operation.runLoop(secsRemaining - 1);
       },
@@ -5075,7 +5077,8 @@ var ask;
           return;
         finished = true;
         kl.stop();
-        process.stdout.write(ansi2.erase.lines(lines) + ansi2.cursor.show);
+        tempLC.clear();
+        process.stdout.write(ansi2.cursor.show);
         deferred.resolve();
       }
     };
