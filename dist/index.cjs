@@ -5145,14 +5145,24 @@ var ask;
     return new Promise((resolve) => {
       const message = typeof text3 === "object" && text3.get ? text3.get() : text3 + "";
       console.log(ansi2.cursor.hide + theme.colours.pause(message));
+      const clear2 = () => {
+        process.stdout.write(ansi2.erase.lines(message.split("\n").length) + ansi2.cursor.show);
+      };
       const finish = () => {
         kl.stop();
-        process.stdout.write(ansi2.erase.lines(message.split("\n").length) + ansi2.cursor.show);
+        clear2();
         resolve();
+      };
+      const exit = () => {
+        kl.stop();
+        clear2();
+        process.stdout.write(ansi2.cursor.show);
+        process.exit();
       };
       const kl = getKeyListener((key) => {
         switch (key) {
           case "esc":
+            return exit();
           case "return":
             return finish();
         }

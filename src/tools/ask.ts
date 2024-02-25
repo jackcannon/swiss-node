@@ -230,15 +230,27 @@ export namespace ask {
       const message = typeof text === 'object' && (text as Breadcrumb).get ? (text as Breadcrumb).get() : text + '';
       console.log(ansi.cursor.hide + theme.colours.pause(message));
 
+      const clear = () => {
+        process.stdout.write(ansi.erase.lines(message.split('\n').length) + ansi.cursor.show);
+      };
+
       const finish = () => {
         kl.stop();
-        process.stdout.write(ansi.erase.lines(message.split('\n').length) + ansi.cursor.show);
+        clear();
         resolve();
+      };
+
+      const exit = () => {
+        kl.stop();
+        clear();
+        process.stdout.write(ansi.cursor.show);
+        process.exit();
       };
 
       const kl = getKeyListener((key) => {
         switch (key) {
           case 'esc':
+            return exit();
           case 'return':
             return finish();
         }
