@@ -87,13 +87,7 @@ export const getKeyListener = (
 
   const stop = () => {
     process.stdin.setRawMode(false);
-
-    // if this is a bun process, don't pause stdin
-    // See: https://github.com/oven-sh/bun/issues/8693
-    if (!process.versions.bun) {
-      process.stdin.pause();
-    }
-
+    process.stdin.pause();
     process.stdin.off('data', listenFn);
     // process.stdout.write('\x1B[?25h'); // show cursor
   };

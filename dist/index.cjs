@@ -100,9 +100,7 @@ var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
   };
   const stop = () => {
     process.stdin.setRawMode(false);
-    if (!process.versions.bun) {
-      process.stdin.pause();
-    }
+    process.stdin.pause();
     process.stdin.off("data", listenFn);
   };
   if (isStart)
