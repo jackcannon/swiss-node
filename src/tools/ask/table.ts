@@ -65,9 +65,11 @@ const askTableHandler = <T extends unknown>(
       };
       const { tableLines, body, header } = operation.getTable(items, activeIndex, 0, {}, overrideOptions);
 
+      const cleanLines = tableLines.map((line) => colr.clear(line));
+
       // calculate row heights
       const horiLine = fullOptions.drawRowLines === false ? 0 : 1;
-      const indexesOfHoriLines = tableLines
+      const indexesOfHoriLines = cleanLines
         .map((line, index) => (line.startsWith(HOR_CHAR.repeat(4)) ? index : undefined))
         .filter((i) => i !== undefined);
       const allRowHeights = indexesOfHoriLines.slice(0, -1).map((num, i) => indexesOfHoriLines[i + 1] - num);
@@ -95,7 +97,7 @@ const askTableHandler = <T extends unknown>(
 
       // calculate locked column widths
       const mostColumns = Math.max(...body.map((row) => row.length));
-      const typicalLine = tableLines.find((line) => line.split('').filter((c) => c === VER_CHAR).length === mostColumns + 1);
+      const typicalLine = cleanLines.find((line) => line.split('').filter((c) => c === VER_CHAR).length === mostColumns + 1);
       colWidths = typicalLine
         .split(VER_CHAR)
         .slice(1, -1)

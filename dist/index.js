@@ -4544,8 +4544,9 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
         align: "left"
       };
       const { tableLines, body, header } = operation.getTable(items, activeIndex, 0, {}, overrideOptions);
+      const cleanLines = tableLines.map((line) => colr.clear(line));
       const horiLine = fullOptions.drawRowLines === false ? 0 : 1;
-      const indexesOfHoriLines = tableLines.map((line, index) => line.startsWith(HOR_CHAR.repeat(4)) ? index : void 0).filter((i) => i !== void 0);
+      const indexesOfHoriLines = cleanLines.map((line, index) => line.startsWith(HOR_CHAR.repeat(4)) ? index : void 0).filter((i) => i !== void 0);
       const allRowHeights = indexesOfHoriLines.slice(0, -1).map((num, i) => indexesOfHoriLines[i + 1] - num);
       const allHeaderHeights = allRowHeights.slice(0, header.length);
       const allBodyHeights = allRowHeights.slice(header.length);
@@ -4567,7 +4568,7 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
       numRows = MathsTools4.clamp(numRows, 1, items.length);
       const mostColumns = Math.max(...body.map((row) => row.length));
-      const typicalLine = tableLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
+      const typicalLine = cleanLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
       colWidths = typicalLine.split(VER_CHAR).slice(1, -1).map((sect) => out.getWidth(sect)).map((fullWidth) => fullWidth - fullOptions.cellPadding * 2);
     },
     getResultsArray: () => (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(fn10.isTruthy),
