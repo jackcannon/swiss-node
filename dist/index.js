@@ -72,6 +72,38 @@ import { fn } from "swiss-ak";
 // src/tools/colr.ts
 import { cachier } from "swiss-ak";
 import { ArrayTools, ObjectTools, StringTools, safe } from "swiss-ak";
+var outputMode = "ANSI";
+var getOutputModeFn = () => outputMode;
+var setOutputModeFn = (mode) => {
+  if (mode === void 0)
+    mode = outputMode;
+  const args = {
+    mode: safe.str(mode, false, "ANSI")
+  };
+  if (args.mode === "AUTO") {
+    if (typeof process === "undefined" || !process.stdout.isTTY) {
+      args.mode = "NONE";
+    } else {
+      args.mode = "ANSI";
+    }
+  }
+  if (!["ANSI", "DEBUG", "NONE"].includes(args.mode))
+    args.mode = "ANSI";
+  outputMode = args.mode;
+  if (outputMode === "DEBUG" && debugReplacements === null) {
+    populateDebugReplacements();
+  }
+};
+setOutputModeFn("AUTO");
+var getOutputForCodes = (codes) => {
+  if (outputMode === "NONE")
+    return "";
+  const arrOfAnsi = [codes].flat().map((code) => `\x1B[${code}m`);
+  if (outputMode === "DEBUG") {
+    return arrOfAnsi.map((ansi3) => debugReplacements[ansi3] || ansi3).join("");
+  }
+  return arrOfAnsi.join("");
+};
 var wrapAnsi = (codes) => [codes].flat().map((code) => `\x1B[${code}m`).join("");
 var simpleStringify = (item, depth = 0) => {
   if (depth > 4)
@@ -328,6 +360,15 @@ var clear = (text2) => {
   };
   return StringTools.replaceAll(args.text, /\u001B\[\d+m/g, "");
 };
+var debugFn = (text2) => {
+  const args = {
+    text: safe.str(text2)
+  };
+  if (debugReplacements === null) {
+    populateDebugReplacements();
+  }
+  return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools.replaceAll(txt, search, replace), args.text);
+};
 var getColrFn = (name, styles = [], options) => {
   if (fullStyleConfigs === null) {
     calculateFullStyleConfigs();
@@ -344,15 +385,19 @@ var getColrFn = (name, styles = [], options) => {
       const isLight = config.isBG ? options.isLightBG : options.isLight;
       return isLight ? config.light || config.dark : config.dark || config.light;
     });
-    const prefix = entries.flatMap((entry) => entry[0]).map((value) => wrapAnsi(value)).join("");
-    const suffix = entries.flatMap((entry) => entry[1]).map((value) => wrapAnsi(value)).reverse().join("");
+    let prefix = "";
+    let suffix = "";
+    if (outputMode === "ANSI" || outputMode === "DEBUG") {
+      prefix = entries.flatMap((entry) => entry[0]).map((value) => getOutputForCodes(value)).join("");
+      suffix = entries.flatMap((entry) => entry[1]).map((value) => getOutputForCodes(value)).reverse().join("");
+    }
     let output = args.text;
     const flatStarts = entries.flatMap((entry) => entry[0]);
     const flatEnds = entries.flatMap((entry) => entry[1]);
     const pairs = ArrayTools.zipMax(flatStarts, flatEnds);
     output = pairs.reduceRight((txt, pair) => {
-      const start = wrapAnsi(pair[0]);
-      const end = wrapAnsi(pair[1]);
+      let start = getOutputForCodes(pair[0]);
+      let end = getOutputForCodes(pair[1]);
       return StringTools.replaceAll(txt, end, end + start);
     }, output);
     output = output.replace(/\r?\n/g, (match) => `${suffix}${match}${prefix}`);
@@ -415,19 +460,22 @@ var getColrFn = (name, styles = [], options) => {
       }
     }
   });
-  const debugFn = (text2) => {
-    const args = {
-      text: safe.str(text2)
-    };
-    if (debugReplacements === null) {
-      populateDebugReplacements();
-    }
-    return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools.replaceAll(txt, search, replace), args.text);
-  };
   Object.defineProperties(result, {
     debug: {
       enumerable: false,
       get: () => debugFn,
+      set(v) {
+      }
+    },
+    getOutputMode: {
+      enumerable: false,
+      get: () => getOutputModeFn,
+      set(v) {
+      }
+    },
+    setOutputMode: {
+      enumerable: false,
+      get: () => setOutputModeFn,
       set(v) {
       }
     }

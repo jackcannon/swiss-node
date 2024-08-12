@@ -3,6 +3,40 @@ import { ArrayTools, ObjectTools, StringTools, ObjOfType, safe } from 'swiss-ak'
 
 //<!-- DOCS: 300 -->
 
+let outputMode = 'ANSI' as 'ANSI' | 'DEBUG' | 'NONE';
+const getOutputModeFn: ColrFn['getOutputMode'] = () => outputMode;
+const setOutputModeFn: ColrFn['setOutputMode'] = (mode?: 'AUTO' | 'ANSI' | 'DEBUG' | 'NONE'): void => {
+  if (mode === undefined) mode = outputMode;
+  const args = {
+    mode: safe.str(mode, false, 'ANSI')
+  };
+
+  if (args.mode === 'AUTO') {
+    if (typeof process === 'undefined' || !process.stdout.isTTY) {
+      args.mode = 'NONE';
+    } else {
+      args.mode = 'ANSI';
+    }
+  }
+
+  if (!['ANSI', 'DEBUG', 'NONE'].includes(args.mode)) args.mode = 'ANSI';
+
+  outputMode = args.mode as 'ANSI' | 'DEBUG' | 'NONE';
+  if (outputMode === 'DEBUG' && debugReplacements === null) {
+    // WILL use debugReplacements object, so populate it now
+    populateDebugReplacements();
+  }
+};
+setOutputModeFn('AUTO');
+
+const getOutputForCodes = (codes: number | number[]): string => {
+  if (outputMode === 'NONE') return '';
+  const arrOfAnsi = [codes].flat().map((code) => `\u001B[${code}m`);
+  if (outputMode === 'DEBUG') {
+    return arrOfAnsi.map((ansi) => debugReplacements[ansi] || ansi).join('');
+  }
+  return arrOfAnsi.join('');
+};
 const wrapAnsi = (codes: number | number[]) =>
   [codes]
     .flat()
@@ -328,6 +362,16 @@ const clear = (text: string): string => {
   return StringTools.replaceAll(args.text, /\u001B\[\d+m/g, '');
 };
 
+const debugFn: ColrFn['debug'] = (text: string): string => {
+  const args = {
+    text: safe.str(text)
+  };
+  if (debugReplacements === null) {
+    populateDebugReplacements();
+  }
+  return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools.replaceAll(txt, search, replace), args.text);
+};
+
 const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOptions): ColrFn => {
   if (fullStyleConfigs === null) {
     calculateFullStyleConfigs();
@@ -348,15 +392,20 @@ const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOp
       return isLight ? config.light || config.dark : config.dark || config.light;
     });
 
-    const prefix = entries
-      .flatMap((entry) => entry[0])
-      .map((value) => wrapAnsi(value))
-      .join('');
-    const suffix = entries
-      .flatMap((entry) => entry[1])
-      .map((value) => wrapAnsi(value))
-      .reverse()
-      .join('');
+    let prefix = '';
+    let suffix = '';
+
+    if (outputMode === 'ANSI' || outputMode === 'DEBUG') {
+      prefix = entries
+        .flatMap((entry) => entry[0])
+        .map((value) => getOutputForCodes(value))
+        .join('');
+      suffix = entries
+        .flatMap((entry) => entry[1])
+        .map((value) => getOutputForCodes(value))
+        .reverse()
+        .join('');
+    }
 
     let output = args.text;
 
@@ -366,12 +415,14 @@ const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOp
     const pairs = ArrayTools.zipMax(flatStarts, flatEnds);
 
     output = pairs.reduceRight((txt, pair) => {
-      const start = wrapAnsi(pair[0]);
-      const end = wrapAnsi(pair[1]);
+      let start = getOutputForCodes(pair[0]);
+      let end = getOutputForCodes(pair[1]);
+
       return StringTools.replaceAll(txt, end, end + start);
     }, output);
     output = output.replace(/\r?\n/g, (match) => `${suffix}${match}${prefix}`);
     output = prefix + output + suffix;
+
     return output;
   }) as ColrFn;
 
@@ -436,20 +487,21 @@ const getColrFn = (name: string, styles: ColrStyleConfig[] = [], options: ColrOp
     }
   });
 
-  // Attach debug function
-  const debugFn = (text: string): string => {
-    const args = {
-      text: safe.str(text)
-    };
-    if (debugReplacements === null) {
-      populateDebugReplacements();
-    }
-    return Object.entries(debugReplacements).reduce((txt, [search, replace]) => StringTools.replaceAll(txt, search, replace), args.text);
-  };
+  // Attach debug, getOutputMode, setOutputMode functions
   Object.defineProperties(result, {
     debug: {
       enumerable: false,
       get: () => debugFn,
+      set(v) {}
+    },
+    getOutputMode: {
+      enumerable: false,
+      get: () => getOutputModeFn,
+      set(v) {}
+    },
+    setOutputMode: {
+      enumerable: false,
+      get: () => setOutputModeFn,
       set(v) {}
     }
   });
@@ -2386,6 +2438,66 @@ export interface ColrFn extends WrapFn {
    * ```
    */
   readonly debug: (text: string) => string;
+
+  /**<!-- DOCS: colr.setOutputMode #### -->
+   * setOutputMode
+   *
+   * - `colr.setOutputMode`
+   *
+   * Control the output mode of colr functions.
+   *
+   * There are 4 mode options:
+   * - `AUTO` - auto-detects the best mode for the current environment (either `ANSI` or `NONE`)
+   * - `ANSI` - normal ANSI escape codes
+   * - `DEBUG` - debug syntax (see `colr.debug`)
+   * - `NONE` - plain text with no colours (good for when ANSI isn't supported)
+   *
+   * ```typescript
+   * // Default mode is 'AUTO' (resolves to 'ANSI' in this example)
+   * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+   *
+   * colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+   * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+   *
+   * colr.setOutputMode('ANSI');
+   * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+   *
+   * colr.setOutputMode('DEBUG');
+   * colr.blue(`Hello ${colr.red('World')}!`); // (BLU>)Hello (RED>)World(<)(BLU>)!(<)
+   *
+   * colr.setOutputMode('NONE');
+   * colr.blue(`Hello ${colr.red('World')}!`); // Hello World!
+   * ```
+   */
+  readonly setOutputMode: (mode?: 'AUTO' | 'ANSI' | 'DEBUG' | 'NONE') => void;
+
+  /**<!-- DOCS: colr.getOutputMode #### -->
+   * getOutputMode
+   *
+   * - `colr.getOutputMode`
+   *
+   * Get the current output mode of colr functions.
+   *
+   * There are 3 actual modes:
+   * - `ANSI` - normal ANSI escape codes
+   * - `DEBUG` - debug syntax (see `colr.debug`)
+   * - `NONE` - plain text with no colours (good for when ANSI isn't supported)
+   *
+   * ```typescript
+   * colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+   * console.log(colr.getOutputMode()); // 'ANSI'
+   *
+   * colr.setOutputMode('ANSI');
+   * console.log(colr.getOutputMode()); // 'ANSI'
+   *
+   * colr.setOutputMode('DEBUG');
+   * console.log(colr.getOutputMode()); // 'DEBUG'
+   *
+   * colr.setOutputMode('NONE');
+   * console.log(colr.getOutputMode()); // 'NONE'
+   * ```
+   */
+  readonly getOutputMode: () => 'ANSI' | 'DEBUG' | 'NONE';
 
   /**<!-- DOCS: colr.sets ### 301 -->
    * sets

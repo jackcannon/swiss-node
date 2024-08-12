@@ -5,6 +5,8 @@ import { register, should, singleTest, multiTest, kitchenSink } from './test-uti
 register({ describe, it, expect });
 
 describe('colr', () => {
+  swissnode.colr.setOutputMode('ANSI');
+
   describe('styles', () => {
     describe('light', () => {
       singleTest(swissnode.colr, 'colr', (colr, name) => {
@@ -8492,168 +8494,10 @@ describe('colr', () => {
     });
   });
 
-  describe('helpers', () => {
-    describe('template', () => {
-      singleTest(swissnode.colr, 'colr', (colr, name) => {
-        it(should` exist as ${name + '.$'}`, () => {
-          expect(colr.$).toBeDefined();
-        });
-        it(should` exist as ${name + '.template'}`, () => {
-          expect(colr.template).toBeDefined();
-        });
-
-        it(should` wrap a template literal - $`, () => {
-          expect(colr.red.$`test with ${'word'} in middle`).toEqual('test with \u001B[91mword\u001B[39m in middle');
-        });
-        it(should` wrap a multiple sections - $`, () => {
-          expect(colr.red.$`one ${'two'} three ${'four'} five ${'six'}`).toEqual(
-            'one \u001B[91mtwo\u001B[39m three \u001B[91mfour\u001B[39m five \u001B[91msix\u001B[39m'
-          );
-        });
-        it(should` wrap a template literal - template`, () => {
-          expect(colr.red.template`test with ${'word'} in middle`).toEqual('test with \u001B[91mword\u001B[39m in middle');
-        });
-        it(should` wrap a multiple sections - template`, () => {
-          expect(colr.red.template`one ${'two'} three ${'four'} five ${'six'}`).toEqual(
-            'one \u001B[91mtwo\u001B[39m three \u001B[91mfour\u001B[39m five \u001B[91msix\u001B[39m'
-          );
-        });
-      });
-    });
-
-    describe('clear', () => {
-      singleTest(swissnode.colr, 'colr', (colr, name) => {
-        it(should` exist as ${name + '.clear'}`, () => {
-          expect(colr.clear).toBeDefined();
-        });
-
-        it(should` clear style ANSI code in a string`, () => {
-          const input = colr.red('hello world');
-          expect(input).toEqual('\u001b[91mhello world\u001b[39m');
-          const result = colr.clear(input);
-          expect(result).toEqual('hello world');
-        });
-
-        it(should` clear style ANSI code in a string - multiple styles`, () => {
-          const colouredString = [
-            colr.darkRed('darkRed'),
-            colr.lightRed('lightRed'),
-            colr.darkGreen('darkGreen'),
-            colr.lightGreen('lightGreen'),
-            colr.darkYellow('darkYellow'),
-            colr.lightYellow('lightYellow'),
-            colr.darkBlue('darkBlue'),
-            colr.lightBlue('lightBlue'),
-            colr.darkMagenta('darkMagenta'),
-            colr.lightMagenta('lightMagenta'),
-            colr.darkCyan('darkCyan'),
-            colr.lightCyan('lightCyan'),
-            colr.darkBlack('darkBlack'),
-            colr.lightBlack('lightBlack'),
-            colr.darkWhite('darkWhite'),
-            colr.lightWhite('lightWhite'),
-            colr.darkRedBg('darkRedBg'),
-            colr.lightRedBg('lightRedBg'),
-            colr.darkGreenBg('darkGreenBg'),
-            colr.lightGreenBg('lightGreenBg'),
-            colr.darkYellowBg('darkYellowBg'),
-            colr.lightYellowBg('lightYellowBg'),
-            colr.darkBlueBg('darkBlueBg'),
-            colr.lightBlueBg('lightBlueBg'),
-            colr.darkMagentaBg('darkMagentaBg'),
-            colr.lightMagentaBg('lightMagentaBg'),
-            colr.darkCyanBg('darkCyanBg'),
-            colr.lightCyanBg('lightCyanBg'),
-            colr.darkBlackBg('darkBlackBg'),
-            colr.lightBlackBg('lightBlackBg'),
-            colr.darkWhiteBg('darkWhiteBg'),
-            colr.lightWhiteBg('lightWhiteBg'),
-            colr.reset('reset'),
-            colr.bold('bold'),
-            colr.dim('dim'),
-            colr.italic('italic'),
-            colr.overline('overline'),
-            colr.underline('underline'),
-            colr.strikethrough('strikethrough'),
-            colr.inverse('inverse'),
-            colr.hidden('hidden')
-          ].join(' ');
-          const result = colr.clear(colouredString);
-          expect(result).toEqual(
-            'darkRed lightRed darkGreen lightGreen darkYellow lightYellow darkBlue lightBlue darkMagenta lightMagenta darkCyan lightCyan darkBlack lightBlack darkWhite lightWhite darkRedBg lightRedBg darkGreenBg lightGreenBg darkYellowBg lightYellowBg darkBlueBg lightBlueBg darkMagentaBg lightMagentaBg darkCyanBg lightCyanBg darkBlackBg lightBlackBg darkWhiteBg lightWhiteBg reset bold dim italic overline underline strikethrough inverse hidden'
-          );
-        });
-
-        kitchenSink.toEqual('text', (v) => colr.clear(v), kitchenSink.safe.str(undefined), kitchenSink.samples.general);
-      });
-    });
-
-    describe('debug', () => {
-      singleTest(swissnode.colr, 'colr', (colr, name) => {
-        it(should` exist as ${name + '.debug'}`, () => {
-          expect(colr.debug).toBeDefined();
-        });
-
-        it(should` replace style ANSI code in a string`, () => {
-          const result = colr.debug(colr.red('hello world'));
-          expect(result).toEqual('(RED>)hello world(<)');
-        });
-        it(should` replace style ANSI code in a string - multiple styles`, () => {
-          const colouredString = [
-            colr.darkRed('darkRed'),
-            colr.lightRed('lightRed'),
-            colr.darkGreen('darkGreen'),
-            colr.lightGreen('lightGreen'),
-            colr.darkYellow('darkYellow'),
-            colr.lightYellow('lightYellow'),
-            colr.darkBlue('darkBlue'),
-            colr.lightBlue('lightBlue'),
-            colr.darkMagenta('darkMagenta'),
-            colr.lightMagenta('lightMagenta'),
-            colr.darkCyan('darkCyan'),
-            colr.lightCyan('lightCyan'),
-            colr.darkBlack('darkBlack'),
-            colr.lightBlack('lightBlack'),
-            colr.darkWhite('darkWhite'),
-            colr.lightWhite('lightWhite'),
-            colr.darkRedBg('darkRedBg'),
-            colr.lightRedBg('lightRedBg'),
-            colr.darkGreenBg('darkGreenBg'),
-            colr.lightGreenBg('lightGreenBg'),
-            colr.darkYellowBg('darkYellowBg'),
-            colr.lightYellowBg('lightYellowBg'),
-            colr.darkBlueBg('darkBlueBg'),
-            colr.lightBlueBg('lightBlueBg'),
-            colr.darkMagentaBg('darkMagentaBg'),
-            colr.lightMagentaBg('lightMagentaBg'),
-            colr.darkCyanBg('darkCyanBg'),
-            colr.lightCyanBg('lightCyanBg'),
-            colr.darkBlackBg('darkBlackBg'),
-            colr.lightBlackBg('lightBlackBg'),
-            colr.darkWhiteBg('darkWhiteBg'),
-            colr.lightWhiteBg('lightWhiteBg'),
-            colr.reset('reset'),
-            colr.bold('bold'),
-            colr.dim('dim'),
-            colr.italic('italic'),
-            colr.overline('overline'),
-            colr.underline('underline'),
-            colr.strikethrough('strikethrough'),
-            colr.inverse('inverse'),
-            colr.hidden('hidden')
-          ].join(' ');
-          const result = colr.debug(colouredString);
-          expect(result).toEqual(
-            '(red>)darkRed(<) (RED>)lightRed(<) (grn>)darkGreen(<) (GRN>)lightGreen(<) (ylw>)darkYellow(<) (YLW>)lightYellow(<) (blu>)darkBlue(<) (BLU>)lightBlue(<) (mag>)darkMagenta(<) (MAG>)lightMagenta(<) (cyn>)darkCyan(<) (CYN>)lightCyan(<) (blk>)darkBlack(<) (BLK>)lightBlack(<) (wht>)darkWhite(<) (WHT>)lightWhite(<) {red>}darkRedBg{<} {RED>}lightRedBg{<} {grn>}darkGreenBg{<} {GRN>}lightGreenBg{<} {ylw>}darkYellowBg{<} {YLW>}lightYellowBg{<} {blu>}darkBlueBg{<} {BLU>}lightBlueBg{<} {mag>}darkMagentaBg{<} {MAG>}lightMagentaBg{<} {cyn>}darkCyanBg{<} {CYN>}lightCyanBg{<} {blk>}darkBlackBg{<} {BLK>}lightBlackBg{<} {wht>}darkWhiteBg{<} {WHT>}lightWhiteBg{<} [<rst]reset[<rst] [bld>]bold[<dim] [dim>]dim[<dim] [itl>]italic[<itl] [ovr>]overline[<ovr] [und>]underline[<und] [str>]strikethrough[<str] [inv>]inverse[<inv] [hdn>]hidden[<hdn]'
-          );
-        });
-      });
-    });
-  });
-
   describe('sets', () => {
     describe('red', () => {
       singleTest(swissnode.colr, 'colr', (colr, name) => {
+        colr.setOutputMode('ANSI');
         it(should` exist as ${name + 'sets.red'}`, () => {
           expect(colr.sets.red).toBeDefined();
         });
@@ -9583,6 +9427,255 @@ describe('colr', () => {
         it(should` chain modifiers - yellowBg`, () => {
           expect(colr.yellowBg.sets.info.text('hello world')).toEqual('\u001b[103m\u001b[94mhello world\u001b[39m\u001b[49m');
           expect(colr.yellowBg.sets.info.bg('hello world')).toEqual('\u001b[103m\u001b[104m\u001b[30mhello world\u001b[39m\u001b[49m\u001b[49m');
+        });
+      });
+    });
+  });
+
+  describe('helpers', () => {
+    describe('template', () => {
+      singleTest(swissnode.colr, 'colr', (colr, name) => {
+        it(should` exist as ${name + '.$'}`, () => {
+          expect(colr.$).toBeDefined();
+        });
+        it(should` exist as ${name + '.template'}`, () => {
+          expect(colr.template).toBeDefined();
+        });
+
+        it(should` wrap a template literal - $`, () => {
+          expect(colr.red.$`test with ${'word'} in middle`).toEqual('test with \u001b[91mword\u001b[39m in middle');
+        });
+        it(should` wrap a multiple sections - $`, () => {
+          expect(colr.red.$`one ${'two'} three ${'four'} five ${'six'}`).toEqual(
+            'one \u001b[91mtwo\u001b[39m three \u001b[91mfour\u001b[39m five \u001b[91msix\u001b[39m'
+          );
+        });
+        it(should` wrap a template literal - template`, () => {
+          expect(colr.red.template`test with ${'word'} in middle`).toEqual('test with \u001b[91mword\u001b[39m in middle');
+        });
+        it(should` wrap a multiple sections - template`, () => {
+          expect(colr.red.template`one ${'two'} three ${'four'} five ${'six'}`).toEqual(
+            'one \u001b[91mtwo\u001b[39m three \u001b[91mfour\u001b[39m five \u001b[91msix\u001b[39m'
+          );
+        });
+      });
+    });
+
+    describe('clear', () => {
+      singleTest(swissnode.colr, 'colr', (colr, name) => {
+        it(should` exist as ${name + '.clear'}`, () => {
+          expect(colr.clear).toBeDefined();
+        });
+
+        it(should` clear style ANSI code in a string`, () => {
+          const input = colr.red('hello world');
+          expect(input).toEqual('\u001b[91mhello world\u001b[39m');
+          const result = colr.clear(input);
+          expect(result).toEqual('hello world');
+        });
+
+        it(should` clear style ANSI code in a string - multiple styles`, () => {
+          const colouredString = [
+            colr.darkRed('darkRed'),
+            colr.lightRed('lightRed'),
+            colr.darkGreen('darkGreen'),
+            colr.lightGreen('lightGreen'),
+            colr.darkYellow('darkYellow'),
+            colr.lightYellow('lightYellow'),
+            colr.darkBlue('darkBlue'),
+            colr.lightBlue('lightBlue'),
+            colr.darkMagenta('darkMagenta'),
+            colr.lightMagenta('lightMagenta'),
+            colr.darkCyan('darkCyan'),
+            colr.lightCyan('lightCyan'),
+            colr.darkBlack('darkBlack'),
+            colr.lightBlack('lightBlack'),
+            colr.darkWhite('darkWhite'),
+            colr.lightWhite('lightWhite'),
+            colr.darkRedBg('darkRedBg'),
+            colr.lightRedBg('lightRedBg'),
+            colr.darkGreenBg('darkGreenBg'),
+            colr.lightGreenBg('lightGreenBg'),
+            colr.darkYellowBg('darkYellowBg'),
+            colr.lightYellowBg('lightYellowBg'),
+            colr.darkBlueBg('darkBlueBg'),
+            colr.lightBlueBg('lightBlueBg'),
+            colr.darkMagentaBg('darkMagentaBg'),
+            colr.lightMagentaBg('lightMagentaBg'),
+            colr.darkCyanBg('darkCyanBg'),
+            colr.lightCyanBg('lightCyanBg'),
+            colr.darkBlackBg('darkBlackBg'),
+            colr.lightBlackBg('lightBlackBg'),
+            colr.darkWhiteBg('darkWhiteBg'),
+            colr.lightWhiteBg('lightWhiteBg'),
+            colr.reset('reset'),
+            colr.bold('bold'),
+            colr.dim('dim'),
+            colr.italic('italic'),
+            colr.overline('overline'),
+            colr.underline('underline'),
+            colr.strikethrough('strikethrough'),
+            colr.inverse('inverse'),
+            colr.hidden('hidden')
+          ].join(' ');
+          const result = colr.clear(colouredString);
+          expect(result).toEqual(
+            'darkRed lightRed darkGreen lightGreen darkYellow lightYellow darkBlue lightBlue darkMagenta lightMagenta darkCyan lightCyan darkBlack lightBlack darkWhite lightWhite darkRedBg lightRedBg darkGreenBg lightGreenBg darkYellowBg lightYellowBg darkBlueBg lightBlueBg darkMagentaBg lightMagentaBg darkCyanBg lightCyanBg darkBlackBg lightBlackBg darkWhiteBg lightWhiteBg reset bold dim italic overline underline strikethrough inverse hidden'
+          );
+        });
+
+        kitchenSink.toEqual('text', (v) => colr.clear(v), kitchenSink.safe.str(undefined), kitchenSink.samples.general);
+      });
+    });
+
+    describe('debug', () => {
+      singleTest(swissnode.colr, 'colr', (colr, name) => {
+        it(should` exist as ${name + '.debug'}`, () => {
+          expect(colr.debug).toBeDefined();
+        });
+
+        it(should` replace style ANSI code in a string`, () => {
+          const result = colr.debug(colr.red('hello world'));
+          expect(result).toEqual('(RED>)hello world(<)');
+        });
+        it(should` replace style ANSI code in a string - multiple styles`, () => {
+          const colouredString = [
+            colr.darkRed('darkRed'),
+            colr.lightRed('lightRed'),
+            colr.darkGreen('darkGreen'),
+            colr.lightGreen('lightGreen'),
+            colr.darkYellow('darkYellow'),
+            colr.lightYellow('lightYellow'),
+            colr.darkBlue('darkBlue'),
+            colr.lightBlue('lightBlue'),
+            colr.darkMagenta('darkMagenta'),
+            colr.lightMagenta('lightMagenta'),
+            colr.darkCyan('darkCyan'),
+            colr.lightCyan('lightCyan'),
+            colr.darkBlack('darkBlack'),
+            colr.lightBlack('lightBlack'),
+            colr.darkWhite('darkWhite'),
+            colr.lightWhite('lightWhite'),
+            colr.darkRedBg('darkRedBg'),
+            colr.lightRedBg('lightRedBg'),
+            colr.darkGreenBg('darkGreenBg'),
+            colr.lightGreenBg('lightGreenBg'),
+            colr.darkYellowBg('darkYellowBg'),
+            colr.lightYellowBg('lightYellowBg'),
+            colr.darkBlueBg('darkBlueBg'),
+            colr.lightBlueBg('lightBlueBg'),
+            colr.darkMagentaBg('darkMagentaBg'),
+            colr.lightMagentaBg('lightMagentaBg'),
+            colr.darkCyanBg('darkCyanBg'),
+            colr.lightCyanBg('lightCyanBg'),
+            colr.darkBlackBg('darkBlackBg'),
+            colr.lightBlackBg('lightBlackBg'),
+            colr.darkWhiteBg('darkWhiteBg'),
+            colr.lightWhiteBg('lightWhiteBg'),
+            colr.reset('reset'),
+            colr.bold('bold'),
+            colr.dim('dim'),
+            colr.italic('italic'),
+            colr.overline('overline'),
+            colr.underline('underline'),
+            colr.strikethrough('strikethrough'),
+            colr.inverse('inverse'),
+            colr.hidden('hidden')
+          ].join(' ');
+          const result = colr.debug(colouredString);
+          expect(result).toEqual(
+            '(red>)darkRed(<) (RED>)lightRed(<) (grn>)darkGreen(<) (GRN>)lightGreen(<) (ylw>)darkYellow(<) (YLW>)lightYellow(<) (blu>)darkBlue(<) (BLU>)lightBlue(<) (mag>)darkMagenta(<) (MAG>)lightMagenta(<) (cyn>)darkCyan(<) (CYN>)lightCyan(<) (blk>)darkBlack(<) (BLK>)lightBlack(<) (wht>)darkWhite(<) (WHT>)lightWhite(<) {red>}darkRedBg{<} {RED>}lightRedBg{<} {grn>}darkGreenBg{<} {GRN>}lightGreenBg{<} {ylw>}darkYellowBg{<} {YLW>}lightYellowBg{<} {blu>}darkBlueBg{<} {BLU>}lightBlueBg{<} {mag>}darkMagentaBg{<} {MAG>}lightMagentaBg{<} {cyn>}darkCyanBg{<} {CYN>}lightCyanBg{<} {blk>}darkBlackBg{<} {BLK>}lightBlackBg{<} {wht>}darkWhiteBg{<} {WHT>}lightWhiteBg{<} [<rst]reset[<rst] [bld>]bold[<dim] [dim>]dim[<dim] [itl>]italic[<itl] [ovr>]overline[<ovr] [und>]underline[<und] [str>]strikethrough[<str] [inv>]inverse[<inv] [hdn>]hidden[<hdn]'
+          );
+        });
+      });
+    });
+
+    describe('setOutputMode', () => {
+      singleTest(swissnode.colr, 'colr', (colr, name) => {
+        it(should` exist as ${name + '.setOutputMode'}`, () => {
+          expect(colr.setOutputMode).toBeDefined();
+        });
+
+        describe('ANSI', () => {
+          it(should` set output mode to ${'ANSI'}`, () => {
+            colr.setOutputMode('ANSI');
+            expect(colr.getOutputMode()).toEqual('ANSI');
+          });
+
+          it(should` wrap a string with ANSI code`, () => {
+            colr.setOutputMode('ANSI');
+            const output = colr.red('hello world');
+            const expected = '\u001b[91mhello world\u001b[39m';
+            expect(output).toEqual(expected);
+          });
+
+          it(should` wrap a string with ANSI code - multiple styles`, () => {
+            colr.setOutputMode('ANSI');
+            const output = colr.blue(`this is a ${colr.red('test')} of colr`);
+            const expected = '\u001b[94mthis is a \u001b[91mtest\u001b[39m\u001b[94m of colr\u001b[39m';
+            expect(output).toEqual(expected);
+          });
+          it(should` wrap a string with ANSI code - multiple styles and backgrounds`, () => {
+            colr.setOutputMode('ANSI');
+            const output = colr.blue.yellowBg(`this is a ${colr.red.greenBg('test')} of colr`);
+            const expected =
+              '\u001b[94m\u001b[103mthis is a \u001b[91m\u001b[102mtest\u001b[49m\u001b[103m\u001b[39m\u001b[94m of colr\u001b[49m\u001b[39m';
+            expect(output).toEqual(expected);
+          });
+        });
+
+        describe('DEBUG', () => {
+          it(should` set output mode to ${'DEBUG'}`, () => {
+            colr.setOutputMode('DEBUG');
+            expect(colr.getOutputMode()).toEqual('DEBUG');
+          });
+
+          it(should` wrap a string with DEBUG notation`, () => {
+            colr.setOutputMode('DEBUG');
+            const output = colr.red('hello world');
+            const expected = '(RED>)hello world(<)';
+            expect(output).toEqual(expected);
+          });
+
+          it(should` wrap a string with DEBUG notation - multiple styles`, () => {
+            colr.setOutputMode('DEBUG');
+            const output = colr.blue(`this is a ${colr.red('test')} of colr`);
+            const expected = '(BLU>)this is a (RED>)test(<)(BLU>) of colr(<)';
+            expect(output).toEqual(expected);
+          });
+          it(should` wrap a string with DEBUG notation - multiple styles and backgrounds`, () => {
+            colr.setOutputMode('DEBUG');
+            const output = colr.blue.yellowBg(`this is a ${colr.red.greenBg('test')} of colr`);
+            const expected = '(BLU>){YLW>}this is a (RED>){GRN>}test{<}{YLW>}(<)(BLU>) of colr{<}(<)';
+            expect(output).toEqual(expected);
+          });
+        });
+
+        describe('NONE', () => {
+          it(should` set output mode to ${'NONE'}`, () => {
+            colr.setOutputMode('NONE');
+            expect(colr.getOutputMode()).toEqual('NONE');
+          });
+
+          it(should` NOT style the string`, () => {
+            colr.setOutputMode('NONE');
+            const output = colr.red('hello world');
+            const expected = 'hello world';
+            expect(output).toEqual(expected);
+          });
+
+          it(should` NOT style the string - multiple styles`, () => {
+            colr.setOutputMode('NONE');
+            const output = colr.blue(`this is a ${colr.red('test')} of colr`);
+            const expected = 'this is a test of colr';
+            expect(output).toEqual(expected);
+          });
+          it(should` NOT style the string - multiple styles and backgrounds`, () => {
+            colr.setOutputMode('NONE');
+            const output = colr.blue.yellowBg(`this is a ${colr.red.greenBg('test')} of colr`);
+            const expected = 'this is a test of colr';
+            expect(output).toEqual(expected);
+          });
         });
       });
     });

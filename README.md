@@ -3458,6 +3458,8 @@ colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A 
       - [$ / template](#--template)
       - [clear](#colr_clear)
       - [debug](#debug)
+      - [setOutputMode](#setoutputmode)
+      - [getOutputMode](#getoutputmode)
     - [**sets**](#sets)
       - [red](#colr_sets_red)
       - [green](#colr_sets_green)
@@ -5655,6 +5657,68 @@ colr.debug(colr.dark.yellow.dim('Hello World!')); // '(ylw>)[dim>]Hello World![<
 
 colr.debug(colr.yellow.blueBg('Hello World!')); // '(YLW>){blu>}Hello World!{<}(<)'
 colr.debug(colr.yellow.lightBg.blueBg('Hello World!')); // '(YLW>){BLU>}Hello World!{<}(<)'
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### setOutputMode
+
+```typescript
+colr.setOutputMode;
+```
+
+Control the output mode of colr functions.
+
+There are 4 mode options:
+- `AUTO` - auto-detects the best mode for the current environment (either `ANSI` or `NONE`)
+- `ANSI` - normal ANSI escape codes
+- `DEBUG` - debug syntax (see `colr.debug`)
+- `NONE` - plain text with no colours (good for when ANSI isn't supported)
+
+```typescript
+// Default mode is 'AUTO' (resolves to 'ANSI' in this example)
+colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+
+colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+
+colr.setOutputMode('ANSI');
+colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+
+colr.setOutputMode('DEBUG');
+colr.blue(`Hello ${colr.red('World')}!`); // (BLU>)Hello (RED>)World(<)(BLU>)!(<)
+
+colr.setOutputMode('NONE');
+colr.blue(`Hello ${colr.red('World')}!`); // Hello World!
+```
+
+<p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
+
+#### getOutputMode
+
+```typescript
+colr.getOutputMode;
+```
+
+Get the current output mode of colr functions.
+
+There are 3 actual modes:
+- `ANSI` - normal ANSI escape codes
+- `DEBUG` - debug syntax (see `colr.debug`)
+- `NONE` - plain text with no colours (good for when ANSI isn't supported)
+
+```typescript
+colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+console.log(colr.getOutputMode()); // 'ANSI'
+
+colr.setOutputMode('ANSI');
+console.log(colr.getOutputMode()); // 'ANSI'
+
+colr.setOutputMode('DEBUG');
+console.log(colr.getOutputMode()); // 'DEBUG'
+
+colr.setOutputMode('NONE');
+console.log(colr.getOutputMode()); // 'NONE'
 ```
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>

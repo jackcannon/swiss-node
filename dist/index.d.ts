@@ -2391,6 +2391,64 @@ interface ColrFn extends WrapFn {
      * ```
      */
     readonly debug: (text: string) => string;
+    /**<!-- DOCS: colr.setOutputMode #### -->
+     * setOutputMode
+     *
+     * - `colr.setOutputMode`
+     *
+     * Control the output mode of colr functions.
+     *
+     * There are 4 mode options:
+     * - `AUTO` - auto-detects the best mode for the current environment (either `ANSI` or `NONE`)
+     * - `ANSI` - normal ANSI escape codes
+     * - `DEBUG` - debug syntax (see `colr.debug`)
+     * - `NONE` - plain text with no colours (good for when ANSI isn't supported)
+     *
+     * ```typescript
+     * // Default mode is 'AUTO' (resolves to 'ANSI' in this example)
+     * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+     *
+     * colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+     * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+     *
+     * colr.setOutputMode('ANSI');
+     * colr.blue(`Hello ${colr.red('World')}!`); // \u001b[94mHello \u001b[91mWorld\u001b[39m\u001b[94m!\u001b[39m
+     *
+     * colr.setOutputMode('DEBUG');
+     * colr.blue(`Hello ${colr.red('World')}!`); // (BLU>)Hello (RED>)World(<)(BLU>)!(<)
+     *
+     * colr.setOutputMode('NONE');
+     * colr.blue(`Hello ${colr.red('World')}!`); // Hello World!
+     * ```
+     */
+    readonly setOutputMode: (mode?: 'AUTO' | 'ANSI' | 'DEBUG' | 'NONE') => void;
+    /**<!-- DOCS: colr.getOutputMode #### -->
+     * getOutputMode
+     *
+     * - `colr.getOutputMode`
+     *
+     * Get the current output mode of colr functions.
+     *
+     * There are 3 actual modes:
+     * - `ANSI` - normal ANSI escape codes
+     * - `DEBUG` - debug syntax (see `colr.debug`)
+     * - `NONE` - plain text with no colours (good for when ANSI isn't supported)
+     *
+     * ```typescript
+     * colr.setOutputMode('AUTO'); // 'AUTO' resolves to 'ANSI' in this example
+     * console.log(colr.getOutputMode()); // 'ANSI'
+     *
+     * colr.setOutputMode('ANSI');
+     * console.log(colr.getOutputMode()); // 'ANSI'
+     *
+     * colr.setOutputMode('DEBUG');
+     * console.log(colr.getOutputMode()); // 'DEBUG'
+     *
+     * colr.setOutputMode('NONE');
+     * console.log(colr.getOutputMode()); // 'NONE'
+     * ```
+     */
+    readonly getOutputMode: () => 'ANSI' | 'DEBUG' | 'NONE';
     /**<!-- DOCS: colr.sets ### 301 -->
      * sets
      *
