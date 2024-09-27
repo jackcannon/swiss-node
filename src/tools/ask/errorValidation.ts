@@ -1,9 +1,11 @@
+import { ask } from '../ask';
+
 export interface ErrorInfo {
   isError: boolean;
   errorMessage: string | undefined;
 }
 
-export const getErrorInfoFromValidationResult = (validateResult: Error | string | boolean | void): ErrorInfo => {
+export const getErrorInfoFromValidationResult = (validateResult: ask.ValidationResponse): ErrorInfo => {
   const isError =
     validateResult instanceof Error ||
     (validateResult as unknown as Error)?.message !== undefined ||

@@ -237,7 +237,7 @@ interface AskItemisedInputOptionsBase<V, I, O> {
   question: string | Breadcrumb;
   actions: KeyPressActions<V, I, O>;
   showCursor: boolean;
-  validate: (valueData: AskValueData<V>, itemsData: AskItemData<I>) => Error | string | boolean | void;
+  validate: (valueData: AskValueData<V>, itemsData: AskItemData<I>) => ask.ValidationResponse;
 }
 
 interface AskItemisedInputOptionsValues<V, I, O> {

@@ -2393,9 +2393,10 @@ var autotext = async (question, choices, initial, validate, lc) => {
       showCursor: true,
       actions: autotextActions,
       validate: (valueData, itemsData) => {
+        var _a;
         if (!validate)
           return true;
-        return validate(itemsData.items[itemsData.hovered].value, itemsData.hovered, valueData.value);
+        return validate((_a = itemsData.items[itemsData.hovered]) == null ? void 0 : _a.value, itemsData.hovered, valueData.value);
       }
     },
     {

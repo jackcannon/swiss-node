@@ -392,7 +392,7 @@ export namespace ask {
    * @param {string | Breadcrumb} question
    * @param {MenuItem<T>[]} items
    * @param {MenuItem<T> | T | number} [initial]
-   * @param {(value: T, index: number) => Error | string | boolean | void} [validate]
+   * @param {(value: T, index: number) => ask.ValidationResponse} [validate]
    * @param {LineCounter} [lc]
    * @returns {Promise<T>}
    */
@@ -400,7 +400,7 @@ export namespace ask {
     question: string | Breadcrumb,
     items: MenuItem<T>[],
     initial?: MenuItem<T> | T | number,
-    validate?: (value: T, index: number) => Error | string | boolean | void,
+    validate?: (value: T, index: number) => ask.ValidationResponse,
     lc?: LineCounter
   ): Promise<T> => {
     const options = customiseOptions.getAskOptions();
@@ -513,7 +513,7 @@ export namespace ask {
     };
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 
-  /**<!-- DOCS: ask.PromptChoice ### 199 -->
+  /**<!-- DOCS: ask.PromptChoice ### 196 -->
    * PromptChoice
    *
    * - `ask.PromptChoice<T>`
@@ -523,4 +523,24 @@ export namespace ask {
    * Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
    */
   export type PromptChoice<T = string> = T | { title?: string; value: T; selected?: boolean };
+
+  /**<!-- DOCS: ask.ValidationResponse ### 196 -->
+   * ValidationResponse
+   *
+   * - `ask.ValidationResponse`
+   *
+   * Response type for ask validation functions.
+   *
+   * | Response             | Type      | Result        | Error Message |
+   * |----------------------|-----------|---------------|---------------|
+   * | `new Error('error')` | Error     | ❌ - Rejected | `'error'`     |
+   * | `'error'`            | string    | ❌ - Rejected | `'error'`     |
+   * | `false`              | boolean   | ❌ - Rejected | None          |
+   * | `true`               | boolean   | ✅ - Accepted | *N/A*         |
+   * | `null`               | null      | ✅ - Accepted | *N/A*         |
+   * | `undefined`          | undefined | ✅ - Accepted | *N/A*         |
+   *
+   * Equivalent to `Error | string | boolean | void`
+   */
+  export type ValidationResponse = Error | string | boolean | void;
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

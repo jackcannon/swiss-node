@@ -590,7 +590,7 @@ export type AskOptionsItemSet<T> = { [key in OptionsState]: T };
 export type AskOptionsItem<T> = T | Partial<AskOptionsItemSet<T>>;
 
 export namespace ask {
-  /**<!-- DOCS: ask.AskOptions ###! 198 -->
+  /**<!-- DOCS: ask.AskOptions ###! 194 -->
    * AskOptions
    *
    * - `ask.AskOptions`
@@ -600,7 +600,7 @@ export namespace ask {
    * Use with `ask.customise` to set these options.
    */
   export interface AskOptions {
-    /**<!-- DOCS: ask.AskOptions.general #### 198 -->
+    /**<!-- DOCS: ask.AskOptions.general #### 195 -->
      * `general` Options
      *
      * - `ask.AskOptions.general`
@@ -663,7 +663,7 @@ export namespace ask {
       /** How many frames to move on a timeline at a time (fast mode) */
       timelineFastSpeed?: number;
     };
-    /**<!-- DOCS: ask.AskOptions.text #### 198 -->
+    /**<!-- DOCS: ask.AskOptions.text #### 195 -->
      * `text` Options
      *
      * - `ask.AskOptions.text`
@@ -734,7 +734,7 @@ export namespace ask {
       /** 'What do you want to name the file?' */
       specialSaveFileQuestion?: (hl: any) => string;
     };
-    /**<!-- DOCS: ask.AskOptions.formatters ####! 198 -->
+    /**<!-- DOCS: ask.AskOptions.formatters ####! 195 -->
      * `formatters` Options
      *
      * - `ask.AskOptions.formatters`
@@ -742,7 +742,7 @@ export namespace ask {
      * Functions for formatting how the prompts should display
      */
     formatters?: {
-      /**<!-- DOCS: ask.AskOptions.formatters.formatPrompt ##### 198 -->
+      /**<!-- DOCS: ask.AskOptions.formatters.formatPrompt ##### 195 -->
        * `formatPrompt`
        *
        * - `ask.AskOptions.formatters.formatPrompt`
@@ -765,7 +765,7 @@ export namespace ask {
        * ```
        */
       formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
-      /**<!-- DOCS: ask.AskOptions.formatters.formatItems ##### 198 -->
+      /**<!-- DOCS: ask.AskOptions.formatters.formatItems ##### 195 -->
        * `formatItems`
        *
        * - `ask.AskOptions.formatters.formatItems`
@@ -788,7 +788,7 @@ export namespace ask {
        */
       formatItems?: 'block' | 'blockAlt' | 'simple' | 'simpleAlt' | FormatItemsFn;
     };
-    /**<!-- DOCS: ask.AskOptions.colours #### 198 -->
+    /**<!-- DOCS: ask.AskOptions.colours #### 195 -->
      * `colours` Options
      *
      * - `ask.AskOptions.colours`
@@ -953,7 +953,7 @@ export namespace ask {
       /** The active control handle on a timeline */
       timelineHandleActive?: WrapFn | { normal?: WrapFn; error?: WrapFn; done?: WrapFn };
     };
-    /**<!-- DOCS: ask.AskOptions.symbols #### 198 -->
+    /**<!-- DOCS: ask.AskOptions.symbols #### 195 -->
      * `symbols` Options
      *
      * - `ask.AskOptions.symbols`

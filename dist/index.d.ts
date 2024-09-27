@@ -4602,7 +4602,7 @@ declare type AskOptionsItemSet<T> = {
     [key in OptionsState]: T;
 };
 declare namespace ask$1 {
-    /**<!-- DOCS: ask.AskOptions ###! 198 -->
+    /**<!-- DOCS: ask.AskOptions ###! 194 -->
      * AskOptions
      *
      * - `ask.AskOptions`
@@ -4612,7 +4612,7 @@ declare namespace ask$1 {
      * Use with `ask.customise` to set these options.
      */
     interface AskOptions {
-        /**<!-- DOCS: ask.AskOptions.general #### 198 -->
+        /**<!-- DOCS: ask.AskOptions.general #### 195 -->
          * `general` Options
          *
          * - `ask.AskOptions.general`
@@ -4657,7 +4657,7 @@ declare namespace ask$1 {
             /** How many frames to move on a timeline at a time (fast mode) */
             timelineFastSpeed?: number;
         };
-        /**<!-- DOCS: ask.AskOptions.text #### 198 -->
+        /**<!-- DOCS: ask.AskOptions.text #### 195 -->
          * `text` Options
          *
          * - `ask.AskOptions.text`
@@ -4726,7 +4726,7 @@ declare namespace ask$1 {
             /** 'What do you want to name the file?' */
             specialSaveFileQuestion?: (hl: any) => string;
         };
-        /**<!-- DOCS: ask.AskOptions.formatters ####! 198 -->
+        /**<!-- DOCS: ask.AskOptions.formatters ####! 195 -->
          * `formatters` Options
          *
          * - `ask.AskOptions.formatters`
@@ -4734,7 +4734,7 @@ declare namespace ask$1 {
          * Functions for formatting how the prompts should display
          */
         formatters?: {
-            /**<!-- DOCS: ask.AskOptions.formatters.formatPrompt ##### 198 -->
+            /**<!-- DOCS: ask.AskOptions.formatters.formatPrompt ##### 195 -->
              * `formatPrompt`
              *
              * - `ask.AskOptions.formatters.formatPrompt`
@@ -4757,7 +4757,7 @@ declare namespace ask$1 {
              * ```
              */
             formatPrompt?: 'oneLine' | 'halfBox' | 'halfBoxClosed' | 'fullBox' | 'fullBoxClosed' | FormatPromptFn;
-            /**<!-- DOCS: ask.AskOptions.formatters.formatItems ##### 198 -->
+            /**<!-- DOCS: ask.AskOptions.formatters.formatItems ##### 195 -->
              * `formatItems`
              *
              * - `ask.AskOptions.formatters.formatItems`
@@ -4780,7 +4780,7 @@ declare namespace ask$1 {
              */
             formatItems?: 'block' | 'blockAlt' | 'simple' | 'simpleAlt' | FormatItemsFn;
         };
-        /**<!-- DOCS: ask.AskOptions.colours #### 198 -->
+        /**<!-- DOCS: ask.AskOptions.colours #### 195 -->
          * `colours` Options
          *
          * - `ask.AskOptions.colours`
@@ -5138,7 +5138,7 @@ declare namespace ask$1 {
                 done?: WrapFn;
             };
         };
-        /**<!-- DOCS: ask.AskOptions.symbols #### 198 -->
+        /**<!-- DOCS: ask.AskOptions.symbols #### 195 -->
          * `symbols` Options
          *
          * - `ask.AskOptions.symbols`
@@ -5505,11 +5505,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {string} [initial]
-     * @param {(value: string) => Error | string | boolean | void} [validate]
+     * @param {(value: string) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<string>}
      */
-    const text: (question: string | Breadcrumb$1, initial?: string, validate?: (value: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string>;
+    const text: (question: string | Breadcrumb$1, initial?: string, validate?: (value: string) => ValidationResponse, lc?: LineCounter$1) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.autotext -->
      * autotext
      * 
@@ -5523,11 +5523,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
      * @param {T | string} [initial]
-     * @param {(item: T, index: number, typedValue: string) => Error | string | boolean | void} [validate]
+     * @param {(item: T, index: number, typedValue: string) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
-    const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, validate?: (item: T, index: number, typedValue: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
+    const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, validate?: (item: T, index: number, typedValue: string) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
     /**<!-- DOCS-ALIAS: ask.number -->
      * number
      * 
@@ -5540,11 +5540,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {number} [initial]
-     * @param {(value: number) => Error | string | boolean | void} [validate]
+     * @param {(value: number) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<number>}
      */
-    const number: (question: string | Breadcrumb$1, initial?: number, validate?: (value: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<number>;
+    const number: (question: string | Breadcrumb$1, initial?: number, validate?: (value: number) => ValidationResponse, lc?: LineCounter$1) => Promise<number>;
     /**<!-- DOCS-ALIAS: ask.boolean -->
      * boolean
      * 
@@ -5557,11 +5557,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} question
      * @param {boolean} [initial=true]
-     * @param {(value: boolean) => Error | string | boolean | void} [validate]
+     * @param {(value: boolean) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<boolean>}
      */
-    const boolean: (question: string | Breadcrumb$1, initial?: boolean, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
+    const boolean: (question: string | Breadcrumb$1, initial?: boolean, validate?: (value: boolean) => ValidationResponse, lc?: LineCounter$1) => Promise<boolean>;
     /**<!-- DOCS-ALIAS: ask.booleanYN -->
      * booleanYN
      * 
@@ -5575,11 +5575,11 @@ declare namespace ask {
      * const isCool = await ask.booleanYN('Is this cool?'); // true
      * ```
      * @param {string | Breadcrumb} question
-     * @param {(value: boolean) => Error | string | boolean | void} [validate]
+     * @param {(value: boolean) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<boolean>}
      */
-    const booleanYN: (question: string | Breadcrumb$1, validate?: (value: boolean) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<boolean>;
+    const booleanYN: (question: string | Breadcrumb$1, validate?: (value: boolean) => ValidationResponse, lc?: LineCounter$1) => Promise<boolean>;
     /**<!-- DOCS-ALIAS: ask.select -->
      * select
      * 
@@ -5593,11 +5593,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
      * @param {ask.PromptChoice<T> | number} [initial]
-     * @param {(item: T, index: number) => Error | string | boolean | void} [validate]
+     * @param {(item: T, index: number) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
-    const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | PromptChoice<T>, validate?: (item: T, index: number) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
+    const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | PromptChoice<T>, validate?: (item: T, index: number) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
     /**<!-- DOCS-ALIAS: ask.multiselect -->
      * multiselect
      * 
@@ -5611,11 +5611,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @param {ask.PromptChoice<T>[]} choices
      * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial]
-     * @param {(items: T[], indexes: number[]) => Error | string | boolean | void} [validate]
+     * @param {(items: T[], indexes: number[]) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<T[]>}
      */
-    const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | number[] | PromptChoice<T> | PromptChoice<T>[], validate?: (items: T[], indexes: number[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
+    const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | number[] | PromptChoice<T> | PromptChoice<T>[], validate?: (items: T[], indexes: number[]) => ValidationResponse, lc?: LineCounter$1) => Promise<T[]>;
     /**<!-- DOCS-ALIAS: ask.date -->
      * date
      * 
@@ -5629,11 +5629,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
-     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {(date: Date) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
-    const date: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
+    const date: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.time -->
      * time
      * 
@@ -5650,11 +5650,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
-     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {(date: Date) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
-    const time: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
+    const time: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.datetime -->
      * datetime
      * 
@@ -5668,11 +5668,11 @@ declare namespace ask {
      * ```
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initial]
-     * @param {(date: Date) => Error | string | boolean | void} [validate]
+     * @param {(date: Date) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<Date>}
      */
-    const datetime: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Date>;
+    const datetime: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.dateRange -->
      * dateRange
      * 
@@ -5690,11 +5690,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} [questionText]
      * @param {Date} [initialStart]
      * @param {Date} [initialEnd]
-     * @param {(dates: [Date, Date]) => Error | string | boolean | void} [validate]
+     * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<[Date, Date]>}
      */
-    const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date, validate?: (dates: [Date, Date]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<[Date, Date]>;
+    const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date, validate?: (dates: [Date, Date]) => ValidationResponse, lc?: LineCounter$1) => Promise<[Date, Date]>;
     /**<!-- DOCS-ALIAS: ask.fileExplorer -->
      * fileExplorer
      * 
@@ -5712,11 +5712,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
-     * @param {(path: string) => Error | string | boolean | void} [validate]
+     * @param {(path: string) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<string>}
      */
-    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string>;
+    const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => ValidationResponse, lc?: LineCounter$1) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
      * multiFileExplorer
      * 
@@ -5735,11 +5735,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {'d' | 'f'} [selectType='f']
      * @param {string} [startPath=process.cwd()]
-     * @param {(paths: string[]) => Error | string | boolean | void} [validate]
+     * @param {(paths: string[]) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<string[]>}
      */
-    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<string[]>;
+    const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => ValidationResponse, lc?: LineCounter$1) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
      * saveFileExplorer
      * 
@@ -5755,10 +5755,10 @@ declare namespace ask {
      * @param {string | Breadcrumb} questionText
      * @param {string} [startPath=process.cwd()]
      * @param {string} [suggestedFileName='']
-     * @param {(dir: string, filename?: string) => Error | string | boolean | void} [validate]
+     * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate]
      * @returns {Promise<string>}
      */
-    const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string, validate?: (dir: string, filename?: string) => string | boolean | void | Error) => Promise<string>;
+    const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string, validate?: (dir: string, filename?: string) => ValidationResponse) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
      * table
      * 
@@ -5797,11 +5797,11 @@ declare namespace ask {
          * @param {T[]} items
          * @param {AskTableDisplaySettings<T>} [settings={}]
          * @param {T | number} [initial]
-         * @param {(item: T) => Error | string | boolean | void} [validate]
+         * @param {(item: T) => ask.ValidationResponse} [validate]
          * @param {LineCounter} [lc]
          * @returns {Promise<T>}
          */
-        const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T>;
+        const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
          * table.multiselect
          * 
@@ -5837,11 +5837,11 @@ declare namespace ask {
          * @param {T[]} items
          * @param {AskTableDisplaySettings<T>} [settings={}]
          * @param {T[] | number[]} [initial]
-         * @param {(items: T[]) => Error | string | boolean | void} [validate]
+         * @param {(items: T[]) => ask.ValidationResponse} [validate]
          * @param {LineCounter} [lc]
          * @returns {Promise<T[]>}
          */
-        const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number[] | T[], validate?: (items: T[]) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<T[]>;
+        const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number[] | T[], validate?: (items: T[]) => ValidationResponse, lc?: LineCounter$1) => Promise<T[]>;
     }
     /**<!-- DOCS-ALIAS: ask.trim -->
      * trim
@@ -5853,11 +5853,11 @@ declare namespace ask {
      * @param {number} totalFrames
      * @param {number} [frameRate=60]
      * @param {Partial<Handles<number>>} [initial]
-     * @param {(handles: Handles<number>) => Error | string | boolean | void} [validate]
+     * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<Handles<number>>}
      */
-    const trim: (question: string | Breadcrumb$1, totalFrames: number, frameRate?: number, initial?: Partial<Handles<number>>, validate?: (handles: Handles<number>) => string | boolean | void | Error, lc?: LineCounter$1) => Promise<Handles<number>>;
+    const trim: (question: string | Breadcrumb$1, totalFrames: number, frameRate?: number, initial?: Partial<Handles<number>>, validate?: (handles: Handles<number>) => ValidationResponse, lc?: LineCounter$1) => Promise<Handles<number>>;
     /**<!-- DOCS: ask.ExtraHeader ### @ -->
      * Extra
      *
@@ -6044,11 +6044,11 @@ declare namespace ask {
      * @param {string | Breadcrumb} question
      * @param {MenuItem<T>[]} items
      * @param {MenuItem<T> | T | number} [initial]
-     * @param {(value: T, index: number) => Error | string | boolean | void} [validate]
+     * @param {(value: T, index: number) => ask.ValidationResponse} [validate]
      * @param {LineCounter} [lc]
      * @returns {Promise<T>}
      */
-    const menu: <T extends unknown>(question: string | Breadcrumb$1, items: MenuItem<T>[], initial?: number | T | MenuItem<T>, validate?: (value: T, index: number) => Error | string | boolean | void, lc?: LineCounter) => Promise<T>;
+    const menu: <T extends unknown>(question: string | Breadcrumb$1, items: MenuItem<T>[], initial?: number | T | MenuItem<T>, validate?: (value: T, index: number) => ask.ValidationResponse, lc?: LineCounter) => Promise<T>;
     /**
      * MenuItem<T>
      *
@@ -6169,7 +6169,7 @@ declare namespace ask {
         }[];
         export {};
     }
-    /**<!-- DOCS: ask.PromptChoice ### 199 -->
+    /**<!-- DOCS: ask.PromptChoice ### 196 -->
      * PromptChoice
      *
      * - `ask.PromptChoice<T>`
@@ -6183,6 +6183,25 @@ declare namespace ask {
         value: T;
         selected?: boolean;
     };
+    /**<!-- DOCS: ask.ValidationResponse ### 196 -->
+     * ValidationResponse
+     *
+     * - `ask.ValidationResponse`
+     *
+     * Response type for ask validation functions.
+     *
+     * | Response             | Type      | Result        | Error Message |
+     * |----------------------|-----------|---------------|---------------|
+     * | `new Error('error')` | Error     | ❌ - Rejected | `'error'`     |
+     * | `'error'`            | string    | ❌ - Rejected | `'error'`     |
+     * | `false`              | boolean   | ❌ - Rejected | None          |
+     * | `true`               | boolean   | ✅ - Accepted | *N/A*         |
+     * | `null`               | null      | ✅ - Accepted | *N/A*         |
+     * | `undefined`          | undefined | ✅ - Accepted | *N/A*         |
+     *
+     * Equivalent to `Error | string | boolean | void`
+     */
+    type ValidationResponse = Error | string | boolean | void;
 }
 
 declare const defaultConfigs: {

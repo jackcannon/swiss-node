@@ -118,7 +118,7 @@ const overallHandler = <T extends unknown>(
   initialDate: [DynDate, DynDate] = [getCurrDynDate(), isRange ? getCurrDynDate() : getCurrDynDate()],
   initialTime: DynTime = getCurrDynTime(),
   convertFn: (current: [[DynDate, DynDate], DynTime]) => T,
-  validateFn?: (result: T) => Error | string | boolean | void,
+  validateFn?: (result: T) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<T> => {
   const deferred = getDeferred<T>();
@@ -291,14 +291,14 @@ const getDefaultDate = (isDateOn: boolean, isTimeOn: boolean, dateOffset: number
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
- * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {(date: Date) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const date = async (
   questionText?: string | Breadcrumb,
   initial?: Date,
-  validate?: (date: Date) => Error | string | boolean | void,
+  validate?: (date: Date) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<Date> => {
   const initDateObj = initial || getDefaultDate(true, false);
@@ -325,14 +325,14 @@ export const date = async (
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
- * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {(date: Date) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const time = async (
   questionText?: string | Breadcrumb,
   initial?: Date,
-  validate?: (date: Date) => Error | string | boolean | void,
+  validate?: (date: Date) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<Date> => {
   const initDateObj = initial || getDefaultDate(false, true);
@@ -357,14 +357,14 @@ export const time = async (
  * ```
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initial]
- * @param {(date: Date) => Error | string | boolean | void} [validate]
+ * @param {(date: Date) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<Date>}
  */
 export const datetime = async (
   questionText?: string | Breadcrumb,
   initial?: Date,
-  validate?: (date: Date) => Error | string | boolean | void,
+  validate?: (date: Date) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<Date> => {
   const initDateObj = initial || getDefaultDate(true, true);
@@ -393,7 +393,7 @@ const range = await ask.dateRange('When is the festival?');
  * @param {string | Breadcrumb} [questionText]
  * @param {Date} [initialStart]
  * @param {Date} [initialEnd]
- * @param {(dates: [Date, Date]) => Error | string | boolean | void} [validate]
+ * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<[Date, Date]>}
  */
@@ -401,7 +401,7 @@ export const dateRange = async (
   questionText?: string | Breadcrumb,
   initialStart?: Date,
   initialEnd?: Date,
-  validate?: (dates: [Date, Date]) => Error | string | boolean | void,
+  validate?: (dates: [Date, Date]) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<[Date, Date]> => {
   const initDateObj1 = initialStart || getDefaultDate(true, false);

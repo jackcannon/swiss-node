@@ -28,7 +28,7 @@ export const fileExplorerHandler = async (
     currentFileName: string | undefined,
     selected: string[],
     newFileName: string | undefined
-  ) => Error | string | boolean | void,
+  ) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<string[]> => {
   // options

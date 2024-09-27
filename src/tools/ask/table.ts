@@ -6,6 +6,7 @@ import { getLineCounter } from '../out/lineCounter';
 import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { colr } from '../colr';
 import { ansi, LineCounter, out } from '../out';
+import { ask } from '../ask';
 import { Breadcrumb } from '../out/breadcrumb';
 import { table } from '../table';
 import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
@@ -25,7 +26,7 @@ const askTableHandler = <T extends unknown>(
   rows?: any[][] | ItemToRowMapFunction<T>,
   headers: any[][] | RemapOf<T, string> = [],
   tableOptions: table.TableOptions = {},
-  validate?: (items: T[]) => Error | string | boolean | void,
+  validate?: (items: T[]) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<T[]> => {
   const deferred = getDeferred<T[]>();
@@ -372,7 +373,7 @@ const getTableSelectActionBar = (multi: boolean, pressed?: string, disabled: str
  * @param {T[]} items
  * @param {AskTableDisplaySettings<T>} [settings={}]
  * @param {T | number} [initial]
- * @param {(item: T) => Error | string | boolean | void} [validate]
+ * @param {(item: T) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<T>}
  */
@@ -381,7 +382,7 @@ export const select = async <T extends unknown>(
   items: T[],
   settings: AskTableDisplaySettings<T> = {},
   initial?: T | number,
-  validate?: (item: T) => Error | string | boolean | void,
+  validate?: (item: T) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<T> => {
   const validateMulti = validate ? (items: T[]) => validate(items[0]) : undefined;
@@ -434,7 +435,7 @@ export const select = async <T extends unknown>(
  * @param {T[]} items
  * @param {AskTableDisplaySettings<T>} [settings={}]
  * @param {T[] | number[]} [initial]
- * @param {(items: T[]) => Error | string | boolean | void} [validate]
+ * @param {(items: T[]) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<T[]>}
  */
@@ -443,7 +444,7 @@ export const multiselect = <T extends unknown>(
   items: T[],
   settings: AskTableDisplaySettings<T> = {},
   initial?: T[] | number[],
-  validate?: (items: T[]) => Error | string | boolean | void,
+  validate?: (items: T[]) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<T[]> => askTableHandler(true, question, items, initial, settings.rows, settings.headers, settings.options, validate, lc);
 

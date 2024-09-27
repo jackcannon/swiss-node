@@ -1,4 +1,5 @@
 import { LineCounter } from '../out';
+import { ask } from '../ask';
 import { Breadcrumb } from '../out/breadcrumb';
 import { fileExplorerHandler } from './fileExplorer/handler';
 
@@ -25,7 +26,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
  * @param {string | Breadcrumb} questionText
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
- * @param {(path: string) => Error | string | boolean | void} [validate]
+ * @param {(path: string) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<string>}
  */
@@ -33,7 +34,7 @@ export const fileExplorer = async (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
   startPath: string = process.cwd(),
-  validate?: (path: string) => Error | string | boolean | void,
+  validate?: (path: string) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<string> => {
   const vFn = (
@@ -43,7 +44,7 @@ export const fileExplorer = async (
     currentFileName: string | undefined,
     selected: string[],
     newFileName: string | undefined
-  ): Error | string | boolean | void => {
+  ): ask.ValidationResponse => {
     if (!validate) return true;
     if (cursorType !== selectType) return true;
 
@@ -72,7 +73,7 @@ export const fileExplorer = async (
  * @param {string | Breadcrumb} questionText
  * @param {'d' | 'f'} [selectType='f']
  * @param {string} [startPath=process.cwd()]
- * @param {(paths: string[]) => Error | string | boolean | void} [validate]
+ * @param {(paths: string[]) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<string[]>}
  */
@@ -80,7 +81,7 @@ export const multiFileExplorer = (
   questionText: string | Breadcrumb,
   selectType: 'd' | 'f' = 'f',
   startPath: string = process.cwd(),
-  validate?: (paths: string[]) => Error | string | boolean | void,
+  validate?: (paths: string[]) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<string[]> => {
   const vFn = (
@@ -90,7 +91,7 @@ export const multiFileExplorer = (
     currentFileName: string | undefined,
     selected: string[],
     newFileName: string | undefined
-  ): Error | string | boolean | void => {
+  ): ask.ValidationResponse => {
     if (!validate) return true;
     const result = validate(selected);
     return result;
@@ -113,14 +114,14 @@ const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
  * @param {string | Breadcrumb} questionText
  * @param {string} [startPath=process.cwd()]
  * @param {string} [suggestedFileName='']
- * @param {(dir: string, filename?: string) => Error | string | boolean | void} [validate]
+ * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate]
  * @returns {Promise<string>}
  */
 export const saveFileExplorer = async (
   questionText: string | Breadcrumb,
   startPath: string = process.cwd(),
   suggestedFileName: string = '',
-  validate?: (dir: string, filename?: string) => Error | string | boolean | void
+  validate?: (dir: string, filename?: string) => ask.ValidationResponse
 ): Promise<string> => {
   const vFn = (
     cursorType: 'd' | 'f',
@@ -129,7 +130,7 @@ export const saveFileExplorer = async (
     currentFileName: string | undefined,
     selected: string[],
     newFileName: string | undefined
-  ): Error | string | boolean | void => {
+  ): ask.ValidationResponse => {
     if (!validate) return true;
 
     const result = validate(currentDir, newFileName ?? currentFileName);

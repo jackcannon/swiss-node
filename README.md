@@ -63,13 +63,14 @@ A collection of functions to ask the user for input.
       - [itemsToPromptObjects](#itemstopromptobjects)
     - [**AskOptions**](#askoptions)
     - [PromptChoice](#promptchoice)
+    - [ValidationResponse](#validationresponse)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
 ### <span id="ask_text">text</span>
 
 ```typescript
-ask.text(question: string | Breadcrumb, initial: string, validate: (value: string) => Error | string | boolean | void, lc: LineCounter): Promise<string>
+ask.text(question: string | Breadcrumb, initial: string, validate: (value: string) => ask.ValidationResponse, lc: LineCounter): Promise<string>
 ```
 
 Get a text input from the user.
@@ -78,12 +79,12 @@ Get a text input from the user.
 const name = await ask.text('What is your name?'); // 'Jack'
 ```
 
-|  #  | Parameter Name | Required | Type                                                    |
-|:---:|:---------------|:---------|:--------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                  |
-| *1* | `initial`      | *No*     | `string`                                                |
-| *2* | `validate`     | *No*     | `(value: string) => Error \| string \| boolean \| void` |
-| *3* | `lc`           | *No*     | `LineCounter`                                           |
+|  #  | Parameter Name | Required | Type                                        |
+|:---:|:---------------|:---------|:--------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      |
+| *1* | `initial`      | *No*     | `string`                                    |
+| *2* | `validate`     | *No*     | `(value: string) => ask.ValidationResponse` |
+| *3* | `lc`           | *No*     | `LineCounter`                               |
 
 | Return Type       |
 |-------------------|
@@ -94,7 +95,7 @@ const name = await ask.text('What is your name?'); // 'Jack'
 ### autotext
 
 ```typescript
-ask.autotext(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: T | string, validate: (item: T, index: number, typedValue: string) => Error | string | boolean | void, lc: LineCounter): Promise<T>
+ask.autotext(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: T | string, validate: (item: T, index: number, typedValue: string) => ask.ValidationResponse, lc: LineCounter): Promise<T>
 ```
 
 Get a text input from the user, with auto-completion.
@@ -103,13 +104,13 @@ Get a text input from the user, with auto-completion.
 const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
 ```
 
-|  #  | Parameter Name | Required | Type                                                                                 |
-|:---:|:---------------|:---------|:-------------------------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                               |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                                              |
-| *2* | `initial`      | *No*     | `T \| string`                                                                        |
-| *3* | `validate`     | *No*     | `(item: T, index: number, typedValue: string) => Error \| string \| boolean \| void` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                                        |
+|  #  | Parameter Name | Required | Type                                                                     |
+|:---:|:---------------|:---------|:-------------------------------------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                   |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                                  |
+| *2* | `initial`      | *No*     | `T \| string`                                                            |
+| *3* | `validate`     | *No*     | `(item: T, index: number, typedValue: string) => ask.ValidationResponse` |
+| *4* | `lc`           | *No*     | `LineCounter`                                                            |
 
 | Return Type  |
 |--------------|
@@ -120,7 +121,7 @@ const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); 
 ### number
 
 ```typescript
-ask.number(question: string | Breadcrumb, initial: number, validate: (value: number) => Error | string | boolean | void, lc: LineCounter): Promise<number>
+ask.number(question: string | Breadcrumb, initial: number, validate: (value: number) => ask.ValidationResponse, lc: LineCounter): Promise<number>
 ```
 
 Get a number input from the user.
@@ -129,12 +130,12 @@ Get a number input from the user.
 const age = await ask.number('How old are you?'); // 30
 ```
 
-|  #  | Parameter Name | Required | Type                                                    |
-|:---:|:---------------|:---------|:--------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                  |
-| *1* | `initial`      | *No*     | `number`                                                |
-| *2* | `validate`     | *No*     | `(value: number) => Error \| string \| boolean \| void` |
-| *3* | `lc`           | *No*     | `LineCounter`                                           |
+|  #  | Parameter Name | Required | Type                                        |
+|:---:|:---------------|:---------|:--------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      |
+| *1* | `initial`      | *No*     | `number`                                    |
+| *2* | `validate`     | *No*     | `(value: number) => ask.ValidationResponse` |
+| *3* | `lc`           | *No*     | `LineCounter`                               |
 
 | Return Type       |
 |-------------------|
@@ -145,7 +146,7 @@ const age = await ask.number('How old are you?'); // 30
 ### boolean
 
 ```typescript
-ask.boolean(question: string | Breadcrumb, initial: boolean, validate: (value: boolean) => Error | string | boolean | void, lc: LineCounter): Promise<boolean>
+ask.boolean(question: string | Breadcrumb, initial: boolean, validate: (value: boolean) => ask.ValidationResponse, lc: LineCounter): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -154,12 +155,12 @@ Get a boolean input from the user (yes or no)
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
-|  #  | Parameter Name | Required | Type                                                     | Default |
-|:---:|:---------------|:---------|:---------------------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                   |         |
-| *1* | `initial`      | *No*     | `boolean`                                                | `true`  |
-| *2* | `validate`     | *No*     | `(value: boolean) => Error \| string \| boolean \| void` |         |
-| *3* | `lc`           | *No*     | `LineCounter`                                            |         |
+|  #  | Parameter Name | Required | Type                                         | Default |
+|:---:|:---------------|:---------|:---------------------------------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       |         |
+| *1* | `initial`      | *No*     | `boolean`                                    | `true`  |
+| *2* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` |         |
+| *3* | `lc`           | *No*     | `LineCounter`                                |         |
 
 | Return Type        |
 |--------------------|
@@ -170,7 +171,7 @@ const isCool = await ask.boolean('Is this cool?'); // true
 ### booleanYN
 
 ```typescript
-ask.booleanYN(question: string | Breadcrumb, validate: (value: boolean) => Error | string | boolean | void, lc: LineCounter): Promise<boolean>
+ask.booleanYN(question: string | Breadcrumb, validate: (value: boolean) => ask.ValidationResponse, lc: LineCounter): Promise<boolean>
 ```
 
 Get a boolean input from the user (yes or no)
@@ -181,11 +182,11 @@ Alternative interface to ask.boolean
 const isCool = await ask.booleanYN('Is this cool?'); // true
 ```
 
-|  #  | Parameter Name | Required | Type                                                     |
-|:---:|:---------------|:---------|:---------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                   |
-| *1* | `validate`     | *No*     | `(value: boolean) => Error \| string \| boolean \| void` |
-| *2* | `lc`           | *No*     | `LineCounter`                                            |
+|  #  | Parameter Name | Required | Type                                         |
+|:---:|:---------------|:---------|:---------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       |
+| *1* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` |
+| *2* | `lc`           | *No*     | `LineCounter`                                |
 
 | Return Type        |
 |--------------------|
@@ -196,7 +197,7 @@ const isCool = await ask.booleanYN('Is this cool?'); // true
 ### select
 
 ```typescript
-ask.select(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | number, validate: (item: T, index: number) => Error | string | boolean | void, lc: LineCounter): Promise<T>
+ask.select(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | number, validate: (item: T, index: number) => ask.ValidationResponse, lc: LineCounter): Promise<T>
 ```
 
 Get the user to select an option from a list.
@@ -205,13 +206,13 @@ Get the user to select an option from a list.
 const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
 ```
 
-|  #  | Parameter Name | Required | Type                                                             |
-|:---:|:---------------|:---------|:-----------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                           |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                          |
-| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| number`                                  |
-| *3* | `validate`     | *No*     | `(item: T, index: number) => Error \| string \| boolean \| void` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                    |
+|  #  | Parameter Name | Required | Type                                                 |
+|:---:|:---------------|:---------|:-----------------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                               |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                              |
+| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| number`                      |
+| *3* | `validate`     | *No*     | `(item: T, index: number) => ask.ValidationResponse` |
+| *4* | `lc`           | *No*     | `LineCounter`                                        |
 
 | Return Type  |
 |--------------|
@@ -222,7 +223,7 @@ const colour = await ask.select('Whats your favourite colour?', ['red', 'green',
 ### multiselect
 
 ```typescript
-ask.multiselect(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[], validate: (items: T[], indexes: number[]) => Error | string | boolean | void, lc: LineCounter): Promise<T[]>
+ask.multiselect(question: string | Breadcrumb, choices: ask.PromptChoice<T>[], initial: ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[], validate: (items: T[], indexes: number[]) => ask.ValidationResponse, lc: LineCounter): Promise<T[]>
 ```
 
 Get the user to select multiple opts from a list.
@@ -231,13 +232,13 @@ Get the user to select multiple opts from a list.
 const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
 ```
 
-|  #  | Parameter Name | Required | Type                                                                    |
-|:---:|:---------------|:---------|:------------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                  |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                                 |
-| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| ask.PromptChoice<T>[] \| number \| number[]`    |
-| *3* | `validate`     | *No*     | `(items: T[], indexes: number[]) => Error \| string \| boolean \| void` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                           |
+|  #  | Parameter Name | Required | Type                                                                 |
+|:---:|:---------------|:---------|:---------------------------------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                               |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                              |
+| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| ask.PromptChoice<T>[] \| number \| number[]` |
+| *3* | `validate`     | *No*     | `(items: T[], indexes: number[]) => ask.ValidationResponse`          |
+| *4* | `lc`           | *No*     | `LineCounter`                                                        |
 
 | Return Type    |
 |----------------|
@@ -248,7 +249,7 @@ const colours = await ask.multiselect('Whats your favourite colours?', ['red', '
 ### date
 
 ```typescript
-ask.date(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => Error | string | boolean | void, lc: LineCounter): Promise<Date>
+ask.date(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => ask.ValidationResponse, lc: LineCounter): Promise<Date>
 ```
 
 Get a date input from the user.
@@ -258,12 +259,12 @@ const date = await ask.date('Whats the date?');
 // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
 ```
 
-|  #  | Parameter Name | Required | Type                                                 |
-|:---:|:---------------|:---------|:-----------------------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                               |
-| *1* | `initial`      | *No*     | `Date`                                               |
-| *2* | `validate`     | *No*     | `(date: Date) => Error \| string \| boolean \| void` |
-| *3* | `lc`           | *No*     | `LineCounter`                                        |
+|  #  | Parameter Name | Required | Type                                     |
+|:---:|:---------------|:---------|:-----------------------------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
+| *1* | `initial`      | *No*     | `Date`                                   |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
+| *3* | `lc`           | *No*     | `LineCounter`                            |
 
 | Return Type     |
 |-----------------|
@@ -274,7 +275,7 @@ const date = await ask.date('Whats the date?');
 ### time
 
 ```typescript
-ask.time(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => Error | string | boolean | void, lc: LineCounter): Promise<Date>
+ask.time(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => ask.ValidationResponse, lc: LineCounter): Promise<Date>
 ```
 
 Get a time input from the user.
@@ -287,12 +288,12 @@ const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
 // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
 ```
 
-|  #  | Parameter Name | Required | Type                                                 |
-|:---:|:---------------|:---------|:-----------------------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                               |
-| *1* | `initial`      | *No*     | `Date`                                               |
-| *2* | `validate`     | *No*     | `(date: Date) => Error \| string \| boolean \| void` |
-| *3* | `lc`           | *No*     | `LineCounter`                                        |
+|  #  | Parameter Name | Required | Type                                     |
+|:---:|:---------------|:---------|:-----------------------------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
+| *1* | `initial`      | *No*     | `Date`                                   |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
+| *3* | `lc`           | *No*     | `LineCounter`                            |
 
 | Return Type     |
 |-----------------|
@@ -303,7 +304,7 @@ const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
 ### datetime
 
 ```typescript
-ask.datetime(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => Error | string | boolean | void, lc: LineCounter): Promise<Date>
+ask.datetime(questionText: string | Breadcrumb, initial: Date, validate: (date: Date) => ask.ValidationResponse, lc: LineCounter): Promise<Date>
 ```
 
 Get a date and time input from the user.
@@ -313,12 +314,12 @@ const when = await ask.datetime('Whats the date/time?');
 // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
 ```
 
-|  #  | Parameter Name | Required | Type                                                 |
-|:---:|:---------------|:---------|:-----------------------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                               |
-| *1* | `initial`      | *No*     | `Date`                                               |
-| *2* | `validate`     | *No*     | `(date: Date) => Error \| string \| boolean \| void` |
-| *3* | `lc`           | *No*     | `LineCounter`                                        |
+|  #  | Parameter Name | Required | Type                                     |
+|:---:|:---------------|:---------|:-----------------------------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
+| *1* | `initial`      | *No*     | `Date`                                   |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
+| *3* | `lc`           | *No*     | `LineCounter`                            |
 
 | Return Type     |
 |-----------------|
@@ -329,7 +330,7 @@ const when = await ask.datetime('Whats the date/time?');
 ### dateRange
 
 ```typescript
-ask.dateRange(questionText: string | Breadcrumb, initialStart: Date, initialEnd: Date, validate: (dates: [Date, Date]) => Error | string | boolean | void, lc: LineCounter): Promise<[Date, Date]>
+ask.dateRange(questionText: string | Breadcrumb, initialStart: Date, initialEnd: Date, validate: (dates: [Date, Date]) => ask.ValidationResponse, lc: LineCounter): Promise<[Date, Date]>
 ```
 
 Get a date range input from the user.
@@ -342,13 +343,13 @@ const range = await ask.dateRange('When is the festival?');
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                                          |
-|:---:|:---------------|:---------|:--------------------------------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                                        |
-| *1* | `initialStart` | *No*     | `Date`                                                        |
-| *2* | `initialEnd`   | *No*     | `Date`                                                        |
-| *3* | `validate`     | *No*     | `(dates: [Date, Date]) => Error \| string \| boolean \| void` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                 |
+|  #  | Parameter Name | Required | Type                                              |
+|:---:|:---------------|:---------|:--------------------------------------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                            |
+| *1* | `initialStart` | *No*     | `Date`                                            |
+| *2* | `initialEnd`   | *No*     | `Date`                                            |
+| *3* | `validate`     | *No*     | `(dates: [Date, Date]) => ask.ValidationResponse` |
+| *4* | `lc`           | *No*     | `LineCounter`                                     |
 
 | Return Type             |
 |-------------------------|
@@ -361,7 +362,7 @@ const range = await ask.dateRange('When is the festival?');
 #### <span id="ask_fileexplorer">fileExplorer</span>
 
 ```typescript
-ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (path: string) => Error | string | boolean | void, lc: LineCounter): Promise<string>
+ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (path: string) => ask.ValidationResponse, lc: LineCounter): Promise<string>
 ```
 
 Get a file or folder path from the user.
@@ -374,13 +375,13 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 // '/Users/jackcannon/Documents/some_folder'
 ```
 
-|  #  | Parameter Name | Required | Type                                                   | Default         |
-|:---:|:---------------|:---------|:-------------------------------------------------------|:----------------|
-| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                                 |                 |
-| *1* | `selectType`   | *No*     | `'d' \| 'f'`                                           | `'f'`           |
-| *2* | `startPath`    | *No*     | `string`                                               | `process.cwd()` |
-| *3* | `validate`     | *No*     | `(path: string) => Error \| string \| boolean \| void` |                 |
-| *4* | `lc`           | *No*     | `LineCounter`                                          |                 |
+|  #  | Parameter Name | Required | Type                                       | Default         |
+|:---:|:---------------|:---------|:-------------------------------------------|:----------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                     |                 |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`                               | `'f'`           |
+| *2* | `startPath`    | *No*     | `string`                                   | `process.cwd()` |
+| *3* | `validate`     | *No*     | `(path: string) => ask.ValidationResponse` |                 |
+| *4* | `lc`           | *No*     | `LineCounter`                              |                 |
 
 | Return Type       |
 |-------------------|
@@ -391,7 +392,7 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 #### multiFileExplorer
 
 ```typescript
-ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (paths: string[]) => Error | string | boolean | void, lc: LineCounter): Promise<string[]>
+ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', startPath: string, validate: (paths: string[]) => ask.ValidationResponse, lc: LineCounter): Promise<string[]>
 ```
 
 Get multiple file or folder paths from the user.
@@ -405,13 +406,13 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                                      | Default         |
-|:---:|:---------------|:---------|:----------------------------------------------------------|:----------------|
-| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                                    |                 |
-| *1* | `selectType`   | *No*     | `'d' \| 'f'`                                              | `'f'`           |
-| *2* | `startPath`    | *No*     | `string`                                                  | `process.cwd()` |
-| *3* | `validate`     | *No*     | `(paths: string[]) => Error \| string \| boolean \| void` |                 |
-| *4* | `lc`           | *No*     | `LineCounter`                                             |                 |
+|  #  | Parameter Name | Required | Type                                          | Default         |
+|:---:|:---------------|:---------|:----------------------------------------------|:----------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                        |                 |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`                                  | `'f'`           |
+| *2* | `startPath`    | *No*     | `string`                                      | `process.cwd()` |
+| *3* | `validate`     | *No*     | `(paths: string[]) => ask.ValidationResponse` |                 |
+| *4* | `lc`           | *No*     | `LineCounter`                                 |                 |
 
 | Return Type         |
 |---------------------|
@@ -422,7 +423,7 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 #### saveFileExplorer
 
 ```typescript
-ask.saveFileExplorer(questionText: string | Breadcrumb, startPath: string, suggestedFileName: string, validate: (dir: string, filename?: string) => Error | string | boolean | void): Promise<string>
+ask.saveFileExplorer(questionText: string | Breadcrumb, startPath: string, suggestedFileName: string, validate: (dir: string, filename?: string) => ask.ValidationResponse): Promise<string>
 ```
 
 Get a file path from the user, with the intention of saving a file to that path.
@@ -433,12 +434,12 @@ const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
 // '/Users/user/Documents/data.json'
 ```
 
-|  #  | Parameter Name      | Required | Type                                                                     | Default         |
-|:---:|:--------------------|:---------|:-------------------------------------------------------------------------|:----------------|
-| *0* | `questionText`      | **Yes**  | `string \| Breadcrumb`                                                   |                 |
-| *1* | `startPath`         | *No*     | `string`                                                                 | `process.cwd()` |
-| *2* | `suggestedFileName` | *No*     | `string`                                                                 | `''`            |
-| *3* | `validate`          | *No*     | `(dir: string, filename?: string) => Error \| string \| boolean \| void` |                 |
+|  #  | Parameter Name      | Required | Type                                                         | Default         |
+|:---:|:--------------------|:---------|:-------------------------------------------------------------|:----------------|
+| *0* | `questionText`      | **Yes**  | `string \| Breadcrumb`                                       |                 |
+| *1* | `startPath`         | *No*     | `string`                                                     | `process.cwd()` |
+| *2* | `suggestedFileName` | *No*     | `string`                                                     | `''`            |
+| *3* | `validate`          | *No*     | `(dir: string, filename?: string) => ask.ValidationResponse` |                 |
 
 | Return Type       |
 |-------------------|
@@ -454,7 +455,7 @@ A collection of functions for asking questions with tables.
 #### table.select
 
 ```typescript
-ask.table.select(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T | number, validate: (item: T) => Error | string | boolean | void, lc: LineCounter): Promise<T>
+ask.table.select(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T | number, validate: (item: T) => ask.ValidationResponse, lc: LineCounter): Promise<T>
 ```
 
 Get a single selection from a table.
@@ -481,14 +482,14 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 // Returns: { name: 'Jane', age: 26 }
 ```
 
-|  #  | Parameter Name | Required | Type                                              | Default |
-|:---:|:---------------|:---------|:--------------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                            |         |
-| *1* | `items`        | **Yes**  | `T[]`                                             |         |
-| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`                      | `{}`    |
-| *3* | `initial`      | *No*     | `T \| number`                                     |         |
-| *4* | `validate`     | *No*     | `(item: T) => Error \| string \| boolean \| void` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                                     |         |
+|  #  | Parameter Name | Required | Type                                  | Default |
+|:---:|:---------------|:---------|:--------------------------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                |         |
+| *1* | `items`        | **Yes**  | `T[]`                                 |         |
+| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`          | `{}`    |
+| *3* | `initial`      | *No*     | `T \| number`                         |         |
+| *4* | `validate`     | *No*     | `(item: T) => ask.ValidationResponse` |         |
+| *5* | `lc`           | *No*     | `LineCounter`                         |         |
 
 | Return Type  |
 |--------------|
@@ -499,7 +500,7 @@ const answer = await ask.table.select('Who?', items, undefined, itemToRow, heade
 #### table.multiselect
 
 ```typescript
-ask.table.multiselect(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T[] | number[], validate: (items: T[]) => Error | string | boolean | void, lc: LineCounter): Promise<T[]>
+ask.table.multiselect(question: string | Breadcrumb, items: T[], settings: AskTableDisplaySettings<T>, initial: T[] | number[], validate: (items: T[]) => ask.ValidationResponse, lc: LineCounter): Promise<T[]>
 ```
 
 Get multiple selections from a table.
@@ -529,14 +530,14 @@ const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, 
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                                 | Default |
-|:---:|:---------------|:---------|:-----------------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                               |         |
-| *1* | `items`        | **Yes**  | `T[]`                                                |         |
-| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`                         | `{}`    |
-| *3* | `initial`      | *No*     | `T[] \| number[]`                                    |         |
-| *4* | `validate`     | *No*     | `(items: T[]) => Error \| string \| boolean \| void` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                                        |         |
+|  #  | Parameter Name | Required | Type                                     | Default |
+|:---:|:---------------|:---------|:-----------------------------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                   |         |
+| *1* | `items`        | **Yes**  | `T[]`                                    |         |
+| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`             | `{}`    |
+| *3* | `initial`      | *No*     | `T[] \| number[]`                        |         |
+| *4* | `validate`     | *No*     | `(items: T[]) => ask.ValidationResponse` |         |
+| *5* | `lc`           | *No*     | `LineCounter`                            |         |
 
 | Return Type    |
 |----------------|
@@ -565,19 +566,19 @@ All settings are optional.
 ### trim
 
 ```typescript
-ask.trim(question: string | Breadcrumb, totalFrames: number, frameRate: number, initial: Partial<Handles<number>>, validate: (handles: Handles<number>) => Error | string | boolean | void, lc: LineCounter): Promise<Handles<number>>
+ask.trim(question: string | Breadcrumb, totalFrames: number, frameRate: number, initial: Partial<Handles<number>>, validate: (handles: Handles<number>) => ask.ValidationResponse, lc: LineCounter): Promise<Handles<number>>
 ```
 
 Get a start and end frame from the user
 
-|  #  | Parameter Name | Required | Type                                                               | Default |
-|:---:|:---------------|:---------|:-------------------------------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                             |         |
-| *1* | `totalFrames`  | **Yes**  | `number`                                                           |         |
-| *2* | `frameRate`    | *No*     | `number`                                                           | `60`    |
-| *3* | `initial`      | *No*     | `Partial<Handles<number>>`                                         |         |
-| *4* | `validate`     | *No*     | `(handles: Handles<number>) => Error \| string \| boolean \| void` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                                                      |         |
+|  #  | Parameter Name | Required | Type                                                   | Default |
+|:---:|:---------------|:---------|:-------------------------------------------------------|:--------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                 |         |
+| *1* | `totalFrames`  | **Yes**  | `number`                                               |         |
+| *2* | `frameRate`    | *No*     | `number`                                               | `60`    |
+| *3* | `initial`      | *No*     | `Partial<Handles<number>>`                             |         |
+| *4* | `validate`     | *No*     | `(handles: Handles<number>) => ask.ValidationResponse` |         |
+| *5* | `lc`           | *No*     | `LineCounter`                                          |         |
 
 | Return Type                |
 |----------------------------|
@@ -795,7 +796,7 @@ const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
 #### menu
 
 ```typescript
-ask.menu(question: string | Breadcrumb, items: MenuItem<T>[], initial: MenuItem<T> | T | number, validate: (value: T, index: number) => Error | string | boolean | void, lc: LineCounter): Promise<T>
+ask.menu(question: string | Breadcrumb, items: MenuItem<T>[], initial: MenuItem<T> | T | number, validate: (value: T, index: number) => ask.ValidationResponse, lc: LineCounter): Promise<T>
 ```
 
 Wrapper for `ask.select` that styles the output as a menu, with icons and colours
@@ -813,13 +814,13 @@ const menuItems: ask.MenuItem<string>[] = [
 const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
 ```
 
-|  #  | Parameter Name | Required | Type                                                              |
-|:---:|:---------------|:---------|:------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                            |
-| *1* | `items`        | **Yes**  | `MenuItem<T>[]`                                                   |
-| *2* | `initial`      | *No*     | `MenuItem<T> \| T \| number`                                      |
-| *3* | `validate`     | *No*     | `(value: T, index: number) => Error \| string \| boolean \| void` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                     |
+|  #  | Parameter Name | Required | Type                                                  |
+|:---:|:---------------|:---------|:------------------------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                |
+| *1* | `items`        | **Yes**  | `MenuItem<T>[]`                                       |
+| *2* | `initial`      | *No*     | `MenuItem<T> \| T \| number`                          |
+| *3* | `validate`     | *No*     | `(value: T, index: number) => ask.ValidationResponse` |
+| *4* | `lc`           | *No*     | `LineCounter`                                         |
 
 | Return Type  |
 |--------------|
@@ -1206,6 +1207,27 @@ ask.PromptChoice<T>;
 A choice for a prompt
 
 Equivalent to ``T | { title?: string; value?: T; selected?: boolean; }``
+
+<p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
+
+### ValidationResponse
+
+```typescript
+ask.ValidationResponse;
+```
+
+Response type for ask validation functions.
+
+| Response             | Type      | Result        | Error Message |
+|----------------------|-----------|---------------|---------------|
+| `new Error('error')` | Error     | ❌ - Rejected | `'error'`     |
+| `'error'`            | string    | ❌ - Rejected | `'error'`     |
+| `false`              | boolean   | ❌ - Rejected | None          |
+| `true`               | boolean   | ✅ - Accepted | *N/A*         |
+| `null`               | null      | ✅ - Accepted | *N/A*         |
+| `undefined`          | undefined | ✅ - Accepted | *N/A*         |
+
+Equivalent to `Error | string | boolean | void`
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 

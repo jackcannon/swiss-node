@@ -4,6 +4,7 @@ import { ActionBarConfig, getActionBar } from '../../utils/actionBar';
 import { colr } from '../colr';
 import { getKeyListener } from '../keyListener';
 import { ansi, Breadcrumb, LineCounter, out } from '../out';
+import { ask } from '../ask';
 import { getLineCounter } from '../out/lineCounter';
 import { getAskOptions, getAskOptionsForState } from './basicInput/customise';
 import { ErrorInfo, getErrorInfoFromValidationResult } from './errorValidation';
@@ -65,7 +66,7 @@ const getTrimActionBar = () => {
  * @param {number} totalFrames
  * @param {number} [frameRate=60]
  * @param {Partial<Handles<number>>} [initial]
- * @param {(handles: Handles<number>) => Error | string | boolean | void} [validate]
+ * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate]
  * @param {LineCounter} [lc]
  * @returns {Promise<Handles<number>>}
  */
@@ -74,7 +75,7 @@ export const trim = async (
   totalFrames: number,
   frameRate: number = 60,
   initial?: Partial<Handles<number>>,
-  validate?: (handles: Handles<number>) => Error | string | boolean | void,
+  validate?: (handles: Handles<number>) => ask.ValidationResponse,
   lc?: LineCounter
 ): Promise<Handles<number>> => {
   const deferred = getDeferred<Handles<number>>();
