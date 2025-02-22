@@ -37,10 +37,13 @@ __export(src_exports, {
   getLineCounter: () => getLineCounter2,
   getLog: () => getLog,
   getLogStr: () => getLogStr,
+  getMultiBarManager: () => getMultiBarManager,
+  getProgressBar: () => getProgressBar,
   log: () => log,
   nextTick: () => nextTick,
   out: () => out,
   processLogContents: () => processLogContents,
+  progressBar: () => progressBar,
   progressBarTools: () => progressBarTools,
   table: () => table,
   waiters: () => waiters
@@ -1179,9 +1182,9 @@ var out;
       min: typeof minColumns === "number" ? minColumns : 0,
       value
     }));
-    const sorted = (0, import_swiss_ak7.sortByMapped)(mapped, (option) => option.min, import_swiss_ak7.fn.desc);
+    const sorted = (0, import_swiss_ak7.sortByMapped)(mapped, (option2) => option2.min, import_swiss_ak7.fn.desc);
     const termWidth = utils.getTerminalWidth();
-    return (sorted.find((option) => termWidth >= option.min) ?? sorted[0]).value;
+    return (sorted.find((option2) => termWidth >= option2.min) ?? sorted[0]).value;
   };
   out2.getBreadcrumb = getBreadcrumb;
   out2.getLineCounter = getLineCounter;
@@ -5387,14 +5390,394 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 };
 var log = createLogger({});
 
-// src/tools/progressBarTools.ts
+// src/tools/progressBar.ts
 var import_swiss_ak31 = require("swiss-ak");
+
+// src/utils/optionUtils.ts
+var option = (value, deflt, safeFn) => value !== void 0 ? safeFn(value, deflt) : deflt;
+var optionalOption = (value, deflt, safeFn) => value !== void 0 ? safeFn(value, deflt) : void 0;
+
+// src/tools/progressBar.ts
+var progressBar;
+((progressBar3) => {
+  const getCharWidth = (num, max, width) => Math.round(width * (Math.max(0, Math.min(num / max, 1)) / 1));
+  const getBarString = (current, max, width, opts) => {
+    const { progChar, emptyChar, startChar, endChar, showCurrent, currentChar } = opts;
+    const numProgChars = getCharWidth(current, max, width);
+    const numNextChars = getCharWidth(current + 1, max, width);
+    const numCurrentChars = showCurrent ? numNextChars - numProgChars : 0;
+    const numEmptyChars = width - numProgChars - numCurrentChars;
+    const prog = opts.barProgWrapFn(progChar.repeat(numProgChars));
+    const curr = opts.barCurrentWrapFn(currentChar.repeat(numCurrentChars));
+    const empt = opts.barEmptyWrapFn(emptyChar.repeat(numEmptyChars));
+    const body = opts.barWrapFn(`${prog}${curr}${empt}`);
+    return `${startChar}${body}${endChar}`;
+  };
+  const getSuffix = (current, maxNum, isMaxKnown, opts) => {
+    let plainItems = [];
+    let wrappedItems = [];
+    if (opts.showCount) {
+      const pad = Math.max(maxNum.toString().length, opts.countWidth);
+      const countSuff = `[${current.toString().padStart(pad, " ")} / ${(isMaxKnown ? maxNum.toString() : "?").padStart(pad, " ")}]`;
+      plainItems.push(countSuff);
+      wrappedItems.push(opts.countWrapFn(countSuff));
+    }
+    if (opts.showPercent) {
+      const percent = Math.round(current / Math.max(1, maxNum) * 100);
+      const percentSuff = `(${percent.toString().padStart("100".toString().length, " ")}%)`;
+      plainItems.push(percentSuff);
+      wrappedItems.push(opts.percentWrapFn(percentSuff));
+    }
+    const plain = plainItems.filter((x) => x).join(" ");
+    const wrapped = wrappedItems.filter((x) => x).join(" ");
+    return [plain.length ? " " + plain : "", wrapped.length ? " " + wrapped : ""];
+  };
+  progressBar3.getProgressBar = (max, options = {}) => {
+    const args = {
+      max: import_swiss_ak31.safe.num(max, true, -1, void 0, -1),
+      options: import_swiss_ak31.safe.obj(options, false, {})
+    };
+    const originalOpts = progressBar3.getFullOptions(args.options);
+    let opts = originalOpts;
+    let managerPackage = void 0;
+    let current = 0;
+    let finished = false;
+    const isMaxKnown = args.max !== -1;
+    const getBar = (applyWrap = false) => {
+      const [suffix, suffixWrapped] = getSuffix(current, args.max, isMaxKnown, opts);
+      const idealMinBarWidth = Math.min(5, opts.maxWidth - [suffix, opts.startChar, opts.endChar].join("").length);
+      const maxPrefixWidth = opts.maxPrefixWidth !== Infinity ? opts.maxPrefixWidth : opts.maxWidth - ([suffix, opts.startChar, opts.endChar].join("").length + idealMinBarWidth);
+      const fullPrefix = opts.prefix.padEnd(opts.prefixWidth).substring(0, maxPrefixWidth);
+      const barString = getBarString(
+        current,
+        Math.max(1, args.max),
+        Math.max(0, opts.maxWidth - [fullPrefix, suffix, opts.startChar, opts.endChar].join("").length),
+        opts
+      );
+      const output = `${opts.prefixWrapFn(fullPrefix)}${barString}${suffixWrapped}`;
+      if (applyWrap)
+        return opts.wrapperFn(output);
+      return output;
+    };
+    const update = () => {
+      const output = getBar(true);
+      if (managerPackage) {
+        managerPackage.onUpdate(output);
+      } else {
+        if (opts.print)
+          opts.printFn(output);
+      }
+      return output;
+    };
+    const next = () => {
+      if (finished)
+        return "";
+      current++;
+      if (managerPackage) {
+        managerPackage.onNext(current);
+      }
+      return update();
+    };
+    const set = (newCurrent) => {
+      const args2 = {
+        newCurrent: import_swiss_ak31.safe.num(newCurrent, true, 0, void 0)
+      };
+      if (finished)
+        return "";
+      current = args2.newCurrent;
+      if (managerPackage) {
+        managerPackage.onSet(args2.newCurrent);
+      }
+      return update();
+    };
+    const reset = () => {
+      return set(0);
+    };
+    const start = () => {
+      if (finished)
+        return "";
+      if (managerPackage) {
+        managerPackage.onStart();
+      } else {
+        if (opts.print)
+          opts.printFn();
+      }
+      return update();
+    };
+    const finish = () => {
+      finished = true;
+      const output = update();
+      if (managerPackage) {
+        managerPackage.onFinish();
+      } else {
+        if (opts.print)
+          opts.printFn();
+      }
+      return output;
+    };
+    const _registerManager = (pack, overrideOptions) => {
+      managerPackage = pack;
+      if (Object.keys(overrideOptions).length) {
+        opts = progressBar3.getFullOptions({
+          ...originalOpts,
+          ...overrideOptions
+        });
+      }
+      return opts;
+    };
+    const _unregisterManager = (pack) => {
+      managerPackage = void 0;
+      opts = originalOpts;
+    };
+    return {
+      next,
+      set,
+      reset,
+      getBar,
+      update,
+      start,
+      finish,
+      max: args.max === -1 ? void 0 : args.max,
+      _registerManager,
+      _unregisterManager
+    };
+  };
+  progressBar3.getFullOptions = (opts = {}) => {
+    var _a;
+    return {
+      prefix: option(opts.prefix, "", (v, dflt) => import_swiss_ak31.safe.str(v, true, dflt)),
+      prefixWidth: option(opts.prefixWidth, 0, (v, dflt) => import_swiss_ak31.safe.num(v, true, 0, void 0, dflt)),
+      maxPrefixWidth: option(opts.maxPrefixWidth, Infinity, (v, dflt) => import_swiss_ak31.safe.num(v, true, 0, void 0, dflt)),
+      maxWidth: option(
+        opts.maxWidth,
+        ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) !== void 0 ? process.stdout.columns : 100,
+        (v, dflt) => import_swiss_ak31.safe.num(v, true, 0, void 0, dflt)
+      ),
+      wrapperFn: option(opts.wrapperFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      barWrapFn: option(opts.barWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      barProgWrapFn: option(opts.barProgWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      barCurrentWrapFn: option(opts.barCurrentWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      barEmptyWrapFn: option(opts.barEmptyWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      prefixWrapFn: option(opts.prefixWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      countWrapFn: option(opts.countWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      percentWrapFn: option(opts.percentWrapFn, import_swiss_ak31.fn.noact, (v, dflt) => import_swiss_ak31.safe.func(v, dflt)),
+      showCount: option(opts.showCount, true, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
+      showPercent: option(opts.showPercent, false, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
+      countWidth: option(opts.countWidth, 0, (v, dflt) => import_swiss_ak31.safe.num(v, true, 0, void 0, dflt)),
+      progChar: option(opts.progChar, "\u2588", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
+      emptyChar: option(opts.emptyChar, " ", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
+      startChar: option(opts.startChar, "\u2595", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
+      endChar: option(opts.endChar, "\u258F", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
+      showCurrent: option(opts.showCurrent, false, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
+      currentChar: option(opts.currentChar, "\u259E", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
+      print: option(opts.print, true, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
+      printFn: option(opts.printFn, progressBar3.utils.printLn, (v, dflt) => import_swiss_ak31.safe.func(v, dflt))
+    };
+  };
+  progressBar3.getMultiBarManager = (options = {}) => {
+    const args = {
+      options: import_swiss_ak31.safe.obj(options, false, {})
+    };
+    const opts = progressBar3.getFullMultiBarManagerOptions(args.options);
+    const { minSlots, maxSlots } = opts;
+    const barPacks = [];
+    let totalCount = 0;
+    let previousDrawnLines = 0;
+    let bumpLines = 0;
+    const add = (bar, removeWhenFinished = opts.removeFinished) => {
+      const args2 = {
+        bar: import_swiss_ak31.safe.obj(bar),
+        removeWhenFinished: import_swiss_ak31.safe.bool(removeWhenFinished, false)
+      };
+      if (!args2.bar._registerManager)
+        return;
+      const barIndex = totalCount;
+      totalCount += 1;
+      const varOpts = import_swiss_ak31.ObjectTools.mapValues(
+        opts.variableOptions,
+        (key, value) => {
+          if (!value)
+            return void 0;
+          if (Array.isArray(value)) {
+            return value[barIndex % value.length];
+          }
+          if (typeof value === "function") {
+            const currentBars = [...getBars(), args2.bar];
+            return value(args2.bar, barIndex, currentBars.indexOf(args2.bar), currentBars);
+          }
+          return void 0;
+        }
+      );
+      const overrideOpts = {
+        ...opts.overrideOptions,
+        ...varOpts
+      };
+      const barPack = {
+        bar: args2.bar,
+        isFinished: false,
+        lastOutput: "",
+        fullOptions: overrideOpts,
+        onUpdate: (outputString) => {
+          barPack.lastOutput = outputString;
+          update();
+        },
+        onStart: () => {
+        },
+        onFinish: () => {
+          barPack.isFinished = true;
+          if (args2.removeWhenFinished) {
+            remove(args2.bar);
+          }
+        },
+        onSet: () => {
+        },
+        onNext: () => {
+        }
+      };
+      barPacks.push(barPack);
+      barPack.fullOptions = args2.bar._registerManager(barPack, overrideOpts);
+      bumpLines = Math.max(0, bumpLines - 1);
+      barPack.lastOutput = barPack.bar.getBar(true);
+      update();
+    };
+    const addNew = (max, options2 = {}) => {
+      const args2 = {
+        max: import_swiss_ak31.safe.num(max, true, -1, void 0, -1),
+        options: import_swiss_ak31.safe.obj(options2, false, {})
+      };
+      const bar = progressBar3.getProgressBar(args2.max, args2.options);
+      add(bar);
+      return bar;
+    };
+    const remove = (bar) => {
+      const args2 = {
+        bar: import_swiss_ak31.safe.obj(bar)
+      };
+      if (!args2.bar._registerManager)
+        return;
+      const index = barPacks.findIndex((pack) => pack.bar === args2.bar);
+      if (index === -1)
+        return;
+      barPacks.splice(index, 1);
+      bumpLines += 1;
+      update();
+    };
+    const update = () => {
+      const result = [];
+      let count = 0;
+      barPacks.slice(0, maxSlots).forEach((pack, index) => {
+        const wrappedBar = pack.lastOutput || pack.bar.getBar(true);
+        result.push(wrappedBar);
+        count++;
+      });
+      if (count < minSlots) {
+        const emptySlots = minSlots - barPacks.length;
+        result.push(...import_swiss_ak31.ArrayTools.repeat(emptySlots, ""));
+        count += emptySlots;
+      }
+      if (!opts.alignBottom) {
+        bumpLines = 0;
+      }
+      count += bumpLines;
+      if (opts.print)
+        progressBar3.utils.multiPrintFn(previousDrawnLines, `
+`.repeat(bumpLines) + result.join("\n"));
+      previousDrawnLines = count;
+    };
+    const getBars = () => {
+      return barPacks.map((pack) => pack.bar);
+    };
+    return {
+      add,
+      addNew,
+      remove,
+      update,
+      getBars
+    };
+  };
+  progressBar3.getFullMultiBarManagerOptions = (opts) => {
+    const numSlots = optionalOption(opts.numSlots, void 0, (v, d) => import_swiss_ak31.safe.num(v, true, 0, void 0, d));
+    let minSlots = optionalOption(opts.minSlots, void 0, (v, d) => import_swiss_ak31.safe.num(v, true, 0, void 0, d));
+    let maxSlots = optionalOption(opts.maxSlots, void 0, (v, d) => v === Infinity ? Infinity : import_swiss_ak31.safe.num(v, true, 0, void 0, d));
+    if (minSlots !== void 0 && maxSlots !== void 0 && minSlots > maxSlots) {
+      let temp = minSlots;
+      minSlots = maxSlots;
+      maxSlots = temp;
+    }
+    const result = {
+      numSlots: option(numSlots, null, (v, d) => import_swiss_ak31.safe.num(v, true, 0, void 0, d)),
+      minSlots: option(minSlots, numSlots ?? 0, (v, d) => import_swiss_ak31.safe.num(v, true, 0, maxSlots, d)),
+      maxSlots: option(maxSlots, numSlots ?? Infinity, (v, d) => v === Infinity ? Infinity : import_swiss_ak31.safe.num(v, true, minSlots, void 0, d)),
+      removeFinished: option(opts.removeFinished, false, (v, d) => import_swiss_ak31.safe.bool(v, d)),
+      alignBottom: option(opts.alignBottom, false, (v, d) => import_swiss_ak31.safe.bool(v, d)),
+      overrideOptions: option(opts.overrideOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
+      variableOptions: option(opts.variableOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
+      print: option(opts.print, true, (v, d) => import_swiss_ak31.safe.bool(v, d))
+    };
+    return result;
+  };
+  let utils;
+  ((utils2) => {
+    utils2.printLn = (...text2) => {
+      var _a, _b;
+      const args = {
+        text: import_swiss_ak31.safe.arrOf.str(text2)
+      };
+      if (((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) && ((_b = process == null ? void 0 : process.stdout) == null ? void 0 : _b.cursorTo)) {
+        if (!args.text.length) {
+          process.stdout.write("\n");
+        } else {
+          const output = args.text.map((item) => item.toString()).join(" ");
+          process.stdout.clearLine(0);
+          process.stdout.cursorTo(0);
+          process.stdout.moveCursor(0, -1);
+          process.stdout.clearLine(0);
+          process.stdout.write(output);
+          process.stdout.write("\n");
+        }
+      } else {
+        console.log(...args.text);
+      }
+    };
+    utils2.multiPrintFn = (previousDrawnLines, output) => {
+      var _a, _b, _c;
+      const args = {
+        previousDrawnLines: import_swiss_ak31.safe.num(previousDrawnLines, true, 0),
+        output: import_swiss_ak31.safe.str(output, true, "")
+      };
+      const hasProcessFns = ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) && ((_b = process == null ? void 0 : process.stdout) == null ? void 0 : _b.cursorTo) && ((_c = process == null ? void 0 : process.stdout) == null ? void 0 : _c.moveCursor);
+      if (hasProcessFns) {
+        let removeLines = args.previousDrawnLines;
+        const outputLines = args.output.split("\n").length;
+        if (outputLines > args.previousDrawnLines) {
+          const extraLines = outputLines - args.previousDrawnLines;
+          process.stdout.write("=========\n".repeat(extraLines));
+          removeLines += extraLines;
+        }
+        for (let i = 0; i < removeLines; i++) {
+          process.stdout.clearLine(0);
+          process.stdout.cursorTo(0);
+          process.stdout.moveCursor(0, -1);
+          process.stdout.clearLine(0);
+        }
+        process.stdout.write(args.output + "\n");
+      } else {
+        console.log(args.output);
+      }
+    };
+  })(utils = progressBar3.utils || (progressBar3.utils = {}));
+})(progressBar || (progressBar = {}));
+var getProgressBar = progressBar.getProgressBar;
+var getMultiBarManager = progressBar.getMultiBarManager;
+
+// src/tools/progressBarTools.ts
+var import_swiss_ak32 = require("swiss-ak");
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
-      wrapperFns = import_swiss_ak31.ArrayTools.randomise(wrapperFns);
+      wrapperFns = import_swiss_ak32.ArrayTools.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {
@@ -5438,10 +5821,13 @@ var nextTick = waiters.nextTick;
   getLineCounter,
   getLog,
   getLogStr,
+  getMultiBarManager,
+  getProgressBar,
   log,
   nextTick,
   out,
   processLogContents,
+  progressBar,
   progressBarTools,
   table,
   waiters

@@ -3,7 +3,7 @@ import { ArrayTools, progressBar } from 'swiss-ak';
 import { out } from './out';
 import { colr } from './colr';
 
-//<!-- DOCS: 800 -->
+//<!-- DOCS: 899 -->
 /**<!-- DOCS: progressBarTools ##! -->
  * progressBarTools
  *

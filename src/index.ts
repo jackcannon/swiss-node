@@ -5,6 +5,7 @@ export * from './tools/table';
 export * from './tools/log';
 export * from './tools/LogTools';
 export * from './tools/PathTools';
+export * from './tools/progressBar';
 export * from './tools/progressBarTools';
 export * from './tools/waiters';
 export * from './tools/keyListener';

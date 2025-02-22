@@ -16,6 +16,7 @@ Uses `swiss-ak`
     - [**Logger**](#logger)
     - [**LogTools**](#logtools)
     - [**PathTools**](#pathtools)
+    - [**progressBar**](#progressbar)
     - [**progressBarTools**](#progressbartools)
     - [**waiters**](#waiters)
     - [**keyListener**](#keylistener)
@@ -3467,7 +3468,7 @@ colr.debug(colr.yellow.blueBg(`A ${colr.red('red')} world`)); // '(YLW>){blu>}A 
       - [warningBg](#warningbg)
       - [infoBg](#infobg)
     - [**Other Styles**](#other-styles)
-      - [reset](#reset)
+      - [reset](#colr_reset)
       - [bold](#bold)
       - [dim](#dim)
       - [italic](#italic)
@@ -5389,7 +5390,7 @@ Equivalent to `colr.lightBg.blueBg.black`.
 
 ### Other Styles
 
-#### reset
+#### <span id="colr_reset">reset</span>
 
 ```typescript
 colr.reset(...text: string[]): string
@@ -6070,7 +6071,7 @@ A simple table generator
       - [transpose](#table_utils_transpose)
       - [concatRows](#concatrows)
       - [getFormat](#getformat)
-      - [getFullOptions](#getfulloptions)
+      - [getFullOptions](#table_utils_getfulloptions)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
 
@@ -6631,7 +6632,7 @@ table.print(header, body, {format})
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
-#### getFullOptions
+#### <span id="table_utils_getfulloptions">getFullOptions</span>
 
 ```typescript
 table.utils.getFullOptions(opts: TableOptions): FullTableOptions
@@ -7006,6 +7007,616 @@ Removes double slashes from path (an bug with Unix paths)
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
+## progressBar
+A progress bar that can be used in the terminal.
+
+  - [**progressBar**](#progressbar)
+    - [**Progress Bar**](#progress-bar)
+      - [**getProgressBar**](#getprogressbar)
+        - [getBar](#getbar)
+        - [update](#progressbar_progressbar_update)
+        - [next](#next)
+        - [set](#set)
+        - [reset](#progressbar_progressbar_reset)
+        - [start](#progressbar_progressbar_start)
+        - [finish](#finish)
+        - [max](#max)
+      - [**Options**](#progressbar_progressbaroptions)
+        - [getFullOptions](#progressbar_getfulloptions)
+    - [**Multi-Bar Manager**](#multibar-manager)
+      - [**getMultiBarManager**](#getmultibarmanager)
+        - [add](#add)
+        - [addNew](#addnew)
+        - [remove](#remove)
+        - [update](#progressbar_multibarmanager_update)
+        - [getBars](#getbars)
+      - [**Options**](#progressbar_multibarmanageroptions)
+        - [getFullMultiBarManagerOptions](#getfullmultibarmanageroptions)
+    - [**utils**](#progressbar_utils)
+      - [printLn](#println)
+      - [multiPrintFn](#multiprintfn)
+
+<p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
+
+### Progress Bar
+
+#### getProgressBar
+
+```typescript
+getProgressBar(max: number, options: progressBar.ProgressBarOptions): ProgressBar
+progressBar.getProgressBar(max: number, options: progressBar.ProgressBarOptions): ProgressBar
+```
+
+Usage:
+```typescript
+import chalk from 'chalk'
+import {getProgressBar} from 'swiss-ak';
+
+console.log('-'.repeat(20) + ' < 20 Chars');
+
+const progress = getProgressBar(5, {
+  prefix: 'ABC',
+  maxWidth: 20,
+  chalk,
+  wrapperFn: chalk.green
+});
+for (let i = 1; i <= 5; i++) {
+  progress.set(i);
+}
+progress.finish();
+```
+
+Output:
+```
+-------------------- < 20 Chars
+ABC ▕      ▏ [0 / 5]
+ABC ▕█     ▏ [1 / 5]
+ABC ▕██    ▏ [2 / 5]
+ABC ▕████  ▏ [3 / 5]
+ABC ▕█████ ▏ [4 / 5]
+ABC ▕██████▏ [5 / 5]
+```
+
+|  #  | Parameter Name | Required | Type                             | Default |
+|:---:|:---------------|:---------|:---------------------------------|:--------|
+| *0* | `max`          | *No*     | `number`                         |         |
+| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    |
+
+| Return Type   |
+|---------------|
+| `ProgressBar` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### getBar
+
+```typescript
+getProgressBar().getBar(applyWrap: boolean): string
+```
+
+Get the output string of the progress bar
+
+|  #  | Parameter Name | Required | Type      | Default | Description                                         |
+|:---:|:---------------|:---------|:----------|:--------|:----------------------------------------------------|
+| *0* | `applyWrap`    | *No*     | `boolean` | `false` | Whether or not to apply the wrapperFn to the output |
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### <span id="progressbar_progressbar_update">update</span>
+
+```typescript
+getProgressBar().update(): string
+```
+
+Trigger the progress bar to update/rerender
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### next
+
+```typescript
+getProgressBar().next(): string
+```
+
+Set the progress bar to the next value
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### set
+
+```typescript
+getProgressBar().set(newCurrent: number): string
+```
+
+Set the progress bar to a specific value
+
+|  #  | Parameter Name | Required | Type     |
+|:---:|:---------------|:---------|:---------|
+| *0* | `newCurrent`   | **Yes**  | `number` |
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### <span id="progressbar_progressbar_reset">reset</span>
+
+```typescript
+getProgressBar().reset(): string
+```
+
+Set the progress bar to 0
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### <span id="progressbar_progressbar_start">start</span>
+
+```typescript
+getProgressBar().start(): string
+```
+
+Start displaying the progress bar
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### finish
+
+```typescript
+getProgressBar().finish(): string
+```
+
+Stop displaying the progress bar
+
+| Return Type |               |
+|-------------|---------------|
+| `string`    | output string |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### max
+
+```typescript
+getProgressBar().max;
+```
+
+Readonly number value of the max value (provided to getProgressBar as first argument)
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+#### <span id="progressbar_progressbaroptions">Options</span>
+
+```typescript
+progressBar.ProgressBarOptions;
+```
+
+All options are optional.
+
+| Property         | Default                           | Description                                            |
+| ---------------- | --------------------------------- | ------------------------------------------------------ |
+| prefix           | `''`                              | String to show to left of progress bar                 |
+| prefixWidth      | `0`                               | Min width of prefix - `10` => `Example˽˽˽`             |
+| maxPrefixWidth   | `Infinity`                        | Max width of prefix                                    |
+| maxWidth         | `process.stdout.columns` or `100` | The maximum width the entire string may extend         |
+| wrapperFn        | nothing                           | Function to wrap the printed string (eg `chalk.cyan)`  |
+| barWrapFn        | nothing                           | Function to wrap the bar                               |
+| barProgWrapFn    | nothing                           | Function to wrap the 'complete' segment of the bar     |
+| barCurrentWrapFn | nothing                           | Function to wrap the 'current' segment of the bar      |
+| barEmptyWrapFn   | nothing                           | Function to wrap the empty/track part of the line      |
+| prefixWrapFn     | nothing                           | Function to wrap the prefix                            |
+| countWrapFn      | nothing                           | Function to wrap the count                             |
+| percentWrapFn    | nothing                           | Function to wrap the percent                           |
+| showCount        | `true`                            | Show numerical values of the count - `[11 / 15]`       |
+| showPercent      | `false`                           | Show percentage completed - `( 69%)`                   |
+| countWidth       | `0`                               | Min width of nums for showCount - `3` => `[˽˽1 / ˽15]` |
+| progChar         | `'█'`                             | Character to use for progress section of bar           |
+| emptyChar        | `' '`                             | Character to use for empty (rail) section of bar       |
+| startChar        | `'▕'`                             | Character to start the progress bar with               |
+| endChar          | `'▏'`                             | Character to end the progress bar with                 |
+| showCurrent      | `false`                           | Show the 'current' segment of the bar seperately       |
+| currentChar      | `'▞'`                             | Character to use the the 'current' segment             |
+| print            | `true`                            | Whether or not to print/output/log the progress bar    |
+| printFn          | progressBar.utils.printLn         | Function to use to print the progress bar              |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### <span id="progressbar_getfulloptions">getFullOptions</span>
+
+```typescript
+progressBar.getFullOptions(opts: ProgressBarOptions): ProgressBarOptionsFull
+```
+
+Fill in any missing Progress Bar options with defaults.
+
+Not needed for `getProgressBar` as it calls this internally.
+
+```typescript
+progressBar.getFullOptions({});
+// {
+//   prefix: "",
+//   prefixWidth: 0,
+//   maxPrefixWidth: Infinity,
+//   maxWidth: 214,
+//   wrapperFn: [Function],
+//   barWrapFn: [Function],
+//   barProgWrapFn: [Function],
+//   barCurrentWrapFn: [Function],
+//   barEmptyWrapFn: [Function],
+//   prefixWrapFn: [Function],
+//   countWrapFn: [Function],
+//   percentWrapFn: [Function],
+//   showCount: true,
+//   showPercent: false,
+//   countWidth: 0,
+//   progChar: "█",
+//   emptyChar: " ",
+//   startChar: "▕",
+//   endChar: "▏",
+//   showCurrent: false,
+//   currentChar: "▞",
+//   print: true,
+//   printFn: [Function],
+// }
+```
+
+|  #  | Parameter Name | Required | Type                 | Default |
+|:---:|:---------------|:---------|:---------------------|:--------|
+| *0* | `opts`         | *No*     | `ProgressBarOptions` | `{}`    |
+
+| Return Type              |
+|--------------------------|
+| `ProgressBarOptionsFull` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+### Multi-Bar Manager
+
+#### getMultiBarManager
+
+```typescript
+getMultiBarManager(options: progressBar.MultiBarManagerOptions): MultiBarManager
+progressBar.getMultiBarManager(options: progressBar.MultiBarManagerOptions): MultiBarManager
+```
+
+Returns a manager for multiple progress bars.
+
+```typescript
+const manager = getMultiBarManager({});
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+const bar3 = manager.addNew(100, { prefix: 'Bar 3' });
+
+bar1.set(25);
+bar2.set(50);
+bar3.set(75);
+
+// Bar 1▕██████████████                                          ▏ [ 25 / 100]
+// Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
+// Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
+```
+
+|  #  | Parameter Name | Required | Type                                 | Default |
+|:---:|:---------------|:---------|:-------------------------------------|:--------|
+| *0* | `options`      | *No*     | `progressBar.MultiBarManagerOptions` | `{}`    |
+
+| Return Type       |
+|-------------------|
+| `MultiBarManager` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### add
+
+```typescript
+getMultiBarManager().add(bar: ProgressBar, removeWhenFinished: boolean): void
+```
+
+Add a given progress bar to the manager
+
+```typescript
+const manager = getMultiBarManager({ overrideOptions: { maxWidth: 75 } });
+
+const bar1 = getProgressBar(100, { prefix: 'Bar 1' });
+manager.add(bar1);
+const bar2 = getProgressBar(100, { prefix: 'Bar 2' });
+manager.add(bar2);
+const bar3 = getProgressBar(100, { prefix: 'Bar 3' });
+manager.add(bar3);
+
+bar1.set(25);
+bar2.set(50);
+bar3.set(75);
+
+// Bar 1▕██████████████                                          ▏ [ 25 / 100]
+// Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
+// Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
+```
+
+|  #  | Parameter Name       | Required | Type          | Default               |
+|:---:|:---------------------|:---------|:--------------|:----------------------|
+| *0* | `bar`                | **Yes**  | `ProgressBar` |                       |
+| *1* | `removeWhenFinished` | *No*     | `boolean`     | `opts.removeFinished` |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### addNew
+
+```typescript
+getMultiBarManager().addNew(max: number, options: progressBar.ProgressBarOptions): ProgressBar
+```
+
+Create a new progress bar and add it to the manager
+
+```typescript
+const manager = getMultiBarManager({});
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+const bar3 = manager.addNew(100, { prefix: 'Bar 3' });
+
+bar1.set(25);
+bar2.set(50);
+bar3.set(75);
+
+// Bar 1▕██████████████                                          ▏ [ 25 / 100]
+// Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
+// Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
+```
+
+|  #  | Parameter Name | Required | Type                             | Default |
+|:---:|:---------------|:---------|:---------------------------------|:--------|
+| *0* | `max`          | *No*     | `number`                         |         |
+| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    |
+
+| Return Type   |
+|---------------|
+| `ProgressBar` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### remove
+
+```typescript
+getMultiBarManager().remove(bar: ProgressBar): void
+```
+
+Remove a given progress bar from the manager
+
+```typescript
+const manager = getMultiBarManager({ overrideOptions: { maxWidth: 75 } });
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+const bar3 = manager.addNew(100, { prefix: 'Bar 3' });
+
+bar1.set(25);
+bar2.set(50);
+bar3.set(75);
+
+manager.remove(bar2);
+
+// Bar 1▕██████████████                                          ▏ [ 25 / 100]
+// Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
+```
+
+|  #  | Parameter Name | Required | Type          |
+|:---:|:---------------|:---------|:--------------|
+| *0* | `bar`          | **Yes**  | `ProgressBar` |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### <span id="progressbar_multibarmanager_update">update</span>
+
+```typescript
+getMultiBarManager().update(): void
+```
+
+Re-render the progress bars
+
+```typescript
+const manager = getMultiBarManager({ overrideOptions: { maxWidth: 75 } });
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+
+bar1.set(25);
+bar2.set(50);
+
+manager.update();
+
+// Bar 1▕██████████████                                          ▏ [ 25 / 100]
+// Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
+```
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### getBars
+
+```typescript
+getMultiBarManager().getBars(): ProgressBar[]
+```
+
+Get an array of all the progress bars currently managed by the manager
+
+```typescript
+const manager = getMultiBarManager({ overrideOptions: { maxWidth: 75 } });
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+const bar3 = manager.addNew(100, { prefix: 'Bar 3' });
+
+bar1.set(25);
+bar2.set(50);
+bar3.set(75);
+
+console.log(manager.getBars()); // [ bar1, bar2, bar3 ]
+
+manager.remove(bar2);
+
+console.log(manager.getBars()); // [ bar1, bar3 ]
+```
+
+| Return Type     |
+|-----------------|
+| `ProgressBar[]` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+#### <span id="progressbar_multibarmanageroptions">Options</span>
+
+```typescript
+progressBar.MultiBarManagerOptions;
+```
+
+The options for MultiBar Managers
+
+All options are optional.
+
+| Property          | Default                        | Description                                            |
+| ----------------- | ------------------------------ | ------------------------------------------------------ |
+| numSlots          | `undefined`                    | Shorthand for setting both minSlots and maxSlots       |
+| minSlots          | `0`                            | The min number of lines to print at a time             |
+| maxSlots          | `Infinity`                     | The max number of lines to print at a time             |
+| removeFinished    | `false`                        | Remove progress bars from the manager when they finish |
+| alignBottom       | `false`                        | Align the bars to the bottom of the print space        |
+| overrideOptions   | `{}` (No overrides)            | Override the options of the progress bars              |
+| variableOptions   | `{}` (No variable options)     | Override options differently for each bar              |
+| print             | `true`                         | Whether or not to print the bars                       |
+| printFn           | progressBar.utils.multiPrintFn | The function to use to print the bars                  |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+##### getFullMultiBarManagerOptions
+
+```typescript
+progressBar.getFullMultiBarManagerOptions(opts: MultiBarManagerOptions): MultiBarManagerOptionsFull
+```
+
+Fill in any missing MultiBar Manager options with defaults.
+
+Not needed for `getMultiBarManager` as it calls this internally.
+
+```typescript
+progressBar.getFullMultiBarManagerOptions({});
+// {
+//   numSlots: null,
+//   minSlots: 0,
+//   maxSlots: Infinity,
+//   removeFinished: false,
+//   alignBottom: false,
+//   overrideOptions: {},
+//   variableOptions: {},
+//   print: true,
+//   printFn: [Function],
+// }
+```
+
+|  #  | Parameter Name | Required | Type                     |
+|:---:|:---------------|:---------|:-------------------------|
+| *0* | `opts`         | **Yes**  | `MultiBarManagerOptions` |
+
+| Return Type                  |
+|------------------------------|
+| `MultiBarManagerOptionsFull` |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+### <span id="progressbar_utils">utils</span>
+
+```typescript
+progressBar.utils;
+```
+
+Small helper functions may help when using progress bars
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+#### printLn
+
+```typescript
+progressBar.printLn(...text: any[]): void
+```
+
+Can use instead of console.log
+
+Overwrites the previous line if possible (i.e. node);
+
+Usage
+```javascript
+import { printLn } from 'swiss-ak';
+
+printLn('A');
+printLn('B'); // Replaces the 'A' line
+printLn('C'); // Replaces the 'B' line
+printLn(); // Jumps a line
+printLn('D'); // Replaces the empty line
+```
+
+Output
+```
+C
+D
+```
+
+|  #   | Parameter Name | Required | Type    |
+|:----:|:---------------|:---------|:--------|
+| *0…* | `text`         | *No*     | `any[]` |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
+#### multiPrintFn
+The default printFn for MultiBarManagers
+
+Clears previously printed lines and prints the output in their place
+
+|  #  | Parameter Name       | Required | Type     |
+|:---:|:---------------------|:---------|:---------|
+| *0* | `previousDrawnLines` | **Yes**  | `number` |
+| *1* | `output`             | **Yes**  | `string` |
+
+| Return Type |
+|-------------|
+| `void`      |
+
+<p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
+
 ## progressBarTools
 A collection of tools for working with progress bars (from swiss-ak)
 
@@ -7072,7 +7683,7 @@ wait nextTick();
   - [**keyListener**](#keylistener)
     - [getKeyListener](#getkeylistener)
     - [**KeyListener**](#keylistener_keylistener)
-      - [start](#start)
+      - [start](#keylistener_keylistener_start)
       - [stop](#stop)
 
 <p style="text-align: right" align="right"><a href="#"> [↑ Back to top ↑] </a></p>
@@ -7119,7 +7730,7 @@ Returned by `getKeyListener`
 
 <p style="text-align: right" align="right"><a href="#keylistener"> [↑ Back to <b>keyListener</b> ↑] </a></p>
 
-#### start
+#### <span id="keylistener_keylistener_start">start</span>
 
 ```typescript
 kl.start(): void
