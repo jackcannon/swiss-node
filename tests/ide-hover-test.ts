@@ -261,6 +261,43 @@ swissnode.PathTools.removeTrailSlash;
 swissnode.PathTools.trailSlash;
 swissnode.PathTools.removeDoubleSlashes;
 
+// progress bar
+
+swissnode.getProgressBar;
+swissnode.progressBar.getProgressBar;
+swissnode.progressBar.getFullOptions;
+
+const progressBar = swissnode.getProgressBar(100);
+
+progressBar.update;
+progressBar.next;
+progressBar.set;
+progressBar.reset;
+progressBar.start;
+progressBar.finish;
+
+swissnode.getMultiBarManager;
+swissnode.progressBar.getMultiBarManager;
+swissnode.progressBar.getFullMultiBarManagerOptions;
+
+const multiBarManager = swissnode.getMultiBarManager();
+
+multiBarManager.add;
+multiBarManager.addNew;
+multiBarManager.remove;
+multiBarManager.update;
+multiBarManager.getBars;
+
+swissnode.progressBar.utils.printLn;
+swissnode.progressBar.utils.multiPrintFn;
+
+type ProgressBar1 = swissnode.ProgressBar;
+type MultiBarManager1 = swissnode.MultiBarManager;
+type ProgressBarOptionsFull1 = swissnode.progressBar.ProgressBarOptionsFull;
+type ProgressBarOptions1 = swissnode.progressBar.ProgressBarOptions;
+type MultiBarManagerOptionsFull1 = swissnode.progressBar.MultiBarManagerOptionsFull;
+type MultiBarManagerOptions1 = swissnode.progressBar.MultiBarManagerOptions;
+
 swissnode.progressBarTools;
 swissnode.progressBarTools.getColouredProgressBarOpts;
 
