@@ -5583,7 +5583,10 @@ var progressBar;
     const barPacks = [];
     let totalCount = 0;
     let previousDrawnLines = 0;
+    let previousUpdateTime = 0;
     let bumpLines = 0;
+    const q = new import_swiss_ak31.QueueManager();
+    q.setDefaultPauseTime(0);
     const add = (bar, removeWhenFinished = opts.removeFinished) => {
       const args2 = {
         bar: import_swiss_ak31.safe.obj(bar),
@@ -5679,10 +5682,18 @@ var progressBar;
         bumpLines = 0;
       }
       count += bumpLines;
-      if (opts.print)
-        progressBar3.utils.multiPrintFn(previousDrawnLines, `
+      if (opts.print) {
+        const timeSinceLastUpdate = Date.now() - previousUpdateTime;
+        if (timeSinceLastUpdate > 15) {
+          q.add("print", async () => {
+            opts.printFn(previousDrawnLines, `
 `.repeat(bumpLines) + result.join("\n"));
-      previousDrawnLines = count;
+            previousDrawnLines = count;
+            previousUpdateTime = Date.now();
+            return (0, import_swiss_ak31.wait)(0);
+          });
+        }
+      }
     };
     const getBars = () => {
       return barPacks.map((pack) => pack.bar);
@@ -5712,7 +5723,8 @@ var progressBar;
       alignBottom: option(opts.alignBottom, false, (v, d) => import_swiss_ak31.safe.bool(v, d)),
       overrideOptions: option(opts.overrideOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
       variableOptions: option(opts.variableOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
-      print: option(opts.print, true, (v, d) => import_swiss_ak31.safe.bool(v, d))
+      print: option(opts.print, true, (v, d) => import_swiss_ak31.safe.bool(v, d)),
+      printFn: option(opts.printFn, progressBar3.utils.multiPrintFn, (v, d) => import_swiss_ak31.safe.func(v, d))
     };
     return result;
   };
@@ -5754,13 +5766,11 @@ var progressBar;
           process.stdout.write("=========\n".repeat(extraLines));
           removeLines += extraLines;
         }
-        for (let i = 0; i < removeLines; i++) {
-          process.stdout.clearLine(0);
-          process.stdout.cursorTo(0);
-          process.stdout.moveCursor(0, -1);
-          process.stdout.clearLine(0);
-        }
-        process.stdout.write(args.output + "\n");
+        let printOutput = "";
+        printOutput += out.ansi.cursor.up(removeLines);
+        printOutput += args.output;
+        printOutput += "\n";
+        process.stdout.write(printOutput);
       } else {
         console.log(args.output);
       }

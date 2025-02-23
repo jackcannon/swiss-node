@@ -1,6 +1,7 @@
-import { ArrayTools, fn, ObjectTools, safe } from 'swiss-ak';
+import { ArrayTools, fn, ObjectTools, QueueManager, safe, wait } from 'swiss-ak';
 import { option, optionalOption } from '../utils/optionUtils';
 import { out } from './out';
+
 //<!-- DOCS: 800 -->
 
 /**
@@ -662,7 +663,10 @@ export namespace progressBar {
     const barPacks: ProgressBarManagerPackage[] = [];
     let totalCount: number = 0;
     let previousDrawnLines: number = 0;
+    let previousUpdateTime: number = 0;
     let bumpLines: number = 0; // track how many lines to bump the output down by
+    const q = new QueueManager();
+    q.setDefaultPauseTime(0);
 
     /**<!-- DOCS: progressBar.MultiBarManager.add ##### -->
      * add
@@ -872,8 +876,19 @@ export namespace progressBar {
       }
 
       count += bumpLines;
-      if (opts.print) progressBar.utils.multiPrintFn(previousDrawnLines, `\n`.repeat(bumpLines) + result.join('\n'));
-      previousDrawnLines = count;
+      if (opts.print) {
+        const timeSinceLastUpdate = Date.now() - previousUpdateTime;
+
+        // debounce updates to prevent clashing with other updates
+        if (timeSinceLastUpdate > 15) {
+          q.add('print', async () => {
+            opts.printFn(previousDrawnLines, `\n`.repeat(bumpLines) + result.join('\n'));
+            previousDrawnLines = count;
+            previousUpdateTime = Date.now();
+            return wait(0);
+          });
+        }
+      }
     };
 
     /**<!-- DOCS: progressBar.MultiBarManager.getBars ##### -->
@@ -982,6 +997,13 @@ export namespace progressBar {
      * Default: `true`
      */
     print: boolean;
+
+    /**
+     * The function to use to print the bars
+     *
+     * Default: progressBar.utils.multiPrintFn
+     */
+    printFn: (previousDrawnLines: number, output: string) => void;
   }
 
   /**<!-- DOCS: progressBar.MultiBarManagerOptions #### -->
@@ -1054,7 +1076,8 @@ export namespace progressBar {
       alignBottom: option(opts.alignBottom, false, (v, d) => safe.bool(v, d)),
       overrideOptions: option(opts.overrideOptions, {}, (v, d) => safe.obj(v, false, d)),
       variableOptions: option(opts.variableOptions, {}, (v, d) => safe.obj(v, false, d)),
-      print: option(opts.print, true, (v, d) => safe.bool(v, d))
+      print: option(opts.print, true, (v, d) => safe.bool(v, d)),
+      printFn: option(opts.printFn, progressBar.utils.multiPrintFn, (v, d) => safe.func(v, d))
     };
 
     return result;
@@ -1163,14 +1186,13 @@ export namespace progressBar {
           removeLines += extraLines;
         }
 
-        for (let i = 0; i < removeLines; i++) {
-          process.stdout.clearLine(0);
-          process.stdout.cursorTo(0);
-          process.stdout.moveCursor(0, -1);
-          process.stdout.clearLine(0);
-        }
+        let printOutput = '';
 
-        process.stdout.write(args.output + '\n');
+        printOutput += out.ansi.cursor.up(removeLines);
+        printOutput += args.output;
+        printOutput += '\n';
+
+        process.stdout.write(printOutput);
       } else {
         console.log(args.output);
       }

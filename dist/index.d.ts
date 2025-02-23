@@ -7209,6 +7209,12 @@ declare namespace progressBar {
          * Default: `true`
          */
         print: boolean;
+        /**
+         * The function to use to print the bars
+         *
+         * Default: progressBar.utils.multiPrintFn
+         */
+        printFn: (previousDrawnLines: number, output: string) => void;
     }
     /**<!-- DOCS: progressBar.MultiBarManagerOptions #### -->
      * Options
