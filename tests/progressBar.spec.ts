@@ -1,7 +1,8 @@
 import * as swissnode from '../';
 import * as swissak from 'swiss-ak';
 import { register, should, singleTest, multiTest, kitchenSink } from './test-utils';
-import { jest } from '@jest/globals';
+
+register({ describe, it, expect });
 
 const IS_DEBUG = false; // controls whether to actually print the progress bar to stdout
 
