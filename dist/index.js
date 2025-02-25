@@ -1,5 +1,5 @@
 // src/tools/ask.ts
-import { getDeferred as getDeferred6, seconds as seconds4, wait as wait3 } from "swiss-ak";
+import { getDeferred as getDeferred6, seconds as seconds4, StringTools as StringTools5, wait as wait3 } from "swiss-ak";
 
 // src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
@@ -5202,6 +5202,8 @@ var ask;
     };
   };
   ask2.menu = async (question, items, initial, validate, lc) => {
+    var _a;
+    const tempLC = getLineCounter2();
     const options = getAskOptions();
     const originalFormatItems = options.formatters.formatItems;
     options.formatters.formatItems = [itemsFormatters.simpleAlt, itemsFormatters.blockAlt].includes(originalFormatItems) ? itemsFormatters.simpleAlt : itemsFormatters.simple;
@@ -5215,6 +5217,7 @@ var ask;
       }
     }
     const hasIcons = items.some((item) => item.icon !== void 0);
+    const submenuIDs = [];
     const choices = items.map((item, index) => {
       const title = item.title || item.value + "";
       let icon = "";
@@ -5222,17 +5225,32 @@ var ask;
         icon = ` ${item.icon || ""} `;
         if (item.colour) {
           const wrapFn = typeof item.colour === "function" ? item.colour : item.colour.bg;
-          icon = wrapFn(icon);
+          icon = colr.black(wrapFn(icon));
         }
         icon += " ";
       }
+      let value = item.value;
+      if (item.submenu) {
+        const uniqueId = StringTools5.randomId("submenu-");
+        submenuIDs.push(uniqueId);
+        value = uniqueId;
+      }
       return {
         title: `${icon}${title}`,
-        value: item.value
+        value,
+        submenu: item.submenu
       };
     });
-    const result = await select(question, choices, initialIndex, validate, lc);
+    const result = await select(question, choices, initialIndex, validate, tempLC);
     options.formatters.formatItems = originalFormatItems;
+    if (submenuIDs.includes(result)) {
+      const submenu = (_a = choices.find((choice) => choice.value === result)) == null ? void 0 : _a.submenu;
+      if (submenu) {
+        tempLC.clear();
+        return ask2.menu(submenu.question || question, submenu.items, submenu.initial ?? initial, validate, lc);
+      }
+    }
+    lc == null ? void 0 : lc.add(tempLC.get());
     return result;
   };
   ask2.section = section;

@@ -800,9 +800,10 @@ const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
 ask.menu(question: string | Breadcrumb, items: MenuItem<T>[], initial: MenuItem<T> | T | number, validate: (value: T, index: number) => ask.ValidationResponse, lc: LineCounter): Promise<T>
 ```
 
-Wrapper for `ask.select` that styles the output as a menu, with icons and colours
+Wrapper for `ask.select` that styles the output as a menu, with icons and colours, and supports nested submenus
 
 ```typescript
+// Example 1
 const menuItems: ask.MenuItem<string>[] = [
   { value: 'done', title: colr.dim(`[ Finished ]`), icon: '✔', colour: colr.dark.green.bold },
   { value: 'create', title: `${colr.bold('Create')} a new thing`, icon: '+', colour: colr.black.greenBg },
@@ -811,8 +812,24 @@ const menuItems: ask.MenuItem<string>[] = [
   { value: 'delete', title: `${colr.bold('Remove')} thing(s)`, icon: '×', colour: colr.black.redBg },
   { value: 'delete-all', title: colr.bold(`Remove all`), icon: '✖', colour: colr.black.darkBg.redBg }
 ];
-
 const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
+
+// Example 2 - Submenus
+const actions = (itemType: string) => ({
+  items: [
+    { title: 'Find', icon: '⌕', colour: colr.sets.blue, value: `find-${itemType}` },
+    { title: 'Add', icon: '✚', colour: colr.sets.green, value: `add-${itemType}` },
+    { title: 'Edit', icon: '✎', colour: colr.sets.yellow, value: `edit-${itemType}` },
+    { title: 'Delete', icon: '⨯', colour: colr.sets.red, value: `delete-${itemType}` }
+  ]
+});
+const menuItems: ask.MenuItem<string>[] = [
+  { title: 'Task', icon: '⚑', colour: colr.darkBg.cyanBg, submenu: actions('task') },
+  { title: 'Project', icon: '⎔', colour: colr.darkBg.magentaBg, submenu: actions('project') },
+  { title: 'Milestone', icon: '◈', colour: colr.darkBg.yellowBg, submenu: actions('milestone') },
+  { title: 'Permission', icon: '⚷', colour: colr.light.greyBg, submenu: actions('permission') }
+];
+const result = await ask.menu('What do you want to work with?', menuItems);
 ```
 
 |  #  | Parameter Name | Required | Type                                                  |

@@ -1,4 +1,4 @@
-import { getDeferred, second, seconds, wait } from 'swiss-ak';
+import { getDeferred, second, seconds, StringTools, wait } from 'swiss-ak';
 
 import { getKeyListener } from './keyListener';
 import { LineCounter, ansi, getLineCounter, out } from './out';
@@ -12,7 +12,7 @@ import * as imitateAsk from './ask/imitate';
 import * as sectionAsk from './ask/section';
 import * as tableAsk from './ask/table';
 import { trim as trimAsk } from './ask/trim';
-import { WrapFn, WrapSet } from './colr';
+import { colr, WrapFn, WrapSet } from './colr';
 import { itemsFormatters } from './ask/basicInput/formatters';
 
 export { AskTableDisplaySettings } from './ask/table';
@@ -375,9 +375,10 @@ export namespace ask {
    *
    * - `ask.menu`
    *
-   * Wrapper for `ask.select` that styles the output as a menu, with icons and colours
+   * Wrapper for `ask.select` that styles the output as a menu, with icons and colours, and supports nested submenus
    *
    * ```typescript
+   * // Example 1
    * const menuItems: ask.MenuItem<string>[] = [
    *   { value: 'done', title: colr.dim(`[ Finished ]`), icon: '✔', colour: colr.dark.green.bold },
    *   { value: 'create', title: `${colr.bold('Create')} a new thing`, icon: '+', colour: colr.black.greenBg },
@@ -386,8 +387,24 @@ export namespace ask {
    *   { value: 'delete', title: `${colr.bold('Remove')} thing(s)`, icon: '×', colour: colr.black.redBg },
    *   { value: 'delete-all', title: colr.bold(`Remove all`), icon: '✖', colour: colr.black.darkBg.redBg }
    * ];
-   *
    * const result = await ask.menu('Pick a menu item', menuItems, 'edit'); // 'duplicate' (or other value)
+   *
+   * // Example 2 - Submenus
+   * const actions = (itemType: string) => ({
+   *   items: [
+   *     { title: 'Find', icon: '⌕', colour: colr.sets.blue, value: `find-${itemType}` },
+   *     { title: 'Add', icon: '✚', colour: colr.sets.green, value: `add-${itemType}` },
+   *     { title: 'Edit', icon: '✎', colour: colr.sets.yellow, value: `edit-${itemType}` },
+   *     { title: 'Delete', icon: '⨯', colour: colr.sets.red, value: `delete-${itemType}` }
+   *   ]
+   * });
+   * const menuItems: ask.MenuItem<string>[] = [
+   *   { title: 'Task', icon: '⚑', colour: colr.darkBg.cyanBg, submenu: actions('task') },
+   *   { title: 'Project', icon: '⎔', colour: colr.darkBg.magentaBg, submenu: actions('project') },
+   *   { title: 'Milestone', icon: '◈', colour: colr.darkBg.yellowBg, submenu: actions('milestone') },
+   *   { title: 'Permission', icon: '⚷', colour: colr.light.greyBg, submenu: actions('permission') }
+   * ];
+   * const result = await ask.menu('What do you want to work with?', menuItems);
    * ```
    * @param {string | Breadcrumb} question
    * @param {MenuItem<T>[]} items
@@ -403,6 +420,8 @@ export namespace ask {
     validate?: (value: T, index: number) => ask.ValidationResponse,
     lc?: LineCounter
   ): Promise<T> => {
+    const tempLC = getLineCounter();
+
     const options = customiseOptions.getAskOptions();
 
     // override the items formatter to use simple (or simpleAlt if using an 'alt' formatter already)
@@ -423,6 +442,8 @@ export namespace ask {
 
     const hasIcons = items.some((item) => item.icon !== undefined);
 
+    const submenuIDs: T[] = [];
+
     const choices = items.map((item, index) => {
       const title = item.title || item.value + '';
       let icon = '';
@@ -430,18 +451,35 @@ export namespace ask {
         icon = ` ${item.icon || ''} `;
         if (item.colour) {
           const wrapFn = typeof item.colour === 'function' ? item.colour : (item.colour as WrapSet).bg;
-          icon = wrapFn(icon);
+          icon = colr.black(wrapFn(icon));
         }
         icon += ' ';
       }
+      let value = item.value;
+      if (item.submenu) {
+        const uniqueId = StringTools.randomId('submenu-') as T;
+        submenuIDs.push(uniqueId);
+        value = uniqueId;
+      }
       return {
         title: `${icon}${title}`,
-        value: item.value
+        value: value,
+        submenu: item.submenu
       };
     });
 
-    const result = await basicInput.select<T>(question, choices, initialIndex, validate, lc);
+    const result = await basicInput.select<T>(question, choices, initialIndex, validate, tempLC);
     options.formatters.formatItems = originalFormatItems;
+
+    if (submenuIDs.includes(result)) {
+      const submenu = choices.find((choice) => choice.value === result)?.submenu;
+      if (submenu) {
+        tempLC.clear();
+        return ask.menu(submenu.question || question, submenu.items, submenu.initial ?? initial, validate, lc);
+      }
+    }
+
+    lc?.add(tempLC.get());
     return result;
   };
 
@@ -454,7 +492,12 @@ export namespace ask {
     icon?: string;
     title?: string;
     colour?: WrapSet | WrapFn;
-    value: T;
+    value?: T;
+    submenu?: {
+      question?: string | Breadcrumb;
+      initial?: MenuItem<T> | T | number;
+      items: MenuItem<T>[];
+    };
   }
 
   //<!-- DOCS: 150 -->

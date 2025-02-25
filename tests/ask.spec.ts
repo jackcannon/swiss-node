@@ -160,6 +160,18 @@ describe('ask', () => {
     });
   });
 
+  describe('menu', () => {
+    singleTest(swissnode.ask.menu, 'ask.menu', (menu, name) => {
+      it(should` exist as ${name}`, () => {
+        expect(menu).toBeDefined();
+      });
+
+      // TODO tests
+      // TODO add arg safety
+      // TODO kitchenSink
+    });
+  });
+
   describe('date', () => {
     singleTest(swissnode.ask.date, 'ask.date', (date, name) => {
       it(should` exist as ${name}`, () => {
