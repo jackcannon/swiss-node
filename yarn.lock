@@ -938,7 +938,7 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
-chalk@^4.0.0, chalk@^4.1.2:
+chalk@^4.0.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
@@ -1362,11 +1362,6 @@ function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
-
-fuse.js@^6.6.2:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/fuse.js/-/fuse.js-6.6.2.tgz#fe463fed4b98c0226ac3da2856a415576dc9a111"
-  integrity sha512-cJaJkxCCxC8qIIcPBF9yGxY0W/tVZS3uEISDxhYIdtk8OL93pe+6Zj7LjCqVV4dzbqcriOZ+kQ/NE4RXZHsIGA==
 
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
@@ -2320,7 +2315,7 @@ pretty-format@^29.0.0, pretty-format@^29.6.3:
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
 
-prompts@^2.0.1, prompts@^2.4.2:
+prompts@^2.0.1:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/prompts/-/prompts-2.4.2.tgz#7b57e73b3a48029ad10ebd44f74b01722a4cb069"
   integrity sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==
@@ -2553,41 +2548,33 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
-swiss-ak@^2.11.0:
-  version "2.11.1"
-  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.11.1.tgz#ea4579a671a7cc83708ddabc338c77eb942e6b01"
-  integrity sha512-PIWkWLE9r0FURucrBrLI1st/UQnQwGdu3nQriZRd6aKsPmbbvG+eIXM3PoIyo/F6FtJSygN2w73zWkLZNcwDmA==
-
 swiss-ak@^2.13.0:
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.13.0.tgz#1f33c3222bc8ee136dfef99f2ac267343e9a7a4a"
   integrity sha512-tX22fguFo5+ceywZXuHtRqGbTL2+h0L/p07eAgf1i34zbJLoIEsQEEQekVFQZMOojnfZV2DmNAOv1JxOUcIfQQ==
 
-swiss-ak@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-2.6.0.tgz#ad729a2e04ac6446030be4ba5c35e996019808c2"
-  integrity sha512-sALskFVciH1maNqZpSu+uLfCkf/F/Fs4aGXPaK8Bf2FpK/hvZS9O2v666+ud/+Arb4KvpxDBqbn5ZUbpMCBslg==
+swiss-ak@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.1.0.tgz#bd2d8a2bd801fd92c700713d130c6ca9d9d1e62f"
+  integrity sha512-tswV8aKnKxMTPs5V/zzEaTnVhriMUx96kVWHWvbkf74xtoqne0Nm4iDb/CwLdvwNmuEW324IyBK+SV7PHKuXlA==
 
-swiss-docs@^0.7.6:
-  version "0.7.6"
-  resolved "https://registry.yarnpkg.com/swiss-docs/-/swiss-docs-0.7.6.tgz#0062961dcfd4e5b11522401677d6e78a73adf743"
-  integrity sha512-kNoTULW6UnLchJc0cPIG4e8hFER7iL/wSefLVzQej9KVH8jWQF4Fso6fvhTXQiV15fmhDtS/WZkwqWAhzhB+zw==
+swiss-docs@^0.7.7:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/swiss-docs/-/swiss-docs-0.7.7.tgz#bd768d8b0707712f453f64348960266a0ff95ac7"
+  integrity sha512-lOw5HOap+LojX8bvmwySnyrPPVLXvXlydqYVy48d8VlLOaQL/sAAnZJ1M7Hqzi/zKzrVHwovft0Sq0/zlzdM8w==
   dependencies:
     glob "^9.1.2"
     minimist "^1.2.8"
-    swiss-ak "^2.6.0"
-    swiss-node "^1.4.5"
+    swiss-ak "^3.1.0"
+    swiss-node "^3.3.1"
     ts-to-jsdoc "^1.3.0"
 
-swiss-node@^1.4.5:
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/swiss-node/-/swiss-node-1.4.8.tgz#77c0f3aea8acf9b5a8397277bfb069740464991d"
-  integrity sha512-flxqiEk17Wwge6Kuu8f+AeTGlcK+6BBsmyS1yO3RvSSHNmrm1FD5Zov7UHLSVO6NEMkSAMW8sWaoj4jV/2ojew==
+swiss-node@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/swiss-node/-/swiss-node-3.3.1.tgz#4ffa944840d5403c91b7bcb509caabc5f1d3b34f"
+  integrity sha512-c/iTApt48cpecUWRS2QOFU+cW2wQBiIvod75nLyhNh7rH60l+MSyPXaMjrhQ88kfpmt4RpDmOhjgjiMGFhgT5A==
   dependencies:
-    chalk "^4.1.2"
-    fuse.js "^6.6.2"
-    prompts "^2.4.2"
-    swiss-ak "^2.11.0"
+    swiss-ak "^2.13.0"
 
 test-exclude@^6.0.0:
   version "6.0.0"
