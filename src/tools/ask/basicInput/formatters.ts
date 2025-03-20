@@ -38,7 +38,7 @@ export const promptFormatters: { [key: string]: FormatPromptFn } = {
     const joinerWidth = out.getWidth(promptIcon);
 
     let mainPrompt = out.wrap(`${specialIcon} ${questionText}`, maxWidth);
-    let mainPromptWidth = out.getWidth(mainPrompt.split('\n').at(-1) as string);
+    let mainPromptWidth = out.getWidth(mainPrompt.split('\n').slice(-1)[0] as string);
 
     let valueOut = '';
     let forceNewLine = false;
@@ -48,11 +48,9 @@ export const promptFormatters: { [key: string]: FormatPromptFn } = {
       if (forceNewLine) maxWidthValue = maxWidth - 3;
       const paddingWidth = (forceNewLine ? 0 : mainPromptWidth) + joinerWidth;
 
-      const resultLines = out
-        .wrap(value, maxWidthValue)
-        .split('\n')
-        .map((line, i) => (i === 0 ? '' : ' '.repeat(paddingWidth)) + line);
-      valueOut = col.result(resultLines.join('\n'));
+      // Single line
+      const result = out.truncateStart(value, maxWidthValue);
+      valueOut = col.result(result);
     }
 
     let itemsOut = '';

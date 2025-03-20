@@ -1110,7 +1110,7 @@ var out;
   const loadingChars = import_swiss_ak7.ArrayTools.repeat((loadingWords.length + 1) * loadingWords[0].length, ...loadingWords).map(
     (word, index) => colr.bold("loading".slice(0, Math.floor(Math.floor(index) / loadingWords.length))) + word.slice(Math.floor(Math.floor(index) / loadingWords.length)).join("") + ["   ", ".  ", ".. ", "..."][Math.floor(index / 3) % 4]
   );
-  out2.loading = (action = loadingDefault, lines = 1, symbols4 = loadingChars) => {
+  out2.loading = (action = loadingDefault, lines = 1, symbols5 = loadingChars) => {
     let stopped = false;
     let count = 0;
     let previousLinesDrawn = 0;
@@ -1119,7 +1119,7 @@ var out;
         return;
       if (count)
         process.stdout.write(out2.ansi.cursor.up(previousLinesDrawn));
-      const output = action(symbols4[count++ % symbols4.length]);
+      const output = action(symbols5[count++ % symbols5.length]);
       previousLinesDrawn = lines;
       if (output !== void 0) {
         console.log(output);
@@ -1303,7 +1303,7 @@ var promptFormatters = {
     const promptIcon = col.promptIcon(out.center(sym.promptIcon, 3));
     const joinerWidth = out.getWidth(promptIcon);
     let mainPrompt = out.wrap(`${specialIcon} ${questionText}`, maxWidth);
-    let mainPromptWidth = out.getWidth(mainPrompt.split("\n").at(-1));
+    let mainPromptWidth = out.getWidth(mainPrompt.split("\n").slice(-1)[0]);
     let valueOut = "";
     let forceNewLine = false;
     if (value !== void 0) {
@@ -1312,8 +1312,8 @@ var promptFormatters = {
       if (forceNewLine)
         maxWidthValue = maxWidth - 3;
       const paddingWidth = (forceNewLine ? 0 : mainPromptWidth) + joinerWidth;
-      const resultLines = out.wrap(value, maxWidthValue).split("\n").map((line, i) => (i === 0 ? "" : " ".repeat(paddingWidth)) + line);
-      valueOut = col.result(resultLines.join("\n"));
+      const result = out.truncateStart(value, maxWidthValue);
+      valueOut = col.result(result);
     }
     let itemsOut = "";
     if (items !== void 0 && !isExit) {
@@ -4297,11 +4297,22 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const infoLine = (() => {
         const loadingOut = loading ? col.specialFaded(txt.loading) : void 0;
         const count = isMulti ? col.specialFaded(`${col.specialHint("[")} ${txt.selected(multiSelected.size)} ${col.specialHint("]")} `) : "";
-        const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
+        const curr = out.truncateStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
         const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
         return out.center(split, termWidth);
       })();
-      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+      const resultOut = isMulti ? Array.from(multiSelected) : (() => {
+        const pathParts = currentPath.split("/");
+        const numParts = maxColumns - 2;
+        const lastXParts = pathParts.slice(-numParts);
+        const truncatedParts = lastXParts.map((s) => out.truncateStart(s, maxWidth - 2));
+        let result = "";
+        if (pathParts.length > numParts) {
+          result += import_swiss_ak25.symbols.ELLIPSIS + "/";
+        }
+        result += truncatedParts.join("/");
+        return result;
+      })();
       const actionBar = getFEActionBar(isMulti, pressed, [], isError);
       let output = ansi2.cursor.hide + tempLC.ansi.moveHome();
       const imitated = getImitateOutput(question, resultOut, false, isError, errorMsg);

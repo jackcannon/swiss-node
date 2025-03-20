@@ -40,7 +40,7 @@ export const stringifyValue = (value: any) => {
       .toString()
       .split(/\n\s*/gm)
       .filter((line) => line.trim().length);
-    return (lines.length > 2 ? [...lines.slice(0, 2), lines.length > 3 ? '...' : undefined, lines.at(-1)] : lines.slice(0, 2))
+    return (lines.length > 2 ? [...lines.slice(0, 2), lines.length > 3 ? '...' : undefined, lines.slice(-1)[0]] : lines.slice(0, 2))
       .filter((l) => l)
       .join(' ');
   }
@@ -63,7 +63,7 @@ export const stringifyValue = (value: any) => {
  */
 export const should = (strings: TemplateStringsArray, ...exps: any[]) => {
   const prefix = 'should' + ((strings[0] || '').startsWith(' ') ? '' : ' ');
-  const output = [...exps.flatMap((exp, i) => [strings[i], stringifyValue(exp)]), [...strings].at(-1)];
+  const output = [...exps.flatMap((exp, i) => [strings[i], stringifyValue(exp)]), [...strings].slice(-1)[0]];
   return prefix + output.join('');
 };
 

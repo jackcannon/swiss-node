@@ -1,4 +1,4 @@
-import { ArrayTools, PromiseTools, fn, getDeferred, milliseconds, wait } from 'swiss-ak';
+import { ArrayTools, PromiseTools, fn, getDeferred, milliseconds, symbols, wait } from 'swiss-ak';
 import { colr } from '../../colr';
 import { Breadcrumb, LineCounter, ansi, getLineCounter, out } from '../../out';
 
@@ -309,11 +309,29 @@ export const fileExplorerHandler = async (
         const loadingOut = loading ? col.specialFaded(txt.loading) : undefined;
 
         const count = isMulti ? col.specialFaded(`${col.specialHint('[')} ${txt.selected(multiSelected.size)} ${col.specialHint(']')} `) : '';
-        const curr = out.limitToLengthStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
+        const curr = out.truncateStart(`${cursorTypeOut} ${currentPath}`, tableWidth - (out.getWidth(count) + 3));
         const split = out.split(loadingOut ?? count, curr, tableWidth - 2);
         return out.center(split, termWidth);
       })();
-      const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
+      const resultOut = isMulti
+        ? Array.from(multiSelected)
+        : (() => {
+            // shortened path for imitated output
+            const pathParts = currentPath.split('/');
+
+            const numParts = maxColumns - 2;
+            const lastXParts = pathParts.slice(-numParts);
+            const truncatedParts = lastXParts.map((s) => out.truncateStart(s, maxWidth - 2));
+
+            let result = '';
+
+            if (pathParts.length > numParts) {
+              result += symbols.ELLIPSIS + '/';
+            }
+
+            result += truncatedParts.join('/');
+            return result;
+          })();
 
       const actionBar = getFEActionBar(isMulti, pressed, [], isError);
 
