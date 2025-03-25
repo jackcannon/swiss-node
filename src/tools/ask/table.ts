@@ -354,10 +354,11 @@ const getTableSelectActionBar = (multi: boolean, pressed?: string, disabled: str
  *   { name: 'Jane', age: 26 },
  *   { name: 'Derek', age: 27 }
  * ];
- * const headers = [['Name', 'Age']];
- * const itemToRow = ({ name, age }) => [name, age];
  *
- * const answer = await ask.table.select('Who?', items, undefined, itemToRow, headers);
+ * const answer = await ask.table.select('Who?', items, {
+ *   rows: ({ name, age }) => [name, age],
+ *   headers: [['Name', 'Age']]
+ * });
  * // ┏━━━┳━━━━━━━┳━━━━━┓
  * // ┃   ┃ Name  ┃ Age ┃
  * // ┡━━━╇━━━━━━━╇━━━━━┩
@@ -413,10 +414,11 @@ export const select = async <T extends unknown>(
  *   { name: 'Jane', age: 26 },
  *   { name: 'Derek', age: 27 }
  * ];
- * const headers = [['Name', 'Age']];
- * const itemToRow = ({ name, age }) => [name, age];
  *
- * const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, headers);
+ * const answer = await ask.table.multiselect('Who?', items, {
+ *   rows: ({ name, age }) => [name, age],
+ *   headers: [['Name', 'Age']]
+ * });
  * ┏━━━┳━━━━━━━┳━━━━━┓
  * ┃   ┃ Name  ┃ Age ┃
  * ┡━━━╇━━━━━━━╇━━━━━┩

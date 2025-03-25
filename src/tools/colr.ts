@@ -1891,6 +1891,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
    *
+   * > __Warning:__ `grey1` may not be visible in some terminals, depending on the colour settings
+   *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
    * @param {...string} text

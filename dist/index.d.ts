@@ -1780,6 +1780,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
      *
+     * > __Warning:__ `grey1` may not be visible in some terminals, depending on the colour settings
+     *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
      * @param {...string} text
@@ -1799,6 +1801,8 @@ interface ColrFn extends WrapFn {
      * Unaffected by `light`/`dark` modifiers
      * 
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey1.inverse` ≈ `colr.lightBlackBg`
+     * 
+     * > __Warning:__ `grey1` may not be visible in some terminals, depending on the colour settings
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * @param {...string} text
@@ -5778,10 +5782,11 @@ declare namespace ask {
          *   { name: 'Jane', age: 26 },
          *   { name: 'Derek', age: 27 }
          * ];
-         * const headers = [['Name', 'Age']];
-         * const itemToRow = ({ name, age }) => [name, age];
          * 
-         * const answer = await ask.table.select('Who?', items, undefined, itemToRow, headers);
+         * const answer = await ask.table.select('Who?', items, {
+         *   rows: ({ name, age }) => [name, age],
+         *   headers: [['Name', 'Age']]
+         * });
          * // ┏━━━┳━━━━━━━┳━━━━━┓
          * // ┃   ┃ Name  ┃ Age ┃
          * // ┡━━━╇━━━━━━━╇━━━━━┩
@@ -5815,10 +5820,11 @@ declare namespace ask {
          *   { name: 'Jane', age: 26 },
          *   { name: 'Derek', age: 27 }
          * ];
-         * const headers = [['Name', 'Age']];
-         * const itemToRow = ({ name, age }) => [name, age];
          * 
-         * const answer = await ask.table.multiselect('Who?', items, undefined, itemToRow, headers);
+         * const answer = await ask.table.multiselect('Who?', items, {
+         *   rows: ({ name, age }) => [name, age],
+         *   headers: [['Name', 'Age']]
+         * });
          * ┏━━━┳━━━━━━━┳━━━━━┓
          * ┃   ┃ Name  ┃ Age ┃
          * ┡━━━╇━━━━━━━╇━━━━━┩
