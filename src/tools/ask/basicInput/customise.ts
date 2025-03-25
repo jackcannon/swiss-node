@@ -45,6 +45,9 @@ const boxSymbols: { [key in 'thin' | 'thick']: BoxSymbols } = {
 let askOptions: AskOptionsStored | null = null;
 const populateAskOptions = (): AskOptionsStored => {
   if (askOptions) return askOptions;
+
+  const darkestGrey = colr.grey2;
+
   askOptions = {
     general: {
       themeColour: 'yellow',
@@ -88,9 +91,9 @@ const populateAskOptions = (): AskOptionsStored => {
     },
     colours: {
       decoration: {
-        normal: colr.grey1,
+        normal: darkestGrey,
         error: colr.dark.red.dim,
-        done: colr.grey1
+        done: darkestGrey
       },
       questionText: {
         normal: colr.white.bold,
@@ -103,9 +106,9 @@ const populateAskOptions = (): AskOptionsStored => {
         done: colr.dark.green
       },
       openingIcon: {
-        normal: colr.grey1,
+        normal: darkestGrey,
         error: colr.dark.red,
-        done: colr.grey1
+        done: darkestGrey
       },
       promptIcon: getSetFromSingle(colr.yellow.dim),
       result: getSetFromSingle(colr.dark.yellow),
@@ -158,7 +161,7 @@ const populateAskOptions = (): AskOptionsStored => {
       specialHighlight: getSetFromSingle(colr.yellow),
       specialNormal: getSetFromSingle(colr.white),
       specialFaded: getSetFromSingle(colr.grey3),
-      specialHint: getSetFromSingle(colr.grey1),
+      specialHint: getSetFromSingle(darkestGrey),
 
       specialInactiveHover: getSetFromSingle(colr.lightBlackBg.black),
       specialInactiveSelected: getSetFromSingle(colr.lightBlackBg.black),
@@ -177,7 +180,7 @@ const populateAskOptions = (): AskOptionsStored => {
         done: colr.yellow
       },
 
-      timelineTrack: getSetFromSingle(colr.grey1),
+      timelineTrack: getSetFromSingle(darkestGrey),
       timelineTrackActive: getSetFromSingle(colr.grey3),
       timelineHandle: getSetFromSingle(colr.grey4),
       timelineHandleActive: getSetFromSingle(colr.yellow)

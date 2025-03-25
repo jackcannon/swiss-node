@@ -1515,6 +1515,7 @@ var askOptions = null;
 var populateAskOptions = () => {
   if (askOptions)
     return askOptions;
+  const darkestGrey = colr.grey2;
   askOptions = {
     general: {
       themeColour: "yellow",
@@ -1556,9 +1557,9 @@ var populateAskOptions = () => {
     },
     colours: {
       decoration: {
-        normal: colr.grey1,
+        normal: darkestGrey,
         error: colr.dark.red.dim,
-        done: colr.grey1
+        done: darkestGrey
       },
       questionText: {
         normal: colr.white.bold,
@@ -1571,9 +1572,9 @@ var populateAskOptions = () => {
         done: colr.dark.green
       },
       openingIcon: {
-        normal: colr.grey1,
+        normal: darkestGrey,
         error: colr.dark.red,
-        done: colr.grey1
+        done: darkestGrey
       },
       promptIcon: getSetFromSingle(colr.yellow.dim),
       result: getSetFromSingle(colr.dark.yellow),
@@ -1625,7 +1626,7 @@ var populateAskOptions = () => {
       specialHighlight: getSetFromSingle(colr.yellow),
       specialNormal: getSetFromSingle(colr.white),
       specialFaded: getSetFromSingle(colr.grey3),
-      specialHint: getSetFromSingle(colr.grey1),
+      specialHint: getSetFromSingle(darkestGrey),
       specialInactiveHover: getSetFromSingle(colr.lightBlackBg.black),
       specialInactiveSelected: getSetFromSingle(colr.lightBlackBg.black),
       specialInactiveHighlight: getSetFromSingle(colr.grey4),
@@ -1640,7 +1641,7 @@ var populateAskOptions = () => {
         error: colr.danger,
         done: colr.yellow
       },
-      timelineTrack: getSetFromSingle(colr.grey1),
+      timelineTrack: getSetFromSingle(darkestGrey),
       timelineTrackActive: getSetFromSingle(colr.grey3),
       timelineHandle: getSetFromSingle(colr.grey4),
       timelineHandleActive: getSetFromSingle(colr.yellow)
