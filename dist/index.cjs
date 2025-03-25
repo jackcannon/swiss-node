@@ -1610,7 +1610,7 @@ var populateAskOptions = () => {
       scrollbarTrack: getSetFromSingle(colr.reset.lightBlack),
       scrollbarBar: getSetFromSingle(colr.reset.lightBlack.inverse),
       selectAllText: getSetFromSingle(colr.grey3),
-      boolYNText: getSetFromSingle(colr.grey),
+      boolYNText: getSetFromSingle(darkestGrey),
       countdown: {
         normal: colr.lightBlack,
         error: colr.dark.red.dim,
