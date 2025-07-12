@@ -574,6 +574,10 @@ ask.trim(question: string | Breadcrumb, totalFrames: number, frameRate: number, 
 
 Get a start and end frame from the user
 
+```typescript
+const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
+```
+
 |  #  | Parameter Name | Required | Type                                                   | Default |
 |:---:|:---------------|:---------|:-------------------------------------------------------|:--------|
 | *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                 |         |
@@ -739,10 +743,10 @@ Good for keeping skipping parts of forms, but providing context and keeping disp
 
 ```typescript
 let data = {};
-const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
+const name1 = ask.prefill('What is your name?', data.name,  ask.text); // User input
 
 data = {name: 'Jack'}
-const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
+const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
 ```
 
 |  #  | Parameter Name | Required | Type                                                                   |
@@ -2732,6 +2736,13 @@ Move the cursor without clearing/erasing lines.
 
 Updates the line count in the process.
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.moveCursor(1);
+lc.log('world'); // 1
+```
+
 |  #  | Parameter Name | Required | Type     | Description                                                          |
 |:---:|:---------------|:---------|:---------|:---------------------------------------------------------------------|
 | *0* | `y`            | **Yes**  | `number` | How many lines to move the cursor (down if positive, up if negative) |
@@ -2749,6 +2760,13 @@ Same as `lc.clear`, but without clearing the lines.
 
 Updates the line count in the process.
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.moveCursor(1);
+lc.log('world'); // 1
+```
+
 | Return Type |
 |-------------|
 | `void`      |
@@ -2761,6 +2779,14 @@ Move the cursor to a previously recorded checkpoint
 Same as `lc.clearToCheckpoint`, but without clearing the lines.
 
 Updates the line count in the process.
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.checkpoint('test');
+lc.moveToCheckpoint('test');
+lc.log('world'); // 1
+```
 
 |  #  | Parameter Name | Required | Type     | Description               |
 |:---:|:---------------|:---------|:---------|:--------------------------|
@@ -2816,6 +2842,13 @@ Moves the cursor down by a given number of lines
 Can be negative to move up (clearing lines)
 
 > **NOTE:** This adds new lines
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.clearDown(1);
+lc.log('world'); // 1
+```
 
 |  #  | Parameter Name | Required | Type     | Description                 |
 |:---:|:---------------|:---------|:---------|:----------------------------|
@@ -2886,6 +2919,13 @@ Updates the line count in the process.
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+process.stdout.write(lc.ansi.moveCursor(1));
+lc.log('world'); // 1
+```
+
 |  #  | Parameter Name | Required | Type     | Description                                                          |
 |:---:|:---------------|:---------|:---------|:---------------------------------------------------------------------|
 | *0* | `y`            | **Yes**  | `number` | How many lines to move the cursor (down if positive, up if negative) |
@@ -2905,6 +2945,13 @@ Updates the line count in the process.
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+process.stdout.write(lc.ansi.moveHome());
+lc.log('world'); // 1
+```
+
 | Return Type |
 |-------------|
 | `string`    |
@@ -2919,6 +2966,14 @@ Same as `lc.clearToCheckpoint`, but without clearing the lines.
 Updates the line count in the process.
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+lc.checkpoint('test');
+lc.moveToCheckpoint('test');
+lc.log('world'); // 1
+```
 
 |  #  | Parameter Name | Required | Type     | Description               |
 |:---:|:---------------|:---------|:---------|:--------------------------|
@@ -2981,6 +3036,15 @@ Can be negative to move up (clearing lines)
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
+```typescript
+const lc = getLineCounter();
+lc.log('line 1'); // 1
+lc.log('line 2'); // 1
+lc.log('line 3'); // 1
+lc.log('line 4'); // 1
+process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
+```
+
 |  #  | Parameter Name | Required | Type     | Description                 |
 |:---:|:---------------|:---------|:---------|:----------------------------|
 | *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
@@ -3021,12 +3085,28 @@ Saves the current cursor position and also tracks the line count
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
 
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+process.stdout.write(lc.ansi.save());
+lc.log('world'); // 1
+process.stdout.write(lc.ansi.restore());
+```
+
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
 ###### lc.ansi.restore
 Restores to the previously saved cursor position and also tracks the line count
 
 > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+
+```typescript
+const lc = getLineCounter();
+lc.log('hello'); // 1
+process.stdout.write(lc.ansi.save());
+lc.log('world'); // 1
+process.stdout.write(lc.ansi.restore());
+```
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3041,7 +3121,7 @@ out.utils.getTerminalWidth(): number
 Get maximum terminal width (columns)
 
 ```typescript
-print.utils.getTerminalWidth(); // 127
+out.utils.getTerminalWidth(); // 127
 ```
 
 | Return Type |
@@ -3255,6 +3335,10 @@ out.utils.stripAnsi(text: string): string
 
 Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
 
+```typescript
+out.utils.stripAnsi(colr.red('this is line 1')) // 'this is line 1'
+```
+
 |  #  | Parameter Name | Required | Type     |
 |:---:|:---------------|:---------|:---------|
 | *0* | `text`         | **Yes**  | `string` |
@@ -3274,6 +3358,11 @@ out.utils.getEmojiRegex(flags: string): RegExp
 A rough way to regex emojis
 
 Note: Certain symbols removed to minimise false positives
+
+```typescript
+const str = "The 🦊 quickly jumps over the lazy 🐶."
+str.match(out.utils.getEmojiRegex()); // [ '🦊', '🐶' ]
+```
 
 |  #  | Parameter Name | Required | Type     | Default |
 |:---:|:---------------|:---------|:---------|:--------|
@@ -6663,6 +6752,13 @@ table.utils.getFullOptions(opts: TableOptions): FullTableOptions
 
 A function for simplifying the format configuration
 
+```typescript
+const someOpts = {
+  // ...
+};
+table.utils.getFullOptions(someOpts) // { ... } with defaults applied
+```
+
 |  #  | Parameter Name | Required | Type           |
 |:---:|:---------------|:---------|:---------------|
 | *0* | `opts`         | **Yes**  | `TableOptions` |
@@ -6775,6 +6871,10 @@ processLogContents(prefix: string, wrapper: Function, ...args: any[]): string
 
 Process an item to be logged
 
+```typescript
+LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
+```
+
 |  #   | Parameter Name | Required | Type       | Default    |
 |:----:|:---------------|:---------|:-----------|:-----------|
 | *0*  | `prefix`       | **Yes**  | `string`   |            |
@@ -6795,6 +6895,11 @@ getLog(prefix: string, wrapper: Function): (...args: any[]) => void
 ```
 
 Get a log function for a given prefix
+
+```typescript
+const log = LogTools.getLog('prefix:');
+log('hello'); // 'prefix: hello'
+```
 
 |  #  | Parameter Name | Required | Type       | Default    |
 |:---:|:---------------|:---------|:-----------|:-----------|
@@ -7625,9 +7730,21 @@ D
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
 #### multiPrintFn
+
+```typescript
+progressBar.multiPrintFn(previousDrawnLines: number, output: string): void
+```
+
 The default printFn for MultiBarManagers
 
 Clears previously printed lines and prints the output in their place
+
+```typescript
+const manager = getMultiBarManager({ printFn: progressBar.utils.multiPrintFn });
+
+const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+```
 
 |  #  | Parameter Name       | Required | Type     |
 |:---:|:---------------------|:---------|:---------|
@@ -7693,7 +7810,7 @@ waiters.nextTick(): Promise<unknown>
 Wait for the next tick
 
 ```typescript
-wait nextTick();
+await nextTick();
 ```
 
 | Return Type        |

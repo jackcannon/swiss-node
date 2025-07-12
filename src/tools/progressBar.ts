@@ -1162,9 +1162,18 @@ export namespace progressBar {
     /**<!-- DOCS: progressBar.multiPrintFn #### @ -->
      * multiPrintFn
      *
+     * - `progressBar.multiPrintFn`
+     *
      * The default printFn for MultiBarManagers
      *
      * Clears previously printed lines and prints the output in their place
+     *
+     * ```typescript
+     * const manager = getMultiBarManager({ printFn: progressBar.utils.multiPrintFn });
+     *
+     * const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+     * const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+     * ```
      * @param {number} previousDrawnLines
      * @param {string} output
      * @returns {void}

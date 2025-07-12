@@ -13,7 +13,7 @@ export namespace waiters {
    * Wait for the next tick
    *
    * ```typescript
-   * wait nextTick();
+   * await nextTick();
    * ```
    * @returns {Promise<unknown>}
    */

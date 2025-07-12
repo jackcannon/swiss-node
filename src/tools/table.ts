@@ -725,6 +725,13 @@ export namespace table {
      * - `table.utils.getFullOptions`
      *
      * A function for simplifying the format configuration
+     *
+     * ```typescript
+     * const someOpts = {
+     *   // ...
+     * };
+     * table.utils.getFullOptions(someOpts) // { ... } with defaults applied
+     * ```
      * @param {TableOptions} opts
      * @returns {FullTableOptions}
      */

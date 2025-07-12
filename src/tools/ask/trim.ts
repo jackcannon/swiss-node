@@ -62,6 +62,10 @@ const getTrimActionBar = () => {
  * - `ask.trim`
  *
  * Get a start and end frame from the user
+ *
+ * ```typescript
+ * const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
+ * ```
  * @param {string | Breadcrumb} question
  * @param {number} totalFrames
  * @param {number} [frameRate=60]

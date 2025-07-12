@@ -337,6 +337,13 @@ export interface LineCounter {
    *
    * Updates the line count in the process.
    *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.moveCursor(1);
+   * lc.log('world'); // 1
+   * ```
+   *
    * @param {number} y How many lines to move the cursor (down if positive, up if negative)
    * @returns {void}
    */
@@ -351,6 +358,13 @@ export interface LineCounter {
    *
    * Updates the line count in the process.
    *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.moveCursor(1);
+   * lc.log('world'); // 1
+   * ```
+   *
    * @returns {void}
    */
   moveHome(): void;
@@ -363,6 +377,14 @@ export interface LineCounter {
    * Same as `lc.clearToCheckpoint`, but without clearing the lines.
    *
    * Updates the line count in the process.
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.checkpoint('test');
+   * lc.moveToCheckpoint('test');
+   * lc.log('world'); // 1
+   * ```
    *
    * @param {string} checkpointID The checkpoint to move to
    * @returns {void}
@@ -412,6 +434,13 @@ export interface LineCounter {
    * Can be negative to move up (clearing lines)
    *
    * > **NOTE:** This adds new lines
+   *
+   * ```typescript
+   * const lc = getLineCounter();
+   * lc.log('hello'); // 1
+   * lc.clearDown(1);
+   * lc.log('world'); // 1
+   * ```
    *
    * @param {number} lines The number of lines to move
    * @returns {void}
@@ -474,6 +503,13 @@ export interface LineCounter {
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
      *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * process.stdout.write(lc.ansi.moveCursor(1));
+     * lc.log('world'); // 1
+     * ```
+     *
      * @param {number} y How many lines to move the cursor (down if positive, up if negative)
      * @returns {string}
      */
@@ -490,6 +526,13 @@ export interface LineCounter {
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
      *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * process.stdout.write(lc.ansi.moveHome());
+     * lc.log('world'); // 1
+     * ```
+     *
      * @returns {string}
      */
     moveHome(): string;
@@ -504,6 +547,14 @@ export interface LineCounter {
      * Updates the line count in the process.
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test');
+     * lc.moveToCheckpoint('test');
+     * lc.log('world'); // 1
+     * ```
      *
      * @param {string} checkpointID The checkpoint to move to
      * @returns {string}
@@ -560,6 +611,14 @@ export interface LineCounter {
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
      *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('line 1'); // 1
+     * lc.log('line 2'); // 1
+     * lc.log('line 3'); // 1
+     * lc.log('line 4'); // 1
+     * process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
+     * ```
      * @param {number} lines The number of lines to move
      * @returns {string}
      */
@@ -593,6 +652,14 @@ export interface LineCounter {
      * Saves the current cursor position and also tracks the line count
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * process.stdout.write(lc.ansi.save());
+     * lc.log('world'); // 1
+     * process.stdout.write(lc.ansi.restore());
+     * ```
      */
     save(): string;
 
@@ -602,6 +669,14 @@ export interface LineCounter {
      * Restores to the previously saved cursor position and also tracks the line count
      *
      * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * process.stdout.write(lc.ansi.save());
+     * lc.log('world'); // 1
+     * process.stdout.write(lc.ansi.restore());
+     * ```
      */
     restore(): string;
   };

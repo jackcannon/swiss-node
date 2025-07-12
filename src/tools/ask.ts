@@ -278,10 +278,10 @@ export namespace ask {
    *
    * ```typescript
    * let data = {};
-   * const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
+   * const name1 = ask.prefill('What is your name?', data.name,  ask.text); // User input
    *
    * data = {name: 'Jack'}
-   * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
+   * const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
    * ```
    * @param {string | Breadcrumb} question
    * @param {T | undefined} value

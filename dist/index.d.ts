@@ -3390,6 +3390,13 @@ declare namespace table {
          * - `table.utils.getFullOptions`
          *
          * A function for simplifying the format configuration
+         *
+         * ```typescript
+         * const someOpts = {
+         *   // ...
+         * };
+         * table.utils.getFullOptions(someOpts) // { ... } with defaults applied
+         * ```
          * @param {TableOptions} opts
          * @returns {FullTableOptions}
          */
@@ -3522,6 +3529,13 @@ interface LineCounter$1 {
      *
      * Updates the line count in the process.
      *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.moveCursor(1);
+     * lc.log('world'); // 1
+     * ```
+     *
      * @param {number} y How many lines to move the cursor (down if positive, up if negative)
      * @returns {void}
      */
@@ -3535,6 +3549,13 @@ interface LineCounter$1 {
      *
      * Updates the line count in the process.
      *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.moveCursor(1);
+     * lc.log('world'); // 1
+     * ```
+     *
      * @returns {void}
      */
     moveHome(): void;
@@ -3546,6 +3567,14 @@ interface LineCounter$1 {
      * Same as `lc.clearToCheckpoint`, but without clearing the lines.
      *
      * Updates the line count in the process.
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.checkpoint('test');
+     * lc.moveToCheckpoint('test');
+     * lc.log('world'); // 1
+     * ```
      *
      * @param {string} checkpointID The checkpoint to move to
      * @returns {void}
@@ -3592,6 +3621,13 @@ interface LineCounter$1 {
      * Can be negative to move up (clearing lines)
      *
      * > **NOTE:** This adds new lines
+     *
+     * ```typescript
+     * const lc = getLineCounter();
+     * lc.log('hello'); // 1
+     * lc.clearDown(1);
+     * lc.log('world'); // 1
+     * ```
      *
      * @param {number} lines The number of lines to move
      * @returns {void}
@@ -3651,6 +3687,13 @@ interface LineCounter$1 {
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.moveCursor(1));
+         * lc.log('world'); // 1
+         * ```
+         *
          * @param {number} y How many lines to move the cursor (down if positive, up if negative)
          * @returns {string}
          */
@@ -3666,6 +3709,13 @@ interface LineCounter$1 {
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.moveHome());
+         * lc.log('world'); // 1
+         * ```
+         *
          * @returns {string}
          */
         moveHome(): string;
@@ -3679,6 +3729,14 @@ interface LineCounter$1 {
          * Updates the line count in the process.
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * lc.checkpoint('test');
+         * lc.moveToCheckpoint('test');
+         * lc.log('world'); // 1
+         * ```
          *
          * @param {string} checkpointID The checkpoint to move to
          * @returns {string}
@@ -3732,6 +3790,14 @@ interface LineCounter$1 {
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
          *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('line 1'); // 1
+         * lc.log('line 2'); // 1
+         * lc.log('line 3'); // 1
+         * lc.log('line 4'); // 1
+         * process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
+         * ```
          * @param {number} lines The number of lines to move
          * @returns {string}
          */
@@ -3763,6 +3829,14 @@ interface LineCounter$1 {
          * Saves the current cursor position and also tracks the line count
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.save());
+         * lc.log('world'); // 1
+         * process.stdout.write(lc.ansi.restore());
+         * ```
          */
         save(): string;
         /**<!-- DOCS: out.LineCounter.ansi.restore ###### -->
@@ -3771,6 +3845,14 @@ interface LineCounter$1 {
          * Restores to the previously saved cursor position and also tracks the line count
          *
          * > **WARNING:** lc.ansi functions update the line count, but don't apply the affect themselves. You must print the returned string to apply the affect.
+         *
+         * ```typescript
+         * const lc = getLineCounter();
+         * lc.log('hello'); // 1
+         * process.stdout.write(lc.ansi.save());
+         * lc.log('world'); // 1
+         * process.stdout.write(lc.ansi.restore());
+         * ```
          */
         restore(): string;
     };
@@ -4319,7 +4401,7 @@ declare namespace out {
          * Get maximum terminal width (columns)
          *
          * ```typescript
-         * print.utils.getTerminalWidth(); // 127
+         * out.utils.getTerminalWidth(); // 127
          * ```
          * @returns {number}
          */
@@ -4463,6 +4545,10 @@ declare namespace out {
          * - `out.utils.stripAnsi`
          *
          * Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
+         *
+         * ```typescript
+         * out.utils.stripAnsi(colr.red('this is line 1')) // 'this is line 1'
+         * ```
          * @param {string} text
          * @returns {string}
          */
@@ -4475,6 +4561,11 @@ declare namespace out {
          * A rough way to regex emojis
          *
          * Note: Certain symbols removed to minimise false positives
+         *
+         * ```typescript
+         * const str = "The 🦊 quickly jumps over the lazy 🐶."
+         * str.match(out.utils.getEmojiRegex()); // [ '🦊', '🐶' ]
+         * ```
          * @param {string} [flags='g']
          * @returns {RegExp}
          */
@@ -5859,6 +5950,10 @@ declare namespace ask {
      * - `ask.trim`
      * 
      * Get a start and end frame from the user
+     * 
+     * ```typescript
+     * const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
+     * ```
      * @param {string | Breadcrumb} question
      * @param {number} totalFrames
      * @param {number} [frameRate=60]
@@ -5979,10 +6074,10 @@ declare namespace ask {
      *
      * ```typescript
      * let data = {};
-     * const name1 = ask.prefill(data.name, 'What is your name?', ask.text); // User input
+     * const name1 = ask.prefill('What is your name?', data.name,  ask.text); // User input
      *
      * data = {name: 'Jack'}
-     * const name2 = ask.prefill(data.name, 'What is your name?', ask.text); // Jack
+     * const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
      * ```
      * @param {string | Breadcrumb} question
      * @param {T | undefined} value
@@ -6404,6 +6499,10 @@ declare namespace LogTools {
      * - `processLogContents`
      *
      * Process an item to be logged
+     *
+     * ```typescript
+     * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
+     * ```
      * @param {string} prefix
      * @param {Function} [wrapper=fn.noact]
      * @param {...any} [args]
@@ -6417,6 +6516,11 @@ declare namespace LogTools {
      * - `getLog`
      *
      * Get a log function for a given prefix
+     *
+     * ```typescript
+     * const log = LogTools.getLog('prefix:');
+     * log('hello'); // 'prefix: hello'
+     * ```
      * @param {string} prefix
      * @param {Function} [wrapper=fn.noact]
      * @returns {(...args: any[]) => void}
@@ -6474,6 +6578,10 @@ declare const getLogStr: (item: any) => string;
  * - `processLogContents`
  * 
  * Process an item to be logged
+ * 
+ * ```typescript
+ * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
+ * ```
  * @param {string} prefix
  * @param {Function} [wrapper=fn.noact]
  * @param {...any} [args]
@@ -6487,6 +6595,11 @@ declare const processLogContents: (prefix: string, wrapper?: Function, ...args: 
  * - `getLog`
  * 
  * Get a log function for a given prefix
+ * 
+ * ```typescript
+ * const log = LogTools.getLog('prefix:');
+ * log('hello'); // 'prefix: hello'
+ * ```
  * @param {string} prefix
  * @param {Function} [wrapper=fn.noact]
  * @returns {(...args: any[]) => void}
@@ -7338,9 +7451,18 @@ declare namespace progressBar {
         /**<!-- DOCS: progressBar.multiPrintFn #### @ -->
          * multiPrintFn
          *
+         * - `progressBar.multiPrintFn`
+         *
          * The default printFn for MultiBarManagers
          *
          * Clears previously printed lines and prints the output in their place
+         *
+         * ```typescript
+         * const manager = getMultiBarManager({ printFn: progressBar.utils.multiPrintFn });
+         *
+         * const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
+         * const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
+         * ```
          * @param {number} previousDrawnLines
          * @param {string} output
          * @returns {void}
@@ -7459,7 +7581,7 @@ declare namespace waiters {
      * Wait for the next tick
      *
      * ```typescript
-     * wait nextTick();
+     * await nextTick();
      * ```
      * @returns {Promise<unknown>}
      */
@@ -7474,7 +7596,7 @@ declare namespace waiters {
  * Wait for the next tick
  * 
  * ```typescript
- * wait nextTick();
+ * await nextTick();
  * ```
  * @returns {Promise<unknown>}
  */

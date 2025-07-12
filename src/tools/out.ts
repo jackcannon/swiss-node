@@ -757,7 +757,7 @@ export namespace out {
      * Get maximum terminal width (columns)
      *
      * ```typescript
-     * print.utils.getTerminalWidth(); // 127
+     * out.utils.getTerminalWidth(); // 127
      * ```
      * @returns {number}
      */
@@ -911,6 +911,10 @@ export namespace out {
      * - `out.utils.stripAnsi`
      *
      * Removes all ANSI escape codes from a string. This includes any colour or styling added by colr or libraries like chalk.
+     *
+     * ```typescript
+     * out.utils.stripAnsi(colr.red('this is line 1')) // 'this is line 1'
+     * ```
      * @param {string} text
      * @returns {string}
      */
@@ -935,6 +939,11 @@ export namespace out {
      * A rough way to regex emojis
      *
      * Note: Certain symbols removed to minimise false positives
+     *
+     * ```typescript
+     * const str = "The 🦊 quickly jumps over the lazy 🐶."
+     * str.match(out.utils.getEmojiRegex()); // [ '🦊', '🐶' ]
+     * ```
      * @param {string} [flags='g']
      * @returns {RegExp}
      */

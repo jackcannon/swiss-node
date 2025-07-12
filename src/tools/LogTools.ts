@@ -70,6 +70,10 @@ export namespace LogTools {
    * - `processLogContents`
    *
    * Process an item to be logged
+   *
+   * ```typescript
+   * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
+   * ```
    * @param {string} prefix
    * @param {Function} [wrapper=fn.noact]
    * @param {...any} [args]
@@ -90,6 +94,11 @@ export namespace LogTools {
    * - `getLog`
    *
    * Get a log function for a given prefix
+   *
+   * ```typescript
+   * const log = LogTools.getLog('prefix:');
+   * log('hello'); // 'prefix: hello'
+   * ```
    * @param {string} prefix
    * @param {Function} [wrapper=fn.noact]
    * @returns {(...args: any[]) => void}
