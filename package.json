@@ -39,7 +39,7 @@
     "test": "yarn quickbuild && yarn test:bun && yarn test:node",
     "test:node": "NODE_NO_WARNINGS=1 node --experimental-vm-modules ./node_modules/.bin/jest --no-cache",
     "test:bun": "bun test",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn quickbuild"
   },
   "dependencies": {
     "swiss-ak": "^2.13.0"
