@@ -1,4 +1,4 @@
-import { Partial as Partial$1, OfType, RemapOf, second, progressBar as progressBar$1 } from 'swiss-ak';
+import { Partial as Partial$1, OfType, RemapOf, second } from 'swiss-ak';
 
 interface AnsiEscapeCodes {
     /**<!-- DOCS: out.ansi.cursor #### -->
@@ -7565,7 +7565,7 @@ declare namespace progressBarTools {
      * @param {boolean} [randomise=false]
      * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
      */
-    const getColouredProgressBarOpts: (opts: progressBar$1.ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: progressBar$1.ProgressBarOptions, resetColours?: boolean) => progressBar$1.ProgressBarOptions;
+    const getColouredProgressBarOpts: (opts: progressBar.ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: progressBar.ProgressBarOptions, resetColours?: boolean) => progressBar.ProgressBarOptions;
 }
 
 /**<!-- DOCS: waiters ##! -->

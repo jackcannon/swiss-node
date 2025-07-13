@@ -1,7 +1,8 @@
-import { ArrayTools, progressBar } from 'swiss-ak';
+import { ArrayTools } from 'swiss-ak';
 
 import { out } from './out';
 import { colr } from './colr';
+import { progressBar } from './progressBar';
 
 //<!-- DOCS: 899 -->
 /**<!-- DOCS: progressBarTools ##! -->

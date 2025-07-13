@@ -664,10 +664,12 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.7.tgz#4b8ecac87fbefbc92f431d09c30e176fc0a7c377"
   integrity sha512-dP7f3LdZIysZnmvP3ANJYTSwg+wLLl8p7RqniVlV7j+oXSXAbt9h0WIBFmJy5inWZoX9wZN6eXx+YXd9Rh3RBA==
 
-"@types/node@^18.11.15":
-  version "18.11.15"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.15.tgz#de0e1fbd2b22b962d45971431e2ae696643d3f5d"
-  integrity sha512-VkhBbVo2+2oozlkdHXLrb3zjsRkpdnaU2bXmX8Wgle3PUi569eLRaHGlgETQHR7lLL1w7GiG3h9SnePhxNDecw==
+"@types/node@^24.0.13":
+  version "24.0.13"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-24.0.13.tgz#93ed8c05c7b188a59760be0ce2ee3fa7ad0f83f6"
+  integrity sha512-Qm9OYVOFHFYg3wJoTSrz80hoec5Lia/dPp84do3X7dZvLikQvM1YpmvTBEdIr/e+U8HTkFjLHLnl78K/qjf+jQ==
+  dependencies:
+    undici-types "~7.8.0"
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
@@ -2558,6 +2560,11 @@ swiss-ak@^3.1.0:
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.1.0.tgz#bd2d8a2bd801fd92c700713d130c6ca9d9d1e62f"
   integrity sha512-tswV8aKnKxMTPs5V/zzEaTnVhriMUx96kVWHWvbkf74xtoqne0Nm4iDb/CwLdvwNmuEW324IyBK+SV7PHKuXlA==
 
+swiss-ak@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.3.0.tgz#32cfec2285f693768be2ce58236a62e968b95579"
+  integrity sha512-Ok5+tsrYoc/HctSdRQFu2gE+gtBr390EINDhhb+LI8xvs19TIqSww9MJCS+ANT1fQkJDFwSnctVD6cEIPop3UA==
+
 swiss-docs@^0.7.7:
   version "0.7.7"
   resolved "https://registry.yarnpkg.com/swiss-docs/-/swiss-docs-0.7.7.tgz#bd768d8b0707712f453f64348960266a0ff95ac7"
@@ -2702,6 +2709,11 @@ undici-types@^5.26.4:
   version "5.28.2"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.28.2.tgz#6d86278547d81c2cad72425cf275e8dfbaa8bc42"
   integrity sha512-W71OLwDqzIO0d3k07qg1xc7d4cX8SsSwuCO4bQ4V7ITwduXXie/lcImofabP5VV+NvuvSe8ovKvHVJcizVc1JA==
+
+undici-types@~7.8.0:
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-7.8.0.tgz#de00b85b710c54122e44fbfd911f8d70174cd294"
+  integrity sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==
 
 update-browserslist-db@^1.0.11:
   version "1.0.11"

@@ -4046,6 +4046,18 @@ var scanDir = async (dir = ".") => {
         dirs.push(file.name);
       } else if (file.isFile()) {
         files.push(file.name);
+      } else if (file.isSymbolicLink()) {
+        try {
+          const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
+          const targetStat = await fsP2.stat(fullPath);
+          if (targetStat.isDirectory()) {
+            dirs.push(file.name);
+          } else if (targetStat.isFile()) {
+            files.push(file.name);
+          }
+        } catch (err) {
+          continue;
+        }
       }
     }
     return { files, dirs };
@@ -5429,7 +5441,7 @@ var optionalOption = (value, deflt, safeFn) => value !== void 0 ? safeFn(value, 
 
 // src/tools/progressBar.ts
 var progressBar;
-((progressBar3) => {
+((progressBar2) => {
   const getCharWidth = (num, max, width) => Math.round(width * (Math.max(0, Math.min(num / max, 1)) / 1));
   const getBarString = (current, max, width, opts) => {
     const { progChar, emptyChar, startChar, endChar, showCurrent, currentChar } = opts;
@@ -5462,12 +5474,12 @@ var progressBar;
     const wrapped = wrappedItems.filter((x) => x).join(" ");
     return [plain.length ? " " + plain : "", wrapped.length ? " " + wrapped : ""];
   };
-  progressBar3.getProgressBar = (max, options = {}) => {
+  progressBar2.getProgressBar = (max, options = {}) => {
     const args = {
       max: import_swiss_ak31.safe.num(max, true, -1, void 0, -1),
       options: import_swiss_ak31.safe.obj(options, false, {})
     };
-    const originalOpts = progressBar3.getFullOptions(args.options);
+    const originalOpts = progressBar2.getFullOptions(args.options);
     let opts = originalOpts;
     let managerPackage = void 0;
     let current = 0;
@@ -5548,7 +5560,7 @@ var progressBar;
     const _registerManager = (pack, overrideOptions) => {
       managerPackage = pack;
       if (Object.keys(overrideOptions).length) {
-        opts = progressBar3.getFullOptions({
+        opts = progressBar2.getFullOptions({
           ...originalOpts,
           ...overrideOptions
         });
@@ -5572,7 +5584,7 @@ var progressBar;
       _unregisterManager
     };
   };
-  progressBar3.getFullOptions = (opts = {}) => {
+  progressBar2.getFullOptions = (opts = {}) => {
     var _a;
     return {
       prefix: option(opts.prefix, "", (v, dflt) => import_swiss_ak31.safe.str(v, true, dflt)),
@@ -5601,14 +5613,14 @@ var progressBar;
       showCurrent: option(opts.showCurrent, false, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
       currentChar: option(opts.currentChar, "\u259E", (v, dflt) => import_swiss_ak31.safe.str(v, false, dflt)),
       print: option(opts.print, true, (v, dflt) => import_swiss_ak31.safe.bool(v, dflt)),
-      printFn: option(opts.printFn, progressBar3.utils.printLn, (v, dflt) => import_swiss_ak31.safe.func(v, dflt))
+      printFn: option(opts.printFn, progressBar2.utils.printLn, (v, dflt) => import_swiss_ak31.safe.func(v, dflt))
     };
   };
-  progressBar3.getMultiBarManager = (options = {}) => {
+  progressBar2.getMultiBarManager = (options = {}) => {
     const args = {
       options: import_swiss_ak31.safe.obj(options, false, {})
     };
-    const opts = progressBar3.getFullMultiBarManagerOptions(args.options);
+    const opts = progressBar2.getFullMultiBarManagerOptions(args.options);
     const { minSlots, maxSlots } = opts;
     const barPacks = [];
     let totalCount = 0;
@@ -5678,7 +5690,7 @@ var progressBar;
         max: import_swiss_ak31.safe.num(max, true, -1, void 0, -1),
         options: import_swiss_ak31.safe.obj(options2, false, {})
       };
-      const bar = progressBar3.getProgressBar(args2.max, args2.options);
+      const bar = progressBar2.getProgressBar(args2.max, args2.options);
       add(bar);
       return bar;
     };
@@ -5736,7 +5748,7 @@ var progressBar;
       getBars
     };
   };
-  progressBar3.getFullMultiBarManagerOptions = (opts) => {
+  progressBar2.getFullMultiBarManagerOptions = (opts) => {
     const numSlots = optionalOption(opts.numSlots, void 0, (v, d) => import_swiss_ak31.safe.num(v, true, 0, void 0, d));
     let minSlots = optionalOption(opts.minSlots, void 0, (v, d) => import_swiss_ak31.safe.num(v, true, 0, void 0, d));
     let maxSlots = optionalOption(opts.maxSlots, void 0, (v, d) => v === Infinity ? Infinity : import_swiss_ak31.safe.num(v, true, 0, void 0, d));
@@ -5754,7 +5766,7 @@ var progressBar;
       overrideOptions: option(opts.overrideOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
       variableOptions: option(opts.variableOptions, {}, (v, d) => import_swiss_ak31.safe.obj(v, false, d)),
       print: option(opts.print, true, (v, d) => import_swiss_ak31.safe.bool(v, d)),
-      printFn: option(opts.printFn, progressBar3.utils.multiPrintFn, (v, d) => import_swiss_ak31.safe.func(v, d))
+      printFn: option(opts.printFn, progressBar2.utils.multiPrintFn, (v, d) => import_swiss_ak31.safe.func(v, d))
     };
     return result;
   };
@@ -5805,7 +5817,7 @@ var progressBar;
         console.log(args.output);
       }
     };
-  })(utils = progressBar3.utils || (progressBar3.utils = {}));
+  })(utils = progressBar2.utils || (progressBar2.utils = {}));
 })(progressBar || (progressBar = {}));
 var getProgressBar = progressBar.getProgressBar;
 var getMultiBarManager = progressBar.getMultiBarManager;

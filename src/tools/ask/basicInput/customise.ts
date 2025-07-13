@@ -258,8 +258,8 @@ export const getAskOptionsForState = (isDone: boolean, isError: boolean): AskOpt
 
   if (cachedOptionsForStates[state]) return cachedOptionsForStates[state];
 
-  const getPropertiesForState = <T extends unknown, U extends unknown>(obj: T): OfType<T, U> =>
-    ObjectTools.mapValues(obj, (key: string, value: U) => {
+  const getPropertiesForState = <T extends object, U extends unknown>(obj: T): OfType<T, U> =>
+    ObjectTools.mapValues<T, U, U>(obj, (key: string, value: U) => {
       if (typeof value !== 'object') return value;
       const valueSet = value as unknown as AskOptionsItemSet<U>;
       return valueSet[state];

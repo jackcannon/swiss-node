@@ -1,8 +1,9 @@
 import { exec } from 'child_process';
-import * as fsP from 'fs/promises';
+import fsP from 'fs/promises';
 import { tryOr } from 'swiss-ak';
 import { explodePath } from '../tools/PathTools';
 import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
+import { couldBeMacOSAlias, isMacOSAlias } from '../tools/ask/fileExplorer/aliases';
 
 const execute = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -92,6 +93,19 @@ export const scanDir = async (dir: string = '.') => {
         dirs.push(file.name);
       } else if (file.isFile()) {
         files.push(file.name);
+      } else if (file.isSymbolicLink()) {
+        try {
+          const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
+          const targetStat = await fsP.stat(fullPath);
+
+          if (targetStat.isDirectory()) {
+            dirs.push(file.name);
+          } else if (targetStat.isFile()) {
+            files.push(file.name);
+          }
+        } catch (err) {
+          continue;
+        }
       }
     }
 
@@ -123,6 +137,11 @@ export const getPathType = async (path: string): Promise<'d' | 'f'> => {
   try {
     const stat = await fsP.stat(path);
     const type = stat.isFile() ? 'f' : stat.isDirectory() ? 'd' : undefined;
+
+    if (couldBeMacOSAlias(stat) && isMacOSAlias(path)) {
+      return 'f';
+    }
+
     return type;
   } catch (err) {
     return undefined;
