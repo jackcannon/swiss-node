@@ -91,35 +91,33 @@ export const resolveMacOSAlias = async (actualPath: string): Promise<string | nu
 export const getActualLocationPath = async (originalPath: string): Promise<string> => {
   if (!extraInfo.isMacOS) return originalPath;
   return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
-    // Handle edge cases
     if (!originalPath || originalPath === '/') {
       return originalPath;
     }
 
-    // Check if the entire path is an alias first
     try {
       const stats = await getStats(originalPath);
       if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
         const destination = await resolveMacOSAlias(originalPath);
         if (destination) {
-          // Recursively resolve the destination
           const resolvedPath = await getActualLocationPath(destination);
           return resolvedPath;
         }
       }
-    } catch (error) {
-      // Continue with component resolution
-    }
+    } catch (error) {}
 
-    // If not an alias, resolve parent directory and append filename
     const exploded = PathTools.explodePath(originalPath);
 
     if (exploded.dir) {
       const resolvedDir = await getActualLocationPath(exploded.dir);
       const result = exploded.filename ? resolvedDir + '/' + exploded.filename : resolvedDir;
+
+      if (result !== originalPath) {
+        return await getActualLocationPath(result);
+      }
+
       return result;
     } else {
-      // No directory, just return the filename
       return originalPath;
     }
   });

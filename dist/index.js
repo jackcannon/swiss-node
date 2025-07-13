@@ -3856,6 +3856,9 @@ var getActualLocationPath = async (originalPath) => {
     if (exploded.dir) {
       const resolvedDir = await getActualLocationPath(exploded.dir);
       const result = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
+      if (result !== originalPath) {
+        return await getActualLocationPath(result);
+      }
       return result;
     } else {
       return originalPath;
