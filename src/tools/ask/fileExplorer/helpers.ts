@@ -197,9 +197,9 @@ export const getFilePanel = (path: string, panelWidth: number, maxLines: number)
     addTimeItem(`Created`, stat.ctimeMs, ' ago');
   }
   if (info) {
-    if (['image', 'video'].includes(category)) addItem(`Dimensions`, `${info.width}×${info.height}`);
-    if (['video', 'audio'].includes(category)) addItem(`Duration`, TimeTools.toReadableDuration(seconds(info.duration), false, 2));
-    if (['video'].includes(category)) addItem(`FPS`, `${info.framerate}`);
+    if (['image', 'video'].includes(category) && info.width && info.height) addItem(`Dimensions`, `${info.width}×${info.height}`);
+    if (['video', 'audio'].includes(category) && info.duration) addItem(`Duration`, TimeTools.toReadableDuration(seconds(info.duration), false, 2));
+    if (['video'].includes(category) && info.framerate) addItem(`FPS`, `${info.framerate}`);
   }
 
   const resultStr = out.left(out.wrap(result.join('\n'), panelWidth), panelWidth);

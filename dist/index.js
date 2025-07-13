@@ -4025,11 +4025,11 @@ var getFilePanel = (path2, panelWidth, maxLines) => {
     addTimeItem(`Created`, stat.ctimeMs, " ago");
   }
   if (info) {
-    if (["image", "video"].includes(category))
+    if (["image", "video"].includes(category) && info.width && info.height)
       addItem(`Dimensions`, `${info.width}\xD7${info.height}`);
-    if (["video", "audio"].includes(category))
+    if (["video", "audio"].includes(category) && info.duration)
       addItem(`Duration`, TimeTools.toReadableDuration(seconds2(info.duration), false, 2));
-    if (["video"].includes(category))
+    if (["video"].includes(category) && info.framerate)
       addItem(`FPS`, `${info.framerate}`);
   }
   const resultStr = out.left(out.wrap(result.join("\n"), panelWidth), panelWidth);
