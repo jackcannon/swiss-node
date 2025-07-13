@@ -3,6 +3,7 @@ import { colr } from '../../colr';
 import { Breadcrumb, LineCounter, ansi, getLineCounter, out } from '../../out';
 
 import { getPathType, mkdir, openFinder } from '../../../utils/fsUtils';
+import { getActualLocationPath } from '../../../utils/aliases';
 import { PathTools } from '../../PathTools';
 import { ask } from '../../ask';
 import { getKeyListener } from '../../keyListener';
@@ -516,11 +517,12 @@ export const fileExplorerHandler = async (
       askOptions.general.lc = originalLC;
 
       const result = join(basePath, newFileName);
+      const actualResult = await getActualLocationPath(result);
       ask.imitate(question, result, true, false, undefined, lc);
       process.stdout.write(ansi.cursor.show);
-      return deferred.resolve([result]);
+      return deferred.resolve([actualResult]);
     },
-    submitSelect: () => {
+    submitSelect: async () => {
       if (!accepted.includes(cursorType)) return;
 
       submitted = true;
@@ -530,9 +532,11 @@ export const fileExplorerHandler = async (
       askOptions.general.lc = originalLC;
 
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
-      const result = isMulti ? Array.from(multiSelected) : [currentPath];
+      const displayResult = isMulti ? Array.from(multiSelected) : [currentPath];
+      const actualResult = await PromiseTools.map(displayResult, (path) => getActualLocationPath(path));
+
       ask.imitate(question, resultOut, true, false, undefined, lc);
-      return deferred.resolve(result);
+      return deferred.resolve(actualResult);
     },
     exit: () => {
       kl.stop();

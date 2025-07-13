@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { cachier, minutes, onDemand } from 'swiss-ak';
 import { PathTools } from '../tools/PathTools';
 import { execute, getStats } from './fsUtils';
@@ -48,14 +49,16 @@ export const isMacOSAlias = (path: string): boolean => {
   });
 };
 
-export const resolveMacOSAlias = async (path: string): Promise<string | null> => {
+export const resolveMacOSAlias = async (actualPath: string): Promise<string | null> => {
   if (!extraInfo.isMacOS) return null;
-  return caches.resolveMacOSAlias.getOrRunAsync(path, async () => {
+  return caches.resolveMacOSAlias.getOrRunAsync(actualPath, async () => {
+    const absolutePath = path.resolve(actualPath);
+
     try {
       // Use osascript to resolve the alias - most reliable method
       const script = `
       tell application "Finder"
-        set aliasFile to POSIX file "${path.replace(/"/g, '\\"')}" as alias
+        set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
         set originalFile to original item of aliasFile
         return POSIX path of (originalFile as string)
       end tell
@@ -70,10 +73,10 @@ export const resolveMacOSAlias = async (path: string): Promise<string | null> =>
     } catch (error) {
       // Fallback: try using stat command
       try {
-        const stdout = await execute(`stat -f %Y "${path.replace(/"/g, '\\"')}"`);
+        const stdout = await execute(`stat -f %Y "${absolutePath.replace(/"/g, '\\"')}"`);
         const destination = PathTools.removeTrailSlash(stdout.trim());
 
-        if (destination && destination !== path && fs.existsSync(destination)) {
+        if (destination && destination !== absolutePath && fs.existsSync(destination)) {
           return destination;
         }
       } catch (fallbackError) {
@@ -120,4 +123,9 @@ export const getActualLocationPath = async (originalPath: string): Promise<strin
       return originalPath;
     }
   });
+};
+
+export const getActualLocationPathSync = (originalPath: string): string => {
+  if (!extraInfo.isMacOS) return originalPath;
+  return caches.getActualLocationPath.get(originalPath) ?? originalPath;
 };

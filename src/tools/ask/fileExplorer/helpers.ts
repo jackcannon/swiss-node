@@ -2,6 +2,7 @@ import * as fsP from 'fs/promises';
 import { MathsTools, StringTools, TimeTools, ms, seconds, sortNumberedText, tryOr } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../../utils/actionBar';
 import { getBasicFileInfo, getPathType, getStats, scanDir } from '../../../utils/fsUtils';
+import { getActualLocationPath } from '../../../utils/aliases';
 import { PathTools } from '../../PathTools';
 import { colr } from '../../colr';
 import { out } from '../../out';
@@ -10,21 +11,22 @@ import { PathContents, fsCache } from './cache';
 
 export const loadPathContents = async (path: string): Promise<PathContents> => {
   if (fsCache.cache.has(path)) {
-    // nextTick().then(() => forceLoadPathContents(path));
     return fsCache.cache.get(path);
   }
   return forceLoadPathContents(path);
 };
 
-export const forceLoadPathContents = async (path: string): Promise<PathContents> => {
+export const forceLoadPathContents = async (displayPath: string): Promise<PathContents> => {
   let contents: PathContents = { dirs: [], files: [] };
   try {
-    const pathType = await getPathType(path);
+    const actualPath = await getActualLocationPath(displayPath);
+    const pathType = await getPathType(actualPath);
 
     if (pathType === 'd') {
-      const scanResults = await scanDir(path);
+      const scanResults = await scanDir(actualPath);
 
       const [dirs, files] = [scanResults.dirs, scanResults.files]
+        .map((list) => list.filter((item) => item !== '.DS_Store')) // Filter out .DS_Store files
         .map((list) => sortNumberedText(list))
         .map((list) => list.map((item) => item.replace(/\r|\n/g, ' ')));
 
@@ -33,8 +35,8 @@ export const forceLoadPathContents = async (path: string): Promise<PathContents>
     if (pathType === 'f') {
       const [stat, info] = await Promise.all([
         //
-        tryOr(undefined, () => getStats(path)),
-        tryOr(undefined, () => getBasicFileInfo(path))
+        tryOr(undefined, () => getStats(actualPath)),
+        tryOr(undefined, () => getBasicFileInfo(actualPath))
       ]);
       contents = { ...contents, info: { stat, info } };
     }
@@ -42,7 +44,7 @@ export const forceLoadPathContents = async (path: string): Promise<PathContents>
     // ignore
   }
 
-  fsCache.cache.set(path, contents);
+  fsCache.cache.set(displayPath, contents);
 
   return contents;
 };

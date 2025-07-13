@@ -4,7 +4,7 @@ import fsP from 'fs/promises';
 import { cachier, minutes, onDemand, tryOr } from 'swiss-ak';
 import { explodePath } from '../tools/PathTools';
 import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
-import { couldBeMacOSAlias, isMacOSAlias } from './aliases';
+import { couldBeMacOSAlias, getActualLocationPath, isMacOSAlias } from './aliases';
 
 const caches = onDemand({
   getStats: () => cachier.create<fs.Stats>(minutes(1))
@@ -97,7 +97,21 @@ export const scanDir = async (dir: string = '.') => {
       if (file.isDirectory()) {
         dirs.push(file.name);
       } else if (file.isFile()) {
-        files.push(file.name);
+        const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
+        const stats = await getStats(fullPath);
+
+        // check if file is an alias
+        if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
+          const actualPath = await getActualLocationPath(fullPath);
+          const actualStat = await getStats(actualPath);
+          if (actualStat.isDirectory()) {
+            dirs.push(file.name);
+          } else if (actualStat.isFile()) {
+            files.push(file.name);
+          }
+        } else {
+          files.push(file.name);
+        }
       } else if (file.isSymbolicLink()) {
         try {
           const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
