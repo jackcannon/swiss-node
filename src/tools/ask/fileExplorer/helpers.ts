@@ -1,7 +1,7 @@
 import * as fsP from 'fs/promises';
 import { MathsTools, StringTools, TimeTools, ms, seconds, sortNumberedText, tryOr } from 'swiss-ak';
 import { ActionBarConfig, getActionBar } from '../../../utils/actionBar';
-import { getBasicFileInfo, getPathType, scanDir } from '../../../utils/fsUtils';
+import { getBasicFileInfo, getPathType, getStats, scanDir } from '../../../utils/fsUtils';
 import { PathTools } from '../../PathTools';
 import { colr } from '../../colr';
 import { out } from '../../out';
@@ -33,7 +33,7 @@ export const forceLoadPathContents = async (path: string): Promise<PathContents>
     if (pathType === 'f') {
       const [stat, info] = await Promise.all([
         //
-        tryOr(undefined, () => fsP.stat(path)),
+        tryOr(undefined, () => getStats(path)),
         tryOr(undefined, () => getBasicFileInfo(path))
       ]);
       contents = { ...contents, info: { stat, info } };

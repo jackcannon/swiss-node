@@ -1,11 +1,16 @@
 import { exec } from 'child_process';
+import fs from 'fs';
 import fsP from 'fs/promises';
-import { tryOr } from 'swiss-ak';
+import { cachier, minutes, onDemand, tryOr } from 'swiss-ak';
 import { explodePath } from '../tools/PathTools';
 import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
-import { couldBeMacOSAlias, isMacOSAlias } from '../tools/ask/fileExplorer/aliases';
+import { couldBeMacOSAlias, isMacOSAlias } from './aliases';
 
-const execute = (command: string): Promise<string> => {
+const caches = onDemand({
+  getStats: () => cachier.create<fs.Stats>(minutes(1))
+});
+
+export const execute = (command: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
@@ -96,7 +101,7 @@ export const scanDir = async (dir: string = '.') => {
       } else if (file.isSymbolicLink()) {
         try {
           const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
-          const targetStat = await fsP.stat(fullPath);
+          const targetStat = await getStats(fullPath);
 
           if (targetStat.isDirectory()) {
             dirs.push(file.name);
@@ -133,9 +138,11 @@ export const openFinder = async (file: string, pathType: 'f' | 'd', revealFlag: 
   }
 };
 
+export const getStats = async (path: string): Promise<fs.Stats> => caches.getStats.getOrRunAsync(path, async () => fsP.stat(path));
+
 export const getPathType = async (path: string): Promise<'d' | 'f'> => {
   try {
-    const stat = await fsP.stat(path);
+    const stat = await getStats(path);
     const type = stat.isFile() ? 'f' : stat.isDirectory() ? 'd' : undefined;
 
     if (couldBeMacOSAlias(stat) && isMacOSAlias(path)) {
