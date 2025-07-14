@@ -3,7 +3,6 @@ import path from 'path';
 import { cachier, minutes, onDemand } from 'swiss-ak';
 import { PathTools } from '../tools/PathTools';
 import { execute, getStats } from './fsUtils';
-import { LOG } from '../../debug/livefilelog';
 
 interface AliasResult {
   targetPath: string;
@@ -150,8 +149,6 @@ const resolvePathFromComponents = (pathComponents: string[]): string => {
     }
   }
 
-  LOG(`resolvePathFromComponents`, { pathComponents, absolutePath });
-
   return absolutePath;
 };
 
@@ -180,7 +177,7 @@ const decodeBookmarkAlias = (buf: Buffer): AliasResult | undefined => {
           component = component.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
           component = component.trim();
 
-          if (component.length > 0 && component.length < 100 && !component.includes('\u0000') && /^[a-zA-Z0-9._-]+$/.test(component)) {
+          if (component.length > 0 && component.length < 100 && !component.includes('\u0000') && /^[a-zA-Z0-9._ -]+$/.test(component)) {
             pathComponents.push(component);
           }
         }
@@ -204,8 +201,7 @@ const decodeBookmarkAlias = (buf: Buffer): AliasResult | undefined => {
   }
 
   if (pathComponents.length > 0) {
-    const validComponents = pathComponents.filter((comp) => (comp !== 'Macintosh' && comp !== 'HD' && !comp.includes('-')) || comp.length < 36);
-    console.log(`decodeBookmarkAlias`, { pathComponents, validComponents });
+    const validComponents = pathComponents.filter((comp) => comp !== 'Macintosh HD' && comp !== 'Macintosh' && comp !== 'HD' && comp.length < 36);
 
     if (validComponents.length > 0) {
       const absolutePath = resolvePathFromComponents(validComponents);

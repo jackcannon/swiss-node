@@ -3853,9 +3853,8 @@ var resolveMacOSAlias = (filePath) => {
   });
 };
 var resolvePathFromComponents = (pathComponents) => {
-  if (pathComponents.length === 0) {
-    throw new Error("No path components provided");
-  }
+  if (pathComponents.length === 0)
+    return "";
   const cwd = process.cwd();
   const cwdExploded = PathTools.explodePath(cwd);
   let absolutePath = "";
@@ -3899,7 +3898,7 @@ var decodeBookmarkAlias = (buf) => {
           component = buf.slice(strStart, pos).toString("utf8");
           component = component.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
           component = component.trim();
-          if (component.length > 0 && component.length < 100 && !component.includes("\0") && /^[a-zA-Z0-9._-]+$/.test(component)) {
+          if (component.length > 0 && component.length < 100 && !component.includes("\0") && /^[a-zA-Z0-9._ -]+$/.test(component)) {
             pathComponents.push(component);
           }
         }
@@ -3920,7 +3919,7 @@ var decodeBookmarkAlias = (buf) => {
     return void 0;
   }
   if (pathComponents.length > 0) {
-    const validComponents = pathComponents.filter((comp) => comp !== "Macintosh" && comp !== "HD" && !comp.includes("-") || comp.length < 36);
+    const validComponents = pathComponents.filter((comp) => comp !== "Macintosh HD" && comp !== "Macintosh" && comp !== "HD" && comp.length < 36);
     if (validComponents.length > 0) {
       const absolutePath = resolvePathFromComponents(validComponents);
       let targetType = "d";
@@ -4278,55 +4277,41 @@ var mkdir = async (dir) => {
 };
 var scanDir = async (dir = ".") => {
   try {
-    LOG(`Scanning A ${dir}`);
     const found = await fsP2.readdir(dir, { withFileTypes: true });
-    LOG(`Scanning B ${dir}`);
     const files = [];
     const dirs = [];
     const dirStartTime = Date.now();
-    const IS_DEBUG = dir.endsWith("Photography");
     await PromiseTools.each(found, async (file) => {
       const itemStartTime = Date.now();
-      const IS_DEBUG_2 = IS_DEBUG && file.name.includes("Photography");
       if (file.isDirectory()) {
-        if (IS_DEBUG_2)
-          LOG(`  d - ${file.name}`);
+        LOG(`    - ${dir} (dir) took ${Date.now() - itemStartTime}ms`);
         return dirs.push(file.name);
       } else if (file.isFile()) {
-        if (IS_DEBUG_2)
-          LOG(`  f 1 - ${file.name}`);
         const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          if (IS_DEBUG)
-            LOG(`  ALIAS: ${file.name}`);
           const targetPath = await getActualLocationPath(fullPath);
           const itemType = await (async () => {
+            let itemStats = stats;
             try {
-              const actualStat = await getStats(targetPath);
-              if (actualStat.isDirectory())
-                return "d";
-              if (actualStat.isFile())
-                return "f";
-              return "other";
+              itemStats = await getStats(targetPath);
             } catch (err) {
-              LOG(`  ERROR: `, { fullPath, targetPath });
-              LOG(`  ERROR: getStats('${targetPath}')`, err);
-              throw err;
             }
+            if (itemStats.isDirectory())
+              return "d";
+            if (itemStats.isFile())
+              return "f";
+            return "other";
           })();
           if (itemType === "d") {
-            if (IS_DEBUG_2)
-              LOG(`  f 2 - ${file.name}`);
+            LOG(`    - ${dir} (alias dir) took ${Date.now() - itemStartTime}ms`);
             return dirs.push(file.name);
           } else if (itemType === "f") {
-            if (IS_DEBUG_2)
-              LOG(`  f 3 - ${file.name}`);
+            LOG(`    - ${dir} (alias file) took ${Date.now() - itemStartTime}ms`);
             return files.push(file.name);
           }
         } else {
-          if (IS_DEBUG_2)
-            LOG(`  f 4 - ${file.name}`);
+          LOG(`    - ${dir} (file) took ${Date.now() - itemStartTime}ms`);
           return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
@@ -4334,19 +4319,21 @@ var scanDir = async (dir = ".") => {
           const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
           const targetStat = await getStats(fullPath);
           if (targetStat.isDirectory()) {
+            LOG(`    - ${dir} (symlink dir) took ${Date.now() - itemStartTime}ms`);
             return dirs.push(file.name);
           } else if (targetStat.isFile()) {
+            LOG(`    - ${dir} (symlink file) took ${Date.now() - itemStartTime}ms`);
             return files.push(file.name);
           }
         } catch (err) {
+          LOG(`    - ${dir} (ERROR) took ${Date.now() - itemStartTime}ms`);
           return;
         }
       }
     });
-    IS_DEBUG && LOG(`Scanning C ${dir}`, { files, dirs });
+    LOG(`- Scanning ${dir} took ${Date.now() - dirStartTime}ms`);
     return { files, dirs };
   } catch (err) {
-    LOG(`ERROR - Scanning D ${dir}`, err);
     return { files: [], dirs: [] };
   }
 };
