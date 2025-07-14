@@ -3729,12 +3729,12 @@ var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => 
 };
 
 // src/tools/ask/fileExplorer/handler.ts
-import { ArrayTools as ArrayTools8, PromiseTools, fn as fn9, getDeferred as getDeferred3, milliseconds, symbols as symbols3, wait as wait2 } from "swiss-ak";
+import { ArrayTools as ArrayTools8, PromiseTools as PromiseTools2, fn as fn9, getDeferred as getDeferred3, milliseconds, symbols as symbols3, wait as wait2 } from "swiss-ak";
 
 // src/utils/fsUtils.ts
 import { exec } from "child_process";
-import fsP from "fs/promises";
-import { cachier as cachier3, minutes as minutes2, onDemand as onDemand2, tryOr as tryOr2 } from "swiss-ak";
+import fsP2 from "fs/promises";
+import { cachier as cachier3, minutes as minutes2, onDemand as onDemand2, PromiseTools, tryOr as tryOr2 } from "swiss-ak";
 
 // src/tools/PathTools.ts
 import { safe as safe4 } from "swiss-ak";
@@ -3803,19 +3803,217 @@ var isMacOSAlias = (path2) => {
     }
   });
 };
-var resolveMacOSAlias = async (actualPath) => {
+var getActualLocationPath = async (originalPath) => {
+  if (!extraInfo.isMacOS)
+    return originalPath;
+  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
+    if (!originalPath || originalPath === "/") {
+      return originalPath;
+    }
+    try {
+      const stats = await getStats(originalPath);
+      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
+        const destination = await resolveMacOSAlias(originalPath);
+        if (destination == null ? void 0 : destination.targetPath) {
+          const resolvedPath = await getActualLocationPath(destination.targetPath);
+          return resolvedPath;
+        }
+      }
+    } catch (error) {
+    }
+    const exploded = PathTools.explodePath(originalPath);
+    if (exploded.dir) {
+      const resolvedDir = await getActualLocationPath(exploded.dir);
+      const resultPath = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
+      if (resultPath !== originalPath) {
+        return await getActualLocationPath(resultPath);
+      }
+      return resultPath;
+    } else {
+      return originalPath;
+    }
+  });
+};
+var resolveMacOSAlias = (filePath) => {
+  return caches.resolveMacOSAlias.getOrRunAsync(filePath, async () => {
+    const buf = fs.readFileSync(filePath);
+    try {
+      let result = void 0;
+      if (buf.slice(0, 4).toString("ascii") === "book") {
+        result = decodeBookmarkAlias(buf);
+      } else {
+        result = decodeClassicAlias(buf);
+      }
+      if (result)
+        return result;
+      return resolveMacOSAliasFallback(filePath);
+    } catch (e) {
+      return resolveMacOSAliasFallback(filePath);
+    }
+  });
+};
+var resolvePathFromComponents = (pathComponents) => {
+  if (pathComponents.length === 0) {
+    throw new Error("No path components provided");
+  }
+  const cwd = process.cwd();
+  const cwdExploded = PathTools.explodePath(cwd);
+  let absolutePath = "";
+  let foundIntersection = false;
+  for (let i = 0; i < pathComponents.length; i++) {
+    const component = pathComponents[i];
+    const cwdIndex = cwdExploded.folders.indexOf(component);
+    if (cwdIndex !== -1) {
+      const beforeIntersection = cwdExploded.folders.slice(0, cwdIndex);
+      const afterIntersection = pathComponents.slice(i);
+      absolutePath = "/" + [...beforeIntersection, ...afterIntersection].join("/");
+      foundIntersection = true;
+      break;
+    }
+  }
+  if (!foundIntersection) {
+    if (pathComponents[0] && /^[a-zA-Z][a-zA-Z0-9._-]*$/.test(pathComponents[0])) {
+      absolutePath = "/Users/" + pathComponents.join("/");
+    } else {
+      absolutePath = "/" + pathComponents.join("/");
+    }
+  }
+  return absolutePath;
+};
+var decodeBookmarkAlias = (buf) => {
+  if (buf.slice(0, 4).toString("ascii") !== "book" || buf.slice(8, 12).toString("ascii") !== "mark") {
+    return void 0;
+  }
+  const pathComponents = [];
+  let pos = 80;
+  try {
+    while (pos < buf.length - 20) {
+      if (buf[pos] === 1 && buf[pos + 1] === 1 && buf[pos + 2] === 0 && buf[pos + 3] === 0) {
+        pos += 4;
+        let component = "";
+        let strStart = pos;
+        while (pos < buf.length && buf[pos] !== 0) {
+          pos++;
+        }
+        if (pos > strStart) {
+          component = buf.slice(strStart, pos).toString("utf8");
+          component = component.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+          component = component.trim();
+          if (component.length > 0 && component.length < 100 && !component.includes("\0") && /^[a-zA-Z0-9._-]+$/.test(component)) {
+            pathComponents.push(component);
+          }
+        }
+        while (pos < buf.length && buf[pos] === 0) {
+          pos++;
+        }
+        if (pos < buf.length - 4) {
+          const nextBytes = buf.slice(pos, pos + 4);
+          if (nextBytes[0] <= 32 && nextBytes[1] === 0) {
+            pos += 4;
+          }
+        }
+      } else {
+        pos++;
+      }
+    }
+  } catch (e) {
+    return void 0;
+  }
+  if (pathComponents.length > 0) {
+    const validComponents = pathComponents.filter((comp) => comp !== "Macintosh" && comp !== "HD" && !comp.includes("-") || comp.length < 36);
+    if (validComponents.length > 0) {
+      const absolutePath = resolvePathFromComponents(validComponents);
+      let targetType = "d";
+      try {
+        const stats = fs.statSync(absolutePath);
+        targetType = stats.isDirectory() ? "d" : "f";
+      } catch (e) {
+        const filename = validComponents[validComponents.length - 1];
+        targetType = filename.includes(".") ? "f" : "d";
+      }
+      return { targetPath: absolutePath, targetType };
+    }
+  }
+  return void 0;
+};
+var decodeClassicAlias = (buf) => {
+  const info = {};
+  if (buf.readUInt16BE(4) !== buf.length)
+    return void 0;
+  const version = buf.readUInt16BE(6);
+  if (version !== 2)
+    return void 0;
+  const type = buf.readUInt16BE(8);
+  if (type !== 0 && type !== 1)
+    return void 0;
+  info.targetType = ["file", "directory"][type];
+  const volNameLength = buf.readUInt8(10);
+  if (volNameLength > 27)
+    return void 0;
+  const volSig = buf.toString("ascii", 42, 44);
+  if (volSig !== "BD" && volSig !== "H+" && volSig !== "HX")
+    return void 0;
+  const volType = buf.readUInt16BE(44);
+  if (volType < 0 || volType > 5)
+    return void 0;
+  const fileNameLength = buf.readUInt8(50);
+  if (fileNameLength > 63)
+    return void 0;
+  info.filename = buf.toString("utf8", 51, 51 + fileNameLength);
+  const reserved = buf.slice(140, 150);
+  if (reserved[0] !== 0 || reserved[1] !== 0 || reserved[2] !== 0 || reserved[3] !== 0 || reserved[4] !== 0 || reserved[5] !== 0 || reserved[6] !== 0 || reserved[7] !== 0 || reserved[8] !== 0 || reserved[9] !== 0) {
+    return void 0;
+  }
+  let pos = 150;
+  while (pos < buf.length) {
+    const partType = buf.readInt16BE(pos);
+    const length = buf.readUInt16BE(pos + 2);
+    const data = buf.slice(pos + 4, pos + 4 + length);
+    pos += 4 + length;
+    if (partType === -1) {
+      if (length !== 0)
+        return void 0;
+      break;
+    }
+    if (length % 2 === 1) {
+      const padding = buf.readUInt8(pos);
+      if (padding !== 0)
+        return void 0;
+      pos += 1;
+    }
+    switch (partType) {
+      case 2:
+        const parts = data.toString("utf8").split("\0");
+        info.path = parts[0];
+        break;
+      case 18:
+        info.abspath = data.toString("utf8");
+        break;
+    }
+  }
+  let absolutePath = info.abspath || info.path || "";
+  if (!absolutePath)
+    return void 0;
+  if (!path.isAbsolute(absolutePath)) {
+    const pathComponents = absolutePath.split("/").filter((comp) => comp.length > 0);
+    absolutePath = resolvePathFromComponents(pathComponents);
+  }
+  const targetType = info.targetType === "directory" ? "d" : "f";
+  return { targetPath: absolutePath, targetType };
+};
+var resolveMacOSAliasFallback = async (actualPath) => {
   if (!extraInfo.isMacOS)
     return null;
-  return caches.resolveMacOSAlias.getOrRunAsync(actualPath, async () => {
-    const absolutePath = path.resolve(actualPath);
+  const absolutePath = path.resolve(actualPath);
+  const targetPath = await (async () => {
     try {
       const script = `
-      tell application "Finder"
-        set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
-        set originalFile to original item of aliasFile
-        return POSIX path of (originalFile as string)
-      end tell
-    `;
+    tell application "Finder"
+      set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
+      set originalFile to original item of aliasFile
+      return POSIX path of (originalFile as string)
+    end tell
+  `;
       const stdout = await execute(`osascript -e '${script.replace(/'/g, "\\'")}'`);
       const destination = PathTools.removeTrailSlash(stdout.trim());
       if (destination && fs.existsSync(destination)) {
@@ -3831,39 +4029,12 @@ var resolveMacOSAlias = async (actualPath) => {
       } catch (fallbackError) {
       }
     }
-    return null;
-  });
-};
-var getActualLocationPath = async (originalPath) => {
-  if (!extraInfo.isMacOS)
-    return originalPath;
-  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
-    if (!originalPath || originalPath === "/") {
-      return originalPath;
-    }
-    try {
-      const stats = await getStats(originalPath);
-      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
-        const destination = await resolveMacOSAlias(originalPath);
-        if (destination) {
-          const resolvedPath = await getActualLocationPath(destination);
-          return resolvedPath;
-        }
-      }
-    } catch (error) {
-    }
-    const exploded = PathTools.explodePath(originalPath);
-    if (exploded.dir) {
-      const resolvedDir = await getActualLocationPath(exploded.dir);
-      const result = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
-      if (result !== originalPath) {
-        return await getActualLocationPath(result);
-      }
-      return result;
-    } else {
-      return originalPath;
-    }
-  });
+  })();
+  if (!targetPath)
+    return void 0;
+  const stats = await getStats(targetPath);
+  const targetType = stats.isDirectory() ? "d" : "f";
+  return { targetPath, targetType };
 };
 
 // src/tools/ask/fileExplorer/cache.ts
@@ -3882,17 +4053,17 @@ var loadPathContents = async (path2) => {
 var forceLoadPathContents = async (displayPath) => {
   let contents = { dirs: [], files: [] };
   try {
-    const actualPath = await getActualLocationPath(displayPath);
-    const pathType = await getPathType(actualPath);
+    const targetPath = await getActualLocationPath(displayPath);
+    const pathType = await getPathType(targetPath);
     if (pathType === "d") {
-      const scanResults = await scanDir(actualPath);
+      const scanResults = await scanDir(targetPath);
       const [dirs, files] = [scanResults.dirs, scanResults.files].map((list) => list.filter((item) => item !== ".DS_Store")).map((list) => sortNumberedText(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
       contents = { ...contents, dirs, files };
     }
     if (pathType === "f") {
       const [stat, info] = await Promise.all([
-        tryOr(void 0, () => getStats(actualPath)),
-        tryOr(void 0, () => getBasicFileInfo(actualPath))
+        tryOr(void 0, () => getStats(targetPath)),
+        tryOr(void 0, () => getBasicFileInfo(targetPath))
       ]);
       contents = { ...contents, info: { stat, info } };
     }
@@ -4036,6 +4207,18 @@ var getFilePanel = (path2, panelWidth, maxLines) => {
   return col.specialNormal(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 
+// debug/livefilelog.ts
+import fsP from "fs/promises";
+import { queue } from "swiss-ak";
+import util from "util";
+var logItems = [];
+var logFile = "./debug/LOG.txt";
+var LOG = async (...args) => {
+  logItems.push(args.map((arg) => util.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
+  await queue.add("log", () => fsP.writeFile(logFile, logItems.join("\n")));
+};
+LOG("START");
+
 // src/utils/fsUtils.ts
 var caches2 = onDemand2({
   getStats: () => cachier3.create(minutes2(1))
@@ -4090,47 +4273,80 @@ var getFFProbe = async (file) => {
   };
 };
 var mkdir = async (dir) => {
-  const result = await fsP.mkdir(dir, { recursive: true });
+  const result = await fsP2.mkdir(dir, { recursive: true });
   return result;
 };
 var scanDir = async (dir = ".") => {
   try {
-    const found = await fsP.readdir(dir, { withFileTypes: true });
+    LOG(`Scanning A ${dir}`);
+    const found = await fsP2.readdir(dir, { withFileTypes: true });
+    LOG(`Scanning B ${dir}`);
     const files = [];
     const dirs = [];
-    for (const file of found) {
+    const dirStartTime = Date.now();
+    const IS_DEBUG = dir.endsWith("Photography");
+    await PromiseTools.each(found, async (file) => {
+      const itemStartTime = Date.now();
+      const IS_DEBUG_2 = IS_DEBUG && file.name.includes("Photography");
       if (file.isDirectory()) {
-        dirs.push(file.name);
+        if (IS_DEBUG_2)
+          LOG(`  d - ${file.name}`);
+        return dirs.push(file.name);
       } else if (file.isFile()) {
+        if (IS_DEBUG_2)
+          LOG(`  f 1 - ${file.name}`);
         const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          const actualPath = await getActualLocationPath(fullPath);
-          const actualStat = await getStats(actualPath);
-          if (actualStat.isDirectory()) {
-            dirs.push(file.name);
-          } else if (actualStat.isFile()) {
-            files.push(file.name);
+          if (IS_DEBUG)
+            LOG(`  ALIAS: ${file.name}`);
+          const targetPath = await getActualLocationPath(fullPath);
+          const itemType = await (async () => {
+            try {
+              const actualStat = await getStats(targetPath);
+              if (actualStat.isDirectory())
+                return "d";
+              if (actualStat.isFile())
+                return "f";
+              return "other";
+            } catch (err) {
+              LOG(`  ERROR: `, { fullPath, targetPath });
+              LOG(`  ERROR: getStats('${targetPath}')`, err);
+              throw err;
+            }
+          })();
+          if (itemType === "d") {
+            if (IS_DEBUG_2)
+              LOG(`  f 2 - ${file.name}`);
+            return dirs.push(file.name);
+          } else if (itemType === "f") {
+            if (IS_DEBUG_2)
+              LOG(`  f 3 - ${file.name}`);
+            return files.push(file.name);
           }
         } else {
-          files.push(file.name);
+          if (IS_DEBUG_2)
+            LOG(`  f 4 - ${file.name}`);
+          return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
         try {
           const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
           const targetStat = await getStats(fullPath);
           if (targetStat.isDirectory()) {
-            dirs.push(file.name);
+            return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            files.push(file.name);
+            return files.push(file.name);
           }
         } catch (err) {
-          continue;
+          return;
         }
       }
-    }
+    });
+    IS_DEBUG && LOG(`Scanning C ${dir}`, { files, dirs });
     return { files, dirs };
   } catch (err) {
+    LOG(`ERROR - Scanning D ${dir}`, err);
     return { files: [], dirs: [] };
   }
 };
@@ -4150,7 +4366,7 @@ var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
     return openFinder(exploded.dir, "d", true, count + 1);
   }
 };
-var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => fsP.stat(path2));
+var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => fsP2.stat(path2));
 var getPathType = async (path2) => {
   try {
     const stat = await getStats(path2);
@@ -4227,11 +4443,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     },
     loadEssentials: async (executeFn = loadPathContents) => {
       await Promise.all([
-        PromiseTools.each(paths, executeFn),
+        PromiseTools2.each(paths, executeFn),
         (async () => {
           const { dirs } = await executeFn(currentPath);
           const list = dirs;
-          return PromiseTools.each(
+          return PromiseTools2.each(
             list.map((dir) => join(currentPath, dir)),
             executeFn
           );
@@ -4240,7 +4456,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
           const parent = PathTools.explodePath(currentPath).dir;
           const { dirs } = await executeFn(parent);
           const list = [...dirs];
-          return PromiseTools.each(
+          return PromiseTools2.each(
             list.map((dir) => join(parent, dir)),
             executeFn
           );
@@ -4464,7 +4680,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       locked = false;
       if (pressed === "r")
         operation.setPressed(void 0);
-      await PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
+      await PromiseTools2.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
         return forceLoadPathContents;
@@ -4572,7 +4788,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       askOptions2.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const displayResult = isMulti ? Array.from(multiSelected) : [currentPath];
-      const actualResult = await PromiseTools.map(displayResult, (path2) => getActualLocationPath(path2));
+      const actualResult = await PromiseTools2.map(displayResult, (path2) => getActualLocationPath(path2));
       ask.imitate(question, resultOut, true, false, void 0, lc);
       return deferred.resolve(actualResult);
     },
@@ -5415,7 +5631,7 @@ var ask;
 })(ask || (ask = {}));
 
 // src/tools/log.ts
-import util from "util";
+import util2 from "util";
 import { ObjectTools as ObjectTools4 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -5465,7 +5681,7 @@ var defaultConfigs = {
 var getStr = (enableColours) => (item) => {
   const inspect2 = ["object", "boolean", "number"];
   if (inspect2.includes(typeof item) && !(item instanceof Date)) {
-    return util.inspect(item, { colors: enableColours, depth: null });
+    return util2.inspect(item, { colors: enableColours, depth: null });
   } else {
     return item + "";
   }

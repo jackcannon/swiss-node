@@ -1,10 +1,12 @@
 import { exec } from 'child_process';
 import fs from 'fs';
 import fsP from 'fs/promises';
-import { cachier, minutes, onDemand, tryOr } from 'swiss-ak';
+import { cachier, minutes, onDemand, PromiseTools, tryOr } from 'swiss-ak';
 import { explodePath } from '../tools/PathTools';
 import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
 import { couldBeMacOSAlias, getActualLocationPath, isMacOSAlias } from './aliases';
+
+import { LOG } from '../../debug/livefilelog';
 
 const caches = onDemand({
   getStats: () => cachier.create<fs.Stats>(minutes(1))
@@ -89,28 +91,63 @@ export const mkdir = async (dir: string): Promise<string> => {
 
 export const scanDir = async (dir: string = '.') => {
   try {
+    LOG(`Scanning A ${dir}`);
     const found = await fsP.readdir(dir, { withFileTypes: true });
+    LOG(`Scanning B ${dir}`);
     const files: string[] = [];
     const dirs: string[] = [];
 
-    for (const file of found) {
+    const dirStartTime = Date.now();
+
+    const IS_DEBUG = dir.endsWith('Photography');
+
+    // if (IS_DEBUG)
+    //   LOG(
+    //     `Scanning ${dir}`,
+    //     found.map((f) => f.name)
+    //   );
+
+    await PromiseTools.each(found, async (file) => {
+      const itemStartTime = Date.now();
+
+      const IS_DEBUG_2 = IS_DEBUG && file.name.includes('Photography');
+
       if (file.isDirectory()) {
-        dirs.push(file.name);
+        if (IS_DEBUG_2) LOG(`  d - ${file.name}`);
+        return dirs.push(file.name);
       } else if (file.isFile()) {
+        if (IS_DEBUG_2) LOG(`  f 1 - ${file.name}`);
         const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
 
         // check if file is an alias
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          const actualPath = await getActualLocationPath(fullPath);
-          const actualStat = await getStats(actualPath);
-          if (actualStat.isDirectory()) {
-            dirs.push(file.name);
-          } else if (actualStat.isFile()) {
-            files.push(file.name);
+          if (IS_DEBUG) LOG(`  ALIAS: ${file.name}`);
+          const targetPath = await getActualLocationPath(fullPath);
+
+          const itemType = await (async () => {
+            try {
+              const actualStat = await getStats(targetPath);
+              if (actualStat.isDirectory()) return 'd';
+              if (actualStat.isFile()) return 'f';
+              return 'other';
+            } catch (err) {
+              LOG(`  ERROR: `, { fullPath, targetPath });
+              LOG(`  ERROR: getStats('${targetPath}')`, err);
+              throw err;
+            }
+          })();
+
+          if (itemType === 'd') {
+            if (IS_DEBUG_2) LOG(`  f 2 - ${file.name}`);
+            return dirs.push(file.name);
+          } else if (itemType === 'f') {
+            if (IS_DEBUG_2) LOG(`  f 3 - ${file.name}`);
+            return files.push(file.name);
           }
         } else {
-          files.push(file.name);
+          if (IS_DEBUG_2) LOG(`  f 4 - ${file.name}`);
+          return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
         try {
@@ -118,18 +155,20 @@ export const scanDir = async (dir: string = '.') => {
           const targetStat = await getStats(fullPath);
 
           if (targetStat.isDirectory()) {
-            dirs.push(file.name);
+            return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            files.push(file.name);
+            return files.push(file.name);
           }
         } catch (err) {
-          continue;
+          return;
         }
       }
-    }
+    });
 
+    IS_DEBUG && LOG(`Scanning C ${dir}`, { files, dirs });
     return { files, dirs };
   } catch (err) {
+    LOG(`ERROR - Scanning D ${dir}`, err);
     return { files: [], dirs: [] };
   }
 };

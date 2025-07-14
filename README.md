@@ -368,6 +368,10 @@ ask.fileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', start
 
 Get a file or folder path from the user.
 
+Note: Handles symlinks and resolves macOS aliases to their actual location.
+
+Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
+
 ```typescript
 const file = await ask.fileExplorer('What file?', 'f');
 // '/Users/user/Documents/some_file.txt'
@@ -397,6 +401,10 @@ ask.multiFileExplorer(questionText: string | Breadcrumb, selectType: 'd' | 'f', 
 ```
 
 Get multiple file or folder paths from the user.
+
+Note: Handles symlinks and resolves macOS aliases to their actual location.
+
+Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
 
 ```typescript
 const files = await ask.multiFileExplorer('What files?', 'f');
@@ -428,6 +436,10 @@ ask.saveFileExplorer(questionText: string | Breadcrumb, startPath: string, sugge
 ```
 
 Get a file path from the user, with the intention of saving a file to that path.
+
+Note: Handles symlinks and resolves macOS aliases to their actual location.
+
+Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
 
 ```typescript
 const HOME_DIR = '/Users/user/Documents';

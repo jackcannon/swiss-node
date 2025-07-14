@@ -51,7 +51,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 
 // src/tools/ask.ts
-var import_swiss_ak30 = require("swiss-ak");
+var import_swiss_ak31 = require("swiss-ak");
 
 // src/tools/keyListener.ts
 var getKeyListener = (callback, isStart = true, isDebugLog = false) => {
@@ -3781,12 +3781,12 @@ var dateRange = async (questionText, initialStart, initialEnd, validate, lc) => 
 };
 
 // src/tools/ask/fileExplorer/handler.ts
-var import_swiss_ak26 = require("swiss-ak");
+var import_swiss_ak27 = require("swiss-ak");
 
 // src/utils/fsUtils.ts
 var import_child_process = require("child_process");
-var import_promises = __toESM(require("fs/promises"), 1);
-var import_swiss_ak25 = require("swiss-ak");
+var import_promises2 = __toESM(require("fs/promises"), 1);
+var import_swiss_ak26 = require("swiss-ak");
 
 // src/tools/PathTools.ts
 var import_swiss_ak22 = require("swiss-ak");
@@ -3855,19 +3855,217 @@ var isMacOSAlias = (path2) => {
     }
   });
 };
-var resolveMacOSAlias = async (actualPath) => {
+var getActualLocationPath = async (originalPath) => {
+  if (!extraInfo.isMacOS)
+    return originalPath;
+  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
+    if (!originalPath || originalPath === "/") {
+      return originalPath;
+    }
+    try {
+      const stats = await getStats(originalPath);
+      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
+        const destination = await resolveMacOSAlias(originalPath);
+        if (destination == null ? void 0 : destination.targetPath) {
+          const resolvedPath = await getActualLocationPath(destination.targetPath);
+          return resolvedPath;
+        }
+      }
+    } catch (error) {
+    }
+    const exploded = PathTools.explodePath(originalPath);
+    if (exploded.dir) {
+      const resolvedDir = await getActualLocationPath(exploded.dir);
+      const resultPath = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
+      if (resultPath !== originalPath) {
+        return await getActualLocationPath(resultPath);
+      }
+      return resultPath;
+    } else {
+      return originalPath;
+    }
+  });
+};
+var resolveMacOSAlias = (filePath) => {
+  return caches.resolveMacOSAlias.getOrRunAsync(filePath, async () => {
+    const buf = import_fs.default.readFileSync(filePath);
+    try {
+      let result = void 0;
+      if (buf.slice(0, 4).toString("ascii") === "book") {
+        result = decodeBookmarkAlias(buf);
+      } else {
+        result = decodeClassicAlias(buf);
+      }
+      if (result)
+        return result;
+      return resolveMacOSAliasFallback(filePath);
+    } catch (e) {
+      return resolveMacOSAliasFallback(filePath);
+    }
+  });
+};
+var resolvePathFromComponents = (pathComponents) => {
+  if (pathComponents.length === 0) {
+    throw new Error("No path components provided");
+  }
+  const cwd = process.cwd();
+  const cwdExploded = PathTools.explodePath(cwd);
+  let absolutePath = "";
+  let foundIntersection = false;
+  for (let i = 0; i < pathComponents.length; i++) {
+    const component = pathComponents[i];
+    const cwdIndex = cwdExploded.folders.indexOf(component);
+    if (cwdIndex !== -1) {
+      const beforeIntersection = cwdExploded.folders.slice(0, cwdIndex);
+      const afterIntersection = pathComponents.slice(i);
+      absolutePath = "/" + [...beforeIntersection, ...afterIntersection].join("/");
+      foundIntersection = true;
+      break;
+    }
+  }
+  if (!foundIntersection) {
+    if (pathComponents[0] && /^[a-zA-Z][a-zA-Z0-9._-]*$/.test(pathComponents[0])) {
+      absolutePath = "/Users/" + pathComponents.join("/");
+    } else {
+      absolutePath = "/" + pathComponents.join("/");
+    }
+  }
+  return absolutePath;
+};
+var decodeBookmarkAlias = (buf) => {
+  if (buf.slice(0, 4).toString("ascii") !== "book" || buf.slice(8, 12).toString("ascii") !== "mark") {
+    return void 0;
+  }
+  const pathComponents = [];
+  let pos = 80;
+  try {
+    while (pos < buf.length - 20) {
+      if (buf[pos] === 1 && buf[pos + 1] === 1 && buf[pos + 2] === 0 && buf[pos + 3] === 0) {
+        pos += 4;
+        let component = "";
+        let strStart = pos;
+        while (pos < buf.length && buf[pos] !== 0) {
+          pos++;
+        }
+        if (pos > strStart) {
+          component = buf.slice(strStart, pos).toString("utf8");
+          component = component.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+          component = component.trim();
+          if (component.length > 0 && component.length < 100 && !component.includes("\0") && /^[a-zA-Z0-9._-]+$/.test(component)) {
+            pathComponents.push(component);
+          }
+        }
+        while (pos < buf.length && buf[pos] === 0) {
+          pos++;
+        }
+        if (pos < buf.length - 4) {
+          const nextBytes = buf.slice(pos, pos + 4);
+          if (nextBytes[0] <= 32 && nextBytes[1] === 0) {
+            pos += 4;
+          }
+        }
+      } else {
+        pos++;
+      }
+    }
+  } catch (e) {
+    return void 0;
+  }
+  if (pathComponents.length > 0) {
+    const validComponents = pathComponents.filter((comp) => comp !== "Macintosh" && comp !== "HD" && !comp.includes("-") || comp.length < 36);
+    if (validComponents.length > 0) {
+      const absolutePath = resolvePathFromComponents(validComponents);
+      let targetType = "d";
+      try {
+        const stats = import_fs.default.statSync(absolutePath);
+        targetType = stats.isDirectory() ? "d" : "f";
+      } catch (e) {
+        const filename = validComponents[validComponents.length - 1];
+        targetType = filename.includes(".") ? "f" : "d";
+      }
+      return { targetPath: absolutePath, targetType };
+    }
+  }
+  return void 0;
+};
+var decodeClassicAlias = (buf) => {
+  const info = {};
+  if (buf.readUInt16BE(4) !== buf.length)
+    return void 0;
+  const version = buf.readUInt16BE(6);
+  if (version !== 2)
+    return void 0;
+  const type = buf.readUInt16BE(8);
+  if (type !== 0 && type !== 1)
+    return void 0;
+  info.targetType = ["file", "directory"][type];
+  const volNameLength = buf.readUInt8(10);
+  if (volNameLength > 27)
+    return void 0;
+  const volSig = buf.toString("ascii", 42, 44);
+  if (volSig !== "BD" && volSig !== "H+" && volSig !== "HX")
+    return void 0;
+  const volType = buf.readUInt16BE(44);
+  if (volType < 0 || volType > 5)
+    return void 0;
+  const fileNameLength = buf.readUInt8(50);
+  if (fileNameLength > 63)
+    return void 0;
+  info.filename = buf.toString("utf8", 51, 51 + fileNameLength);
+  const reserved = buf.slice(140, 150);
+  if (reserved[0] !== 0 || reserved[1] !== 0 || reserved[2] !== 0 || reserved[3] !== 0 || reserved[4] !== 0 || reserved[5] !== 0 || reserved[6] !== 0 || reserved[7] !== 0 || reserved[8] !== 0 || reserved[9] !== 0) {
+    return void 0;
+  }
+  let pos = 150;
+  while (pos < buf.length) {
+    const partType = buf.readInt16BE(pos);
+    const length = buf.readUInt16BE(pos + 2);
+    const data = buf.slice(pos + 4, pos + 4 + length);
+    pos += 4 + length;
+    if (partType === -1) {
+      if (length !== 0)
+        return void 0;
+      break;
+    }
+    if (length % 2 === 1) {
+      const padding = buf.readUInt8(pos);
+      if (padding !== 0)
+        return void 0;
+      pos += 1;
+    }
+    switch (partType) {
+      case 2:
+        const parts = data.toString("utf8").split("\0");
+        info.path = parts[0];
+        break;
+      case 18:
+        info.abspath = data.toString("utf8");
+        break;
+    }
+  }
+  let absolutePath = info.abspath || info.path || "";
+  if (!absolutePath)
+    return void 0;
+  if (!import_path.default.isAbsolute(absolutePath)) {
+    const pathComponents = absolutePath.split("/").filter((comp) => comp.length > 0);
+    absolutePath = resolvePathFromComponents(pathComponents);
+  }
+  const targetType = info.targetType === "directory" ? "d" : "f";
+  return { targetPath: absolutePath, targetType };
+};
+var resolveMacOSAliasFallback = async (actualPath) => {
   if (!extraInfo.isMacOS)
     return null;
-  return caches.resolveMacOSAlias.getOrRunAsync(actualPath, async () => {
-    const absolutePath = import_path.default.resolve(actualPath);
+  const absolutePath = import_path.default.resolve(actualPath);
+  const targetPath = await (async () => {
     try {
       const script = `
-      tell application "Finder"
-        set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
-        set originalFile to original item of aliasFile
-        return POSIX path of (originalFile as string)
-      end tell
-    `;
+    tell application "Finder"
+      set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
+      set originalFile to original item of aliasFile
+      return POSIX path of (originalFile as string)
+    end tell
+  `;
       const stdout = await execute(`osascript -e '${script.replace(/'/g, "\\'")}'`);
       const destination = PathTools.removeTrailSlash(stdout.trim());
       if (destination && import_fs.default.existsSync(destination)) {
@@ -3883,39 +4081,12 @@ var resolveMacOSAlias = async (actualPath) => {
       } catch (fallbackError) {
       }
     }
-    return null;
-  });
-};
-var getActualLocationPath = async (originalPath) => {
-  if (!extraInfo.isMacOS)
-    return originalPath;
-  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
-    if (!originalPath || originalPath === "/") {
-      return originalPath;
-    }
-    try {
-      const stats = await getStats(originalPath);
-      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
-        const destination = await resolveMacOSAlias(originalPath);
-        if (destination) {
-          const resolvedPath = await getActualLocationPath(destination);
-          return resolvedPath;
-        }
-      }
-    } catch (error) {
-    }
-    const exploded = PathTools.explodePath(originalPath);
-    if (exploded.dir) {
-      const resolvedDir = await getActualLocationPath(exploded.dir);
-      const result = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
-      if (result !== originalPath) {
-        return await getActualLocationPath(result);
-      }
-      return result;
-    } else {
-      return originalPath;
-    }
-  });
+  })();
+  if (!targetPath)
+    return void 0;
+  const stats = await getStats(targetPath);
+  const targetType = stats.isDirectory() ? "d" : "f";
+  return { targetPath, targetType };
 };
 
 // src/tools/ask/fileExplorer/cache.ts
@@ -3934,17 +4105,17 @@ var loadPathContents = async (path2) => {
 var forceLoadPathContents = async (displayPath) => {
   let contents = { dirs: [], files: [] };
   try {
-    const actualPath = await getActualLocationPath(displayPath);
-    const pathType = await getPathType(actualPath);
+    const targetPath = await getActualLocationPath(displayPath);
+    const pathType = await getPathType(targetPath);
     if (pathType === "d") {
-      const scanResults = await scanDir(actualPath);
+      const scanResults = await scanDir(targetPath);
       const [dirs, files] = [scanResults.dirs, scanResults.files].map((list) => list.filter((item) => item !== ".DS_Store")).map((list) => (0, import_swiss_ak24.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
       contents = { ...contents, dirs, files };
     }
     if (pathType === "f") {
       const [stat, info] = await Promise.all([
-        (0, import_swiss_ak24.tryOr)(void 0, () => getStats(actualPath)),
-        (0, import_swiss_ak24.tryOr)(void 0, () => getBasicFileInfo(actualPath))
+        (0, import_swiss_ak24.tryOr)(void 0, () => getStats(targetPath)),
+        (0, import_swiss_ak24.tryOr)(void 0, () => getBasicFileInfo(targetPath))
       ]);
       contents = { ...contents, info: { stat, info } };
     }
@@ -4088,9 +4259,21 @@ var getFilePanel = (path2, panelWidth, maxLines) => {
   return col.specialNormal(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 
+// debug/livefilelog.ts
+var import_promises = __toESM(require("fs/promises"), 1);
+var import_swiss_ak25 = require("swiss-ak");
+var import_util2 = __toESM(require("util"), 1);
+var logItems = [];
+var logFile = "./debug/LOG.txt";
+var LOG = async (...args) => {
+  logItems.push(args.map((arg) => import_util2.default.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
+  await import_swiss_ak25.queue.add("log", () => import_promises.default.writeFile(logFile, logItems.join("\n")));
+};
+LOG("START");
+
 // src/utils/fsUtils.ts
-var caches2 = (0, import_swiss_ak25.onDemand)({
-  getStats: () => import_swiss_ak25.cachier.create((0, import_swiss_ak25.minutes)(1))
+var caches2 = (0, import_swiss_ak26.onDemand)({
+  getStats: () => import_swiss_ak26.cachier.create((0, import_swiss_ak26.minutes)(1))
 });
 var execute = (command) => {
   return new Promise((resolve, reject) => {
@@ -4118,7 +4301,7 @@ var getBasicFileInfo = async (file) => {
   return { width: void 0, height: void 0, duration: void 0, framerate: void 0 };
 };
 var getFileInfo = async (file) => {
-  const stdout = (await (0, import_swiss_ak25.tryOr)("", async () => await execute(`file ${file}`))).toString();
+  const stdout = (await (0, import_swiss_ak26.tryOr)("", async () => await execute(`file ${file}`))).toString();
   const [width, height] = (stdout.match(/([0-9]{2,})x([0-9]{2,})/g) || [""])[0].split("x").map(Number).filter((n) => n);
   return {
     width,
@@ -4128,7 +4311,7 @@ var getFileInfo = async (file) => {
   };
 };
 var getFFProbe = async (file) => {
-  const stdout = await (0, import_swiss_ak25.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
+  const stdout = await (0, import_swiss_ak26.tryOr)("", async () => await execute(`ffprobe -select_streams v -show_streams ${file} 2>/dev/null | grep =`));
   const props = Object.fromEntries(
     stdout.toString().split("\n").map((line) => line.split("=").map((str) => str.trim()))
   );
@@ -4142,47 +4325,80 @@ var getFFProbe = async (file) => {
   };
 };
 var mkdir = async (dir) => {
-  const result = await import_promises.default.mkdir(dir, { recursive: true });
+  const result = await import_promises2.default.mkdir(dir, { recursive: true });
   return result;
 };
 var scanDir = async (dir = ".") => {
   try {
-    const found = await import_promises.default.readdir(dir, { withFileTypes: true });
+    LOG(`Scanning A ${dir}`);
+    const found = await import_promises2.default.readdir(dir, { withFileTypes: true });
+    LOG(`Scanning B ${dir}`);
     const files = [];
     const dirs = [];
-    for (const file of found) {
+    const dirStartTime = Date.now();
+    const IS_DEBUG = dir.endsWith("Photography");
+    await import_swiss_ak26.PromiseTools.each(found, async (file) => {
+      const itemStartTime = Date.now();
+      const IS_DEBUG_2 = IS_DEBUG && file.name.includes("Photography");
       if (file.isDirectory()) {
-        dirs.push(file.name);
+        if (IS_DEBUG_2)
+          LOG(`  d - ${file.name}`);
+        return dirs.push(file.name);
       } else if (file.isFile()) {
+        if (IS_DEBUG_2)
+          LOG(`  f 1 - ${file.name}`);
         const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          const actualPath = await getActualLocationPath(fullPath);
-          const actualStat = await getStats(actualPath);
-          if (actualStat.isDirectory()) {
-            dirs.push(file.name);
-          } else if (actualStat.isFile()) {
-            files.push(file.name);
+          if (IS_DEBUG)
+            LOG(`  ALIAS: ${file.name}`);
+          const targetPath = await getActualLocationPath(fullPath);
+          const itemType = await (async () => {
+            try {
+              const actualStat = await getStats(targetPath);
+              if (actualStat.isDirectory())
+                return "d";
+              if (actualStat.isFile())
+                return "f";
+              return "other";
+            } catch (err) {
+              LOG(`  ERROR: `, { fullPath, targetPath });
+              LOG(`  ERROR: getStats('${targetPath}')`, err);
+              throw err;
+            }
+          })();
+          if (itemType === "d") {
+            if (IS_DEBUG_2)
+              LOG(`  f 2 - ${file.name}`);
+            return dirs.push(file.name);
+          } else if (itemType === "f") {
+            if (IS_DEBUG_2)
+              LOG(`  f 3 - ${file.name}`);
+            return files.push(file.name);
           }
         } else {
-          files.push(file.name);
+          if (IS_DEBUG_2)
+            LOG(`  f 4 - ${file.name}`);
+          return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
         try {
           const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
           const targetStat = await getStats(fullPath);
           if (targetStat.isDirectory()) {
-            dirs.push(file.name);
+            return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            files.push(file.name);
+            return files.push(file.name);
           }
         } catch (err) {
-          continue;
+          return;
         }
       }
-    }
+    });
+    IS_DEBUG && LOG(`Scanning C ${dir}`, { files, dirs });
     return { files, dirs };
   } catch (err) {
+    LOG(`ERROR - Scanning D ${dir}`, err);
     return { files: [], dirs: [] };
   }
 };
@@ -4202,7 +4418,7 @@ var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
     return openFinder(exploded.dir, "d", true, count + 1);
   }
 };
-var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => import_promises.default.stat(path2));
+var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => import_promises2.default.stat(path2));
 var getPathType = async (path2) => {
   try {
     const stat = await getStats(path2);
@@ -4225,7 +4441,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
   const maxColumns = Math.floor(out.utils.getTerminalWidth() / (maxWidth + 1));
   const accepted = isSave ? ["d", "f"] : [selectType];
   const tempLC = getLineCounter2();
-  const deferred = (0, import_swiss_ak26.getDeferred)();
+  const deferred = (0, import_swiss_ak27.getDeferred)();
   let cursor = startPath.split("/");
   const multiSelected = /* @__PURE__ */ new Set();
   let paths = [];
@@ -4279,11 +4495,11 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     },
     loadEssentials: async (executeFn = loadPathContents) => {
       await Promise.all([
-        import_swiss_ak26.PromiseTools.each(paths, executeFn),
+        import_swiss_ak27.PromiseTools.each(paths, executeFn),
         (async () => {
           const { dirs } = await executeFn(currentPath);
           const list = dirs;
-          return import_swiss_ak26.PromiseTools.each(
+          return import_swiss_ak27.PromiseTools.each(
             list.map((dir) => join(currentPath, dir)),
             executeFn
           );
@@ -4292,7 +4508,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
           const parent = PathTools.explodePath(currentPath).dir;
           const { dirs } = await executeFn(parent);
           const list = [...dirs];
-          return import_swiss_ak26.PromiseTools.each(
+          return import_swiss_ak27.PromiseTools.each(
             list.map((dir) => join(parent, dir)),
             executeFn
           );
@@ -4322,7 +4538,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       operation.display();
       if (!key)
         return;
-      await (0, import_swiss_ak26.wait)((0, import_swiss_ak26.milliseconds)(100));
+      await (0, import_swiss_ak27.wait)((0, import_swiss_ak27.milliseconds)(100));
       if (!loading) {
         pressed = void 0;
         operation.display();
@@ -4344,7 +4560,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const template = (text2) => `${prefix}${text2} ${symbol} `;
         const extraChars = out.getWidth(template(""));
         const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
-        let wrapFn = import_swiss_ak26.fn.noact;
+        let wrapFn = import_swiss_ak27.fn.noact;
         if (isHighlighted) {
           if (isActiveColumn) {
             wrapFn = col.specialHover;
@@ -4420,7 +4636,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       if (cursorType === "f") {
         allColumns[allColumns.length - 1] = getFilePanel(currentPath, minWidth, maxItems);
       }
-      const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak26.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
+      const columns = [...allColumns.slice(-maxColumns), ...import_swiss_ak27.ArrayTools.repeat(maxColumns, out.utils.joinLines(emptyColumn))].slice(0, maxColumns);
       const termWidth = out.utils.getTerminalWidth();
       const tableLines = table.getLines([columns], void 0, {
         wrapLinesFn: col.decoration,
@@ -4446,7 +4662,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const truncatedParts = lastXParts.map((s) => out.truncateStart(s, maxWidth - 2));
         let result = "";
         if (pathParts.length > numParts) {
-          result += import_swiss_ak26.symbols.ELLIPSIS + "/";
+          result += import_swiss_ak27.symbols.ELLIPSIS + "/";
         }
         result += truncatedParts.join("/");
         return result;
@@ -4516,7 +4732,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       locked = false;
       if (pressed === "r")
         operation.setPressed(void 0);
-      await import_swiss_ak26.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
+      await import_swiss_ak27.PromiseTools.eachLimit(32, Array.from(restKeys), async () => {
         if (submitted)
           return;
         return forceLoadPathContents;
@@ -4624,7 +4840,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       askOptions2.general.lc = originalLC;
       const resultOut = isMulti ? Array.from(multiSelected) : currentPath;
       const displayResult = isMulti ? Array.from(multiSelected) : [currentPath];
-      const actualResult = await import_swiss_ak26.PromiseTools.map(displayResult, (path2) => getActualLocationPath(path2));
+      const actualResult = await import_swiss_ak27.PromiseTools.map(displayResult, (path2) => getActualLocationPath(path2));
       ask.imitate(question, resultOut, true, false, void 0, lc);
       return deferred.resolve(actualResult);
     },
@@ -4707,7 +4923,7 @@ var saveFileExplorer = async (questionText, startPath = process.cwd(), suggested
 };
 
 // src/tools/ask/section.ts
-var import_swiss_ak27 = require("swiss-ak");
+var import_swiss_ak28 = require("swiss-ak");
 var section = async (question, sectionHeader, ...questionFns) => {
   const theme = getAskOptionsForState(false, false);
   const originalLC = theme.general.lc;
@@ -4751,7 +4967,7 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
     none: theme.symbols.separatorNodeNone,
     up: theme.symbols.separatorNodeUp
   };
-  const line = import_swiss_ak27.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
+  const line = import_swiss_ak28.ArrayTools.repeat(Math.floor(width / spacing) - offset, chars[version]).join(lineChar.repeat(spacing - 1));
   const output = out.center(line, void 0, lineChar);
   console.log(theme.colours.decoration(output));
   const numLines = out.utils.getNumLines(output);
@@ -4762,14 +4978,14 @@ var separator = (version = "down", spacing = 8, offset = 0, width = out.utils.ge
 };
 
 // src/tools/ask/table.ts
-var import_swiss_ak28 = require("swiss-ak");
+var import_swiss_ak29 = require("swiss-ak");
 var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [], tableOptions = {}, validate, lc) => {
-  const deferred = (0, import_swiss_ak28.getDeferred)();
+  const deferred = (0, import_swiss_ak29.getDeferred)();
   const tempLC = getLineCounter();
   const askOptions2 = getAskOptions();
   const questionText = typeof question === "string" ? question : question.get();
   let activeIndex = initial[0] !== void 0 ? typeof initial[0] === "number" ? initial[0] : items.indexOf(initial[0]) : 0;
-  activeIndex = import_swiss_ak28.MathsTools.clamp(activeIndex, 0, items.length - 1);
+  activeIndex = import_swiss_ak29.MathsTools.clamp(activeIndex, 0, items.length - 1);
   let selectedIndexes = initial.map((i) => typeof i === "number" ? i : items.indexOf(i)).filter((i) => i !== -1);
   let fullOptions = void 0;
   let bodyRowHeight = 0;
@@ -4812,18 +5028,18 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
       headerHeight = horiLine;
       if (header.length) {
         const dividerLine = 1;
-        headerHeight = import_swiss_ak28.MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
+        headerHeight = import_swiss_ak29.MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
         headerHeight += dividerLine;
       }
       const maxHeight = Math.floor(askOptions3.general.tableSelectMaxHeightPercentage / 100 * calcedTermSize[1]);
       const availableSpace = maxHeight - questPromptHeight - actionBarHeight - topMargin - bottomMargin;
       numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
-      numRows = import_swiss_ak28.MathsTools.clamp(numRows, 1, items.length);
+      numRows = import_swiss_ak29.MathsTools.clamp(numRows, 1, items.length);
       const mostColumns = Math.max(...body.map((row) => row.length));
       const typicalLine = cleanLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
       colWidths = typicalLine.split(VER_CHAR).slice(1, -1).map((sect) => out.getWidth(sect)).map((fullWidth) => fullWidth - fullOptions.cellPadding * 2);
     },
-    getResultsArray: () => (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak28.fn.isTruthy),
+    getResultsArray: () => (isMulti ? selectedIndexes.map((i) => items[i]) : [items[activeIndex]]).filter(import_swiss_ak29.fn.isTruthy),
     getDisplayResult: () => isMulti ? operation.getResultsArray() : items[activeIndex],
     runValidation: () => {
       if (!validate)
@@ -5034,10 +5250,10 @@ var select2 = async (question, items, settings = {}, initial, validate, lc) => {
 var multiselect2 = (question, items, settings = {}, initial, validate, lc) => askTableHandler(true, question, items, initial, settings.rows, settings.headers, settings.options, validate, lc);
 
 // src/tools/ask/trim.ts
-var import_swiss_ak29 = require("swiss-ak");
+var import_swiss_ak30 = require("swiss-ak");
 var toTimeCode = (frame, frameRate = 60, includeHours = false, includeMinutes = true) => {
   const frLength = out.getWidth(Math.round(frameRate) + "");
-  const toSecs = (0, import_swiss_ak29.seconds)(Math.floor(frame / frameRate));
+  const toSecs = (0, import_swiss_ak30.seconds)(Math.floor(frame / frameRate));
   const remaining = Math.round(frame % frameRate);
   let cut = includeHours ? 11 : 14;
   if (!includeMinutes)
@@ -5072,16 +5288,16 @@ var getTrimActionBar = () => {
   return getActionBar(["move", "moveFast", "switch", "return"], actionBarConfig);
 };
 var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) => {
-  const deferred = (0, import_swiss_ak29.getDeferred)();
+  const deferred = (0, import_swiss_ak30.getDeferred)();
   const askOptions2 = getAskOptions();
   const tempLC = getLineCounter();
-  const totalLength = (0, import_swiss_ak29.seconds)(Math.floor(totalFrames / frameRate));
-  const showHours = totalLength > (0, import_swiss_ak29.hours)(1);
+  const totalLength = (0, import_swiss_ak30.seconds)(Math.floor(totalFrames / frameRate));
+  const showHours = totalLength > (0, import_swiss_ak30.hours)(1);
   let errorInfo = getErrorInfoFromValidationResult(true);
   let activeHandle = "start";
   const handles = {
-    start: (initial == null ? void 0 : initial.start) !== void 0 ? import_swiss_ak29.MathsTools.clamp(initial.start, 0, totalFrames - 1) : 0,
-    end: (initial == null ? void 0 : initial.end) !== void 0 ? import_swiss_ak29.MathsTools.clamp(initial.end, 0, totalFrames - 1) : totalFrames - 1
+    start: (initial == null ? void 0 : initial.start) !== void 0 ? import_swiss_ak30.MathsTools.clamp(initial.start, 0, totalFrames - 1) : 0,
+    end: (initial == null ? void 0 : initial.end) !== void 0 ? import_swiss_ak30.MathsTools.clamp(initial.end, 0, totalFrames - 1) : totalFrames - 1
   };
   let cacheTermSize = [0, 0];
   let cacheActionBar = "";
@@ -5106,7 +5322,7 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
       const result = operation.getResult();
       const startOut = col.resultNumber(result.start + colr.dim(` (${toTimeCode(result.start, frameRate, showHours)})`));
       const endOut = col.resultNumber(result.end + colr.dim(` (${toTimeCode(result.end, frameRate, showHours)})`));
-      return `${startOut} ${col.decoration(import_swiss_ak29.symbols.ARROW_RGT)} ${endOut}`;
+      return `${startOut} ${col.decoration(import_swiss_ak30.symbols.ARROW_RGT)} ${endOut}`;
     },
     display: () => {
       operation.calc();
@@ -5114,7 +5330,7 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
       const theme = getAskOptionsForState(false, errorInfo.isError);
       const { colours: col, symbols: sym, general: gen, text: txt } = theme;
       const totalSpace = width - 2;
-      const handlePositions = import_swiss_ak29.ObjectTools.mapValues(
+      const handlePositions = import_swiss_ak30.ObjectTools.mapValues(
         handles,
         (_k, value) => Math.floor(value / (totalFrames - 1) * totalSpace)
       );
@@ -5126,11 +5342,11 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
       const handStart = activeHandle == "start" ? actvHand : inactvHand;
       const handEnd = activeHandle == "end" ? actvHand : inactvHand;
       const getHandleLabels = () => {
-        const handleLabelsRaw = import_swiss_ak29.ObjectTools.mapValues(handles, (_k, value) => [
+        const handleLabelsRaw = import_swiss_ak30.ObjectTools.mapValues(handles, (_k, value) => [
           ` ${toTimeCode(value, frameRate, showHours)} `,
           ""
         ]);
-        const handleLabelWidths = import_swiss_ak29.ObjectTools.mapValues(
+        const handleLabelWidths = import_swiss_ak30.ObjectTools.mapValues(
           handleLabelsRaw,
           (_k, value) => Math.max(...value.map((s) => out.getWidth(s)))
         );
@@ -5138,7 +5354,7 @@ var trim = async (question, totalFrames, frameRate = 60, initial, validate, lc) 
           start: handleLabelWidths.start > befSpace ? "left" : "right",
           end: handleLabelWidths.end > aftSpace ? "right" : "left"
         };
-        const handleLabels = import_swiss_ak29.ObjectTools.mapValues(
+        const handleLabels = import_swiss_ak30.ObjectTools.mapValues(
           handleLabelsRaw,
           (key, value) => value.map((l) => out.align(l, handleAligns[key], handleLabelWidths[key], " ", true))
         );
@@ -5305,7 +5521,7 @@ var ask;
     return loader;
   };
   ask2.countdown = (totalSeconds, template, isComplete, isError) => {
-    const deferred = (0, import_swiss_ak30.getDeferred)();
+    const deferred = (0, import_swiss_ak31.getDeferred)();
     const theme = getAskOptionsForState(isComplete, isError);
     const tempLC = getLineCounter2();
     let finished = false;
@@ -5320,7 +5536,7 @@ var ask;
         lines = textValue.split("\n").length;
         const output = theme.colours.countdown(textValue);
         tempLC.overwrite(tempLC.ansi.moveHome() + ansi2.cursor.hide + output);
-        await (0, import_swiss_ak30.wait)((0, import_swiss_ak30.seconds)(1));
+        await (0, import_swiss_ak31.wait)((0, import_swiss_ak31.seconds)(1));
         operation.runLoop(secsRemaining - 1);
       },
       finish: () => {
@@ -5434,7 +5650,7 @@ var ask;
       }
       let value = item.value;
       if (item.submenu) {
-        const uniqueId = import_swiss_ak30.StringTools.randomId("submenu-");
+        const uniqueId = import_swiss_ak31.StringTools.randomId("submenu-");
         submenuIDs.push(uniqueId);
         value = uniqueId;
       }
@@ -5467,8 +5683,8 @@ var ask;
 })(ask || (ask = {}));
 
 // src/tools/log.ts
-var import_util2 = __toESM(require("util"), 1);
-var import_swiss_ak31 = require("swiss-ak");
+var import_util3 = __toESM(require("util"), 1);
+var import_swiss_ak32 = require("swiss-ak");
 var defaultOptions = {
   showDate: false,
   showTime: true,
@@ -5517,7 +5733,7 @@ var defaultConfigs = {
 var getStr = (enableColours) => (item) => {
   const inspect2 = ["object", "boolean", "number"];
   if (inspect2.includes(typeof item) && !(item instanceof Date)) {
-    return import_util2.default.inspect(item, { colors: enableColours, depth: null });
+    return import_util3.default.inspect(item, { colors: enableColours, depth: null });
   } else {
     return item + "";
   }
@@ -5549,7 +5765,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
-  return import_swiss_ak31.ObjectTools.mapValues(allConfigs, (key, config) => {
+  return import_swiss_ak32.ObjectTools.mapValues(allConfigs, (key, config) => {
     const func = (...args) => {
       const log2 = formatLog(args, config, completeOptions, longestName);
       console.log(log2);
@@ -5560,7 +5776,7 @@ var createLogger = (extraConfigs = {}, options = {}) => {
 var log = createLogger({});
 
 // src/tools/progressBar.ts
-var import_swiss_ak32 = require("swiss-ak");
+var import_swiss_ak33 = require("swiss-ak");
 
 // src/utils/optionUtils.ts
 var option = (value, deflt, safeFn) => value !== void 0 ? safeFn(value, deflt) : deflt;
@@ -5603,8 +5819,8 @@ var progressBar;
   };
   progressBar2.getProgressBar = (max, options = {}) => {
     const args = {
-      max: import_swiss_ak32.safe.num(max, true, -1, void 0, -1),
-      options: import_swiss_ak32.safe.obj(options, false, {})
+      max: import_swiss_ak33.safe.num(max, true, -1, void 0, -1),
+      options: import_swiss_ak33.safe.obj(options, false, {})
     };
     const originalOpts = progressBar2.getFullOptions(args.options);
     let opts = originalOpts;
@@ -5649,7 +5865,7 @@ var progressBar;
     };
     const set = (newCurrent) => {
       const args2 = {
-        newCurrent: import_swiss_ak32.safe.num(newCurrent, true, 0, void 0)
+        newCurrent: import_swiss_ak33.safe.num(newCurrent, true, 0, void 0)
       };
       if (finished)
         return "";
@@ -5714,38 +5930,38 @@ var progressBar;
   progressBar2.getFullOptions = (opts = {}) => {
     var _a;
     return {
-      prefix: option(opts.prefix, "", (v, dflt) => import_swiss_ak32.safe.str(v, true, dflt)),
-      prefixWidth: option(opts.prefixWidth, 0, (v, dflt) => import_swiss_ak32.safe.num(v, true, 0, void 0, dflt)),
-      maxPrefixWidth: option(opts.maxPrefixWidth, Infinity, (v, dflt) => import_swiss_ak32.safe.num(v, true, 0, void 0, dflt)),
+      prefix: option(opts.prefix, "", (v, dflt) => import_swiss_ak33.safe.str(v, true, dflt)),
+      prefixWidth: option(opts.prefixWidth, 0, (v, dflt) => import_swiss_ak33.safe.num(v, true, 0, void 0, dflt)),
+      maxPrefixWidth: option(opts.maxPrefixWidth, Infinity, (v, dflt) => import_swiss_ak33.safe.num(v, true, 0, void 0, dflt)),
       maxWidth: option(
         opts.maxWidth,
         ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.columns) !== void 0 ? process.stdout.columns : 100,
-        (v, dflt) => import_swiss_ak32.safe.num(v, true, 0, void 0, dflt)
+        (v, dflt) => import_swiss_ak33.safe.num(v, true, 0, void 0, dflt)
       ),
-      wrapperFn: option(opts.wrapperFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      barWrapFn: option(opts.barWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      barProgWrapFn: option(opts.barProgWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      barCurrentWrapFn: option(opts.barCurrentWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      barEmptyWrapFn: option(opts.barEmptyWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      prefixWrapFn: option(opts.prefixWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      countWrapFn: option(opts.countWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      percentWrapFn: option(opts.percentWrapFn, import_swiss_ak32.fn.noact, (v, dflt) => import_swiss_ak32.safe.func(v, dflt)),
-      showCount: option(opts.showCount, true, (v, dflt) => import_swiss_ak32.safe.bool(v, dflt)),
-      showPercent: option(opts.showPercent, false, (v, dflt) => import_swiss_ak32.safe.bool(v, dflt)),
-      countWidth: option(opts.countWidth, 0, (v, dflt) => import_swiss_ak32.safe.num(v, true, 0, void 0, dflt)),
-      progChar: option(opts.progChar, "\u2588", (v, dflt) => import_swiss_ak32.safe.str(v, false, dflt)),
-      emptyChar: option(opts.emptyChar, " ", (v, dflt) => import_swiss_ak32.safe.str(v, false, dflt)),
-      startChar: option(opts.startChar, "\u2595", (v, dflt) => import_swiss_ak32.safe.str(v, false, dflt)),
-      endChar: option(opts.endChar, "\u258F", (v, dflt) => import_swiss_ak32.safe.str(v, false, dflt)),
-      showCurrent: option(opts.showCurrent, false, (v, dflt) => import_swiss_ak32.safe.bool(v, dflt)),
-      currentChar: option(opts.currentChar, "\u259E", (v, dflt) => import_swiss_ak32.safe.str(v, false, dflt)),
-      print: option(opts.print, true, (v, dflt) => import_swiss_ak32.safe.bool(v, dflt)),
-      printFn: option(opts.printFn, progressBar2.utils.printLn, (v, dflt) => import_swiss_ak32.safe.func(v, dflt))
+      wrapperFn: option(opts.wrapperFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      barWrapFn: option(opts.barWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      barProgWrapFn: option(opts.barProgWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      barCurrentWrapFn: option(opts.barCurrentWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      barEmptyWrapFn: option(opts.barEmptyWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      prefixWrapFn: option(opts.prefixWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      countWrapFn: option(opts.countWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      percentWrapFn: option(opts.percentWrapFn, import_swiss_ak33.fn.noact, (v, dflt) => import_swiss_ak33.safe.func(v, dflt)),
+      showCount: option(opts.showCount, true, (v, dflt) => import_swiss_ak33.safe.bool(v, dflt)),
+      showPercent: option(opts.showPercent, false, (v, dflt) => import_swiss_ak33.safe.bool(v, dflt)),
+      countWidth: option(opts.countWidth, 0, (v, dflt) => import_swiss_ak33.safe.num(v, true, 0, void 0, dflt)),
+      progChar: option(opts.progChar, "\u2588", (v, dflt) => import_swiss_ak33.safe.str(v, false, dflt)),
+      emptyChar: option(opts.emptyChar, " ", (v, dflt) => import_swiss_ak33.safe.str(v, false, dflt)),
+      startChar: option(opts.startChar, "\u2595", (v, dflt) => import_swiss_ak33.safe.str(v, false, dflt)),
+      endChar: option(opts.endChar, "\u258F", (v, dflt) => import_swiss_ak33.safe.str(v, false, dflt)),
+      showCurrent: option(opts.showCurrent, false, (v, dflt) => import_swiss_ak33.safe.bool(v, dflt)),
+      currentChar: option(opts.currentChar, "\u259E", (v, dflt) => import_swiss_ak33.safe.str(v, false, dflt)),
+      print: option(opts.print, true, (v, dflt) => import_swiss_ak33.safe.bool(v, dflt)),
+      printFn: option(opts.printFn, progressBar2.utils.printLn, (v, dflt) => import_swiss_ak33.safe.func(v, dflt))
     };
   };
   progressBar2.getMultiBarManager = (options = {}) => {
     const args = {
-      options: import_swiss_ak32.safe.obj(options, false, {})
+      options: import_swiss_ak33.safe.obj(options, false, {})
     };
     const opts = progressBar2.getFullMultiBarManagerOptions(args.options);
     const { minSlots, maxSlots } = opts;
@@ -5754,18 +5970,18 @@ var progressBar;
     let previousDrawnLines = 0;
     let previousUpdateTime = 0;
     let bumpLines = 0;
-    const q = new import_swiss_ak32.QueueManager();
+    const q = new import_swiss_ak33.QueueManager();
     q.setDefaultPauseTime(0);
     const add = (bar, removeWhenFinished = opts.removeFinished) => {
       const args2 = {
-        bar: import_swiss_ak32.safe.obj(bar),
-        removeWhenFinished: import_swiss_ak32.safe.bool(removeWhenFinished, false)
+        bar: import_swiss_ak33.safe.obj(bar),
+        removeWhenFinished: import_swiss_ak33.safe.bool(removeWhenFinished, false)
       };
       if (!args2.bar._registerManager)
         return;
       const barIndex = totalCount;
       totalCount += 1;
-      const varOpts = import_swiss_ak32.ObjectTools.mapValues(
+      const varOpts = import_swiss_ak33.ObjectTools.mapValues(
         opts.variableOptions,
         (key, value) => {
           if (!value)
@@ -5814,8 +6030,8 @@ var progressBar;
     };
     const addNew = (max, options2 = {}) => {
       const args2 = {
-        max: import_swiss_ak32.safe.num(max, true, -1, void 0, -1),
-        options: import_swiss_ak32.safe.obj(options2, false, {})
+        max: import_swiss_ak33.safe.num(max, true, -1, void 0, -1),
+        options: import_swiss_ak33.safe.obj(options2, false, {})
       };
       const bar = progressBar2.getProgressBar(args2.max, args2.options);
       add(bar);
@@ -5823,7 +6039,7 @@ var progressBar;
     };
     const remove = (bar) => {
       const args2 = {
-        bar: import_swiss_ak32.safe.obj(bar)
+        bar: import_swiss_ak33.safe.obj(bar)
       };
       if (!args2.bar._registerManager)
         return;
@@ -5844,7 +6060,7 @@ var progressBar;
       });
       if (count < minSlots) {
         const emptySlots = minSlots - barPacks.length;
-        result.push(...import_swiss_ak32.ArrayTools.repeat(emptySlots, ""));
+        result.push(...import_swiss_ak33.ArrayTools.repeat(emptySlots, ""));
         count += emptySlots;
       }
       if (!opts.alignBottom) {
@@ -5859,7 +6075,7 @@ var progressBar;
 `.repeat(bumpLines) + result.join("\n"));
             previousDrawnLines = count;
             previousUpdateTime = Date.now();
-            return (0, import_swiss_ak32.wait)(0);
+            return (0, import_swiss_ak33.wait)(0);
           });
         }
       }
@@ -5876,24 +6092,24 @@ var progressBar;
     };
   };
   progressBar2.getFullMultiBarManagerOptions = (opts) => {
-    const numSlots = optionalOption(opts.numSlots, void 0, (v, d) => import_swiss_ak32.safe.num(v, true, 0, void 0, d));
-    let minSlots = optionalOption(opts.minSlots, void 0, (v, d) => import_swiss_ak32.safe.num(v, true, 0, void 0, d));
-    let maxSlots = optionalOption(opts.maxSlots, void 0, (v, d) => v === Infinity ? Infinity : import_swiss_ak32.safe.num(v, true, 0, void 0, d));
+    const numSlots = optionalOption(opts.numSlots, void 0, (v, d) => import_swiss_ak33.safe.num(v, true, 0, void 0, d));
+    let minSlots = optionalOption(opts.minSlots, void 0, (v, d) => import_swiss_ak33.safe.num(v, true, 0, void 0, d));
+    let maxSlots = optionalOption(opts.maxSlots, void 0, (v, d) => v === Infinity ? Infinity : import_swiss_ak33.safe.num(v, true, 0, void 0, d));
     if (minSlots !== void 0 && maxSlots !== void 0 && minSlots > maxSlots) {
       let temp = minSlots;
       minSlots = maxSlots;
       maxSlots = temp;
     }
     const result = {
-      numSlots: option(numSlots, null, (v, d) => import_swiss_ak32.safe.num(v, true, 0, void 0, d)),
-      minSlots: option(minSlots, numSlots ?? 0, (v, d) => import_swiss_ak32.safe.num(v, true, 0, maxSlots, d)),
-      maxSlots: option(maxSlots, numSlots ?? Infinity, (v, d) => v === Infinity ? Infinity : import_swiss_ak32.safe.num(v, true, minSlots, void 0, d)),
-      removeFinished: option(opts.removeFinished, false, (v, d) => import_swiss_ak32.safe.bool(v, d)),
-      alignBottom: option(opts.alignBottom, false, (v, d) => import_swiss_ak32.safe.bool(v, d)),
-      overrideOptions: option(opts.overrideOptions, {}, (v, d) => import_swiss_ak32.safe.obj(v, false, d)),
-      variableOptions: option(opts.variableOptions, {}, (v, d) => import_swiss_ak32.safe.obj(v, false, d)),
-      print: option(opts.print, true, (v, d) => import_swiss_ak32.safe.bool(v, d)),
-      printFn: option(opts.printFn, progressBar2.utils.multiPrintFn, (v, d) => import_swiss_ak32.safe.func(v, d))
+      numSlots: option(numSlots, null, (v, d) => import_swiss_ak33.safe.num(v, true, 0, void 0, d)),
+      minSlots: option(minSlots, numSlots ?? 0, (v, d) => import_swiss_ak33.safe.num(v, true, 0, maxSlots, d)),
+      maxSlots: option(maxSlots, numSlots ?? Infinity, (v, d) => v === Infinity ? Infinity : import_swiss_ak33.safe.num(v, true, minSlots, void 0, d)),
+      removeFinished: option(opts.removeFinished, false, (v, d) => import_swiss_ak33.safe.bool(v, d)),
+      alignBottom: option(opts.alignBottom, false, (v, d) => import_swiss_ak33.safe.bool(v, d)),
+      overrideOptions: option(opts.overrideOptions, {}, (v, d) => import_swiss_ak33.safe.obj(v, false, d)),
+      variableOptions: option(opts.variableOptions, {}, (v, d) => import_swiss_ak33.safe.obj(v, false, d)),
+      print: option(opts.print, true, (v, d) => import_swiss_ak33.safe.bool(v, d)),
+      printFn: option(opts.printFn, progressBar2.utils.multiPrintFn, (v, d) => import_swiss_ak33.safe.func(v, d))
     };
     return result;
   };
@@ -5902,7 +6118,7 @@ var progressBar;
     utils2.printLn = (...text2) => {
       var _a, _b;
       const args = {
-        text: import_swiss_ak32.safe.arrOf.str(text2)
+        text: import_swiss_ak33.safe.arrOf.str(text2)
       };
       if (((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) && ((_b = process == null ? void 0 : process.stdout) == null ? void 0 : _b.cursorTo)) {
         if (!args.text.length) {
@@ -5923,8 +6139,8 @@ var progressBar;
     utils2.multiPrintFn = (previousDrawnLines, output) => {
       var _a, _b, _c;
       const args = {
-        previousDrawnLines: import_swiss_ak32.safe.num(previousDrawnLines, true, 0),
-        output: import_swiss_ak32.safe.str(output, true, "")
+        previousDrawnLines: import_swiss_ak33.safe.num(previousDrawnLines, true, 0),
+        output: import_swiss_ak33.safe.str(output, true, "")
       };
       const hasProcessFns = ((_a = process == null ? void 0 : process.stdout) == null ? void 0 : _a.clearLine) && ((_b = process == null ? void 0 : process.stdout) == null ? void 0 : _b.cursorTo) && ((_c = process == null ? void 0 : process.stdout) == null ? void 0 : _c.moveCursor);
       if (hasProcessFns) {
@@ -5950,13 +6166,13 @@ var getProgressBar = progressBar.getProgressBar;
 var getMultiBarManager = progressBar.getMultiBarManager;
 
 // src/tools/progressBarTools.ts
-var import_swiss_ak33 = require("swiss-ak");
+var import_swiss_ak34 = require("swiss-ak");
 var progressBarTools;
 ((progressBarTools2) => {
   progressBarTools2.getColouredProgressBarOpts = (opts, randomise = false) => {
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
     if (randomise) {
-      wrapperFns = import_swiss_ak33.ArrayTools.randomise(wrapperFns);
+      wrapperFns = import_swiss_ak34.ArrayTools.randomise(wrapperFns);
     }
     let index = 0;
     return (prefix = "", override = {}, resetColours = false) => {

@@ -19,11 +19,11 @@ export const loadPathContents = async (path: string): Promise<PathContents> => {
 export const forceLoadPathContents = async (displayPath: string): Promise<PathContents> => {
   let contents: PathContents = { dirs: [], files: [] };
   try {
-    const actualPath = await getActualLocationPath(displayPath);
-    const pathType = await getPathType(actualPath);
+    const targetPath = await getActualLocationPath(displayPath);
+    const pathType = await getPathType(targetPath);
 
     if (pathType === 'd') {
-      const scanResults = await scanDir(actualPath);
+      const scanResults = await scanDir(targetPath);
 
       const [dirs, files] = [scanResults.dirs, scanResults.files]
         .map((list) => list.filter((item) => item !== '.DS_Store')) // Filter out .DS_Store files
@@ -35,8 +35,8 @@ export const forceLoadPathContents = async (displayPath: string): Promise<PathCo
     if (pathType === 'f') {
       const [stat, info] = await Promise.all([
         //
-        tryOr(undefined, () => getStats(actualPath)),
-        tryOr(undefined, () => getBasicFileInfo(actualPath))
+        tryOr(undefined, () => getStats(targetPath)),
+        tryOr(undefined, () => getBasicFileInfo(targetPath))
       ]);
       contents = { ...contents, info: { stat, info } };
     }
