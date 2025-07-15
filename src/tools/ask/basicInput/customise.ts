@@ -993,6 +993,7 @@ export namespace ask {
      * | specialErrorIcon         | Icon for errors (for dates, fileExplorer, etc)                            |
      * | folderOpenableIcon       | Shown at end of line for folders to show they can be opened (right-wards) |
      * | fileOpenableIcon         | File version of folderOpenableIcon. Typically empty                       |
+     * | symlinkIcon              | Shown at end of line for symlinks or aliases                                |
      * | timelineTrack            | The track of a timeline                                                   |
      * | timelineHandle           | The control handle on a timeline                                          |
      * | timelineBar              | The 'bar' (active portion) of a timeline                                  |
