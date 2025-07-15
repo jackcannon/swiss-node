@@ -4479,7 +4479,7 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const isSelected = isMulti && multiSelected.has(fullPath);
         const prefix = isSelected ? selectedPrefix : unselectedPrefix;
         const symlinkSuffix = isSymlink ? sym.symlinkIcon + " " : "";
-        const template = (text2) => `${prefix}${text2} ${symlinkSuffix}${symbol}`;
+        const template = (text2) => `${prefix}${text2} ${symlinkSuffix}${symbol} `;
         const extraChars = out.getWidth(template(""));
         const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
         let wrapFn = fn9.noact;
