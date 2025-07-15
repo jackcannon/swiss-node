@@ -226,7 +226,7 @@ const populateAskOptions = (): AskOptionsStored => {
 
       folderOpenableIcon: getSetFromSingle('›'),
       fileOpenableIcon: getSetFromSingle(' '),
-      symlinkIcon: getSetFromSingle('↪'),
+      symlinkIcon: getSetFromSingle('⤤'),
 
       timelineTrack: getSetFromSingle('█'),
       timelineHandle: getSetFromSingle('┃'),

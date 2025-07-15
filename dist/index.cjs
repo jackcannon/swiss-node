@@ -1682,7 +1682,7 @@ var populateAskOptions = () => {
       specialErrorIcon: getSetFromSingle(" ! "),
       folderOpenableIcon: getSetFromSingle("\u203A"),
       fileOpenableIcon: getSetFromSingle(" "),
-      symlinkIcon: getSetFromSingle("\u21AA"),
+      symlinkIcon: getSetFromSingle("\u2924"),
       timelineTrack: getSetFromSingle("\u2588"),
       timelineHandle: getSetFromSingle("\u2503"),
       timelineBar: getSetFromSingle("\u2588")
