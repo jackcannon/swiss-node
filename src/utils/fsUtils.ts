@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import fs from 'fs';
 import fsP from 'fs/promises';
-import { cachier, minutes, onDemand, tryOr } from 'swiss-ak';
+import { cachier, minutes, onDemand, PromiseTools, tryOr } from 'swiss-ak';
 import { explodePath } from '../tools/PathTools';
 import { FILE_CATEGORIES } from '../tools/ask/fileExplorer/helpers';
 import { couldBeMacOSAlias, getActualLocationPath, isMacOSAlias } from './aliases';
@@ -87,30 +87,44 @@ export const mkdir = async (dir: string): Promise<string> => {
   return result;
 };
 
-export const scanDir = async (dir: string = '.') => {
+export const scanDir = async (dir: string = '.'): Promise<{ files: string[]; dirs: string[]; symlinks: { f: string[]; d: string[] } }> => {
   try {
     const found = await fsP.readdir(dir, { withFileTypes: true });
     const files: string[] = [];
     const dirs: string[] = [];
+    const symlinks: { f: string[]; d: string[] } = { f: [], d: [] };
 
-    for (const file of found) {
+    await PromiseTools.each(found, async (file) => {
       if (file.isDirectory()) {
-        dirs.push(file.name);
+        return dirs.push(file.name);
       } else if (file.isFile()) {
         const fullPath = dir.endsWith('/') ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
 
         // check if file is an alias
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          const actualPath = await getActualLocationPath(fullPath);
-          const actualStat = await getStats(actualPath);
-          if (actualStat.isDirectory()) {
-            dirs.push(file.name);
-          } else if (actualStat.isFile()) {
-            files.push(file.name);
+          const targetPath = await getActualLocationPath(fullPath);
+
+          const itemType = await (async () => {
+            let itemStats = stats;
+            try {
+              itemStats = await getStats(targetPath);
+            } catch (err) {}
+
+            if (itemStats.isDirectory()) return 'd';
+            if (itemStats.isFile()) return 'f';
+            return 'other';
+          })();
+
+          if (itemType === 'd') {
+            symlinks.d.push(file.name);
+            return dirs.push(file.name);
+          } else if (itemType === 'f') {
+            symlinks.f.push(file.name);
+            return files.push(file.name);
           }
         } else {
-          files.push(file.name);
+          return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
         try {
@@ -118,19 +132,21 @@ export const scanDir = async (dir: string = '.') => {
           const targetStat = await getStats(fullPath);
 
           if (targetStat.isDirectory()) {
-            dirs.push(file.name);
+            symlinks.d.push(file.name);
+            return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            files.push(file.name);
+            symlinks.f.push(file.name);
+            return files.push(file.name);
           }
         } catch (err) {
-          continue;
+          return files.push(file.name);
         }
       }
-    }
+    });
 
-    return { files, dirs };
+    return { files, dirs, symlinks };
   } catch (err) {
-    return { files: [], dirs: [] };
+    return { files: [], dirs: [], symlinks: { f: [], d: [] } };
   }
 };
 

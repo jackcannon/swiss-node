@@ -226,6 +226,7 @@ const populateAskOptions = (): AskOptionsStored => {
 
       folderOpenableIcon: getSetFromSingle('›'),
       fileOpenableIcon: getSetFromSingle(' '),
+      symlinkIcon: getSetFromSingle('↪'),
 
       timelineTrack: getSetFromSingle('█'),
       timelineHandle: getSetFromSingle('┃'),
@@ -448,6 +449,7 @@ const applyPartialOptionsToAskOptions = (options: Partial<ask.AskOptions>) => {
     specialErrorIcon: processThemeItem(options?.symbols?.specialErrorIcon, askOptions.symbols.specialErrorIcon),
     folderOpenableIcon: processThemeItem(options?.symbols?.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
     fileOpenableIcon: processThemeItem(options?.symbols?.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
+    symlinkIcon: processThemeItem(options?.symbols?.symlinkIcon, askOptions.symbols.symlinkIcon),
 
     timelineTrack: processThemeItem(options?.symbols?.timelineTrack, askOptions.symbols.timelineTrack),
     timelineHandle: processThemeItem(options?.symbols?.timelineHandle, askOptions.symbols.timelineHandle),
@@ -1046,6 +1048,8 @@ export namespace ask {
       folderOpenableIcon?: string | { normal?: string; error?: string; done?: string };
       /** File version of folderOpenableIcon. Typically empty */
       fileOpenableIcon?: string | { normal?: string; error?: string; done?: string };
+      /** Shown at end of line for symlinks or aliases */
+      symlinkIcon?: string | { normal?: string; error?: string; done?: string };
 
       /** The track of a timeline */
       timelineTrack?: string | { normal?: string; error?: string; done?: string };
@@ -1207,6 +1211,7 @@ interface AskOptionsStoredSymbols {
   specialErrorIcon: AskOptionsItemSet<string>;
   folderOpenableIcon: AskOptionsItemSet<string>; // used in fileExplorer to show a folder can be opened
   fileOpenableIcon: AskOptionsItemSet<string>; // shown at end of row for files (usually just a space)
+  symlinkIcon: AskOptionsItemSet<string>; // shown at end of row for symlinks or aliases
 
   timelineTrack: AskOptionsItemSet<string>;
   timelineHandle: AskOptionsItemSet<string>;

@@ -5415,6 +5415,12 @@ declare namespace ask$1 {
                 error?: string;
                 done?: string;
             };
+            /** Shown at end of line for symlinks or aliases */
+            symlinkIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
             /** The track of a timeline */
             timelineTrack?: string | {
                 normal?: string;
@@ -5549,6 +5555,7 @@ interface AskOptionsStoredSymbols {
     specialErrorIcon: AskOptionsItemSet<string>;
     folderOpenableIcon: AskOptionsItemSet<string>;
     fileOpenableIcon: AskOptionsItemSet<string>;
+    symlinkIcon: AskOptionsItemSet<string>;
     timelineTrack: AskOptionsItemSet<string>;
     timelineHandle: AskOptionsItemSet<string>;
     timelineBar: AskOptionsItemSet<string>;
@@ -5801,6 +5808,10 @@ declare namespace ask {
      * 
      * Get a file or folder path from the user.
      * 
+     * Note: Handles symlinks and resolves macOS aliases to their actual location.
+     * 
+     * Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
+     * 
      * ```typescript
      * const file = await ask.fileExplorer('What file?', 'f');
      * // '/Users/user/Documents/some_file.txt'
@@ -5822,6 +5833,10 @@ declare namespace ask {
      * - `ask.multiFileExplorer`
      * 
      * Get multiple file or folder paths from the user.
+     * 
+     * Note: Handles symlinks and resolves macOS aliases to their actual location.
+     * 
+     * Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
      * 
      * ```typescript
      * const files = await ask.multiFileExplorer('What files?', 'f');
@@ -5845,6 +5860,10 @@ declare namespace ask {
      * - `ask.saveFileExplorer`
      * 
      * Get a file path from the user, with the intention of saving a file to that path.
+     * 
+     * Note: Handles symlinks and resolves macOS aliases to their actual location.
+     * 
+     * Note: Accepts both relative and absolute paths as startPath (relative will not allow navigating up from the CWD)
      * 
      * ```typescript
      * const HOME_DIR = '/Users/user/Documents';

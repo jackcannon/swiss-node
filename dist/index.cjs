@@ -1682,6 +1682,7 @@ var populateAskOptions = () => {
       specialErrorIcon: getSetFromSingle(" ! "),
       folderOpenableIcon: getSetFromSingle("\u203A"),
       fileOpenableIcon: getSetFromSingle(" "),
+      symlinkIcon: getSetFromSingle("\u21AA"),
       timelineTrack: getSetFromSingle("\u2588"),
       timelineHandle: getSetFromSingle("\u2503"),
       timelineBar: getSetFromSingle("\u2588")
@@ -1745,7 +1746,7 @@ var processThemeItem = (item, defaultItem) => {
   return defaultItem;
 };
 var applyPartialOptionsToAskOptions = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
@@ -1883,9 +1884,10 @@ var applyPartialOptionsToAskOptions = (options) => {
     specialErrorIcon: processThemeItem((_Ta = options == null ? void 0 : options.symbols) == null ? void 0 : _Ta.specialErrorIcon, askOptions.symbols.specialErrorIcon),
     folderOpenableIcon: processThemeItem((_Ua = options == null ? void 0 : options.symbols) == null ? void 0 : _Ua.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
     fileOpenableIcon: processThemeItem((_Va = options == null ? void 0 : options.symbols) == null ? void 0 : _Va.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
-    timelineTrack: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.timelineTrack, askOptions.symbols.timelineTrack),
-    timelineHandle: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineHandle, askOptions.symbols.timelineHandle),
-    timelineBar: processThemeItem((_Ya = options == null ? void 0 : options.symbols) == null ? void 0 : _Ya.timelineBar, askOptions.symbols.timelineBar)
+    symlinkIcon: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.symlinkIcon, askOptions.symbols.symlinkIcon),
+    timelineTrack: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineTrack, askOptions.symbols.timelineTrack),
+    timelineHandle: processThemeItem((_Ya = options == null ? void 0 : options.symbols) == null ? void 0 : _Ya.timelineHandle, askOptions.symbols.timelineHandle),
+    timelineBar: processThemeItem((_Za = options == null ? void 0 : options.symbols) == null ? void 0 : _Za.timelineBar, askOptions.symbols.timelineBar)
   };
 };
 var setThemeColour = (colour) => {
@@ -3855,19 +3857,216 @@ var isMacOSAlias = (path2) => {
     }
   });
 };
-var resolveMacOSAlias = async (actualPath) => {
+var getActualLocationPath = async (originalPath) => {
+  if (!extraInfo.isMacOS)
+    return originalPath;
+  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
+    if (!originalPath || originalPath === "/") {
+      return originalPath;
+    }
+    try {
+      const stats = await getStats(originalPath);
+      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
+        const destination = await resolveMacOSAlias(originalPath);
+        if (destination == null ? void 0 : destination.targetPath) {
+          const resolvedPath = await getActualLocationPath(destination.targetPath);
+          return resolvedPath;
+        }
+      }
+    } catch (error) {
+    }
+    const exploded = PathTools.explodePath(originalPath);
+    if (exploded.dir) {
+      const resolvedDir = await getActualLocationPath(exploded.dir);
+      const resultPath = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
+      if (resultPath !== originalPath) {
+        return await getActualLocationPath(resultPath);
+      }
+      return resultPath;
+    } else {
+      return originalPath;
+    }
+  });
+};
+var resolveMacOSAlias = (filePath) => {
+  return caches.resolveMacOSAlias.getOrRunAsync(filePath, async () => {
+    const buf = import_fs.default.readFileSync(filePath);
+    try {
+      let result = void 0;
+      if (buf.slice(0, 4).toString("ascii") === "book") {
+        result = decodeBookmarkAlias(buf);
+      } else {
+        result = decodeClassicAlias(buf);
+      }
+      if (result)
+        return result;
+      return resolveMacOSAliasFallback(filePath);
+    } catch (e) {
+      return resolveMacOSAliasFallback(filePath);
+    }
+  });
+};
+var resolvePathFromComponents = (pathComponents) => {
+  if (pathComponents.length === 0)
+    return "";
+  const cwd = process.cwd();
+  const cwdExploded = PathTools.explodePath(cwd);
+  let absolutePath = "";
+  let foundIntersection = false;
+  for (let i = 0; i < pathComponents.length; i++) {
+    const component = pathComponents[i];
+    const cwdIndex = cwdExploded.folders.indexOf(component);
+    if (cwdIndex !== -1) {
+      const beforeIntersection = cwdExploded.folders.slice(0, cwdIndex);
+      const afterIntersection = pathComponents.slice(i);
+      absolutePath = "/" + [...beforeIntersection, ...afterIntersection].join("/");
+      foundIntersection = true;
+      break;
+    }
+  }
+  if (!foundIntersection) {
+    if (pathComponents[0] && /^[a-zA-Z][a-zA-Z0-9._-]*$/.test(pathComponents[0])) {
+      absolutePath = "/Users/" + pathComponents.join("/");
+    } else {
+      absolutePath = "/" + pathComponents.join("/");
+    }
+  }
+  return absolutePath;
+};
+var decodeBookmarkAlias = (buf) => {
+  if (buf.slice(0, 4).toString("ascii") !== "book" || buf.slice(8, 12).toString("ascii") !== "mark") {
+    return void 0;
+  }
+  const pathComponents = [];
+  let pos = 80;
+  try {
+    while (pos < buf.length - 20) {
+      if (buf[pos] === 1 && buf[pos + 1] === 1 && buf[pos + 2] === 0 && buf[pos + 3] === 0) {
+        pos += 4;
+        let component = "";
+        let strStart = pos;
+        while (pos < buf.length && buf[pos] !== 0) {
+          pos++;
+        }
+        if (pos > strStart) {
+          component = buf.slice(strStart, pos).toString("utf8");
+          component = component.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+          component = component.trim();
+          if (component.length > 0 && component.length < 100 && !component.includes("\0") && /^[a-zA-Z0-9._ -]+$/.test(component)) {
+            pathComponents.push(component);
+          }
+        }
+        while (pos < buf.length && buf[pos] === 0) {
+          pos++;
+        }
+        if (pos < buf.length - 4) {
+          const nextBytes = buf.slice(pos, pos + 4);
+          if (nextBytes[0] <= 32 && nextBytes[1] === 0) {
+            pos += 4;
+          }
+        }
+      } else {
+        pos++;
+      }
+    }
+  } catch (e) {
+    return void 0;
+  }
+  if (pathComponents.length > 0) {
+    const validComponents = pathComponents.filter((comp) => comp !== "Macintosh HD" && comp !== "Macintosh" && comp !== "HD" && comp.length < 36);
+    if (validComponents.length > 0) {
+      const absolutePath = resolvePathFromComponents(validComponents);
+      let targetType = "d";
+      try {
+        const stats = import_fs.default.statSync(absolutePath);
+        targetType = stats.isDirectory() ? "d" : "f";
+      } catch (e) {
+        const filename = validComponents[validComponents.length - 1];
+        targetType = filename.includes(".") ? "f" : "d";
+      }
+      return { targetPath: absolutePath, targetType };
+    }
+  }
+  return void 0;
+};
+var decodeClassicAlias = (buf) => {
+  const info = {};
+  if (buf.readUInt16BE(4) !== buf.length)
+    return void 0;
+  const version = buf.readUInt16BE(6);
+  if (version !== 2)
+    return void 0;
+  const type = buf.readUInt16BE(8);
+  if (type !== 0 && type !== 1)
+    return void 0;
+  info.targetType = ["file", "directory"][type];
+  const volNameLength = buf.readUInt8(10);
+  if (volNameLength > 27)
+    return void 0;
+  const volSig = buf.toString("ascii", 42, 44);
+  if (volSig !== "BD" && volSig !== "H+" && volSig !== "HX")
+    return void 0;
+  const volType = buf.readUInt16BE(44);
+  if (volType < 0 || volType > 5)
+    return void 0;
+  const fileNameLength = buf.readUInt8(50);
+  if (fileNameLength > 63)
+    return void 0;
+  info.filename = buf.toString("utf8", 51, 51 + fileNameLength);
+  const reserved = buf.slice(140, 150);
+  if (reserved[0] !== 0 || reserved[1] !== 0 || reserved[2] !== 0 || reserved[3] !== 0 || reserved[4] !== 0 || reserved[5] !== 0 || reserved[6] !== 0 || reserved[7] !== 0 || reserved[8] !== 0 || reserved[9] !== 0) {
+    return void 0;
+  }
+  let pos = 150;
+  while (pos < buf.length) {
+    const partType = buf.readInt16BE(pos);
+    const length = buf.readUInt16BE(pos + 2);
+    const data = buf.slice(pos + 4, pos + 4 + length);
+    pos += 4 + length;
+    if (partType === -1) {
+      if (length !== 0)
+        return void 0;
+      break;
+    }
+    if (length % 2 === 1) {
+      const padding = buf.readUInt8(pos);
+      if (padding !== 0)
+        return void 0;
+      pos += 1;
+    }
+    switch (partType) {
+      case 2:
+        const parts = data.toString("utf8").split("\0");
+        info.path = parts[0];
+        break;
+      case 18:
+        info.abspath = data.toString("utf8");
+        break;
+    }
+  }
+  let absolutePath = info.abspath || info.path || "";
+  if (!absolutePath)
+    return void 0;
+  if (!import_path.default.isAbsolute(absolutePath)) {
+    const pathComponents = absolutePath.split("/").filter((comp) => comp.length > 0);
+    absolutePath = resolvePathFromComponents(pathComponents);
+  }
+  const targetType = info.targetType === "directory" ? "d" : "f";
+  return { targetPath: absolutePath, targetType };
+};
+var resolveMacOSAliasFallback = async (actualPath) => {
   if (!extraInfo.isMacOS)
     return null;
-  return caches.resolveMacOSAlias.getOrRunAsync(actualPath, async () => {
-    const absolutePath = import_path.default.resolve(actualPath);
+  const absolutePath = import_path.default.resolve(actualPath);
+  const targetPath = await (async () => {
     try {
       const script = `
-      tell application "Finder"
-        set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
-        set originalFile to original item of aliasFile
-        return POSIX path of (originalFile as string)
-      end tell
-    `;
+    tell application "Finder"
+      set aliasFile to POSIX file "${absolutePath.replace(/"/g, '\\"')}" as alias
+      set originalFile to original item of aliasFile
+      return POSIX path of (originalFile as string)
+    end tell
+  `;
       const stdout = await execute(`osascript -e '${script.replace(/'/g, "\\'")}'`);
       const destination = PathTools.removeTrailSlash(stdout.trim());
       if (destination && import_fs.default.existsSync(destination)) {
@@ -3883,39 +4082,12 @@ var resolveMacOSAlias = async (actualPath) => {
       } catch (fallbackError) {
       }
     }
-    return null;
-  });
-};
-var getActualLocationPath = async (originalPath) => {
-  if (!extraInfo.isMacOS)
-    return originalPath;
-  return caches.getActualLocationPath.getOrRunAsync(originalPath, async () => {
-    if (!originalPath || originalPath === "/") {
-      return originalPath;
-    }
-    try {
-      const stats = await getStats(originalPath);
-      if (couldBeMacOSAlias(stats) && isMacOSAlias(originalPath)) {
-        const destination = await resolveMacOSAlias(originalPath);
-        if (destination) {
-          const resolvedPath = await getActualLocationPath(destination);
-          return resolvedPath;
-        }
-      }
-    } catch (error) {
-    }
-    const exploded = PathTools.explodePath(originalPath);
-    if (exploded.dir) {
-      const resolvedDir = await getActualLocationPath(exploded.dir);
-      const result = exploded.filename ? resolvedDir + "/" + exploded.filename : resolvedDir;
-      if (result !== originalPath) {
-        return await getActualLocationPath(result);
-      }
-      return result;
-    } else {
-      return originalPath;
-    }
-  });
+  })();
+  if (!targetPath)
+    return void 0;
+  const stats = await getStats(targetPath);
+  const targetType = stats.isDirectory() ? "d" : "f";
+  return { targetPath, targetType };
 };
 
 // src/tools/ask/fileExplorer/cache.ts
@@ -3932,19 +4104,19 @@ var loadPathContents = async (path2) => {
   return forceLoadPathContents(path2);
 };
 var forceLoadPathContents = async (displayPath) => {
-  let contents = { dirs: [], files: [] };
+  let contents = { dirs: [], files: [], symlinks: { f: [], d: [] } };
   try {
-    const actualPath = await getActualLocationPath(displayPath);
-    const pathType = await getPathType(actualPath);
+    const targetPath = await getActualLocationPath(displayPath);
+    const pathType = await getPathType(targetPath);
     if (pathType === "d") {
-      const scanResults = await scanDir(actualPath);
+      const scanResults = await scanDir(targetPath);
       const [dirs, files] = [scanResults.dirs, scanResults.files].map((list) => list.filter((item) => item !== ".DS_Store")).map((list) => (0, import_swiss_ak24.sortNumberedText)(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
-      contents = { ...contents, dirs, files };
+      contents = { ...contents, dirs, files, symlinks: scanResults.symlinks };
     }
     if (pathType === "f") {
       const [stat, info] = await Promise.all([
-        (0, import_swiss_ak24.tryOr)(void 0, () => getStats(actualPath)),
-        (0, import_swiss_ak24.tryOr)(void 0, () => getBasicFileInfo(actualPath))
+        (0, import_swiss_ak24.tryOr)(void 0, () => getStats(targetPath)),
+        (0, import_swiss_ak24.tryOr)(void 0, () => getBasicFileInfo(targetPath))
       ]);
       contents = { ...contents, info: { stat, info } };
     }
@@ -4150,40 +4322,56 @@ var scanDir = async (dir = ".") => {
     const found = await import_promises.default.readdir(dir, { withFileTypes: true });
     const files = [];
     const dirs = [];
-    for (const file of found) {
+    const symlinks = { f: [], d: [] };
+    await import_swiss_ak25.PromiseTools.each(found, async (file) => {
       if (file.isDirectory()) {
-        dirs.push(file.name);
+        return dirs.push(file.name);
       } else if (file.isFile()) {
         const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
         const stats = await getStats(fullPath);
         if (couldBeMacOSAlias(stats) && isMacOSAlias(fullPath)) {
-          const actualPath = await getActualLocationPath(fullPath);
-          const actualStat = await getStats(actualPath);
-          if (actualStat.isDirectory()) {
-            dirs.push(file.name);
-          } else if (actualStat.isFile()) {
-            files.push(file.name);
+          const targetPath = await getActualLocationPath(fullPath);
+          const itemType = await (async () => {
+            let itemStats = stats;
+            try {
+              itemStats = await getStats(targetPath);
+            } catch (err) {
+            }
+            if (itemStats.isDirectory())
+              return "d";
+            if (itemStats.isFile())
+              return "f";
+            return "other";
+          })();
+          if (itemType === "d") {
+            symlinks.d.push(file.name);
+            return dirs.push(file.name);
+          } else if (itemType === "f") {
+            symlinks.f.push(file.name);
+            return files.push(file.name);
           }
         } else {
-          files.push(file.name);
+          return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
         try {
           const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
           const targetStat = await getStats(fullPath);
           if (targetStat.isDirectory()) {
-            dirs.push(file.name);
+            symlinks.d.push(file.name);
+            return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            files.push(file.name);
+            symlinks.f.push(file.name);
+            return files.push(file.name);
           }
         } catch (err) {
-          continue;
+          return files.push(file.name);
         }
       }
-    }
-    return { files, dirs };
+    });
+    return { files, dirs, symlinks };
   } catch (err) {
-    return { files: [], dirs: [] };
+    return { files: [], dirs: [], symlinks: { f: [], d: [] } };
   }
 };
 var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
@@ -4336,12 +4524,14 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const { colours: col, symbols: sym, general: gen, text: txt } = theme;
       const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
       const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
-      const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
+      const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath, symlinks) => (name, index, all) => {
         const isHighlighted = name === highlighted;
+        const isSymlink = symlinks.includes(name);
         const fullPath = join(columnPath, name);
         const isSelected = isMulti && multiSelected.has(fullPath);
         const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-        const template = (text2) => `${prefix}${text2} ${symbol} `;
+        const symlinkSuffix = isSymlink ? sym.symlinkIcon + " " : "";
+        const template = (text2) => `${prefix}${text2} ${symlinkSuffix}${symbol}`;
         const extraChars = out.getWidth(template(""));
         const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
         let wrapFn = import_swiss_ak26.fn.noact;
@@ -4404,8 +4594,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const isActiveCol = index + 2 === cursor.length;
         const columnPath = paths[index];
         const formattedLines = [
-          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
-          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
+          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath, (contents == null ? void 0 : contents.symlinks.d) ?? [])),
+          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath, (contents == null ? void 0 : contents.symlinks.f) ?? []))
         ];
         if (isScrollbar) {
           const currentHoverIndex = cursorIndexes[currentParentDir] ?? (highlightedIndex !== -1 ? highlightedIndex : 0);
@@ -4550,31 +4740,36 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     newFolder: async () => {
       const { colours: col, text: txt } = getAskOptionsForState(false, false);
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
+      const actualBasePath = await getActualLocationPath(basePath);
       await userActions.takeInput(
         () => {
           tempLC.checkpoint("newFolder");
           const info2 = col.specialFaded(txt.specialNewFolderEnterNothingCancel);
           const info1Prefix = col.specialFaded("  " + txt.specialNewFolderAddingFolderTo);
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(actualBasePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
           tempLC.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
         () => ask.text(txt.specialNewFolderQuestion(col.specialHighlight), "", void 0, tempLC),
         async (newFolderName) => {
-          const newFolderPath = join(basePath, newFolderName);
+          const newFolderPath = join(actualBasePath, newFolderName);
           if (newFolderName !== "") {
             await mkdir(newFolderPath);
           }
           tempLC.clearToCheckpoint("newFolder");
           operation.display();
-          await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
+          const loadPaths = [basePath, newFolderPath];
+          if (basePath !== actualBasePath)
+            loadPaths.push(actualBasePath);
+          await Promise.all(loadPaths.map((p) => forceLoadPathContents(p)));
           return;
         }
       );
     },
     openFinder: async () => {
-      await openFinder(currentPath, cursorType);
+      const actualCurrentPath = await getActualLocationPath(currentPath);
+      await openFinder(actualCurrentPath, cursorType);
     },
     submit: () => {
       if (isError) {
