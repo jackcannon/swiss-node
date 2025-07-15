@@ -1630,6 +1630,7 @@ var populateAskOptions = () => {
       specialErrorIcon: getSetFromSingle(" ! "),
       folderOpenableIcon: getSetFromSingle("\u203A"),
       fileOpenableIcon: getSetFromSingle(" "),
+      symlinkIcon: getSetFromSingle("\u21AA"),
       timelineTrack: getSetFromSingle("\u2588"),
       timelineHandle: getSetFromSingle("\u2503"),
       timelineBar: getSetFromSingle("\u2588")
@@ -1693,7 +1694,7 @@ var processThemeItem = (item, defaultItem) => {
   return defaultItem;
 };
 var applyPartialOptionsToAskOptions = (options) => {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za;
   if (!askOptions)
     populateAskOptions();
   askOptions.general = {
@@ -1831,9 +1832,10 @@ var applyPartialOptionsToAskOptions = (options) => {
     specialErrorIcon: processThemeItem((_Ta = options == null ? void 0 : options.symbols) == null ? void 0 : _Ta.specialErrorIcon, askOptions.symbols.specialErrorIcon),
     folderOpenableIcon: processThemeItem((_Ua = options == null ? void 0 : options.symbols) == null ? void 0 : _Ua.folderOpenableIcon, askOptions.symbols.folderOpenableIcon),
     fileOpenableIcon: processThemeItem((_Va = options == null ? void 0 : options.symbols) == null ? void 0 : _Va.fileOpenableIcon, askOptions.symbols.fileOpenableIcon),
-    timelineTrack: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.timelineTrack, askOptions.symbols.timelineTrack),
-    timelineHandle: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineHandle, askOptions.symbols.timelineHandle),
-    timelineBar: processThemeItem((_Ya = options == null ? void 0 : options.symbols) == null ? void 0 : _Ya.timelineBar, askOptions.symbols.timelineBar)
+    symlinkIcon: processThemeItem((_Wa = options == null ? void 0 : options.symbols) == null ? void 0 : _Wa.symlinkIcon, askOptions.symbols.symlinkIcon),
+    timelineTrack: processThemeItem((_Xa = options == null ? void 0 : options.symbols) == null ? void 0 : _Xa.timelineTrack, askOptions.symbols.timelineTrack),
+    timelineHandle: processThemeItem((_Ya = options == null ? void 0 : options.symbols) == null ? void 0 : _Ya.timelineHandle, askOptions.symbols.timelineHandle),
+    timelineBar: processThemeItem((_Za = options == null ? void 0 : options.symbols) == null ? void 0 : _Za.timelineBar, askOptions.symbols.timelineBar)
   };
 };
 var setThemeColour = (colour) => {
@@ -3733,7 +3735,7 @@ import { ArrayTools as ArrayTools8, PromiseTools as PromiseTools2, fn as fn9, ge
 
 // src/utils/fsUtils.ts
 import { exec } from "child_process";
-import fsP2 from "fs/promises";
+import fsP from "fs/promises";
 import { cachier as cachier3, minutes as minutes2, onDemand as onDemand2, PromiseTools, tryOr as tryOr2 } from "swiss-ak";
 
 // src/tools/PathTools.ts
@@ -4050,14 +4052,14 @@ var loadPathContents = async (path2) => {
   return forceLoadPathContents(path2);
 };
 var forceLoadPathContents = async (displayPath) => {
-  let contents = { dirs: [], files: [] };
+  let contents = { dirs: [], files: [], symlinks: { f: [], d: [] } };
   try {
     const targetPath = await getActualLocationPath(displayPath);
     const pathType = await getPathType(targetPath);
     if (pathType === "d") {
       const scanResults = await scanDir(targetPath);
       const [dirs, files] = [scanResults.dirs, scanResults.files].map((list) => list.filter((item) => item !== ".DS_Store")).map((list) => sortNumberedText(list)).map((list) => list.map((item) => item.replace(/\r|\n/g, " ")));
-      contents = { ...contents, dirs, files };
+      contents = { ...contents, dirs, files, symlinks: scanResults.symlinks };
     }
     if (pathType === "f") {
       const [stat, info] = await Promise.all([
@@ -4206,18 +4208,6 @@ var getFilePanel = (path2, panelWidth, maxLines) => {
   return col.specialNormal(out.utils.joinLines(out.utils.getLines(resultStr).slice(0, maxLines)));
 };
 
-// debug/livefilelog.ts
-import fsP from "fs/promises";
-import { queue } from "swiss-ak";
-import util from "util";
-var logItems = [];
-var logFile = "./debug/LOG.txt";
-var LOG = async (...args) => {
-  logItems.push(args.map((arg) => util.inspect(arg, { showHidden: false, depth: null, colors: true })).join(" "));
-  await queue.add("log", () => fsP.writeFile(logFile, logItems.join("\n")));
-};
-LOG("START");
-
 // src/utils/fsUtils.ts
 var caches2 = onDemand2({
   getStats: () => cachier3.create(minutes2(1))
@@ -4272,19 +4262,17 @@ var getFFProbe = async (file) => {
   };
 };
 var mkdir = async (dir) => {
-  const result = await fsP2.mkdir(dir, { recursive: true });
+  const result = await fsP.mkdir(dir, { recursive: true });
   return result;
 };
 var scanDir = async (dir = ".") => {
   try {
-    const found = await fsP2.readdir(dir, { withFileTypes: true });
+    const found = await fsP.readdir(dir, { withFileTypes: true });
     const files = [];
     const dirs = [];
-    const dirStartTime = Date.now();
+    const symlinks = { f: [], d: [] };
     await PromiseTools.each(found, async (file) => {
-      const itemStartTime = Date.now();
       if (file.isDirectory()) {
-        LOG(`    - ${dir} (dir) took ${Date.now() - itemStartTime}ms`);
         return dirs.push(file.name);
       } else if (file.isFile()) {
         const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
@@ -4304,14 +4292,13 @@ var scanDir = async (dir = ".") => {
             return "other";
           })();
           if (itemType === "d") {
-            LOG(`    - ${dir} (alias dir) took ${Date.now() - itemStartTime}ms`);
+            symlinks.d.push(file.name);
             return dirs.push(file.name);
           } else if (itemType === "f") {
-            LOG(`    - ${dir} (alias file) took ${Date.now() - itemStartTime}ms`);
+            symlinks.f.push(file.name);
             return files.push(file.name);
           }
         } else {
-          LOG(`    - ${dir} (file) took ${Date.now() - itemStartTime}ms`);
           return files.push(file.name);
         }
       } else if (file.isSymbolicLink()) {
@@ -4319,22 +4306,20 @@ var scanDir = async (dir = ".") => {
           const fullPath = dir.endsWith("/") ? `${dir}${file.name}` : `${dir}/${file.name}`;
           const targetStat = await getStats(fullPath);
           if (targetStat.isDirectory()) {
-            LOG(`    - ${dir} (symlink dir) took ${Date.now() - itemStartTime}ms`);
+            symlinks.d.push(file.name);
             return dirs.push(file.name);
           } else if (targetStat.isFile()) {
-            LOG(`    - ${dir} (symlink file) took ${Date.now() - itemStartTime}ms`);
+            symlinks.f.push(file.name);
             return files.push(file.name);
           }
         } catch (err) {
-          LOG(`    - ${dir} (ERROR) took ${Date.now() - itemStartTime}ms`);
-          return;
+          return files.push(file.name);
         }
       }
     });
-    LOG(`- Scanning ${dir} took ${Date.now() - dirStartTime}ms`);
-    return { files, dirs };
+    return { files, dirs, symlinks };
   } catch (err) {
-    return { files: [], dirs: [] };
+    return { files: [], dirs: [], symlinks: { f: [], d: [] } };
   }
 };
 var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
@@ -4353,7 +4338,7 @@ var openFinder = async (file, pathType, revealFlag = true, count = 0) => {
     return openFinder(exploded.dir, "d", true, count + 1);
   }
 };
-var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => fsP2.stat(path2));
+var getStats = async (path2) => caches2.getStats.getOrRunAsync(path2, async () => fsP.stat(path2));
 var getPathType = async (path2) => {
   try {
     const stat = await getStats(path2);
@@ -4487,12 +4472,14 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
       const { colours: col, symbols: sym, general: gen, text: txt } = theme;
       const selectedIcon = ` ${col.itemSelectedIcon(sym.itemSelectedIcon)} `;
       const unselectedIcon = ` ${col.itemUnselectedIcon(sym.itemUnselectedIcon)} `;
-      const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath) => (name, index, all) => {
+      const formatter = (symbol, regularWrapFn, selectedPrefix = " ", unselectedPrefix = " ") => (width, highlighted, isActiveColumn, columnPath, symlinks) => (name, index, all) => {
         const isHighlighted = name === highlighted;
+        const isSymlink = symlinks.includes(name);
         const fullPath = join(columnPath, name);
         const isSelected = isMulti && multiSelected.has(fullPath);
         const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-        const template = (text2) => `${prefix}${text2} ${symbol} `;
+        const symlinkSuffix = isSymlink ? sym.symlinkIcon + " " : "";
+        const template = (text2) => `${prefix}${text2} ${symlinkSuffix}${symbol}`;
         const extraChars = out.getWidth(template(""));
         const stretched = template(out.left(out.truncate(name, width - extraChars, "\u2026"), width - extraChars));
         let wrapFn = fn9.noact;
@@ -4555,8 +4542,8 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
         const isActiveCol = index + 2 === cursor.length;
         const columnPath = paths[index];
         const formattedLines = [
-          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
-          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
+          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath, (contents == null ? void 0 : contents.symlinks.d) ?? [])),
+          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath, (contents == null ? void 0 : contents.symlinks.f) ?? []))
         ];
         if (isScrollbar) {
           const currentHoverIndex = cursorIndexes[currentParentDir] ?? (highlightedIndex !== -1 ? highlightedIndex : 0);
@@ -4701,31 +4688,36 @@ var fileExplorerHandler = async (isMulti = false, isSave = false, question, sele
     newFolder: async () => {
       const { colours: col, text: txt } = getAskOptionsForState(false, false);
       const basePath = cursorType === "f" ? paths[paths.length - 2] : currentPath;
+      const actualBasePath = await getActualLocationPath(basePath);
       await userActions.takeInput(
         () => {
           tempLC.checkpoint("newFolder");
           const info2 = col.specialFaded(txt.specialNewFolderEnterNothingCancel);
           const info1Prefix = col.specialFaded("  " + txt.specialNewFolderAddingFolderTo);
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(actualBasePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
           tempLC.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
         () => ask.text(txt.specialNewFolderQuestion(col.specialHighlight), "", void 0, tempLC),
         async (newFolderName) => {
-          const newFolderPath = join(basePath, newFolderName);
+          const newFolderPath = join(actualBasePath, newFolderName);
           if (newFolderName !== "") {
             await mkdir(newFolderPath);
           }
           tempLC.clearToCheckpoint("newFolder");
           operation.display();
-          await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
+          const loadPaths = [basePath, newFolderPath];
+          if (basePath !== actualBasePath)
+            loadPaths.push(actualBasePath);
+          await Promise.all(loadPaths.map((p) => forceLoadPathContents(p)));
           return;
         }
       );
     },
     openFinder: async () => {
-      await openFinder(currentPath, cursorType);
+      const actualCurrentPath = await getActualLocationPath(currentPath);
+      await openFinder(actualCurrentPath, cursorType);
     },
     submit: () => {
       if (isError) {
@@ -5618,7 +5610,7 @@ var ask;
 })(ask || (ask = {}));
 
 // src/tools/log.ts
-import util2 from "util";
+import util from "util";
 import { ObjectTools as ObjectTools4 } from "swiss-ak";
 var defaultOptions = {
   showDate: false,
@@ -5668,7 +5660,7 @@ var defaultConfigs = {
 var getStr = (enableColours) => (item) => {
   const inspect2 = ["object", "boolean", "number"];
   if (inspect2.includes(typeof item) && !(item instanceof Date)) {
-    return util2.inspect(item, { colors: enableColours, depth: null });
+    return util.inspect(item, { colors: enableColours, depth: null });
   } else {
     return item + "";
   }

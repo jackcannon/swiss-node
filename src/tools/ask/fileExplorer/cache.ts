@@ -4,6 +4,7 @@ import { BasicFileInfo } from '../../../utils/fsUtils';
 export interface PathContents {
   dirs: string[];
   files: string[];
+  symlinks: { f: string[]; d: string[] };
   info?: {
     stat: fs.Stats;
     info: BasicFileInfo;

@@ -181,18 +181,21 @@ export const fileExplorerHandler = async (
         width: number,
         highlighted: string,
         isActiveColumn: boolean,
-        columnPath: string
+        columnPath: string,
+        aliases: string[]
       ) => (name: string, index?: number, all?: string[]) => string;
 
       const formatter =
         (symbol: string, regularWrapFn: Function, selectedPrefix: string = ' ', unselectedPrefix: string = ' '): Formatter =>
-        (width: number, highlighted: string, isActiveColumn: boolean, columnPath: string) =>
+        (width: number, highlighted: string, isActiveColumn: boolean, columnPath: string, symlinks: string[]) =>
         (name: string, index?: number, all?: string[]) => {
           const isHighlighted = name === highlighted;
+          const isSymlink = symlinks.includes(name);
           const fullPath = join(columnPath, name);
           const isSelected = isMulti && multiSelected.has(fullPath);
           const prefix = isSelected ? selectedPrefix : unselectedPrefix;
-          const template = (text) => `${prefix}${text} ${symbol} `;
+          const symlinkSuffix = isSymlink ? sym.symlinkIcon + ' ' : '';
+          const template = (text) => `${prefix}${text} ${symlinkSuffix}${symbol} `;
           const extraChars = out.getWidth(template(''));
           const stretched = template(out.left(out.truncate(name, width - extraChars, '…'), width - extraChars));
 
@@ -266,8 +269,8 @@ export const fileExplorerHandler = async (
         const columnPath = paths[index];
 
         const formattedLines = [
-          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath)),
-          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath))
+          ...dirs.map(formatDir(width, highlighted, isActiveCol, columnPath, contents?.symlinks.d ?? [])),
+          ...files.map(formatFile(width, highlighted, isActiveCol, columnPath, contents?.symlinks.f ?? []))
         ];
 
         if (isScrollbar) {
@@ -450,6 +453,7 @@ export const fileExplorerHandler = async (
       const { colours: col, text: txt } = getAskOptionsForState(false, false);
 
       const basePath = cursorType === 'f' ? paths[paths.length - 2] : currentPath;
+      const actualBasePath = await getActualLocationPath(basePath);
 
       await userActions.takeInput(
         () => {
@@ -458,26 +462,31 @@ export const fileExplorerHandler = async (
 
           const info1Prefix = col.specialFaded('  ' + txt.specialNewFolderAddingFolderTo);
           const maxValWidth = out.utils.getTerminalWidth() - (out.getWidth(info1Prefix) + out.getWidth(info2));
-          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(basePath), maxValWidth));
+          const info1Value = col.specialNormal(out.truncateStart(PathTools.trailSlash(actualBasePath), maxValWidth));
           const info1 = info1Prefix + info1Value;
 
           tempLC.log(out.split(info1, info2, out.utils.getTerminalWidth() - 2));
         },
         () => ask.text(txt.specialNewFolderQuestion(col.specialHighlight), '', undefined, tempLC),
         async (newFolderName) => {
-          const newFolderPath = join(basePath, newFolderName);
+          const newFolderPath = join(actualBasePath, newFolderName);
           if (newFolderName !== '') {
             await mkdir(newFolderPath);
           }
           tempLC.clearToCheckpoint('newFolder');
           operation.display();
-          await Promise.all([forceLoadPathContents(basePath), forceLoadPathContents(newFolderPath)]);
+
+          const loadPaths = [basePath, newFolderPath];
+          if (basePath !== actualBasePath) loadPaths.push(actualBasePath);
+
+          await Promise.all(loadPaths.map((p) => forceLoadPathContents(p)));
           return;
         }
       );
     },
     openFinder: async () => {
-      await openFinder(currentPath, cursorType);
+      const actualCurrentPath = await getActualLocationPath(currentPath);
+      await openFinder(actualCurrentPath, cursorType);
     },
     submit: () => {
       if (isError) {

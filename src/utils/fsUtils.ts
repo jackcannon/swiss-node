@@ -87,11 +87,12 @@ export const mkdir = async (dir: string): Promise<string> => {
   return result;
 };
 
-export const scanDir = async (dir: string = '.') => {
+export const scanDir = async (dir: string = '.'): Promise<{ files: string[]; dirs: string[]; symlinks: { f: string[]; d: string[] } }> => {
   try {
     const found = await fsP.readdir(dir, { withFileTypes: true });
     const files: string[] = [];
     const dirs: string[] = [];
+    const symlinks: { f: string[]; d: string[] } = { f: [], d: [] };
 
     await PromiseTools.each(found, async (file) => {
       if (file.isDirectory()) {
@@ -116,8 +117,10 @@ export const scanDir = async (dir: string = '.') => {
           })();
 
           if (itemType === 'd') {
+            symlinks.d.push(file.name);
             return dirs.push(file.name);
           } else if (itemType === 'f') {
+            symlinks.f.push(file.name);
             return files.push(file.name);
           }
         } else {
@@ -129,19 +132,21 @@ export const scanDir = async (dir: string = '.') => {
           const targetStat = await getStats(fullPath);
 
           if (targetStat.isDirectory()) {
+            symlinks.d.push(file.name);
             return dirs.push(file.name);
           } else if (targetStat.isFile()) {
+            symlinks.f.push(file.name);
             return files.push(file.name);
           }
         } catch (err) {
-          return;
+          return files.push(file.name);
         }
       }
     });
 
-    return { files, dirs };
+    return { files, dirs, symlinks };
   } catch (err) {
-    return { files: [], dirs: [] };
+    return { files: [], dirs: [], symlinks: { f: [], d: [] } };
   }
 };
 

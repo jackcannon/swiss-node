@@ -5415,6 +5415,12 @@ declare namespace ask$1 {
                 error?: string;
                 done?: string;
             };
+            /** Shown at end of line for symlinks or aliases */
+            symlinkIcon?: string | {
+                normal?: string;
+                error?: string;
+                done?: string;
+            };
             /** The track of a timeline */
             timelineTrack?: string | {
                 normal?: string;
@@ -5549,6 +5555,7 @@ interface AskOptionsStoredSymbols {
     specialErrorIcon: AskOptionsItemSet<string>;
     folderOpenableIcon: AskOptionsItemSet<string>;
     fileOpenableIcon: AskOptionsItemSet<string>;
+    symlinkIcon: AskOptionsItemSet<string>;
     timelineTrack: AskOptionsItemSet<string>;
     timelineHandle: AskOptionsItemSet<string>;
     timelineBar: AskOptionsItemSet<string>;

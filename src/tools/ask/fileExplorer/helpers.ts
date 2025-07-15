@@ -17,7 +17,7 @@ export const loadPathContents = async (path: string): Promise<PathContents> => {
 };
 
 export const forceLoadPathContents = async (displayPath: string): Promise<PathContents> => {
-  let contents: PathContents = { dirs: [], files: [] };
+  let contents: PathContents = { dirs: [], files: [], symlinks: { f: [], d: [] } };
   try {
     const targetPath = await getActualLocationPath(displayPath);
     const pathType = await getPathType(targetPath);
@@ -30,7 +30,7 @@ export const forceLoadPathContents = async (displayPath: string): Promise<PathCo
         .map((list) => sortNumberedText(list))
         .map((list) => list.map((item) => item.replace(/\r|\n/g, ' ')));
 
-      contents = { ...contents, dirs, files };
+      contents = { ...contents, dirs, files, symlinks: scanResults.symlinks };
     }
     if (pathType === 'f') {
       const [stat, info] = await Promise.all([
