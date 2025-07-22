@@ -27,12 +27,12 @@ const file = await ask.fileExplorer('What file?', 'f');
 const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
 // '/Users/jackcannon/Documents/some_folder'
  * ```
- * @param {string | Breadcrumb} questionText
- * @param {'d' | 'f'} [selectType='f']
- * @param {string} [startPath=process.cwd()]
- * @param {(path: string) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<string>}
+ * @param {string | Breadcrumb} questionText - Question to ask
+ * @param {'d' | 'f'} [selectType='f'] - Type of item to select (directory or file)
+ * @param {string} [startPath=process.cwd()] - Starting path
+ * @param {(path: string) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<string>} - Promise that resolves with the user input path
  */
 export const fileExplorer = async (
   questionText: string | Breadcrumb,
@@ -78,12 +78,12 @@ export const fileExplorer = async (
  * //   '/Users/user/Documents/some_file_3.txt'
  * // ]
  * ```
- * @param {string | Breadcrumb} questionText
- * @param {'d' | 'f'} [selectType='f']
- * @param {string} [startPath=process.cwd()]
- * @param {(paths: string[]) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<string[]>}
+ * @param {string | Breadcrumb} questionText - Question to ask
+ * @param {'d' | 'f'} [selectType='f'] - Type of item to select (directory or file)
+ * @param {string} [startPath=process.cwd()] - Starting path
+ * @param {(paths: string[]) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<string[]>} - Promise that resolves with the user input paths
  */
 export const multiFileExplorer = (
   questionText: string | Breadcrumb,
@@ -123,11 +123,11 @@ const HOME_DIR = '/Users/user/Documents';
 const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
 // '/Users/user/Documents/data.json'
  * ```
- * @param {string | Breadcrumb} questionText
- * @param {string} [startPath=process.cwd()]
- * @param {string} [suggestedFileName='']
- * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate]
- * @returns {Promise<string>}
+ * @param {string | Breadcrumb} questionText - Question to ask
+ * @param {string} [startPath=process.cwd()] - Starting path
+ * @param {string} [suggestedFileName=''] - Suggested file name
+ * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate] - Validation function
+ * @returns {Promise<string>} - Promise that resolves with the user input path
  */
 export const saveFileExplorer = async (
   questionText: string | Breadcrumb,

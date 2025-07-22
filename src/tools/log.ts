@@ -127,9 +127,9 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
  *
  * log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
  * ```
- * @param {T} [extraConfigs={} as T]
- * @param {LogOptions} [options={}]
- * @returns {Logger<T>}
+ * @param {T} [extraConfigs={} as T] - Configs for extra log functions to add to the logger
+ * @param {LogOptions} [options={}] - Options for the logger
+ * @returns {Logger<T>} - Logger object
  */
 export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, options: LogOptions = {}): Logger<T> => {
   const completeOptions = { ...defaultOptions, ...options };

@@ -20,7 +20,7 @@ import { ansi } from './ansi';
  * lc.get(); // 3
  * lc.clear();
  * ```
- * @returns {LineCounter}
+ * @returns {LineCounter} - Line counter object
  */
 export const getLineCounter = (): LineCounter => {
   let lineCount: number = 0;
@@ -236,8 +236,8 @@ export interface LineCounter {
    * lc.log('hello'); // 1
    * ```
    *
-   * @param {...any} args The arguments to log
-   * @returns {number} The number of lines added
+   * @param {...any} args - Arguments to log
+   * @returns {number} - Number of lines added
    */
   log(...args: any[]): number;
 
@@ -255,8 +255,8 @@ export interface LineCounter {
    * lc.overwrite('hello'); // 1
    * ```
    *
-   * @param {...any} args The arguments to overwrite
-   * @returns {number} The number of lines added
+   * @param {...any} args - Arguments to overwrite
+   * @returns {number} - Number of lines added
    */
   overwrite(...args: any[]): number;
 
@@ -270,10 +270,10 @@ export interface LineCounter {
    * lc.wrap(1, () => console.log('a single line')); // 1
    * ```
    *
-   * @param {number} newLines The number of lines to add
-   * @param {(...args: A[]) => number | T} func The function to wrap
-   * @param {...A} args The arguments to pass to the function
-   * @returns {T} The result of the function
+   * @param {number} newLines - Number of lines to add
+   * @param {(...args: A[]) => number | T} func - Function to wrap
+   * @param {...A} args - Arguments to pass to the function
+   * @returns {T} - Result of the function
    */
   wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
 
@@ -287,7 +287,7 @@ export interface LineCounter {
    * lc.add(1);
    * ```
    *
-   * @param {number} newLines The number of lines to add
+   * @param {number} newLines - Number of lines to add
    * @returns {void}
    */
   add(newLines: number): void;
@@ -305,7 +305,7 @@ export interface LineCounter {
    * lc.get(); // 3
    * ```
    *
-   * @returns {number} The line counter
+   * @returns {number} - Line count
    */
   get(): number;
 
@@ -325,8 +325,8 @@ export interface LineCounter {
    * lc.getSince('test-b'); // 1
    * ```
    *
-   * @param {string} checkpointID The checkpoint to check
-   * @returns {number} The number of lines since the checkpoint
+   * @param {string} checkpointID - Checkpoint to check
+   * @returns {number} - Number of lines since the checkpoint
    */
   getSince(checkpointID: string): number;
 
@@ -344,7 +344,7 @@ export interface LineCounter {
    * lc.log('world'); // 1
    * ```
    *
-   * @param {number} y How many lines to move the cursor (down if positive, up if negative)
+   * @param {number} y - How many lines to move the cursor (down if positive, up if negative)
    * @returns {void}
    */
   moveCursor(y: number): void;
@@ -386,7 +386,7 @@ export interface LineCounter {
    * lc.log('world'); // 1
    * ```
    *
-   * @param {string} checkpointID The checkpoint to move to
+   * @param {string} checkpointID - Checkpoint to move to
    * @returns {void}
    */
   moveToCheckpoint(checkpointID: string): void;
@@ -420,8 +420,8 @@ export interface LineCounter {
    * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
    * ```
    *
-   * @param {number} linesToMoveBack The number of lines to clear
-   * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+   * @param {number} linesToMoveBack - Number of lines to clear
+   * @param {boolean} [limitToRecordedLines] - Whether to limit the number of lines to clear to the number of lines recorded
    * @returns {void}
    */
   clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
@@ -442,7 +442,7 @@ export interface LineCounter {
    * lc.log('world'); // 1
    * ```
    *
-   * @param {number} lines The number of lines to move
+   * @param {number} lines - Number of lines to move
    * @returns {void}
    */
   clearDown(lines: number): void;
@@ -463,8 +463,8 @@ export interface LineCounter {
    * lc.getSince('test-b'); // 1
    * ```
    *
-   * @param {string} [checkpointID] The checkpoint to record
-   * @returns {string} The checkpointID
+   * @param {string} [checkpointID] - Checkpoint to record
+   * @returns {string} - Checkpoint ID
    */
   checkpoint(checkpointID?: string): string;
 
@@ -483,7 +483,7 @@ export interface LineCounter {
    * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
    * ```
    *
-   * @param {string} checkpointID The checkpoint to clear to
+   * @param {string} checkpointID - Checkpoint to clear to
    * @returns {void}
    */
   clearToCheckpoint(checkpointID: string): void;
@@ -510,8 +510,8 @@ export interface LineCounter {
      * lc.log('world'); // 1
      * ```
      *
-     * @param {number} y How many lines to move the cursor (down if positive, up if negative)
-     * @returns {string}
+     * @param {number} y - How many lines to move the cursor (down if positive, up if negative)
+     * @returns {string} - ANSI escape code
      */
     moveCursor(y: number): string;
 
@@ -533,7 +533,7 @@ export interface LineCounter {
      * lc.log('world'); // 1
      * ```
      *
-     * @returns {string}
+     * @returns {string} - ANSI escape code
      */
     moveHome(): string;
 
@@ -556,8 +556,8 @@ export interface LineCounter {
      * lc.log('world'); // 1
      * ```
      *
-     * @param {string} checkpointID The checkpoint to move to
-     * @returns {string}
+     * @param {string} checkpointID - Checkpoint to move to
+     * @returns {string} - ANSI escape code
      */
     moveToCheckpoint(checkpointID: string): string;
 
@@ -574,7 +574,7 @@ export interface LineCounter {
      * process.stdout.write(lc.ansi.clear());
      * ```
      *
-     * @returns {string}
+     * @returns {string} - ANSI escape code
      */
     clear(): string;
 
@@ -594,9 +594,9 @@ export interface LineCounter {
      * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
      * ```
      *
-     * @param {number} linesToMoveBack The number of lines to clear
-     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
-     * @returns {string}
+     * @param {number} linesToMoveBack - Number of lines to clear
+     * @param {boolean} [limitToRecordedLines] - Whether to limit the number of lines to clear to the number of lines recorded
+     * @returns {string} - ANSI escape code
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
 
@@ -619,8 +619,8 @@ export interface LineCounter {
      * lc.log('line 4'); // 1
      * process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
      * ```
-     * @param {number} lines The number of lines to move
-     * @returns {string}
+     * @param {number} lines - Number of lines to move
+     * @returns {string} - ANSI escape code
      */
     clearDown(lines: number): string;
 
@@ -641,8 +641,8 @@ export interface LineCounter {
      * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
      * ```
      *
-     * @param {string} checkpointID The checkpoint to clear to
-     * @returns {string}
+     * @param {string} checkpointID - Checkpoint to clear to
+     * @returns {string} - ANSI escape code
      */
     clearToCheckpoint(checkpointID: string): string;
 

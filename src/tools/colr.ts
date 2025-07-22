@@ -729,8 +729,8 @@ export interface ColrFn extends WrapFn {
    * colr.red.light('Hello World!'); // 'Hello World!' with light red text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly light: ColrFn;
 
@@ -750,8 +750,8 @@ export interface ColrFn extends WrapFn {
    * colr.red.dark('Hello World!'); // 'Hello World!' with dark red text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly dark: ColrFn;
 
@@ -771,8 +771,8 @@ export interface ColrFn extends WrapFn {
    * colr.redBg.lightBg('Hello World!'); // 'Hello World!' with a light red background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightBg: ColrFn;
 
@@ -792,8 +792,8 @@ export interface ColrFn extends WrapFn {
    * colr.redBg.darkBg('Hello World!'); // 'Hello World!' with a dark red background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkBg: ColrFn;
 
@@ -819,8 +819,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.red('Hello World!'); // 'Hello World!' with __dark__ red text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly red: ColrFn;
 
@@ -838,8 +838,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkRed: ColrFn;
 
@@ -858,8 +858,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightRed: ColrFn;
 
@@ -881,8 +881,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.green('Hello World!'); // 'Hello World!' with __dark__ green text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly green: ColrFn;
 
@@ -900,8 +900,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkGreen: ColrFn;
 
@@ -920,8 +920,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightGreen: ColrFn;
 
@@ -943,8 +943,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.yellow('Hello World!'); // 'Hello World!' with __dark__ yellow text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly yellow: ColrFn;
 
@@ -962,8 +962,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkYellow: ColrFn;
 
@@ -982,8 +982,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightYellow: ColrFn;
 
@@ -1005,8 +1005,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.blue('Hello World!'); // 'Hello World!' with __dark__ blue text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly blue: ColrFn;
 
@@ -1024,8 +1024,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkBlue: ColrFn;
 
@@ -1044,8 +1044,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightBlue: ColrFn;
 
@@ -1067,8 +1067,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.magenta('Hello World!'); // 'Hello World!' with __dark__ magenta text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly magenta: ColrFn;
 
@@ -1086,8 +1086,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkMagenta: ColrFn;
 
@@ -1106,8 +1106,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightMagenta: ColrFn;
 
@@ -1129,8 +1129,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.cyan('Hello World!'); // 'Hello World!' with __dark__ cyan text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly cyan: ColrFn;
 
@@ -1148,8 +1148,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkCyan: ColrFn;
 
@@ -1168,8 +1168,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightCyan: ColrFn;
 
@@ -1191,8 +1191,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.white('Hello World!'); // 'Hello World!' with __dark__ white text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly white: ColrFn;
 
@@ -1210,8 +1210,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkWhite: ColrFn;
 
@@ -1230,8 +1230,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightWhite: ColrFn;
 
@@ -1257,8 +1257,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a __dark__ red background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly redBg: ColrFn;
 
@@ -1277,8 +1277,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkRedBg: ColrFn;
 
@@ -1296,8 +1296,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightRedBg: ColrFn;
 
@@ -1319,8 +1319,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.greenBg('Hello World!'); // 'Hello World!' with a __dark__ green background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly greenBg: ColrFn;
 
@@ -1339,8 +1339,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkGreenBg: ColrFn;
 
@@ -1358,8 +1358,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightGreenBg: ColrFn;
 
@@ -1381,8 +1381,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.yellowBg('Hello World!'); // 'Hello World!' with a __dark__ yellow background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly yellowBg: ColrFn;
 
@@ -1401,8 +1401,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkYellowBg: ColrFn;
 
@@ -1420,8 +1420,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightYellowBg: ColrFn;
 
@@ -1443,8 +1443,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.blueBg('Hello World!'); // 'Hello World!' with a __dark__ blue background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly blueBg: ColrFn;
 
@@ -1463,8 +1463,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkBlueBg: ColrFn;
 
@@ -1482,8 +1482,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightBlueBg: ColrFn;
 
@@ -1505,8 +1505,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.magentaBg('Hello World!'); // 'Hello World!' with a __dark__ magenta background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly magentaBg: ColrFn;
 
@@ -1525,8 +1525,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkMagentaBg: ColrFn;
 
@@ -1544,8 +1544,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightMagentaBg: ColrFn;
 
@@ -1567,8 +1567,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.cyanBg('Hello World!'); // 'Hello World!' with a __dark__ cyan background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly cyanBg: ColrFn;
 
@@ -1587,8 +1587,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkCyanBg: ColrFn;
 
@@ -1606,8 +1606,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightCyanBg: ColrFn;
 
@@ -1629,8 +1629,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.whiteBg('Hello World!'); // 'Hello World!' with a __dark__ white background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly whiteBg: ColrFn;
 
@@ -1649,8 +1649,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkWhiteBg: ColrFn;
 
@@ -1668,8 +1668,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightWhiteBg: ColrFn;
 
@@ -1697,8 +1697,8 @@ export interface ColrFn extends WrapFn {
    * colr.dark.black('Hello World!'); // 'Hello World!' with __dark__ black text
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly black: ColrFn;
 
@@ -1718,8 +1718,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkBlack: ColrFn;
 
@@ -1736,8 +1736,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightBlack: ColrFn;
 
@@ -1761,8 +1761,8 @@ export interface ColrFn extends WrapFn {
    * colr.darkBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
    * ```
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly blackBg: ColrFn;
 
@@ -1782,8 +1782,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly darkBlackBg: ColrFn;
 
@@ -1800,8 +1800,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly lightBlackBg: ColrFn;
 
@@ -1823,8 +1823,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey: ColrFn;
 
@@ -1847,8 +1847,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Warning:__ May not be visible in some terminals, depending on the colour settings
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly greyBg: ColrFn;
 
@@ -1871,8 +1871,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey0: ColrFn;
 
@@ -1897,8 +1897,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey1: ColrFn;
 
@@ -1921,8 +1921,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey2: ColrFn;
 
@@ -1945,8 +1945,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey3: ColrFn;
 
@@ -1969,8 +1969,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey4: ColrFn;
 
@@ -1993,8 +1993,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly grey5: ColrFn;
 
@@ -2016,8 +2016,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly primary: ColrFn;
 
@@ -2032,8 +2032,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly secondary: ColrFn;
 
@@ -2048,8 +2048,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly success: ColrFn;
 
@@ -2064,8 +2064,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly danger: ColrFn;
 
@@ -2080,8 +2080,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly warning: ColrFn;
 
@@ -2096,8 +2096,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly info: ColrFn;
 
@@ -2112,8 +2112,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly primaryBg: ColrFn;
 
@@ -2128,8 +2128,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly secondaryBg: ColrFn;
 
@@ -2144,8 +2144,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly successBg: ColrFn;
 
@@ -2160,8 +2160,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly dangerBg: ColrFn;
 
@@ -2176,8 +2176,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly warningBg: ColrFn;
 
@@ -2192,8 +2192,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly infoBg: ColrFn;
 
@@ -2212,8 +2212,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly reset: ColrFn;
 
@@ -2228,8 +2228,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly bold: ColrFn;
 
@@ -2246,8 +2246,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly dim: ColrFn;
 
@@ -2264,8 +2264,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly italic: ColrFn;
 
@@ -2282,8 +2282,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly overline: ColrFn;
 
@@ -2300,8 +2300,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly underline: ColrFn;
 
@@ -2318,8 +2318,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly strikethrough: ColrFn;
 
@@ -2334,8 +2334,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly inverse: ColrFn;
 
@@ -2350,8 +2350,8 @@ export interface ColrFn extends WrapFn {
    *
    * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
    *
-   * @param {...string} text
-   * @returns {string}
+   * @param {...string} text - Text to colour
+   * @returns {string} - Coloured text
    */
   readonly hidden: ColrFn;
 

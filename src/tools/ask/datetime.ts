@@ -289,11 +289,11 @@ const getDefaultDate = (isDateOn: boolean, isTimeOn: boolean, dateOffset: number
  * const date = await ask.date('Whats the date?');
  * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
  * ```
- * @param {string | Breadcrumb} [questionText]
- * @param {Date} [initial]
- * @param {(date: Date) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<Date>}
+ * @param {string | Breadcrumb} [questionText] - Question to ask
+ * @param {Date} [initial] - Initial date
+ * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<Date>} - Promise that resolves with the user input date
  */
 export const date = async (
   questionText?: string | Breadcrumb,
@@ -323,11 +323,11 @@ export const date = async (
  * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
  * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
  * ```
- * @param {string | Breadcrumb} [questionText]
- * @param {Date} [initial]
- * @param {(date: Date) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<Date>}
+ * @param {string | Breadcrumb} [questionText] - Question to ask
+ * @param {Date} [initial] - Initial date
+ * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<Date>} - Promise that resolves with the user input date
  */
 export const time = async (
   questionText?: string | Breadcrumb,
@@ -355,11 +355,11 @@ export const time = async (
  * const when = await ask.datetime('Whats the date/time?');
  * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
  * ```
- * @param {string | Breadcrumb} [questionText]
- * @param {Date} [initial]
- * @param {(date: Date) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<Date>}
+ * @param {string | Breadcrumb} [questionText] - Question to ask
+ * @param {Date} [initial] - Initial date
+ * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<Date>} - Promise that resolves with the user input date
  */
 export const datetime = async (
   questionText?: string | Breadcrumb,
@@ -390,12 +390,12 @@ const range = await ask.dateRange('When is the festival?');
 //   [Date: 2023-03-31T12:00:00.000Z]
 // ]
  * ```
- * @param {string | Breadcrumb} [questionText]
- * @param {Date} [initialStart]
- * @param {Date} [initialEnd]
- * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<[Date, Date]>}
+ * @param {string | Breadcrumb} [questionText] - Question to ask
+ * @param {Date} [initialStart] - Initial start date
+ * @param {Date} [initialEnd] - Initial end date
+ * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<[Date, Date]>} - Promise that resolves with the user input date range
  */
 export const dateRange = async (
   questionText?: string | Breadcrumb,

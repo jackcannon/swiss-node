@@ -80,16 +80,16 @@ Get a text input from the user.
 const name = await ask.text('What is your name?'); // 'Jack'
 ```
 
-|  #  | Parameter Name | Required | Type                                        |
-|:---:|:---------------|:---------|:--------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      |
-| *1* | `initial`      | *No*     | `string`                                    |
-| *2* | `validate`     | *No*     | `(value: string) => ask.ValidationResponse` |
-| *3* | `lc`           | *No*     | `LineCounter`                               |
+|  #  | Parameter Name | Required | Type                                        | Description         |
+|:---:|:---------------|:---------|:--------------------------------------------|:--------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      | Question to ask     |
+| *1* | `initial`      | *No*     | `string`                                    | Initial value       |
+| *2* | `validate`     | *No*     | `(value: string) => ask.ValidationResponse` | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                               | Line counter        |
 
-| Return Type       |
-|-------------------|
-| `Promise<string>` |
+| Return Type       |                                                  |
+|-------------------|--------------------------------------------------|
+| `Promise<string>` | Promise that resolves with the user input string |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -105,17 +105,17 @@ Get a text input from the user, with auto-completion.
 const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
 ```
 
-|  #  | Parameter Name | Required | Type                                                                     |
-|:---:|:---------------|:---------|:-------------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                   |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                                  |
-| *2* | `initial`      | *No*     | `T \| string`                                                            |
-| *3* | `validate`     | *No*     | `(item: T, index: number, typedValue: string) => ask.ValidationResponse` |
-| *4* | `lc`           | *No*     | `LineCounter`                                                            |
+|  #  | Parameter Name | Required | Type                                                                     | Description                  |
+|:---:|:---------------|:---------|:-------------------------------------------------------------------------|:-----------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                   | Question to ask              |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                                  | Choices to autocomplete from |
+| *2* | `initial`      | *No*     | `T \| string`                                                            | Initial value                |
+| *3* | `validate`     | *No*     | `(item: T, index: number, typedValue: string) => ask.ValidationResponse` | Validation function          |
+| *4* | `lc`           | *No*     | `LineCounter`                                                            | Line counter                 |
 
-| Return Type  |
-|--------------|
-| `Promise<T>` |
+| Return Type  |                                                  |
+|--------------|--------------------------------------------------|
+| `Promise<T>` | Promise that resolves with the user input string |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -131,16 +131,16 @@ Get a number input from the user.
 const age = await ask.number('How old are you?'); // 30
 ```
 
-|  #  | Parameter Name | Required | Type                                        |
-|:---:|:---------------|:---------|:--------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      |
-| *1* | `initial`      | *No*     | `number`                                    |
-| *2* | `validate`     | *No*     | `(value: number) => ask.ValidationResponse` |
-| *3* | `lc`           | *No*     | `LineCounter`                               |
+|  #  | Parameter Name | Required | Type                                        | Description         |
+|:---:|:---------------|:---------|:--------------------------------------------|:--------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                      | Question to ask     |
+| *1* | `initial`      | *No*     | `number`                                    | Initial value       |
+| *2* | `validate`     | *No*     | `(value: number) => ask.ValidationResponse` | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                               | Line counter        |
 
-| Return Type       |
-|-------------------|
-| `Promise<number>` |
+| Return Type       |                                                  |
+|-------------------|--------------------------------------------------|
+| `Promise<number>` | Promise that resolves with the user input number |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -156,16 +156,16 @@ Get a boolean input from the user (yes or no)
 const isCool = await ask.boolean('Is this cool?'); // true
 ```
 
-|  #  | Parameter Name | Required | Type                                         | Default |
-|:---:|:---------------|:---------|:---------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       |         |
-| *1* | `initial`      | *No*     | `boolean`                                    | `true`  |
-| *2* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` |         |
-| *3* | `lc`           | *No*     | `LineCounter`                                |         |
+|  #  | Parameter Name | Required | Type                                         | Default | Description         |
+|:---:|:---------------|:---------|:---------------------------------------------|:--------|:--------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       |         | Question to ask     |
+| *1* | `initial`      | *No*     | `boolean`                                    | `true`  | Initial value       |
+| *2* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` |         | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                                |         | Line counter        |
 
-| Return Type        |
-|--------------------|
-| `Promise<boolean>` |
+| Return Type        |                                                   |
+|--------------------|---------------------------------------------------|
+| `Promise<boolean>` | Promise that resolves with the user input boolean |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -183,15 +183,15 @@ Alternative interface to ask.boolean
 const isCool = await ask.booleanYN('Is this cool?'); // true
 ```
 
-|  #  | Parameter Name | Required | Type                                         |
-|:---:|:---------------|:---------|:---------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       |
-| *1* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` |
-| *2* | `lc`           | *No*     | `LineCounter`                                |
+|  #  | Parameter Name | Required | Type                                         | Description         |
+|:---:|:---------------|:---------|:---------------------------------------------|:--------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                       | Question to ask     |
+| *1* | `validate`     | *No*     | `(value: boolean) => ask.ValidationResponse` | Validation function |
+| *2* | `lc`           | *No*     | `LineCounter`                                | Line counter        |
 
-| Return Type        |
-|--------------------|
-| `Promise<boolean>` |
+| Return Type        |                                                   |
+|--------------------|---------------------------------------------------|
+| `Promise<boolean>` | Promise that resolves with the user input boolean |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -207,17 +207,17 @@ Get the user to select an option from a list.
 const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
 ```
 
-|  #  | Parameter Name | Required | Type                                                 |
-|:---:|:---------------|:---------|:-----------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                               |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                              |
-| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| number`                      |
-| *3* | `validate`     | *No*     | `(item: T, index: number) => ask.ValidationResponse` |
-| *4* | `lc`           | *No*     | `LineCounter`                                        |
+|  #  | Parameter Name | Required | Type                                                 | Description            |
+|:---:|:---------------|:---------|:-----------------------------------------------------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                               | Question to ask        |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                              | Choices to select from |
+| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| number`                      | Initial value          |
+| *3* | `validate`     | *No*     | `(item: T, index: number) => ask.ValidationResponse` | Validation function    |
+| *4* | `lc`           | *No*     | `LineCounter`                                        | Line counter           |
 
-| Return Type  |
-|--------------|
-| `Promise<T>` |
+| Return Type  |                                                  |
+|--------------|--------------------------------------------------|
+| `Promise<T>` | Promise that resolves with the user input string |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -233,17 +233,17 @@ Get the user to select multiple opts from a list.
 const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
 ```
 
-|  #  | Parameter Name | Required | Type                                                                 |
-|:---:|:---------------|:---------|:---------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                               |
-| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                              |
-| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| ask.PromptChoice<T>[] \| number \| number[]` |
-| *3* | `validate`     | *No*     | `(items: T[], indexes: number[]) => ask.ValidationResponse`          |
-| *4* | `lc`           | *No*     | `LineCounter`                                                        |
+|  #  | Parameter Name | Required | Type                                                                 | Description            |
+|:---:|:---------------|:---------|:---------------------------------------------------------------------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                               | Question to ask        |
+| *1* | `choices`      | **Yes**  | `ask.PromptChoice<T>[]`                                              | Choices to select from |
+| *2* | `initial`      | *No*     | `ask.PromptChoice<T> \| ask.PromptChoice<T>[] \| number \| number[]` | Initial value          |
+| *3* | `validate`     | *No*     | `(items: T[], indexes: number[]) => ask.ValidationResponse`          | Validation function    |
+| *4* | `lc`           | *No*     | `LineCounter`                                                        | Line counter           |
 
-| Return Type    |
-|----------------|
-| `Promise<T[]>` |
+| Return Type    |                                                 |
+|----------------|-------------------------------------------------|
+| `Promise<T[]>` | Promise that resolves with the user input array |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -260,16 +260,16 @@ const date = await ask.date('Whats the date?');
 // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
 ```
 
-|  #  | Parameter Name | Required | Type                                     |
-|:---:|:---------------|:---------|:-----------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
-| *1* | `initial`      | *No*     | `Date`                                   |
-| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
-| *3* | `lc`           | *No*     | `LineCounter`                            |
+|  #  | Parameter Name | Required | Type                                     | Description         |
+|:---:|:---------------|:---------|:-----------------------------------------|:--------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   | Question to ask     |
+| *1* | `initial`      | *No*     | `Date`                                   | Initial date        |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                            | Line counter        |
 
-| Return Type     |
-|-----------------|
-| `Promise<Date>` |
+| Return Type     |                                                |
+|-----------------|------------------------------------------------|
+| `Promise<Date>` | Promise that resolves with the user input date |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -289,16 +289,16 @@ const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
 // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
 ```
 
-|  #  | Parameter Name | Required | Type                                     |
-|:---:|:---------------|:---------|:-----------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
-| *1* | `initial`      | *No*     | `Date`                                   |
-| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
-| *3* | `lc`           | *No*     | `LineCounter`                            |
+|  #  | Parameter Name | Required | Type                                     | Description         |
+|:---:|:---------------|:---------|:-----------------------------------------|:--------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   | Question to ask     |
+| *1* | `initial`      | *No*     | `Date`                                   | Initial date        |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                            | Line counter        |
 
-| Return Type     |
-|-----------------|
-| `Promise<Date>` |
+| Return Type     |                                                |
+|-----------------|------------------------------------------------|
+| `Promise<Date>` | Promise that resolves with the user input date |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -315,16 +315,16 @@ const when = await ask.datetime('Whats the date/time?');
 // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
 ```
 
-|  #  | Parameter Name | Required | Type                                     |
-|:---:|:---------------|:---------|:-----------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   |
-| *1* | `initial`      | *No*     | `Date`                                   |
-| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` |
-| *3* | `lc`           | *No*     | `LineCounter`                            |
+|  #  | Parameter Name | Required | Type                                     | Description         |
+|:---:|:---------------|:---------|:-----------------------------------------|:--------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                   | Question to ask     |
+| *1* | `initial`      | *No*     | `Date`                                   | Initial date        |
+| *2* | `validate`     | *No*     | `(date: Date) => ask.ValidationResponse` | Validation function |
+| *3* | `lc`           | *No*     | `LineCounter`                            | Line counter        |
 
-| Return Type     |
-|-----------------|
-| `Promise<Date>` |
+| Return Type     |                                                |
+|-----------------|------------------------------------------------|
+| `Promise<Date>` | Promise that resolves with the user input date |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -344,17 +344,17 @@ const range = await ask.dateRange('When is the festival?');
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                              |
-|:---:|:---------------|:---------|:--------------------------------------------------|
-| *0* | `questionText` | *No*     | `string \| Breadcrumb`                            |
-| *1* | `initialStart` | *No*     | `Date`                                            |
-| *2* | `initialEnd`   | *No*     | `Date`                                            |
-| *3* | `validate`     | *No*     | `(dates: [Date, Date]) => ask.ValidationResponse` |
-| *4* | `lc`           | *No*     | `LineCounter`                                     |
+|  #  | Parameter Name | Required | Type                                              | Description         |
+|:---:|:---------------|:---------|:--------------------------------------------------|:--------------------|
+| *0* | `questionText` | *No*     | `string \| Breadcrumb`                            | Question to ask     |
+| *1* | `initialStart` | *No*     | `Date`                                            | Initial start date  |
+| *2* | `initialEnd`   | *No*     | `Date`                                            | Initial end date    |
+| *3* | `validate`     | *No*     | `(dates: [Date, Date]) => ask.ValidationResponse` | Validation function |
+| *4* | `lc`           | *No*     | `LineCounter`                                     | Line counter        |
 
-| Return Type             |
-|-------------------------|
-| `Promise<[Date, Date]>` |
+| Return Type             |                                                      |
+|-------------------------|------------------------------------------------------|
+| `Promise<[Date, Date]>` | Promise that resolves with the user input date range |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -380,17 +380,17 @@ const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documen
 // '/Users/jackcannon/Documents/some_folder'
 ```
 
-|  #  | Parameter Name | Required | Type                                       | Default         |
-|:---:|:---------------|:---------|:-------------------------------------------|:----------------|
-| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                     |                 |
-| *1* | `selectType`   | *No*     | `'d' \| 'f'`                               | `'f'`           |
-| *2* | `startPath`    | *No*     | `string`                                   | `process.cwd()` |
-| *3* | `validate`     | *No*     | `(path: string) => ask.ValidationResponse` |                 |
-| *4* | `lc`           | *No*     | `LineCounter`                              |                 |
+|  #  | Parameter Name | Required | Type                                       | Default         | Description                                |
+|:---:|:---------------|:---------|:-------------------------------------------|:----------------|:-------------------------------------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                     |                 | Question to ask                            |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`                               | `'f'`           | Type of item to select (directory or file) |
+| *2* | `startPath`    | *No*     | `string`                                   | `process.cwd()` | Starting path                              |
+| *3* | `validate`     | *No*     | `(path: string) => ask.ValidationResponse` |                 | Validation function                        |
+| *4* | `lc`           | *No*     | `LineCounter`                              |                 | Line counter                               |
 
-| Return Type       |
-|-------------------|
-| `Promise<string>` |
+| Return Type       |                                                |
+|-------------------|------------------------------------------------|
+| `Promise<string>` | Promise that resolves with the user input path |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -415,17 +415,17 @@ const files = await ask.multiFileExplorer('What files?', 'f');
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                          | Default         |
-|:---:|:---------------|:---------|:----------------------------------------------|:----------------|
-| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                        |                 |
-| *1* | `selectType`   | *No*     | `'d' \| 'f'`                                  | `'f'`           |
-| *2* | `startPath`    | *No*     | `string`                                      | `process.cwd()` |
-| *3* | `validate`     | *No*     | `(paths: string[]) => ask.ValidationResponse` |                 |
-| *4* | `lc`           | *No*     | `LineCounter`                                 |                 |
+|  #  | Parameter Name | Required | Type                                          | Default         | Description                                |
+|:---:|:---------------|:---------|:----------------------------------------------|:----------------|:-------------------------------------------|
+| *0* | `questionText` | **Yes**  | `string \| Breadcrumb`                        |                 | Question to ask                            |
+| *1* | `selectType`   | *No*     | `'d' \| 'f'`                                  | `'f'`           | Type of item to select (directory or file) |
+| *2* | `startPath`    | *No*     | `string`                                      | `process.cwd()` | Starting path                              |
+| *3* | `validate`     | *No*     | `(paths: string[]) => ask.ValidationResponse` |                 | Validation function                        |
+| *4* | `lc`           | *No*     | `LineCounter`                                 |                 | Line counter                               |
 
-| Return Type         |
-|---------------------|
-| `Promise<string[]>` |
+| Return Type         |                                                 |
+|---------------------|-------------------------------------------------|
+| `Promise<string[]>` | Promise that resolves with the user input paths |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -447,16 +447,16 @@ const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
 // '/Users/user/Documents/data.json'
 ```
 
-|  #  | Parameter Name      | Required | Type                                                         | Default         |
-|:---:|:--------------------|:---------|:-------------------------------------------------------------|:----------------|
-| *0* | `questionText`      | **Yes**  | `string \| Breadcrumb`                                       |                 |
-| *1* | `startPath`         | *No*     | `string`                                                     | `process.cwd()` |
-| *2* | `suggestedFileName` | *No*     | `string`                                                     | `''`            |
-| *3* | `validate`          | *No*     | `(dir: string, filename?: string) => ask.ValidationResponse` |                 |
+|  #  | Parameter Name      | Required | Type                                                         | Default         | Description         |
+|:---:|:--------------------|:---------|:-------------------------------------------------------------|:----------------|:--------------------|
+| *0* | `questionText`      | **Yes**  | `string \| Breadcrumb`                                       |                 | Question to ask     |
+| *1* | `startPath`         | *No*     | `string`                                                     | `process.cwd()` | Starting path       |
+| *2* | `suggestedFileName` | *No*     | `string`                                                     | `''`            | Suggested file name |
+| *3* | `validate`          | *No*     | `(dir: string, filename?: string) => ask.ValidationResponse` |                 | Validation function |
 
-| Return Type       |
-|-------------------|
-| `Promise<string>` |
+| Return Type       |                                                |
+|-------------------|------------------------------------------------|
+| `Promise<string>` | Promise that resolves with the user input path |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -496,18 +496,18 @@ const answer = await ask.table.select('Who?', items, {
 // Returns: { name: 'Jane', age: 26 }
 ```
 
-|  #  | Parameter Name | Required | Type                                  | Default |
-|:---:|:---------------|:---------|:--------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                |         |
-| *1* | `items`        | **Yes**  | `T[]`                                 |         |
-| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`          | `{}`    |
-| *3* | `initial`      | *No*     | `T \| number`                         |         |
-| *4* | `validate`     | *No*     | `(item: T) => ask.ValidationResponse` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                         |         |
+|  #  | Parameter Name | Required | Type                                  | Default | Description            |
+|:---:|:---------------|:---------|:--------------------------------------|:--------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                |         | Question to ask        |
+| *1* | `items`        | **Yes**  | `T[]`                                 |         | Items to select from   |
+| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`          | `{}`    | Settings for the table |
+| *3* | `initial`      | *No*     | `T \| number`                         |         | Initial item           |
+| *4* | `validate`     | *No*     | `(item: T) => ask.ValidationResponse` |         | Validation function    |
+| *5* | `lc`           | *No*     | `LineCounter`                         |         | Line counter           |
 
-| Return Type  |
-|--------------|
-| `Promise<T>` |
+| Return Type  |                                                   |
+|--------------|---------------------------------------------------|
+| `Promise<T>` | Promise that resolves with the user selected item |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -545,18 +545,18 @@ const answer = await ask.table.multiselect('Who?', items, {
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                     | Default |
-|:---:|:---------------|:---------|:-----------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                   |         |
-| *1* | `items`        | **Yes**  | `T[]`                                    |         |
-| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`             | `{}`    |
-| *3* | `initial`      | *No*     | `T[] \| number[]`                        |         |
-| *4* | `validate`     | *No*     | `(items: T[]) => ask.ValidationResponse` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                            |         |
+|  #  | Parameter Name | Required | Type                                     | Default | Description            |
+|:---:|:---------------|:---------|:-----------------------------------------|:--------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                   |         | Question to ask        |
+| *1* | `items`        | **Yes**  | `T[]`                                    |         | Items to select from   |
+| *2* | `settings`     | *No*     | `AskTableDisplaySettings<T>`             | `{}`    | Settings for the table |
+| *3* | `initial`      | *No*     | `T[] \| number[]`                        |         | Initial items          |
+| *4* | `validate`     | *No*     | `(items: T[]) => ask.ValidationResponse` |         | Validation function    |
+| *5* | `lc`           | *No*     | `LineCounter`                            |         | Line counter           |
 
-| Return Type    |
-|----------------|
-| `Promise<T[]>` |
+| Return Type    |                                                    |
+|----------------|----------------------------------------------------|
+| `Promise<T[]>` | Promise that resolves with the user selected items |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -590,18 +590,18 @@ Get a start and end frame from the user
 const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
 ```
 
-|  #  | Parameter Name | Required | Type                                                   | Default |
-|:---:|:---------------|:---------|:-------------------------------------------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                 |         |
-| *1* | `totalFrames`  | **Yes**  | `number`                                               |         |
-| *2* | `frameRate`    | *No*     | `number`                                               | `60`    |
-| *3* | `initial`      | *No*     | `Partial<Handles<number>>`                             |         |
-| *4* | `validate`     | *No*     | `(handles: Handles<number>) => ask.ValidationResponse` |         |
-| *5* | `lc`           | *No*     | `LineCounter`                                          |         |
+|  #  | Parameter Name | Required | Type                                                   | Default | Description              |
+|:---:|:---------------|:---------|:-------------------------------------------------------|:--------|:-------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                 |         | Question to ask          |
+| *1* | `totalFrames`  | **Yes**  | `number`                                               |         | Total number of frames   |
+| *2* | `frameRate`    | *No*     | `number`                                               | `60`    | Frame rate               |
+| *3* | `initial`      | *No*     | `Partial<Handles<number>>`                             |         | Initial handle positions |
+| *4* | `validate`     | *No*     | `(handles: Handles<number>) => ask.ValidationResponse` |         | Validation function      |
+| *5* | `lc`           | *No*     | `LineCounter`                                          |         | Line counter             |
 
-| Return Type                |
-|----------------------------|
-| `Promise<Handles<number>>` |
+| Return Type                |                                                      |
+|----------------------------|------------------------------------------------------|
+| `Promise<Handles<number>>` | Promise that resolves with the user selected handles |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -626,9 +626,9 @@ ask.customise({ general: { lc } }); // set a line counter for that all prompts w
 ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
 ```
 
-|  #  | Parameter Name | Required | Type                      |
-|:---:|:---------------|:---------|:--------------------------|
-| *0* | `options`      | **Yes**  | `Partial<ask.AskOptions>` |
+|  #  | Parameter Name | Required | Type                      | Description                                                        |
+|:---:|:---------------|:---------|:--------------------------|:-------------------------------------------------------------------|
+| *0* | `options`      | **Yes**  | `Partial<ask.AskOptions>` | Options to customise the behaviour/appearance of the `ask` prompts |
 
 | Return Type |
 |-------------|
@@ -652,16 +652,16 @@ const loader = ask.loading('What is your name?');
 loader.stop();
 ```
 
-|  #  | Parameter Name | Required | Type                   | Default |
-|:---:|:---------------|:---------|:-----------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
-| *1* | `isComplete`   | *No*     | `boolean`              | `false` |
-| *2* | `isError`      | *No*     | `boolean`              | `false` |
-| *3* | `lc`           | *No*     | `LineCounter`          |         |
+|  #  | Parameter Name | Required | Type                   | Default | Description                              |
+|:---:|:---------------|:---------|:-----------------------|:--------|:-----------------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         | The question to display                  |
+| *1* | `isComplete`   | *No*     | `boolean`              | `false` | Whether the loading is complete          |
+| *2* | `isError`      | *No*     | `boolean`              | `false` | Whether the loading is in an error state |
+| *3* | `lc`           | *No*     | `LineCounter`          |         | Line counter                             |
 
-| Return Type             |
-|-------------------------|
-| `{ stop: () => void; }` |
+| Return Type             |                                    |
+|-------------------------|------------------------------------|
+| `{ stop: () => void; }` | Loader object with a `stop` method |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -677,16 +677,16 @@ Animated countdown for a given number of seconds
 await ask.countdown(5);
 ```
 
-|  #  | Parameter Name | Required | Type                    |
-|:---:|:---------------|:---------|:------------------------|
-| *0* | `totalSeconds` | **Yes**  | `number`                |
-| *1* | `template`     | *No*     | `(s: second) => string` |
-| *2* | `isComplete`   | *No*     | `boolean`               |
-| *3* | `isError`      | *No*     | `boolean`               |
+|  #  | Parameter Name | Required | Type                    | Description                                    |
+|:---:|:---------------|:---------|:------------------------|:-----------------------------------------------|
+| *0* | `totalSeconds` | **Yes**  | `number`                | Total number of seconds to countdown from      |
+| *1* | `template`     | *No*     | `(s: second) => string` | Template function to format the countdown text |
+| *2* | `isComplete`   | *No*     | `boolean`               | Whether the countdown is complete              |
+| *3* | `isError`      | *No*     | `boolean`               | Whether the countdown is in an error state     |
 
-| Return Type     |
-|-----------------|
-| `Promise<void>` |
+| Return Type     |                                                      |
+|-----------------|------------------------------------------------------|
+| `Promise<void>` | Promise that resolves when the countdown is complete |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -702,13 +702,13 @@ Pause the program until the user presses enter
 await ask.pause();
 ```
 
-|  #  | Parameter Name | Required | Type                   | Default                        |
-|:---:|:---------------|:---------|:-----------------------|:-------------------------------|
-| *0* | `text`         | *No*     | `string \| Breadcrumb` | `'Press enter to continue...'` |
+|  #  | Parameter Name | Required | Type                   | Default                        | Description     |
+|:---:|:---------------|:---------|:-----------------------|:-------------------------------|:----------------|
+| *0* | `text`         | *No*     | `string \| Breadcrumb` | `'Press enter to continue...'` | Text to display |
 
-| Return Type     |
-|-----------------|
-| `Promise<void>` |
+| Return Type     |                                                   |
+|-----------------|---------------------------------------------------|
+| `Promise<void>` | Promise that resolves when the user presses enter |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -726,14 +726,14 @@ imitate('What is your name?', 'Jack', true);
 ask.imitate('What is your name?', 'Jack', true);
 ```
 
-|  #  | Parameter Name | Required | Type                   | Default |
-|:---:|:---------------|:---------|:-----------------------|:--------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         |
-| *1* | `result`       | *No*     | `any`                  |         |
-| *2* | `isComplete`   | *No*     | `boolean`              | `true`  |
-| *3* | `isError`      | *No*     | `boolean`              | `false` |
-| *4* | `errorMessage` | *No*     | `string`               |         |
-| *5* | `lc`           | *No*     | `LineCounter`          |         |
+|  #  | Parameter Name | Required | Type                   | Default | Description                    |
+|:---:|:---------------|:---------|:-----------------------|:--------|:-------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb` |         | Question to ask                |
+| *1* | `result`       | *No*     | `any`                  |         | Result to display              |
+| *2* | `isComplete`   | *No*     | `boolean`              | `true`  | Whether the result is complete |
+| *3* | `isError`      | *No*     | `boolean`              | `false` | Whether the result is an error |
+| *4* | `errorMessage` | *No*     | `string`               |         | Error message                  |
+| *5* | `lc`           | *No*     | `LineCounter`          |         | Line counter                   |
 
 | Return Type |
 |-------------|
@@ -761,16 +761,16 @@ data = {name: 'Jack'}
 const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
 ```
 
-|  #  | Parameter Name | Required | Type                                                                   |
-|:---:|:---------------|:---------|:-----------------------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                 |
-| *1* | `value`        | **Yes**  | `T \| undefined`                                                       |
-| *2* | `askFn`        | **Yes**  | `(question: string \| Breadcrumb, lc: LineCounter) => Promise<T> \| T` |
-| *3* | `lc`           | *No*     | `LineCounter`                                                          |
+|  #  | Parameter Name | Required | Type                                                                   | Description                     |
+|:---:|:---------------|:---------|:-----------------------------------------------------------------------|:--------------------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                                 | Question to display             |
+| *1* | `value`        | **Yes**  | `T \| undefined`                                                       | Value to prefill                |
+| *2* | `askFn`        | **Yes**  | `(question: string \| Breadcrumb, lc: LineCounter) => Promise<T> \| T` | Ask function to use if no value |
+| *3* | `lc`           | *No*     | `LineCounter`                                                          | Line counter                    |
 
-| Return Type  |
-|--------------|
-| `Promise<T>` |
+| Return Type  |                                                         |
+|--------------|---------------------------------------------------------|
+| `Promise<T>` | Promise that resolves with the prefilled or asked value |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -802,13 +802,13 @@ await wiz.add('bar', ask.number('What is bar?')); // User input: 123
 const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
 ```
 
-|  #  | Parameter Name | Required | Type         | Default |
-|:---:|:---------------|:---------|:-------------|:--------|
-| *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    |
+|  #  | Parameter Name | Required | Type         | Default | Description                  |
+|:---:|:---------------|:---------|:-------------|:--------|:-----------------------------|
+| *0* | `startObj`     | *No*     | `Partial<T>` | `{}`    | Initial object to start with |
 
-| Return Type     |
-|-----------------|
-| `ask.Wizard<T>` |
+| Return Type     |               |
+|-----------------|---------------|
+| `ask.Wizard<T>` | Wizard object |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -850,17 +850,17 @@ const menuItems: ask.MenuItem<string>[] = [
 const result = await ask.menu('What do you want to work with?', menuItems);
 ```
 
-|  #  | Parameter Name | Required | Type                                                  |
-|:---:|:---------------|:---------|:------------------------------------------------------|
-| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                |
-| *1* | `items`        | **Yes**  | `MenuItem<T>[]`                                       |
-| *2* | `initial`      | *No*     | `MenuItem<T> \| T \| number`                          |
-| *3* | `validate`     | *No*     | `(value: T, index: number) => ask.ValidationResponse` |
-| *4* | `lc`           | *No*     | `LineCounter`                                         |
+|  #  | Parameter Name | Required | Type                                                  | Description            |
+|:---:|:---------------|:---------|:------------------------------------------------------|:-----------------------|
+| *0* | `question`     | **Yes**  | `string \| Breadcrumb`                                | Question to display    |
+| *1* | `items`        | **Yes**  | `MenuItem<T>[]`                                       | Menu items             |
+| *2* | `initial`      | *No*     | `MenuItem<T> \| T \| number`                          | Initial item to select |
+| *3* | `validate`     | *No*     | `(value: T, index: number) => ask.ValidationResponse` | Validation function    |
+| *4* | `lc`           | *No*     | `LineCounter`                                         | Line counter           |
 
-| Return Type  |
-|--------------|
-| `Promise<T>` |
+| Return Type  |                                              |
+|--------------|----------------------------------------------|
+| `Promise<T>` | Promise that resolves with the selected item |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -899,15 +899,15 @@ Question 1: answer1
 Question 2a: [ answer2, answer2b ]
 ```
 
-|  #   | Parameter Name  | Required | Type                                        |
-|:----:|:----------------|:---------|:--------------------------------------------|
-| *0*  | `question`      | **Yes**  | `string \| Breadcrumb`                      |
-| *1*  | `sectionHeader` | *No*     | `(lc: LineCounter) => void \| Promise<any>` |
-| *2…* | `questionFns`   | *No*     | `[...T][]`                                  |
+|  #   | Parameter Name  | Required | Type                                        | Description             |
+|:----:|:----------------|:---------|:--------------------------------------------|:------------------------|
+| *0*  | `question`      | **Yes**  | `string \| Breadcrumb`                      | Question to ask         |
+| *1*  | `sectionHeader` | *No*     | `(lc: LineCounter) => void \| Promise<any>` | Section header function |
+| *2…* | `questionFns`   | *No*     | `[...T][]`                                  | Question functions      |
 
-| Return Type                          |
-|--------------------------------------|
-| `Promise<TupleFromQuestionFuncs<T>>` |
+| Return Type                          |                                           |
+|--------------------------------------|-------------------------------------------|
+| `Promise<TupleFromQuestionFuncs<T>>` | Promise that resolves with the user input |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -930,13 +930,13 @@ ask.separator('up', 5, 2);
 // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
 ```
 
-|  #  | Parameter Name | Required | Type                       | Default                            |
-|:---:|:---------------|:---------|:---------------------------|:-----------------------------------|
-| *0* | `version`      | *No*     | `'down' \| 'none' \| 'up'` | `'down'`                           |
-| *1* | `spacing`      | *No*     | `number`                   | `8`                                |
-| *2* | `offset`       | *No*     | `number`                   | `0`                                |
-| *3* | `width`        | *No*     | `number`                   | `out.utils.getTerminalWidth() - 2` |
-| *4* | `lc`           | *No*     | `LineCounter`              |                                    |
+|  #  | Parameter Name | Required | Type                       | Default                            | Description                         |
+|:---:|:---------------|:---------|:---------------------------|:-----------------------------------|:------------------------------------|
+| *0* | `version`      | *No*     | `'down' \| 'none' \| 'up'` | `'down'`                           | Type of separator                   |
+| *1* | `spacing`      | *No*     | `number`                   | `8`                                | Spacing between the separator nodes |
+| *2* | `offset`       | *No*     | `number`                   | `0`                                | Offset of the separator nodes       |
+| *3* | `width`        | *No*     | `number`                   | `out.utils.getTerminalWidth() - 2` | Width of the separator              |
+| *4* | `lc`           | *No*     | `LineCounter`              |                                    | Line counter                        |
 
 | Return Type |
 |-------------|
@@ -977,15 +977,15 @@ ask.utils.itemsToPromptObjects(['lorem', 'ipsum', 'dolor'], undefined, (s) => s.
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type         | Default |
-|:---:|:---------------|:---------|:-------------|:--------|
-| *0* | `items`        | **Yes**  | `T[]`        |         |
-| *1* | `titles`       | *No*     | `string[]`   | `[]`    |
-| *2* | `titleFn`      | *No*     | `TitleFn<T>` |         |
+|  #  | Parameter Name | Required | Type         | Default | Description                 |
+|:---:|:---------------|:---------|:-------------|:--------|:----------------------------|
+| *0* | `items`        | **Yes**  | `T[]`        |         | Items to convert            |
+| *1* | `titles`       | *No*     | `string[]`   | `[]`    | Titles to use               |
+| *2* | `titleFn`      | *No*     | `TitleFn<T>` |         | Function to generate titles |
 
-| Return Type                      |
-|----------------------------------|
-| `{ title: string; value: T; }[]` |
+| Return Type                      |                         |
+|----------------------------------|-------------------------|
+| `{ title: string; value: T; }[]` | Array of prompt objects |
 
 <p style="text-align: right" align="right"><a href="#ask"> [↑ Back to <b>ask</b> ↑] </a></p>
 
@@ -1329,13 +1329,13 @@ out.getWidth('↓←→↑'); // 4
 out.getWidth(colr.red('this is red')); // 11
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `text`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description              |
+|:---:|:---------------|:---------|:---------|:-------------------------|
+| *0* | `text`         | **Yes**  | `string` | Text to get the width of |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                   |
+|-------------|-------------------|
+| `number`    | Width of the text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1352,16 +1352,16 @@ pad('foo', 3, 1, '-'); // '---foo-'
 pad('bar', 10, 5, '_'); // '__________bar_____'
 ```
 
-|  #  | Parameter Name | Required | Type     | Default |
-|:---:|:---------------|:---------|:---------|:--------|
-| *0* | `line`         | **Yes**  | `string` |         |
-| *1* | `start`        | **Yes**  | `number` |         |
-| *2* | `end`          | **Yes**  | `number` |         |
-| *3* | `replaceChar`  | *No*     | `string` | `' '`   |
+|  #  | Parameter Name | Required | Type     | Default | Description                                 |
+|:---:|:---------------|:---------|:---------|:--------|:--------------------------------------------|
+| *0* | `line`         | **Yes**  | `string` |         | Text to pad                                 |
+| *1* | `start`        | **Yes**  | `number` |         | Number of characters to pad before the line |
+| *2* | `end`          | **Yes**  | `number` |         | Number of characters to pad after the line  |
+| *3* | `replaceChar`  | *No*     | `string` | `' '`   | Character to use for padding                |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |             |
+|-------------|-------------|
+| `string`    | Padded text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1384,16 +1384,16 @@ out.center('lines\n1\n2', 5);
 // '  2  '
 ```
 
-|  #  | Parameter Name | Required | Type      | Default                        |
-|:---:|:---------------|:---------|:----------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`     |                                |
-| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
-| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
-| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+|  #  | Parameter Name | Required | Type      | Default                        | Description                  |
+|:---:|:---------------|:---------|:----------|:-------------------------------|:-----------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                | Item to align                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` | Width to align to            |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          | Character to use for padding |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         | Whether to force the width   |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Aligned text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1416,16 +1416,16 @@ out.left('lines\n1\n2', 5);
 // '2    '
 ```
 
-|  #  | Parameter Name | Required | Type      | Default                        |
-|:---:|:---------------|:---------|:----------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`     |                                |
-| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
-| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
-| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+|  #  | Parameter Name | Required | Type      | Default                        | Description                  |
+|:---:|:---------------|:---------|:----------|:-------------------------------|:-----------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                | Item to align                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` | Width to align to            |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          | Character to use for padding |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         | Whether to force the width   |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Aligned text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1448,16 +1448,16 @@ out.right('lines\n1\n2', 5);
 // '    2'
 ```
 
-|  #  | Parameter Name | Required | Type      | Default                        |
-|:---:|:---------------|:---------|:----------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`     |                                |
-| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
-| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
-| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+|  #  | Parameter Name | Required | Type      | Default                        | Description                  |
+|:---:|:---------------|:---------|:----------|:-------------------------------|:-----------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                | Item to align                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` | Width to align to            |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          | Character to use for padding |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         | Whether to force the width   |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Aligned text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1480,16 +1480,16 @@ out.justify(out.wrap(lorem, 20), 20);
 // 'adipiscing      elit'
 ```
 
-|  #  | Parameter Name | Required | Type      | Default                        |
-|:---:|:---------------|:---------|:----------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`     |                                |
-| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` |
-| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          |
-| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         |
+|  #  | Parameter Name | Required | Type      | Default                        | Description                  |
+|:---:|:---------------|:---------|:----------|:-------------------------------|:-----------------------------|
+| *0* | `item`         | **Yes**  | `any`     |                                | Item to align                |
+| *1* | `width`        | *No*     | `number`  | `out.utils.getTerminalWidth()` | Width to align to            |
+| *2* | `replaceChar`  | *No*     | `string`  | `' '`                          | Character to use for padding |
+| *3* | `forceWidth`   | *No*     | `boolean` | `true`                         | Whether to force the width   |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Aligned text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1510,14 +1510,14 @@ out.leftLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type       | Default                |
-|:---:|:---------------|:---------|:-----------|:-----------------------|
-| *0* | `lines`        | **Yes**  | `string[]` |                        |
-| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+|  #  | Parameter Name | Required | Type       | Default                | Description       |
+|:---:|:---------------|:---------|:-----------|:-----------------------|:------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        | Lines to align    |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` | Width to align to |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |               |
+|-------------|---------------|
+| `string[]`  | Aligned lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1538,14 +1538,14 @@ out.rightLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type       | Default                |
-|:---:|:---------------|:---------|:-----------|:-----------------------|
-| *0* | `lines`        | **Yes**  | `string[]` |                        |
-| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+|  #  | Parameter Name | Required | Type       | Default                | Description       |
+|:---:|:---------------|:---------|:-----------|:-----------------------|:------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        | Lines to align    |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` | Width to align to |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |               |
+|-------------|---------------|
+| `string[]`  | Aligned lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1566,14 +1566,14 @@ out.centerLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type       | Default                |
-|:---:|:---------------|:---------|:-----------|:-----------------------|
-| *0* | `lines`        | **Yes**  | `string[]` |                        |
-| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+|  #  | Parameter Name | Required | Type       | Default                | Description       |
+|:---:|:---------------|:---------|:-----------|:-----------------------|:------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        | Lines to align    |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` | Width to align to |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |               |
+|-------------|---------------|
+| `string[]`  | Aligned lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1594,14 +1594,14 @@ out.justifyLines(['This is line 1', 'This is a longer line 2', 'Line 3']);
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type       | Default                |
-|:---:|:---------------|:---------|:-----------|:-----------------------|
-| *0* | `lines`        | **Yes**  | `string[]` |                        |
-| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` |
+|  #  | Parameter Name | Required | Type       | Default                | Description       |
+|:---:|:---------------|:---------|:-----------|:-----------------------|:------------------|
+| *0* | `lines`        | **Yes**  | `string[]` |                        | Lines to align    |
+| *1* | `width`        | *No*     | `number`   | `getLongestLen(lines)` | Width to align to |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |               |
+|-------------|---------------|
+| `string[]`  | Aligned lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1624,17 +1624,17 @@ out.align('lines\n1\n2', 'right', 5);
 // '    2'
 ```
 
-|  #  | Parameter Name | Required | Type        | Default                        |
-|:---:|:---------------|:---------|:------------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`       |                                |
-| *1* | `direction`    | **Yes**  | `AlignType` |                                |
-| *2* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` |
-| *3* | `replaceChar`  | *No*     | `string`    | `' '`                          |
-| *4* | `forceWidth`   | *No*     | `boolean`   | `true`                         |
+|  #  | Parameter Name | Required | Type        | Default                        | Description                  |
+|:---:|:---------------|:---------|:------------|:-------------------------------|:-----------------------------|
+| *0* | `item`         | **Yes**  | `any`       |                                | Item to align                |
+| *1* | `direction`    | **Yes**  | `AlignType` |                                | Alignment direction          |
+| *2* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` | Width to align to            |
+| *3* | `replaceChar`  | *No*     | `string`    | `' '`                          | Character to use for padding |
+| *4* | `forceWidth`   | *No*     | `boolean`   | `true`                         | Whether to force the width   |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Aligned text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1650,16 +1650,16 @@ Split the given text into two parts, left and right, with the given width of cha
 out.split('Left', 'Right', 15); // Left      Right
 ```
 
-|  #  | Parameter Name | Required | Type     | Default                        |
-|:---:|:---------------|:---------|:---------|:-------------------------------|
-| *0* | `leftItem`     | **Yes**  | `any`    |                                |
-| *1* | `rightItem`    | **Yes**  | `any`    |                                |
-| *2* | `width`        | *No*     | `number` | `out.utils.getTerminalWidth()` |
-| *3* | `replaceChar`  | *No*     | `string` | `' '`                          |
+|  #  | Parameter Name | Required | Type     | Default                        | Description                  |
+|:---:|:---------------|:---------|:---------|:-------------------------------|:-----------------------------|
+| *0* | `leftItem`     | **Yes**  | `any`    |                                | Left item to split           |
+| *1* | `rightItem`    | **Yes**  | `any`    |                                | Right item to split          |
+| *2* | `width`        | *No*     | `number` | `out.utils.getTerminalWidth()` | Width to split at            |
+| *3* | `replaceChar`  | *No*     | `string` | `' '`                          | Character to use for padding |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |            |
+|-------------|------------|
+| `string`    | Split text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1677,16 +1677,16 @@ wrap('This is a sentence', 15);
 // 'a sentence'
 ```
 
-|  #  | Parameter Name | Required | Type        | Default                        |
-|:---:|:---------------|:---------|:------------|:-------------------------------|
-| *0* | `item`         | **Yes**  | `any`       |                                |
-| *1* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` |
-| *2* | `alignment`    | *No*     | `AlignType` |                                |
-| *3* | `forceWidth`   | *No*     | `boolean`   | `false`                        |
+|  #  | Parameter Name | Required | Type        | Default                        | Description                |
+|:---:|:---------------|:---------|:------------|:-------------------------------|:---------------------------|
+| *0* | `item`         | **Yes**  | `any`       |                                | Item to wrap               |
+| *1* | `width`        | *No*     | `number`    | `out.utils.getTerminalWidth()` | Width to wrap to           |
+| *2* | `alignment`    | *No*     | `AlignType` |                                | Alignment to use           |
+| *3* | `forceWidth`   | *No*     | `boolean`   | `false`                        | Whether to force the width |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Wrapped text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1704,9 +1704,9 @@ Useful for replacing previous lines of output
 moveUp(1);
 ```
 
-|  #  | Parameter Name | Required | Type     | Default |
-|:---:|:---------------|:---------|:---------|:--------|
-| *0* | `lines`        | *No*     | `number` | `1`     |
+|  #  | Parameter Name | Required | Type     | Default | Description                |
+|:---:|:---------------|:---------|:---------|:--------|:---------------------------|
+| *0* | `lines`        | *No*     | `number` | `1`     | Number of lines to move up |
 
 | Return Type |
 |-------------|
@@ -1722,7 +1722,7 @@ out.loading(action: (s: string) => string | void, lines: number, symbols: string
 
 Display an animated loading indicator
 
-If the given action returns a string, it will be printed. Otherwise, it will assume the action prints to output itself (and clears the number of lines given as the second argument)
+If the given action returns a string, it will be printed. Otherwise, it will assume the action prints the output itself (and clears the number of lines given as the second argument)
 
 ```typescript
 const loader = out.loading();
@@ -1730,15 +1730,15 @@ const loader = out.loading();
 loader.stop();
 ```
 
-|  #  | Parameter Name | Required | Type                            | Default          |
-|:---:|:---------------|:---------|:--------------------------------|:-----------------|
-| *0* | `action`       | *No*     | `(s: string) => string \| void` | `loadingDefault` |
-| *1* | `lines`        | *No*     | `number`                        | `1`              |
-| *2* | `symbols`      | *No*     | `string[]`                      | `loadingChars`   |
+|  #  | Parameter Name | Required | Type                            | Default          | Description                              |
+|:---:|:---------------|:---------|:--------------------------------|:-----------------|:-----------------------------------------|
+| *0* | `action`       | *No*     | `(s: string) => string \| void` | `loadingDefault` | Custom loading output function           |
+| *1* | `lines`        | *No*     | `number`                        | `1`              | Number of lines to move up               |
+| *2* | `symbols`      | *No*     | `string[]`                      | `loadingChars`   | Symbols to use for the loading indicator |
 
-| Return Type             |
-|-------------------------|
-| `{ stop: () => void; }` |
+| Return Type             |                                     |
+|-------------------------|-------------------------------------|
+| `{ stop: () => void; }` | Loading object with a `stop` method |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1754,14 +1754,14 @@ Limit the length of a string to the given length
 out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `text`         | **Yes**  | `string` |
-| *1* | `maxLength`    | **Yes**  | `number` |
+|  #  | Parameter Name | Required | Type     | Description                |
+|:---:|:---------------|:---------|:---------|:---------------------------|
+| *0* | `text`         | **Yes**  | `string` | Text to limit              |
+| *1* | `maxLength`    | **Yes**  | `number` | Maximum length of the text |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Limited text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1777,14 +1777,14 @@ Limit the length of a string to the given length, keeping the end
 out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `text`         | **Yes**  | `string` |
-| *1* | `maxLength`    | **Yes**  | `number` |
+|  #  | Parameter Name | Required | Type     | Description                |
+|:---:|:---------------|:---------|:---------|:---------------------------|
+| *0* | `text`         | **Yes**  | `string` | Text to truncate           |
+| *1* | `maxLength`    | **Yes**  | `number` | Maximum length of the text |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                |
+|-------------|----------------|
+| `string`    | Truncated text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1800,15 +1800,15 @@ Limit the length of a string to the given length, and add an ellipsis if necessa
 out.truncate('This is a very long sentence', 15); // 'This is a ve...'
 ```
 
-|  #  | Parameter Name | Required | Type     | Default                        |
-|:---:|:---------------|:---------|:---------|:-------------------------------|
-| *0* | `text`         | **Yes**  | `string` |                                |
-| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
-| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                |
+|  #  | Parameter Name | Required | Type     | Default                        | Description                            |
+|:---:|:---------------|:---------|:---------|:-------------------------------|:---------------------------------------|
+| *0* | `text`         | **Yes**  | `string` |                                | Text to truncate                       |
+| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` | Maximum length of the text             |
+| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                | Suffix to add if the text is truncated |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                |
+|-------------|----------------|
+| `string`    | Truncated text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1824,15 +1824,15 @@ Limit the length of a string to the given length, and add an ellipsis if necessa
 out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
 ```
 
-|  #  | Parameter Name | Required | Type     | Default                        |
-|:---:|:---------------|:---------|:---------|:-------------------------------|
-| *0* | `text`         | **Yes**  | `string` |                                |
-| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` |
-| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                |
+|  #  | Parameter Name | Required | Type     | Default                        | Description                            |
+|:---:|:---------------|:---------|:---------|:-------------------------------|:---------------------------------------|
+| *0* | `text`         | **Yes**  | `string` |                                | Text to truncate                       |
+| *1* | `maxLength`    | *No*     | `number` | `out.utils.getTerminalWidth()` | Maximum length of the text             |
+| *2* | `suffix`       | *No*     | `string` | `colr.dim('…')`                | Suffix to add if the text is truncated |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                |
+|-------------|----------------|
+| `string`    | Truncated text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1849,13 +1849,13 @@ out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
 // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
 ```
 
-|  #   | Parameter Name | Required | Type         |
-|:----:|:---------------|:---------|:-------------|
-| *0…* | `groups`       | *No*     | `string[][]` |
+|  #   | Parameter Name | Required | Type         | Description                |
+|:----:|:---------------|:---------|:-------------|:---------------------------|
+| *0…* | `groups`       | *No*     | `string[][]` | Line groups to concatenate |
 
-| Return Type |
-|-------------|
-| `any`       |
+| Return Type |                    |
+|-------------|--------------------|
+| `any`       | Concatenated lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1879,13 +1879,13 @@ out.getResponsiveValue([
   - [**getResponsiveValue**](#getresponsivevalue)
     - [ResponsiveOption<T>](#responsiveoptiont)
 
-|  #  | Parameter Name | Required | Type                    |
-|:---:|:---------------|:---------|:------------------------|
-| *0* | `options`      | **Yes**  | `ResponsiveOption<T>[]` |
+|  #  | Parameter Name | Required | Type                    | Description                 |
+|:---:|:---------------|:---------|:------------------------|:----------------------------|
+| *0* | `options`      | **Yes**  | `ResponsiveOption<T>[]` | Options to get a value from |
 
-| Return Type |
-|-------------|
-| `T`         |
+| Return Type |       |
+|-------------|-------|
+| `T`         | Value |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -1967,9 +1967,9 @@ process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
 | *0* | `x`            | *No*     | `number` | `0`     | The x position to move the cursor to |
 | *1* | `y`            | *No*     | `number` | `0`     | The y position to move the cursor to |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -1992,9 +1992,9 @@ process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines 
 | *0* | `x`            | *No*     | `number` | `0`     | How many spaces to move the cursor horizontally (negative values move left) |
 | *1* | `y`            | *No*     | `number` | `0`     | How many spaces to move the cursor vertically (negative values move up)     |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2016,9 +2016,9 @@ process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor up |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2040,9 +2040,9 @@ process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor down |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2064,9 +2064,9 @@ process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor left |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2088,9 +2088,9 @@ process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
 |:---:|:---------------|:---------|:---------|:--------|:-----------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many spaces to move the cursor right |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2112,9 +2112,9 @@ process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines 
 |:---:|:---------------|:---------|:---------|:--------|:---------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to move the cursor down |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2136,9 +2136,9 @@ process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines an
 |:---:|:---------------|:---------|:---------|:--------|:-------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to move the cursor up |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2175,9 +2175,9 @@ process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
 |:---:|:---------------|:---------|:----------|:------------------------------------------|
 | *0* | `isShow`       | **Yes**  | `boolean` | Whether or not the cursor should be shown |
 
-| Return Type |             |
-|-------------|-------------|
-| `string`    | escape code |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2268,9 +2268,9 @@ process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How much to scroll the terminal up by |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2292,9 +2292,9 @@ process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
 |:---:|:---------------|:---------|:---------|:--------|:----------------------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How much to scroll the terminal down by |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2336,9 +2336,9 @@ process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2360,9 +2360,9 @@ process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the curs
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2428,9 +2428,9 @@ process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cu
 |:---:|:---------------|:---------|:---------|:--------|:------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to erase |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2453,9 +2453,9 @@ process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are 
 |:---:|:---------------|:---------|:---------|:--------|:--------------------------|
 | *0* | `count`        | *No*     | `number` | `1`     | How many lines to reserve |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | escape codes |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | ANSI escape codes |
 
 <p style="text-align: right" align="right"><a href="#ansi"> [↑ Back to <b>ansi</b> ↑] </a></p>
 
@@ -2533,13 +2533,13 @@ subsub('e'); // 'a › b › c › d › e'
   - [**getBreadcrumb**](#getbreadcrumb)
     - [Breadcrumb](#breadcrumb)
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `baseNames`    | *No*     | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description                         |
+|:----:|:---------------|:---------|:-----------|:------------------------------------|
+| *0…* | `baseNames`    | *No*     | `string[]` | Base names to add to the breadcrumb |
 
-| Return Type  |
-|--------------|
-| `Breadcrumb` |
+| Return Type  |                   |
+|--------------|-------------------|
+| `Breadcrumb` | Breadcrumb object |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -2599,9 +2599,9 @@ lc.clear();
         - [lc.ansi.save](#lcansisave)
         - [lc.ansi.restore](#lcansirestore)
 
-| Return Type   |
-|---------------|
-| `LineCounter` |
+| Return Type   |                     |
+|---------------|---------------------|
+| `LineCounter` | Line counter object |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -2633,13 +2633,13 @@ const lc = getLineCounter();
 lc.log('hello'); // 1
 ```
 
-|  #   | Parameter Name | Required | Type    | Description          |
-|:----:|:---------------|:---------|:--------|:---------------------|
-| *0…* | `args`         | **Yes**  | `any[]` | The arguments to log |
+|  #   | Parameter Name | Required | Type    | Description      |
+|:----:|:---------------|:---------|:--------|:-----------------|
+| *0…* | `args`         | **Yes**  | `any[]` | Arguments to log |
 
 | Return Type |                       |
 |-------------|-----------------------|
-| `number`    | number of lines added |
+| `number`    | Number of lines added |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2655,13 +2655,13 @@ const lc = getLineCounter();
 lc.overwrite('hello'); // 1
 ```
 
-|  #   | Parameter Name | Required | Type    | Description                |
-|:----:|:---------------|:---------|:--------|:---------------------------|
-| *0…* | `args`         | **Yes**  | `any[]` | The arguments to overwrite |
+|  #   | Parameter Name | Required | Type    | Description            |
+|:----:|:---------------|:---------|:--------|:-----------------------|
+| *0…* | `args`         | **Yes**  | `any[]` | Arguments to overwrite |
 
 | Return Type |                       |
 |-------------|-----------------------|
-| `number`    | number of lines added |
+| `number`    | Number of lines added |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2673,15 +2673,15 @@ const lc = getLineCounter();
 lc.wrap(1, () => console.log('a single line')); // 1
 ```
 
-|  #   | Parameter Name | Required | Type                            | Description                           |
-|:----:|:---------------|:---------|:--------------------------------|:--------------------------------------|
-| *0*  | `newLines`     | **Yes**  | `number`                        | The number of lines to add            |
-| *1*  | `func`         | **Yes**  | `(...args: A[]) => number \| T` | The function to wrap                  |
-| *2…* | `args`         | **Yes**  | `A[]`                           | The arguments to pass to the function |
+|  #   | Parameter Name | Required | Type                            | Description                       |
+|:----:|:---------------|:---------|:--------------------------------|:----------------------------------|
+| *0*  | `newLines`     | **Yes**  | `number`                        | Number of lines to add            |
+| *1*  | `func`         | **Yes**  | `(...args: A[]) => number \| T` | Function to wrap                  |
+| *2…* | `args`         | **Yes**  | `A[]`                           | Arguments to pass to the function |
 
 | Return Type |                        |
 |-------------|------------------------|
-| `T`         | result of the function |
+| `T`         | Result of the function |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2693,9 +2693,9 @@ const lc = getLineCounter();
 lc.add(1);
 ```
 
-|  #  | Parameter Name | Required | Type     | Description                |
-|:---:|:---------------|:---------|:---------|:---------------------------|
-| *0* | `newLines`     | **Yes**  | `number` | The number of lines to add |
+|  #  | Parameter Name | Required | Type     | Description            |
+|:---:|:---------------|:---------|:---------|:-----------------------|
+| *0* | `newLines`     | **Yes**  | `number` | Number of lines to add |
 
 | Return Type |
 |-------------|
@@ -2714,9 +2714,9 @@ lc.add(1);
 lc.get(); // 3
 ```
 
-| Return Type |              |
-|-------------|--------------|
-| `number`    | line counter |
+| Return Type |            |
+|-------------|------------|
+| `number`    | Line count |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2734,13 +2734,13 @@ lc.getSince('test-a'); // 2
 lc.getSince('test-b'); // 1
 ```
 
-|  #  | Parameter Name | Required | Type     | Description             |
-|:---:|:---------------|:---------|:---------|:------------------------|
-| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to check |
+|  #  | Parameter Name | Required | Type     | Description         |
+|:---:|:---------------|:---------|:---------|:--------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | Checkpoint to check |
 
 | Return Type |                                      |
 |-------------|--------------------------------------|
-| `number`    | number of lines since the checkpoint |
+| `number`    | Number of lines since the checkpoint |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2801,9 +2801,9 @@ lc.moveToCheckpoint('test');
 lc.log('world'); // 1
 ```
 
-|  #  | Parameter Name | Required | Type     | Description               |
-|:---:|:---------------|:---------|:---------|:--------------------------|
-| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to move to |
+|  #  | Parameter Name | Required | Type     | Description           |
+|:---:|:---------------|:---------|:---------|:----------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | Checkpoint to move to |
 
 | Return Type |
 |-------------|
@@ -2840,7 +2840,7 @@ lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
 
 |  #  | Parameter Name         | Required | Type      | Description                                                                   |
 |:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
-| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | Number of lines to clear                                                      |
 | *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
 
 | Return Type |
@@ -2863,9 +2863,9 @@ lc.clearDown(1);
 lc.log('world'); // 1
 ```
 
-|  #  | Parameter Name | Required | Type     | Description                 |
-|:---:|:---------------|:---------|:---------|:----------------------------|
-| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+|  #  | Parameter Name | Required | Type     | Description             |
+|:---:|:---------------|:---------|:---------|:------------------------|
+| *0* | `lines`        | **Yes**  | `number` | Number of lines to move |
 
 | Return Type |
 |-------------|
@@ -2887,13 +2887,13 @@ lc.getSince('test-a'); // 2
 lc.getSince('test-b'); // 1
 ```
 
-|  #  | Parameter Name | Required | Type     | Description              |
-|:---:|:---------------|:---------|:---------|:-------------------------|
-| *0* | `checkpointID` | *No*     | `string` | The checkpoint to record |
+|  #  | Parameter Name | Required | Type     | Description          |
+|:---:|:---------------|:---------|:---------|:---------------------|
+| *0* | `checkpointID` | *No*     | `string` | Checkpoint to record |
 
-| Return Type |              |
-|-------------|--------------|
-| `string`    | checkpointID |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Checkpoint ID |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2910,9 +2910,9 @@ lc.log('line 4'); // 1
 lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name | Required | Type     | Description                |
-|:---:|:---------------|:---------|:---------|:---------------------------|
-| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to clear to |
+|  #  | Parameter Name | Required | Type     | Description            |
+|:---:|:---------------|:---------|:---------|:-----------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | Checkpoint to clear to |
 
 | Return Type |
 |-------------|
@@ -2943,9 +2943,9 @@ lc.log('world'); // 1
 |:---:|:---------------|:---------|:---------|:---------------------------------------------------------------------|
 | *0* | `y`            | **Yes**  | `number` | How many lines to move the cursor (down if positive, up if negative) |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2965,9 +2965,9 @@ process.stdout.write(lc.ansi.moveHome());
 lc.log('world'); // 1
 ```
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -2988,13 +2988,13 @@ lc.moveToCheckpoint('test');
 lc.log('world'); // 1
 ```
 
-|  #  | Parameter Name | Required | Type     | Description               |
-|:---:|:---------------|:---------|:---------|:--------------------------|
-| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to move to |
+|  #  | Parameter Name | Required | Type     | Description           |
+|:---:|:---------------|:---------|:---------|:----------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | Checkpoint to move to |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3009,9 +3009,9 @@ lc.log('hello'); // 1
 process.stdout.write(lc.ansi.clear());
 ```
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3031,12 +3031,12 @@ process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleare
 
 |  #  | Parameter Name         | Required | Type      | Description                                                                   |
 |:---:|:-----------------------|:---------|:----------|:------------------------------------------------------------------------------|
-| *0* | `linesToMoveBack`      | **Yes**  | `number`  | The number of lines to clear                                                  |
+| *0* | `linesToMoveBack`      | **Yes**  | `number`  | Number of lines to clear                                                      |
 | *1* | `limitToRecordedLines` | *No*     | `boolean` | Whether to limit the number of lines to clear to the number of lines recorded |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3058,13 +3058,13 @@ lc.log('line 4'); // 1
 process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name | Required | Type     | Description                 |
-|:---:|:---------------|:---------|:---------|:----------------------------|
-| *0* | `lines`        | **Yes**  | `number` | The number of lines to move |
+|  #  | Parameter Name | Required | Type     | Description             |
+|:---:|:---------------|:---------|:---------|:------------------------|
+| *0* | `lines`        | **Yes**  | `number` | Number of lines to move |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3083,13 +3083,13 @@ lc.log('line 4'); // 1
 process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
 ```
 
-|  #  | Parameter Name | Required | Type     | Description                |
-|:---:|:---------------|:---------|:---------|:---------------------------|
-| *0* | `checkpointID` | **Yes**  | `string` | The checkpoint to clear to |
+|  #  | Parameter Name | Required | Type     | Description            |
+|:---:|:---------------|:---------|:---------|:-----------------------|
+| *0* | `checkpointID` | **Yes**  | `string` | Checkpoint to clear to |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                  |
+|-------------|------------------|
+| `string`    | ANSI escape code |
 
 <p style="text-align: right" align="right"><a href="#getlinecounter"> [↑ Back to <b>getLineCounter</b> ↑] </a></p>
 
@@ -3137,9 +3137,9 @@ Get maximum terminal width (columns)
 out.utils.getTerminalWidth(); // 127
 ```
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                        |
+|-------------|------------------------|
+| `number`    | Maximum terminal width |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3158,13 +3158,13 @@ this is line 2
 `); // [ '', 'this is line 1', 'this is line 2', '' ]
 ```
 
-|  #  | Parameter Name | Required | Type   |
-|:---:|:---------------|:---------|:-------|
-| *0* | `text`         | **Yes**  | `Text` |
+|  #  | Parameter Name | Required | Type   | Description   |
+|:---:|:---------------|:---------|:-------|:--------------|
+| *0* | `text`         | **Yes**  | `Text` | Text to split |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |                |
+|-------------|----------------|
+| `string[]`  | Array of lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3183,13 +3183,13 @@ this is line 2
 `); // 4
 ```
 
-|  #  | Parameter Name | Required | Type   |
-|:---:|:---------------|:---------|:-------|
-| *0* | `text`         | **Yes**  | `Text` |
+|  #  | Parameter Name | Required | Type   | Description                         |
+|:---:|:---------------|:---------|:-------|:------------------------------------|
+| *0* | `text`         | **Yes**  | `Text` | Text to get the number of lines for |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                 |
+|-------------|-----------------|
+| `number`    | Number of lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3208,13 +3208,13 @@ this is line 2
 `) // 14
 ```
 
-|  #  | Parameter Name | Required | Type   |
-|:---:|:---------------|:---------|:-------|
-| *0* | `text`         | **Yes**  | `Text` |
+|  #  | Parameter Name | Required | Type   | Description              |
+|:---:|:---------------|:---------|:-------|:-------------------------|
+| *0* | `text`         | **Yes**  | `Text` | Text to get the width of |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                   |
+|-------------|-------------------|
+| `number`    | Width of the text |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3233,13 +3233,13 @@ this is line 2
 `); // [ '', 'this is line 1', 'this is line 2', '' ]
 ```
 
-|  #  | Parameter Name | Required | Type  |
-|:---:|:---------------|:---------|:------|
-| *0* | `item`         | **Yes**  | `any` |
+|  #  | Parameter Name | Required | Type  | Description                   |
+|:---:|:---------------|:---------|:------|:------------------------------|
+| *0* | `item`         | **Yes**  | `any` | Item to get the log lines for |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |                    |
+|-------------|--------------------|
+| `string[]`  | Array of log lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3258,13 +3258,13 @@ this is line 2
 `); // 4
 ```
 
-|  #  | Parameter Name | Required | Type   |
-|:---:|:---------------|:---------|:-------|
-| *0* | `item`         | **Yes**  | `Text` |
+|  #  | Parameter Name | Required | Type   | Description                             |
+|:---:|:---------------|:---------|:-------|:----------------------------------------|
+| *0* | `item`         | **Yes**  | `Text` | Item to get the number of log lines for |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                     |
+|-------------|---------------------|
+| `number`    | Number of log lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3283,13 +3283,13 @@ this is line 2
 `) // 14
 ```
 
-|  #  | Parameter Name | Required | Type   |
-|:---:|:---------------|:---------|:-------|
-| *0* | `item`         | **Yes**  | `Text` |
+|  #  | Parameter Name | Required | Type   | Description              |
+|:---:|:---------------|:---------|:-------|:-------------------------|
+| *0* | `item`         | **Yes**  | `Text` | Item to get the width of |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                   |
+|-------------|-------------------|
+| `number`    | Width of the item |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3307,13 +3307,13 @@ out.utils.joinLines(['this is line 1', 'this is line 2'])
 // 'this is line 2'
 ```
 
-|  #  | Parameter Name | Required | Type       |
-|:---:|:---------------|:---------|:-----------|
-| *0* | `lines`        | **Yes**  | `string[]` |
+|  #  | Parameter Name | Required | Type       | Description   |
+|:---:|:---------------|:---------|:-----------|:--------------|
+| *0* | `lines`        | **Yes**  | `string[]` | Lines to join |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |              |
+|-------------|--------------|
+| `string`    | Joined lines |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3330,13 +3330,13 @@ out.utils.hasColor('this is line 1') // false
 out.utils.hasColor(colr.red('this is line 1')) // true
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `str`          | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description                 |
+|:---:|:---------------|:---------|:---------|:----------------------------|
+| *0* | `str`          | **Yes**  | `string` | String to check for colours |
 
-| Return Type |
-|-------------|
-| `boolean`   |
+| Return Type |                                         |
+|-------------|-----------------------------------------|
+| `boolean`   | Whether the string contains any colours |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3352,13 +3352,13 @@ Removes all ANSI escape codes from a string. This includes any colour or styling
 out.utils.stripAnsi(colr.red('this is line 1')) // 'this is line 1'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `text`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description                   |
+|:---:|:---------------|:---------|:---------|:------------------------------|
+| *0* | `text`         | **Yes**  | `string` | Text to strip ANSI codes from |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                         |
+|-------------|-------------------------|
+| `string`    | Text without ANSI codes |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3377,13 +3377,13 @@ const str = "The 🦊 quickly jumps over the lazy 🐶."
 str.match(out.utils.getEmojiRegex()); // [ '🦊', '🐶' ]
 ```
 
-|  #  | Parameter Name | Required | Type     | Default |
-|:---:|:---------------|:---------|:---------|:--------|
-| *0* | `flags`        | *No*     | `string` | `'g'`   |
+|  #  | Parameter Name | Required | Type     | Default | Description                 |
+|:---:|:---------------|:---------|:---------|:--------|:----------------------------|
+| *0* | `flags`        | *No*     | `string` | `'g'`   | Flags to pass to the RegExp |
 
-| Return Type |
-|-------------|
-| `RegExp`    |
+| Return Type |             |
+|-------------|-------------|
+| `RegExp`    | Emoji regex |
 
 <p style="text-align: right" align="right"><a href="#out"> [↑ Back to <b>out</b> ↑] </a></p>
 
@@ -3648,13 +3648,13 @@ colr.light.red('Hello World!'); // 'Hello World!' with light red text
 colr.red.light('Hello World!'); // 'Hello World!' with light red text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3675,13 +3675,13 @@ colr.dark.red('Hello World!'); // 'Hello World!' with dark red text
 colr.red.dark('Hello World!'); // 'Hello World!' with dark red text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3702,13 +3702,13 @@ colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a light red backgroun
 colr.redBg.lightBg('Hello World!'); // 'Hello World!' with a light red background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3729,13 +3729,13 @@ colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a dark red background
 colr.redBg.darkBg('Hello World!'); // 'Hello World!' with a dark red background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3760,13 +3760,13 @@ colr.light.red('Hello World!'); // 'Hello World!' with __light__ red text
 colr.dark.red('Hello World!'); // 'Hello World!' with __dark__ red text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3785,13 +3785,13 @@ Prefer `dark.red`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3811,13 +3811,13 @@ Prefer `light.red`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3840,13 +3840,13 @@ colr.light.green('Hello World!'); // 'Hello World!' with __light__ green text
 colr.dark.green('Hello World!'); // 'Hello World!' with __dark__ green text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3865,13 +3865,13 @@ Prefer `dark.green`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3891,13 +3891,13 @@ Prefer `light.green`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3920,13 +3920,13 @@ colr.light.yellow('Hello World!'); // 'Hello World!' with __light__ yellow text
 colr.dark.yellow('Hello World!'); // 'Hello World!' with __dark__ yellow text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3945,13 +3945,13 @@ Prefer `dark.yellow`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -3971,13 +3971,13 @@ Prefer `light.yellow`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4000,13 +4000,13 @@ colr.light.blue('Hello World!'); // 'Hello World!' with __light__ blue text
 colr.dark.blue('Hello World!'); // 'Hello World!' with __dark__ blue text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4025,13 +4025,13 @@ Prefer `dark.blue`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4051,13 +4051,13 @@ Prefer `light.blue`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4080,13 +4080,13 @@ colr.light.magenta('Hello World!'); // 'Hello World!' with __light__ magenta tex
 colr.dark.magenta('Hello World!'); // 'Hello World!' with __dark__ magenta text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4105,13 +4105,13 @@ Prefer `dark.magenta`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4131,13 +4131,13 @@ Prefer `light.magenta`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4160,13 +4160,13 @@ colr.light.cyan('Hello World!'); // 'Hello World!' with __light__ cyan text
 colr.dark.cyan('Hello World!'); // 'Hello World!' with __dark__ cyan text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4185,13 +4185,13 @@ Prefer `dark.cyan`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4211,13 +4211,13 @@ Prefer `light.cyan`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4240,13 +4240,13 @@ colr.light.white('Hello World!'); // 'Hello World!' with __light__ white text
 colr.dark.white('Hello World!'); // 'Hello World!' with __dark__ white text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4265,13 +4265,13 @@ Prefer `dark.white`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4291,13 +4291,13 @@ Prefer `light.white`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4322,13 +4322,13 @@ colr.lightBg.redBg('Hello World!'); // 'Hello World!' with a __light__ red backg
 colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a __dark__ red background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4348,13 +4348,13 @@ Prefer `darkBg.redBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4373,13 +4373,13 @@ Prefer `lightBg.redBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4402,13 +4402,13 @@ colr.lightBg.greenBg('Hello World!'); // 'Hello World!' with a __light__ green b
 colr.darkBg.greenBg('Hello World!'); // 'Hello World!' with a __dark__ green background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4428,13 +4428,13 @@ Prefer `darkBg.greenBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4453,13 +4453,13 @@ Prefer `lightBg.greenBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4482,13 +4482,13 @@ colr.lightBg.yellowBg('Hello World!'); // 'Hello World!' with a __light__ yellow
 colr.darkBg.yellowBg('Hello World!'); // 'Hello World!' with a __dark__ yellow background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4508,13 +4508,13 @@ Prefer `darkBg.yellowBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4533,13 +4533,13 @@ Prefer `lightBg.yellowBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4562,13 +4562,13 @@ colr.lightBg.blueBg('Hello World!'); // 'Hello World!' with a __light__ blue bac
 colr.darkBg.blueBg('Hello World!'); // 'Hello World!' with a __dark__ blue background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4588,13 +4588,13 @@ Prefer `darkBg.blueBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4613,13 +4613,13 @@ Prefer `lightBg.blueBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4642,13 +4642,13 @@ colr.lightBg.magentaBg('Hello World!'); // 'Hello World!' with a __light__ magen
 colr.darkBg.magentaBg('Hello World!'); // 'Hello World!' with a __dark__ magenta background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4668,13 +4668,13 @@ Prefer `darkBg.magentaBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4693,13 +4693,13 @@ Prefer `lightBg.magentaBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4722,13 +4722,13 @@ colr.lightBg.cyanBg('Hello World!'); // 'Hello World!' with a __light__ cyan bac
 colr.darkBg.cyanBg('Hello World!'); // 'Hello World!' with a __dark__ cyan background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4748,13 +4748,13 @@ Prefer `darkBg.cyanBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4773,13 +4773,13 @@ Prefer `lightBg.cyanBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4802,13 +4802,13 @@ colr.lightBg.whiteBg('Hello World!'); // 'Hello World!' with a __light__ white b
 colr.darkBg.whiteBg('Hello World!'); // 'Hello World!' with a __dark__ white background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4828,13 +4828,13 @@ Prefer `darkBg.whiteBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4853,13 +4853,13 @@ Prefer `lightBg.whiteBg`
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4886,13 +4886,13 @@ colr.light.black('Hello World!'); // 'Hello World!' with __dark__ black text
 colr.dark.black('Hello World!'); // 'Hello World!' with __dark__ black text
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4913,13 +4913,13 @@ Same as `black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4937,13 +4937,13 @@ Unaffected by `light`/`dark` modifiers and __will always be light__.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4968,13 +4968,13 @@ colr.lightBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black ba
 colr.darkBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
 ```
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -4995,13 +4995,13 @@ Same as `blackBg`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5019,13 +5019,13 @@ Unaffected by `lightBg`/`darkBg` modifiers and __will always be light__.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5046,13 +5046,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5073,13 +5073,13 @@ Unaffected by `lightBg`/`darkBg` modifiers
 
 > __Warning:__ May not be visible in some terminals, depending on the colour settings
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5100,13 +5100,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5129,13 +5129,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5156,13 +5156,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5183,13 +5183,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5210,13 +5210,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5237,13 +5237,13 @@ Unaffected by `light`/`dark` modifiers
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5261,13 +5261,13 @@ Equivalent to `colr.light.yellow`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5283,13 +5283,13 @@ Equivalent to `colr.light.magenta`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5305,13 +5305,13 @@ Equivalent to `colr.light.green`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5327,13 +5327,13 @@ Equivalent to `colr.dark.red`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5349,13 +5349,13 @@ Equivalent to `colr.dark.yellow`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5371,13 +5371,13 @@ Equivalent to `colr.light.blue`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5393,13 +5393,13 @@ Equivalent to `colr.lightBg.yellowBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5415,13 +5415,13 @@ Equivalent to `colr.lightBg.magentaBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5437,13 +5437,13 @@ Equivalent to `colr.lightBg.greenBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5459,13 +5459,13 @@ Equivalent to `colr.darkBg.redBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5481,13 +5481,13 @@ Equivalent to `colr.darkBg.yellowBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5503,13 +5503,13 @@ Equivalent to `colr.lightBg.blueBg.black`.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5527,13 +5527,13 @@ This returns the text back to normal colours/styles.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5549,13 +5549,13 @@ This makes the text __bold__.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5573,13 +5573,13 @@ This dims the brightness of the text colour.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5597,13 +5597,13 @@ This makes the text _italic_.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5621,13 +5621,13 @@ This adds a horizontal line above the text
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5645,13 +5645,13 @@ This adds a horizontal line below the text
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5669,13 +5669,13 @@ This add a horizontal line through the middle of the given text.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5691,13 +5691,13 @@ This inverses the text and background colours for the given text.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -5713,13 +5713,13 @@ This makes the text invisible.
 
 > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
 
-|  #   | Parameter Name | Required | Type       |
-|:----:|:---------------|:---------|:-----------|
-| *0…* | `text`         | **Yes**  | `string[]` |
+|  #   | Parameter Name | Required | Type       | Description    |
+|:----:|:---------------|:---------|:-----------|:---------------|
+| *0…* | `text`         | **Yes**  | `string[]` | Text to colour |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |               |
+|-------------|---------------|
+| `string`    | Coloured text |
 
 <p style="text-align: right" align="right"><a href="#colr"> [↑ Back to <b>colr</b> ↑] </a></p>
 
@@ -6222,15 +6222,15 @@ table.print(body, header); // 7
 // └──────┴─────┘
 ```
 
-|  #  | Parameter Name | Required | Type           | Default |
-|:---:|:---------------|:---------|:---------------|:--------|
-| *0* | `body`         | **Yes**  | `any[][]`      |         |
-| *1* | `header`       | *No*     | `any[][]`      |         |
-| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type           | Default | Description           |
+|:---:|:---------------|:---------|:---------------|:--------|:----------------------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         | Body of the table     |
+| *1* | `header`       | *No*     | `any[][]`      |         | Header of the table   |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    | Options for the table |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                         |
+|-------------|-------------------------|
+| `number`    | Number of lines printed |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6270,15 +6270,15 @@ table.printObjects(objs, header); // 11
 // └───────┴───────┴───────┘
 ```
 
-|  #  | Parameter Name | Required | Type           | Default |
-|:---:|:---------------|:---------|:---------------|:--------|
-| *0* | `objects`      | **Yes**  | `Object[]`     |         |
-| *1* | `headers`      | *No*     | `Object`       | `{}`    |
-| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type           | Default | Description           |
+|:---:|:---------------|:---------|:---------------|:--------|:----------------------|
+| *0* | `objects`      | **Yes**  | `Object[]`     |         | Objects to print      |
+| *1* | `headers`      | *No*     | `Object`       | `{}`    | Headers for the table |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    | Options for the table |
 
-| Return Type |
-|-------------|
-| `number`    |
+| Return Type |                         |
+|-------------|-------------------------|
+| `number`    | Number of lines printed |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6305,15 +6305,15 @@ console.log(md.join('\n'));
 // |      Jane |       26       | Software Engineer |
 ```
 
-|  #  | Parameter Name | Required | Type           | Default |
-|:---:|:---------------|:---------|:---------------|:--------|
-| *0* | `body`         | **Yes**  | `any[][]`      |         |
-| *1* | `header`       | *No*     | `any[][]`      |         |
-| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type           | Default | Description           |
+|:---:|:---------------|:---------|:---------------|:--------|:----------------------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         | Body of the table     |
+| *1* | `header`       | *No*     | `any[][]`      |         | Header of the table   |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    | Options for the table |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |                |
+|-------------|----------------|
+| `string[]`  | Array of lines |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6340,15 +6340,15 @@ table.getLines(body, header);
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type           | Default |
-|:---:|:---------------|:---------|:---------------|:--------|
-| *0* | `body`         | **Yes**  | `any[][]`      |         |
-| *1* | `header`       | *No*     | `any[][]`      |         |
-| *2* | `options`      | *No*     | `TableOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type           | Default | Description           |
+|:---:|:---------------|:---------|:---------------|:--------|:----------------------|
+| *0* | `body`         | **Yes**  | `any[][]`      |         | Body of the table     |
+| *1* | `header`       | *No*     | `any[][]`      |         | Header of the table   |
+| *2* | `options`      | *No*     | `TableOptions` | `{}`    | Options for the table |
 
-| Return Type |
-|-------------|
-| `string[]`  |
+| Return Type |                |
+|-------------|----------------|
+| `string[]`  | Array of lines |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6631,14 +6631,14 @@ table.utils.objectsToTable(objs)
 // }
 ```
 
-|  #  | Parameter Name | Required | Type       | Default |
-|:---:|:---------------|:---------|:-----------|:--------|
-| *0* | `objects`      | **Yes**  | `Object[]` |         |
-| *1* | `headers`      | *No*     | `Object`   | `{}`    |
+|  #  | Parameter Name | Required | Type       | Default | Description                   |
+|:---:|:---------------|:---------|:-----------|:--------|:------------------------------|
+| *0* | `objects`      | **Yes**  | `Object[]` |         | Objects to convert to a table |
+| *1* | `headers`      | *No*     | `Object`   | `{}`    | Headers for the table         |
 
-| Return Type                           |
-|---------------------------------------|
-| `{ header: any[][]; body: any[][]; }` |
+| Return Type                           |              |
+|---------------------------------------|--------------|
+| `{ header: any[][]; body: any[][]; }` | Table object |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6663,13 +6663,13 @@ table.utils.transpose(input)
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type      |
-|:---:|:---------------|:---------|:----------|
-| *0* | `rows`         | **Yes**  | `any[][]` |
+|  #  | Parameter Name | Required | Type      | Description       |
+|:---:|:---------------|:---------|:----------|:------------------|
+| *0* | `rows`         | **Yes**  | `any[][]` | Rows to transpose |
 
-| Return Type |
-|-------------|
-| `any[][]`   |
+| Return Type |                 |
+|-------------|-----------------|
+| `any[][]`   | Transposed rows |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6697,13 +6697,13 @@ table.utils.concatRows({header, body})
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type                                 |
-|:---:|:---------------|:---------|:-------------------------------------|
-| *0* | `cells`        | **Yes**  | `{ header: any[][]; body: any[][] }` |
+|  #  | Parameter Name | Required | Type                                 | Description          |
+|:---:|:---------------|:---------|:-------------------------------------|:---------------------|
+| *0* | `cells`        | **Yes**  | `{ header: any[][]; body: any[][] }` | Cells to concatenate |
 
-| Return Type |
-|-------------|
-| `any[][]`   |
+| Return Type |                   |
+|-------------|-------------------|
+| `any[][]`   | Concatenated rows |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6743,17 +6743,17 @@ table.print(header, body, {format})
 // └───┴───┴───┘
 ```
 
-|  #  | Parameter Name | Required | Type      |
-|:---:|:---------------|:---------|:----------|
-| *0* | `format`       | **Yes**  | `WrapFn`  |
-| *1* | `row`          | *No*     | `number`  |
-| *2* | `col`          | *No*     | `number`  |
-| *3* | `isHeader`     | *No*     | `boolean` |
-| *4* | `isBody`       | *No*     | `boolean` |
+|  #  | Parameter Name | Required | Type      | Description                               |
+|:---:|:---------------|:---------|:----------|:------------------------------------------|
+| *0* | `format`       | **Yes**  | `WrapFn`  | Wrap function (e.g. colr.blue)            |
+| *1* | `row`          | *No*     | `number`  | Row to apply the format to                |
+| *2* | `col`          | *No*     | `number`  | Column to apply the format to             |
+| *3* | `isHeader`     | *No*     | `boolean` | Whether to apply the format to the header |
+| *4* | `isBody`       | *No*     | `boolean` | Whether to apply the format to the body   |
 
-| Return Type         |
-|---------------------|
-| `TableFormatConfig` |
+| Return Type         |                             |
+|---------------------|-----------------------------|
+| `TableFormatConfig` | Format configuration object |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6772,13 +6772,13 @@ const someOpts = {
 table.utils.getFullOptions(someOpts) // { ... } with defaults applied
 ```
 
-|  #  | Parameter Name | Required | Type           |
-|:---:|:---------------|:---------|:---------------|
-| *0* | `opts`         | **Yes**  | `TableOptions` |
+|  #  | Parameter Name | Required | Type           | Description                   |
+|:---:|:---------------|:---------|:---------------|:------------------------------|
+| *0* | `opts`         | **Yes**  | `TableOptions` | Partial options for the table |
 
-| Return Type        |
-|--------------------|
-| `FullTableOptions` |
+| Return Type        |                     |
+|--------------------|---------------------|
+| `FullTableOptions` | Full options object |
 
 <p style="text-align: right" align="right"><a href="#table"> [↑ Back to <b>table</b> ↑] </a></p>
 
@@ -6865,13 +6865,13 @@ getLogStr([
 // ]
 ```
 
-|  #  | Parameter Name | Required | Type  |
-|:---:|:---------------|:---------|:------|
-| *0* | `item`         | **Yes**  | `any` |
+|  #  | Parameter Name | Required | Type  | Description              |
+|:---:|:---------------|:---------|:------|:-------------------------|
+| *0* | `item`         | **Yes**  | `any` | Item to get a string for |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                                   |
+|-------------|-----------------------------------|
+| `string`    | String representation of the item |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -6888,15 +6888,15 @@ Process an item to be logged
 LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
 ```
 
-|  #   | Parameter Name | Required | Type       | Default    |
-|:----:|:---------------|:---------|:-----------|:-----------|
-| *0*  | `prefix`       | **Yes**  | `string`   |            |
-| *1*  | `wrapper`      | *No*     | `Function` | `fn.noact` |
-| *2…* | `args`         | *No*     | `any[]`    |            |
+|  #   | Parameter Name | Required | Type       | Default    | Description                          |
+|:----:|:---------------|:---------|:-----------|:-----------|:-------------------------------------|
+| *0*  | `prefix`       | **Yes**  | `string`   |            | Prefix to add to the log             |
+| *1*  | `wrapper`      | *No*     | `Function` | `fn.noact` | Wrapper function to apply to the log |
+| *2…* | `args`         | *No*     | `any[]`    |            | Arguments to log                     |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                      |
+|-------------|----------------------|
+| `string`    | Processed log string |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -6914,14 +6914,14 @@ const log = LogTools.getLog('prefix:');
 log('hello'); // 'prefix: hello'
 ```
 
-|  #  | Parameter Name | Required | Type       | Default    |
-|:---:|:---------------|:---------|:-----------|:-----------|
-| *0* | `prefix`       | **Yes**  | `string`   |            |
-| *1* | `wrapper`      | *No*     | `Function` | `fn.noact` |
+|  #  | Parameter Name | Required | Type       | Default    | Description                          |
+|:---:|:---------------|:---------|:-----------|:-----------|:-------------------------------------|
+| *0* | `prefix`       | **Yes**  | `string`   |            | Prefix to add to the log             |
+| *1* | `wrapper`      | *No*     | `Function` | `fn.noact` | Wrapper function to apply to the log |
 
-| Return Type                |
-|----------------------------|
-| `(...args: any[]) => void` |
+| Return Type                |              |
+|----------------------------|--------------|
+| `(...args: any[]) => void` | Log function |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -6947,14 +6947,14 @@ const log = createLogger({
 log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
 ```
 
-|  #  | Parameter Name | Required | Type         | Default   |
-|:---:|:---------------|:---------|:-------------|:----------|
-| *0* | `extraConfigs` | *No*     | `T`          | `{} as T` |
-| *1* | `options`      | *No*     | `LogOptions` | `{}`      |
+|  #  | Parameter Name | Required | Type         | Default   | Description                                          |
+|:---:|:---------------|:---------|:-------------|:----------|:-----------------------------------------------------|
+| *0* | `extraConfigs` | *No*     | `T`          | `{} as T` | Configs for extra log functions to add to the logger |
+| *1* | `options`      | *No*     | `LogOptions` | `{}`      | Options for the logger                               |
 
-| Return Type |
-|-------------|
-| `Logger<T>` |
+| Return Type |               |
+|-------------|---------------|
+| `Logger<T>` | Logger object |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
@@ -7019,13 +7019,13 @@ console.log(filename); // 'file.txt'
 console.log(folders); // ['path', 'to']
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `path`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description     |
+|:---:|:---------------|:---------|:---------|:----------------|
+| *0* | `path`         | **Yes**  | `string` | Path to explode |
 
-| Return Type    |
-|----------------|
-| `ExplodedPath` |
+| Return Type    |                      |
+|----------------|----------------------|
+| `ExplodedPath` | Exploded path object |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -7094,13 +7094,13 @@ Remove trailing slash from path (if one exists)
 '/path/to/file/' -> '/path/to/file'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `path`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description                            |
+|:---:|:---------------|:---------|:---------|:---------------------------------------|
+| *0* | `path`         | **Yes**  | `string` | Path to remove the trailing slash from |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                                 |
+|-------------|---------------------------------|
+| `string`    | Path without the trailing slash |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -7116,13 +7116,13 @@ Ensures there's a trailing slash on path
 '/path/to/file' -> '/path/to/file/'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `path`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description                         |
+|:---:|:---------------|:---------|:---------|:------------------------------------|
+| *0* | `path`         | **Yes**  | `string` | Path to ensure has a trailing slash |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                            |
+|-------------|----------------------------|
+| `string`    | Path with a trailing slash |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -7138,13 +7138,13 @@ Removes double slashes from path (an bug with Unix paths)
 '/path/to//file' -> '/path/to/file'
 ```
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `path`         | **Yes**  | `string` |
+|  #  | Parameter Name | Required | Type     | Description                        |
+|:---:|:---------------|:---------|:---------|:-----------------------------------|
+| *0* | `path`         | **Yes**  | `string` | Path to remove double slashes from |
 
-| Return Type |
-|-------------|
-| `string`    |
+| Return Type |                             |
+|-------------|-----------------------------|
+| `string`    | Path without double slashes |
 
 <p style="text-align: right" align="right"><a href="#pathtools"> [↑ Back to <b>PathTools</b> ↑] </a></p>
 
@@ -7218,14 +7218,14 @@ ABC ▕█████ ▏ [4 / 5]
 ABC ▕██████▏ [5 / 5]
 ```
 
-|  #  | Parameter Name | Required | Type                             | Default |
-|:---:|:---------------|:---------|:---------------------------------|:--------|
-| *0* | `max`          | *No*     | `number`                         |         |
-| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type                             | Default | Description                       |
+|:---:|:---------------|:---------|:---------------------------------|:--------|:----------------------------------|
+| *0* | `max`          | *No*     | `number`                         |         | Maximum value of the progress bar |
+| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    | Options for the progress bar      |
 
-| Return Type   |
-|---------------|
-| `ProgressBar` |
+| Return Type   |                     |
+|---------------|---------------------|
+| `ProgressBar` | Progress bar object |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7241,9 +7241,9 @@ Get the output string of the progress bar
 |:---:|:---------------|:---------|:----------|:--------|:----------------------------------------------------|
 | *0* | `applyWrap`    | *No*     | `boolean` | `false` | Whether or not to apply the wrapperFn to the output |
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7255,9 +7255,9 @@ getProgressBar().update(): string
 
 Trigger the progress bar to update/rerender
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7269,9 +7269,9 @@ getProgressBar().next(): string
 
 Set the progress bar to the next value
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7283,13 +7283,13 @@ getProgressBar().set(newCurrent: number): string
 
 Set the progress bar to a specific value
 
-|  #  | Parameter Name | Required | Type     |
-|:---:|:---------------|:---------|:---------|
-| *0* | `newCurrent`   | **Yes**  | `number` |
+|  #  | Parameter Name | Required | Type     | Description           |
+|:---:|:---------------|:---------|:---------|:----------------------|
+| *0* | `newCurrent`   | **Yes**  | `number` | The new current value |
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7301,9 +7301,9 @@ getProgressBar().reset(): string
 
 Set the progress bar to 0
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7315,9 +7315,9 @@ getProgressBar().start(): string
 
 Start displaying the progress bar
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7329,9 +7329,9 @@ getProgressBar().finish(): string
 
 Stop displaying the progress bar
 
-| Return Type |               |
-|-------------|---------------|
-| `string`    | output string |
+| Return Type |                   |
+|-------------|-------------------|
+| `string`    | The output string |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7420,13 +7420,13 @@ progressBar.getFullOptions({});
 // }
 ```
 
-|  #  | Parameter Name | Required | Type                 | Default |
-|:---:|:---------------|:---------|:---------------------|:--------|
-| *0* | `opts`         | *No*     | `ProgressBarOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type                 | Default | Description                  |
+|:---:|:---------------|:---------|:---------------------|:--------|:-----------------------------|
+| *0* | `opts`         | *No*     | `ProgressBarOptions` | `{}`    | Options for the progress bar |
 
-| Return Type              |
-|--------------------------|
-| `ProgressBarOptionsFull` |
+| Return Type              |                     |
+|--------------------------|---------------------|
+| `ProgressBarOptionsFull` | Full options object |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7457,13 +7457,13 @@ bar3.set(75);
 // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
 ```
 
-|  #  | Parameter Name | Required | Type                                 | Default |
-|:---:|:---------------|:---------|:-------------------------------------|:--------|
-| *0* | `options`      | *No*     | `progressBar.MultiBarManagerOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type                                 | Default | Description                       |
+|:---:|:---------------|:---------|:-------------------------------------|:--------|:----------------------------------|
+| *0* | `options`      | *No*     | `progressBar.MultiBarManagerOptions` | `{}`    | Options for the multi-bar manager |
 
-| Return Type       |
-|-------------------|
-| `MultiBarManager` |
+| Return Type       |                          |
+|-------------------|--------------------------|
+| `MultiBarManager` | Multi-bar manager object |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7494,10 +7494,10 @@ bar3.set(75);
 // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
 ```
 
-|  #  | Parameter Name       | Required | Type          | Default               |
-|:---:|:---------------------|:---------|:--------------|:----------------------|
-| *0* | `bar`                | **Yes**  | `ProgressBar` |                       |
-| *1* | `removeWhenFinished` | *No*     | `boolean`     | `opts.removeFinished` |
+|  #  | Parameter Name       | Required | Type          | Default               | Description                                |
+|:---:|:---------------------|:---------|:--------------|:----------------------|:-------------------------------------------|
+| *0* | `bar`                | **Yes**  | `ProgressBar` |                       | Progress bar to add                        |
+| *1* | `removeWhenFinished` | *No*     | `boolean`     | `opts.removeFinished` | Whether to remove the bar when it finishes |
 
 | Return Type |
 |-------------|
@@ -7529,14 +7529,14 @@ bar3.set(75);
 // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
 ```
 
-|  #  | Parameter Name | Required | Type                             | Default |
-|:---:|:---------------|:---------|:---------------------------------|:--------|
-| *0* | `max`          | *No*     | `number`                         |         |
-| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    |
+|  #  | Parameter Name | Required | Type                             | Default | Description                       |
+|:---:|:---------------|:---------|:---------------------------------|:--------|:----------------------------------|
+| *0* | `max`          | *No*     | `number`                         |         | Maximum value of the progress bar |
+| *1* | `options`      | *No*     | `progressBar.ProgressBarOptions` | `{}`    | Options for the progress bar      |
 
-| Return Type   |
-|---------------|
-| `ProgressBar` |
+| Return Type   |                     |
+|---------------|---------------------|
+| `ProgressBar` | Progress bar object |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7565,9 +7565,9 @@ manager.remove(bar2);
 // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
 ```
 
-|  #  | Parameter Name | Required | Type          |
-|:---:|:---------------|:---------|:--------------|
-| *0* | `bar`          | **Yes**  | `ProgressBar` |
+|  #  | Parameter Name | Required | Type          | Description            |
+|:---:|:---------------|:---------|:--------------|:-----------------------|
+| *0* | `bar`          | **Yes**  | `ProgressBar` | Progress bar to remove |
 
 | Return Type |
 |-------------|
@@ -7630,9 +7630,9 @@ manager.remove(bar2);
 console.log(manager.getBars()); // [ bar1, bar3 ]
 ```
 
-| Return Type     |
-|-----------------|
-| `ProgressBar[]` |
+| Return Type     |                        |
+|-----------------|------------------------|
+| `ProgressBar[]` | Array of progress bars |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7685,13 +7685,13 @@ progressBar.getFullMultiBarManagerOptions({});
 // }
 ```
 
-|  #  | Parameter Name | Required | Type                     |
-|:---:|:---------------|:---------|:-------------------------|
-| *0* | `opts`         | **Yes**  | `MultiBarManagerOptions` |
+|  #  | Parameter Name | Required | Type                     | Description                       |
+|:---:|:---------------|:---------|:-------------------------|:----------------------------------|
+| *0* | `opts`         | **Yes**  | `MultiBarManagerOptions` | Options for the multi-bar manager |
 
-| Return Type                  |
-|------------------------------|
-| `MultiBarManagerOptionsFull` |
+| Return Type                  |                     |
+|------------------------------|---------------------|
+| `MultiBarManagerOptionsFull` | Full options object |
 
 <p style="text-align: right" align="right"><a href="#progressbar"> [↑ Back to <b>progressBar</b> ↑] </a></p>
 
@@ -7732,9 +7732,9 @@ C
 D
 ```
 
-|  #   | Parameter Name | Required | Type    |
-|:----:|:---------------|:---------|:--------|
-| *0…* | `text`         | *No*     | `any[]` |
+|  #   | Parameter Name | Required | Type    | Description   |
+|:----:|:---------------|:---------|:--------|:--------------|
+| *0…* | `text`         | *No*     | `any[]` | Text to print |
 
 | Return Type |
 |-------------|
@@ -7759,10 +7759,10 @@ const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
 const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
 ```
 
-|  #  | Parameter Name       | Required | Type     |
-|:---:|:---------------------|:---------|:---------|
-| *0* | `previousDrawnLines` | **Yes**  | `number` |
-| *1* | `output`             | **Yes**  | `string` |
+|  #  | Parameter Name       | Required | Type     | Description                      |
+|:---:|:---------------------|:---------|:---------|:---------------------------------|
+| *0* | `previousDrawnLines` | **Yes**  | `number` | Number of lines previously drawn |
+| *1* | `output`             | **Yes**  | `string` | Output to print                  |
 
 | Return Type |
 |-------------|
@@ -7781,7 +7781,7 @@ A collection of tools for working with progress bars (from swiss-ak)
 ### getColouredProgressBarOpts
 
 ```typescript
-progressBarTools.getColouredProgressBarOpts(opts: progressBar.ProgressBarOptions, randomise: boolean): (prefix?: string, override?: any, resetColours?: boolean) => any
+progressBarTools.getColouredProgressBarOpts(opts: progressBar.ProgressBarOptions, randomise: boolean): (prefix?: string, override?: any, resetColours?: boolean) => progressBar.ProgressBarOptions
 ```
 
 Helper for providing a consistent set of options for a progress bar, and colouring them appropriately
@@ -7796,14 +7796,14 @@ const progressBar = getProgressBar(numThings, progOpts('Things'));
 progressBar.update();
 ```
 
-|  #  | Parameter Name | Required | Type                             | Default |
-|:---:|:---------------|:---------|:---------------------------------|:--------|
-| *0* | `opts`         | **Yes**  | `progressBar.ProgressBarOptions` |         |
-| *1* | `randomise`    | *No*     | `boolean`                        | `false` |
+|  #  | Parameter Name | Required | Type                             | Default | Description                                |
+|:---:|:---------------|:---------|:---------------------------------|:--------|:-------------------------------------------|
+| *0* | `opts`         | **Yes**  | `progressBar.ProgressBarOptions` |         | Options for the progress bar               |
+| *1* | `randomise`    | *No*     | `boolean`                        | `false` | Whether to randomise the wrapper functions |
 
-| Return Type                                                        |
-|--------------------------------------------------------------------|
-| `(prefix?: string, override?: any, resetColours?: boolean) => any` |
+| Return Type                                                                                   |                                          |
+|-----------------------------------------------------------------------------------------------|------------------------------------------|
+| `(prefix?: string, override?: any, resetColours?: boolean) => progressBar.ProgressBarOptions` | Function to get the progress bar options |
 
 <p style="text-align: right" align="right"><a href="#progressbartools"> [↑ Back to <b>progressBarTools</b> ↑] </a></p>
 
@@ -7826,9 +7826,9 @@ Wait for the next tick
 await nextTick();
 ```
 
-| Return Type        |
-|--------------------|
-| `Promise<unknown>` |
+| Return Type        |                                                     |
+|--------------------|-----------------------------------------------------|
+| `Promise<unknown>` | Promise that resolves when the next tick is reached |
 
 <p style="text-align: right" align="right"><a href="#waiters"> [↑ Back to <b>waiters</b> ↑] </a></p>
 
@@ -7861,15 +7861,15 @@ kl.start();
 kl.stop();
 ```
 
-|  #  | Parameter Name | Required | Type                                          | Default |
-|:---:|:---------------|:---------|:----------------------------------------------|:--------|
-| *0* | `callback`     | **Yes**  | `(keyName: string, rawValue: string) => void` |         |
-| *1* | `isStart`      | *No*     | `boolean`                                     | `true`  |
-| *2* | `isDebugLog`   | *No*     | `boolean`                                     | `false` |
+|  #  | Parameter Name | Required | Type                                          | Default | Description                                     |
+|:---:|:---------------|:---------|:----------------------------------------------|:--------|:------------------------------------------------|
+| *0* | `callback`     | **Yes**  | `(keyName: string, rawValue: string) => void` |         | Callback function when keys are pressed         |
+| *1* | `isStart`      | *No*     | `boolean`                                     | `true`  | Whether to start listening for keys immediately |
+| *2* | `isDebugLog`   | *No*     | `boolean`                                     | `false` | Whether to log key codes to the console         |
 
-| Return Type   |
-|---------------|
-| `KeyListener` |
+| Return Type   |                    |
+|---------------|--------------------|
+| `KeyListener` | KeyListener object |
 
 <p style="text-align: right" align="right"><a href="#keylistener"> [↑ Back to <b>keyListener</b> ↑] </a></p>
 

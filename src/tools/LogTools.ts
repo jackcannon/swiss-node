@@ -51,8 +51,8 @@ export namespace LogTools {
    * //   [ [ [ 'm', 'n', 'o' ] ] ]
    * // ]
    * ```
-   * @param {any} item
-   * @returns {string}
+   * @param {any} item - Item to get a string for
+   * @returns {string} - String representation of the item
    */
   export const getLogStr = (item: any): string => {
     const inspectList = ['object', 'boolean', 'number'];
@@ -74,10 +74,10 @@ export namespace LogTools {
    * ```typescript
    * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
    * ```
-   * @param {string} prefix
-   * @param {Function} [wrapper=fn.noact]
-   * @param {...any} [args]
-   * @returns {string}
+   * @param {string} prefix - Prefix to add to the log
+   * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+   * @param {...any} [args] - Arguments to log
+   * @returns {string} - Processed log string
    */
   export const processLogContents = (prefix: string, wrapper: Function = fn.noact, ...args: any[]): string =>
     args
@@ -99,9 +99,9 @@ export namespace LogTools {
    * const log = LogTools.getLog('prefix:');
    * log('hello'); // 'prefix: hello'
    * ```
-   * @param {string} prefix
-   * @param {Function} [wrapper=fn.noact]
-   * @returns {(...args: any[]) => void}
+   * @param {string} prefix - Prefix to add to the log
+   * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+   * @returns {(...args: any[]) => void} - Log function
    */
   export const getLog =
     (prefix: string, wrapper: Function = fn.noact) =>

@@ -145,9 +145,9 @@ export namespace progressBar {
    * ABC ▕█████ ▏ [4 / 5]
    * ABC ▕██████▏ [5 / 5]
    * ```
-   * @param {number} [max]
-   * @param {progressBar.ProgressBarOptions} [options={}]
-   * @returns {ProgressBar}
+   * @param {number} [max] - Maximum value of the progress bar
+   * @param {progressBar.ProgressBarOptions} [options={}] - Options for the progress bar
+   * @returns {ProgressBar} - Progress bar object
    */
   export const getProgressBar = (max?: number, options: progressBar.ProgressBarOptions = {}): ProgressBar => {
     const args = {
@@ -169,8 +169,8 @@ export namespace progressBar {
      *
      * Get the output string of the progress bar
      *
-     * @param {boolean} [applyWrap=false] Whether or not to apply the wrapperFn to the output
-     * @returns {string} The output string
+     * @param {boolean} [applyWrap=false] - Whether or not to apply the wrapperFn to the output
+     * @returns {string} - The output string
      */
     const getBar = (applyWrap: boolean = false): string => {
       const [suffix, suffixWrapped] = getSuffix(current, args.max, isMaxKnown, opts);
@@ -202,7 +202,7 @@ export namespace progressBar {
      *
      * Trigger the progress bar to update/rerender
      *
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     const update = (): string => {
       const output = getBar(true);
@@ -222,7 +222,7 @@ export namespace progressBar {
      * - `getProgressBar().next`
      *
      * Set the progress bar to the next value
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     const next = (): string => {
       if (finished) return '';
@@ -242,8 +242,8 @@ export namespace progressBar {
      * - `getProgressBar().set`
      *
      * Set the progress bar to a specific value
-     * @param {number} newCurrent
-     * @returns {string} The output string
+     * @param {number} newCurrent - The new current value
+     * @returns {string} - The output string
      */
     const set = (newCurrent: number): string => {
       const args = {
@@ -266,7 +266,7 @@ export namespace progressBar {
      * - `getProgressBar().reset`
      *
      * Set the progress bar to 0
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     const reset = (): string => {
       return set(0);
@@ -278,7 +278,7 @@ export namespace progressBar {
      * - `getProgressBar().start`
      *
      * Start displaying the progress bar
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     const start = (): string => {
       if (finished) return '';
@@ -300,7 +300,7 @@ export namespace progressBar {
      * - `getProgressBar().finish`
      *
      * Stop displaying the progress bar
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     const finish = (): string => {
       finished = true;
@@ -575,8 +575,8 @@ export namespace progressBar {
    * //   printFn: [Function],
    * // }
    * ```
-   * @param {ProgressBarOptions} [opts={}]
-   * @returns {ProgressBarOptionsFull}
+   * @param {ProgressBarOptions} [opts={}] - Options for the progress bar
+   * @returns {ProgressBarOptionsFull} - Full options object
    */
   export const getFullOptions = (opts: ProgressBarOptions = {}): ProgressBarOptionsFull => ({
     prefix: option(opts.prefix, '', (v, dflt) => safe.str(v, true, dflt)),
@@ -649,8 +649,8 @@ export namespace progressBar {
    * // Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
    * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
    * ```
-   * @param {progressBar.MultiBarManagerOptions} [options={}]
-   * @returns {MultiBarManager}
+   * @param {progressBar.MultiBarManagerOptions} [options={}] - Options for the multi-bar manager
+   * @returns {MultiBarManager} - Multi-bar manager object
    */
   export const getMultiBarManager = (options: progressBar.MultiBarManagerOptions = {}): MultiBarManager => {
     const args = {
@@ -694,8 +694,8 @@ export namespace progressBar {
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
      *
-     * @param {ProgressBar} bar
-     * @param {boolean} [removeWhenFinished=opts.removeFinished]
+     * @param {ProgressBar} bar - Progress bar to add
+     * @param {boolean} [removeWhenFinished=opts.removeFinished] - Whether to remove the bar when it finishes
      * @returns {void}
      */
     const add: MultiBarManager['add'] = (bar: ProgressBar, removeWhenFinished: boolean = opts.removeFinished): void => {
@@ -778,9 +778,9 @@ export namespace progressBar {
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
      *
-     * @param {number} [max]
-     * @param {progressBar.ProgressBarOptions} [options={}]
-     * @returns {ProgressBar}
+     * @param {number} [max] - Maximum value of the progress bar
+     * @param {progressBar.ProgressBarOptions} [options={}] - Options for the progress bar
+     * @returns {ProgressBar} - Progress bar object
      */
     const addNew: MultiBarManager['addNew'] = (max?: number, options: progressBar.ProgressBarOptions = {}): ProgressBar => {
       const args2 = {
@@ -816,7 +816,7 @@ export namespace progressBar {
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
      *
-     * @param {ProgressBar} bar
+     * @param {ProgressBar} bar - Progress bar to remove
      * @returns {void}
      */
     const remove: MultiBarManager['remove'] = (bar: ProgressBar): void => {
@@ -916,7 +916,7 @@ export namespace progressBar {
      * console.log(manager.getBars()); // [ bar1, bar3 ]
      * ```
      *
-     * @returns {ProgressBar[]}
+     * @returns {ProgressBar[]} - Array of progress bars
      */
     const getBars: MultiBarManager['getBars'] = (): ProgressBar[] => {
       return barPacks.map((pack) => pack.bar);
@@ -1052,8 +1052,8 @@ export namespace progressBar {
    * //   printFn: [Function],
    * // }
    * ```
-   * @param {MultiBarManagerOptions} opts
-   * @returns {MultiBarManagerOptionsFull}
+   * @param {MultiBarManagerOptions} opts - Options for the multi-bar manager
+   * @returns {MultiBarManagerOptionsFull} - Full options object
    */
   export const getFullMultiBarManagerOptions = (opts: MultiBarManagerOptions): MultiBarManagerOptionsFull => {
     // ensure safe nums before using as defaults, etc
@@ -1135,7 +1135,7 @@ export namespace progressBar {
      * C
      * D
      * ```
-     * @param {...any} [text]
+     * @param {...any} [text] - Text to print
      * @returns {void}
      */
     export const printLn = (...text: any[]) => {
@@ -1174,8 +1174,8 @@ export namespace progressBar {
      * const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
      * const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
      * ```
-     * @param {number} previousDrawnLines
-     * @param {string} output
+     * @param {number} previousDrawnLines - Number of lines previously drawn
+     * @param {string} output - Output to print
      * @returns {void}
      */
     export const multiPrintFn = (previousDrawnLines: number, output: string): void => {

@@ -66,13 +66,13 @@ const getTrimActionBar = () => {
  * ```typescript
  * const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
  * ```
- * @param {string | Breadcrumb} question
- * @param {number} totalFrames
- * @param {number} [frameRate=60]
- * @param {Partial<Handles<number>>} [initial]
- * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<Handles<number>>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {number} totalFrames - Total number of frames
+ * @param {number} [frameRate=60] - Frame rate
+ * @param {Partial<Handles<number>>} [initial] - Initial handle positions
+ * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<Handles<number>>} - Promise that resolves with the user selected handles
  */
 export const trim = async (
   question: string | Breadcrumb,

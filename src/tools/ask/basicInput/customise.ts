@@ -558,7 +558,7 @@ const setThemeColour = <
  * ask.customise({ general: { lc } }); // set a line counter for that all prompts will add to when complete
  * ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
  * ```
- * @param {Partial<ask.AskOptions>} options
+ * @param {Partial<ask.AskOptions>} options - Options to customise the behaviour/appearance of the `ask` prompts
  * @returns {void}
  */
 export const customise = (options: Partial<ask.AskOptions>) => {

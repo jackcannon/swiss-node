@@ -45,10 +45,10 @@ type TupleFromQuestionFuncs<T extends QuestionFunc<any>[]> = {
  * Question 1: answer1
  * Question 2a: [ answer2, answer2b ]
  * ```
- * @param {string | Breadcrumb} question
- * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader]
- * @param {...[...T]} [questionFns]
- * @returns {Promise<TupleFromQuestionFuncs<T>>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader] - Section header function
+ * @param {...[...T]} [questionFns] - Question functions
+ * @returns {Promise<TupleFromQuestionFuncs<T>>} - Promise that resolves with the user input
  */
 export const section = async <T extends QuestionFunc<any>[]>(
   question: string | Breadcrumb,
@@ -114,11 +114,11 @@ export const section = async <T extends QuestionFunc<any>[]>(
  * ask.separator('up', 5, 2);
  * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
  * ```
- * @param {'down' | 'none' | 'up'} [version='down']
- * @param {number} [spacing=8]
- * @param {number} [offset=0]
- * @param {number} [width=out.utils.getTerminalWidth() - 2]
- * @param {LineCounter} [lc]
+ * @param {'down' | 'none' | 'up'} [version='down'] - Type of separator
+ * @param {number} [spacing=8] - Spacing between the separator nodes
+ * @param {number} [offset=0] - Offset of the separator nodes
+ * @param {number} [width=out.utils.getTerminalWidth() - 2] - Width of the separator
+ * @param {LineCounter} [lc] - Line counter
  * @returns {void}
  */
 export const separator = (

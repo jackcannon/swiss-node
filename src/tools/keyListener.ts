@@ -20,10 +20,10 @@
  *
  * kl.stop();
  * ```
- * @param {(keyName: string, rawValue: string) => void} callback
- * @param {boolean} [isStart=true]
- * @param {boolean} [isDebugLog=false]
- * @returns {KeyListener}
+ * @param {(keyName: string, rawValue: string) => void} callback - Callback function when keys are pressed
+ * @param {boolean} [isStart=true] - Whether to start listening for keys immediately
+ * @param {boolean} [isDebugLog=false] - Whether to log key codes to the console
+ * @returns {KeyListener} - KeyListener object
  */
 export const getKeyListener = (
   callback: (keyName: string, rawValue: string) => void,

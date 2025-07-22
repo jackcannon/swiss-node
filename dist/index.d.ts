@@ -19,9 +19,9 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
          * ```
          *
-         * @param {number} [x=0] The x position to move the cursor to
-         * @param {number} [y=0] The y position to move the cursor to
-         * @returns {string} ANSI escape codes
+         * @param {number} [x=0] - The x position to move the cursor to
+         * @param {number} [y=0] - The y position to move the cursor to
+         * @returns {string} - ANSI escape codes
          */
         to: (x?: number, y?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.move ##### -->
@@ -37,9 +37,9 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines and left 10 spaces
          * ```
          *
-         * @param {number} [x=0] How many spaces to move the cursor horizontally (negative values move left)
-         * @param {number} [y=0] How many spaces to move the cursor vertically (negative values move up)
-         * @returns {string} ANSI escape codes
+         * @param {number} [x=0] - How many spaces to move the cursor horizontally (negative values move left)
+         * @param {number} [y=0] - How many spaces to move the cursor vertically (negative values move up)
+         * @returns {string} - ANSI escape codes
          */
         move: (x?: number, y?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.up ##### -->
@@ -55,8 +55,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
          * ```
          *
-         * @param {number} [count=1] How many spaces to move the cursor up
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many spaces to move the cursor up
+         * @returns {string} - ANSI escape codes
          */
         up: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.down ##### -->
@@ -72,8 +72,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
          * ```
          *
-         * @param {number} [count=1] How many spaces to move the cursor down
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many spaces to move the cursor down
+         * @returns {string} - ANSI escape codes
          */
         down: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.left ##### -->
@@ -89,8 +89,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
          * ```
          *
-         * @param {number} [count=1] How many spaces to move the cursor left
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many spaces to move the cursor left
+         * @returns {string} - ANSI escape codes
          */
         left: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.right ##### -->
@@ -106,8 +106,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
          * ```
          *
-         * @param {number} [count=1] How many spaces to move the cursor right
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many spaces to move the cursor right
+         * @returns {string} - ANSI escape codes
          */
         right: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.nextLine ##### -->
@@ -123,8 +123,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines and to the beginning of the next line
          * ```
          *
-         * @param {number} [count=1] How many lines to move the cursor down
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to move the cursor down
+         * @returns {string} - ANSI escape codes
          */
         nextLine: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.prevLine ##### -->
@@ -140,8 +140,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines and to the beginning of the previous line
          * ```
          *
-         * @param {number} [count=1] How many lines to move the cursor up
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to move the cursor up
+         * @returns {string} - ANSI escape codes
          */
         prevLine: (count?: number) => string;
         /**<!-- DOCS: out.ansi.cursor.lineStart ##### -->
@@ -172,8 +172,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
          * ```
          *
-         * @param {boolean} isShow Whether or not the cursor should be shown
-         * @returns {string} ANSI escape code
+         * @param {boolean} isShow - Whether or not the cursor should be shown
+         * @returns {string} - ANSI escape code
          */
         setShow: (isShow: boolean) => string;
         /**<!-- DOCS: out.ansi.cursor.show ##### -->
@@ -260,8 +260,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
          * ```
          *
-         * @param {number} [count=1] How much to scroll the terminal up by
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How much to scroll the terminal up by
+         * @returns {string} - ANSI escape codes
          */
         up: (count?: number) => string;
         /**<!-- DOCS: out.ansi.scroll.down ##### -->
@@ -277,8 +277,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
          * ```
          *
-         * @param {number} [count=1] How much to scroll the terminal down by
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How much to scroll the terminal down by
+         * @returns {string} - ANSI escape codes
          */
         down: (count?: number) => string;
     };
@@ -316,8 +316,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor by 5 lines
          * ```
          *
-         * @param {number} [count=1] How many lines to erase
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to erase
+         * @returns {string} - ANSI escape codes
          */
         up: (count?: number) => string;
         /**<!-- DOCS: out.ansi.erase.down ##### -->
@@ -333,8 +333,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the cursor by 5 lines
          * ```
          *
-         * @param {number} [count=1] How many lines to erase
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to erase
+         * @returns {string} - ANSI escape codes
          */
         down: (count?: number) => string;
         /**<!-- DOCS: out.ansi.erase.line ##### -->
@@ -394,8 +394,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cursor
          * ```
          *
-         * @param {number} [count=1] How many lines to erase
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to erase
+         * @returns {string} - ANSI escape codes
          */
         lines: (count?: number) => string;
         /**<!-- DOCS: out.ansi.erase.reserve ##### -->
@@ -412,8 +412,8 @@ interface AnsiEscapeCodes {
          * process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are blank and on the screen
          * ```
          *
-         * @param {number} [count=1] How many lines to reserve
-         * @returns {string} ANSI escape codes
+         * @param {number} [count=1] - How many lines to reserve
+         * @returns {string} - ANSI escape codes
          */
         reserve: (count?: number) => string;
     };
@@ -633,8 +633,8 @@ interface ColrFn extends WrapFn {
      * colr.red.light('Hello World!'); // 'Hello World!' with light red text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly light: ColrFn;
     /**<!-- DOCS: colr.dark #### -->
@@ -653,8 +653,8 @@ interface ColrFn extends WrapFn {
      * colr.red.dark('Hello World!'); // 'Hello World!' with dark red text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly dark: ColrFn;
     /**<!-- DOCS: colr.lightBg #### -->
@@ -673,8 +673,8 @@ interface ColrFn extends WrapFn {
      * colr.redBg.lightBg('Hello World!'); // 'Hello World!' with a light red background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightBg: ColrFn;
     /**<!-- DOCS: colr.darkBg #### -->
@@ -693,8 +693,8 @@ interface ColrFn extends WrapFn {
      * colr.redBg.darkBg('Hello World!'); // 'Hello World!' with a dark red background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkBg: ColrFn;
     /**<!-- DOCS: colr.textColourHeader ### -->
@@ -718,8 +718,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.red('Hello World!'); // 'Hello World!' with __dark__ red text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly red: ColrFn;
     /**<!-- DOCS: colr.darkRed ##### -->
@@ -736,8 +736,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkRed: ColrFn;
     /**<!-- DOCS: colr.lightRed ##### -->
@@ -755,8 +755,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightRed: ColrFn;
     /**<!-- DOCS: colr.green #### -->
@@ -777,8 +777,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.green('Hello World!'); // 'Hello World!' with __dark__ green text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly green: ColrFn;
     /**<!-- DOCS: colr.darkGreen ##### -->
@@ -795,8 +795,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkGreen: ColrFn;
     /**<!-- DOCS: colr.lightGreen ##### -->
@@ -814,8 +814,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightGreen: ColrFn;
     /**<!-- DOCS: colr.yellow #### -->
@@ -836,8 +836,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.yellow('Hello World!'); // 'Hello World!' with __dark__ yellow text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly yellow: ColrFn;
     /**<!-- DOCS: colr.darkYellow ##### -->
@@ -854,8 +854,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkYellow: ColrFn;
     /**<!-- DOCS: colr.lightYellow ##### -->
@@ -873,8 +873,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightYellow: ColrFn;
     /**<!-- DOCS: colr.blue #### -->
@@ -895,8 +895,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.blue('Hello World!'); // 'Hello World!' with __dark__ blue text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly blue: ColrFn;
     /**<!-- DOCS: colr.darkBlue ##### -->
@@ -913,8 +913,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkBlue: ColrFn;
     /**<!-- DOCS: colr.lightBlue ##### -->
@@ -932,8 +932,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightBlue: ColrFn;
     /**<!-- DOCS: colr.magenta #### -->
@@ -954,8 +954,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.magenta('Hello World!'); // 'Hello World!' with __dark__ magenta text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly magenta: ColrFn;
     /**<!-- DOCS: colr.darkMagenta ##### -->
@@ -972,8 +972,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkMagenta: ColrFn;
     /**<!-- DOCS: colr.lightMagenta ##### -->
@@ -991,8 +991,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightMagenta: ColrFn;
     /**<!-- DOCS: colr.cyan #### -->
@@ -1013,8 +1013,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.cyan('Hello World!'); // 'Hello World!' with __dark__ cyan text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly cyan: ColrFn;
     /**<!-- DOCS: colr.darkCyan ##### -->
@@ -1031,8 +1031,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkCyan: ColrFn;
     /**<!-- DOCS: colr.lightCyan ##### -->
@@ -1050,8 +1050,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightCyan: ColrFn;
     /**<!-- DOCS: colr.white #### -->
@@ -1072,8 +1072,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.white('Hello World!'); // 'Hello World!' with __dark__ white text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly white: ColrFn;
     /**<!-- DOCS: colr.darkWhite ##### -->
@@ -1090,8 +1090,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkWhite: ColrFn;
     /**<!-- DOCS: colr.lightWhite ##### -->
@@ -1109,8 +1109,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightWhite: ColrFn;
     /**<!-- DOCS: colr.backgroundColourHeader ### -->
@@ -1134,8 +1134,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.redBg('Hello World!'); // 'Hello World!' with a __dark__ red background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly redBg: ColrFn;
     /**<!-- DOCS: colr.darkRedBg ##### -->
@@ -1153,8 +1153,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkRedBg: ColrFn;
     /**<!-- DOCS: colr.lightRedBg ##### -->
@@ -1171,8 +1171,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightRedBg: ColrFn;
     /**<!-- DOCS: colr.greenBg #### -->
@@ -1193,8 +1193,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.greenBg('Hello World!'); // 'Hello World!' with a __dark__ green background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly greenBg: ColrFn;
     /**<!-- DOCS: colr.darkGreenBg ##### -->
@@ -1212,8 +1212,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkGreenBg: ColrFn;
     /**<!-- DOCS: colr.lightGreenBg ##### -->
@@ -1230,8 +1230,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightGreenBg: ColrFn;
     /**<!-- DOCS: colr.yellowBg #### -->
@@ -1252,8 +1252,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.yellowBg('Hello World!'); // 'Hello World!' with a __dark__ yellow background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly yellowBg: ColrFn;
     /**<!-- DOCS: colr.darkYellowBg ##### -->
@@ -1271,8 +1271,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkYellowBg: ColrFn;
     /**<!-- DOCS: colr.lightYellowBg ##### -->
@@ -1289,8 +1289,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightYellowBg: ColrFn;
     /**<!-- DOCS: colr.blueBg #### -->
@@ -1311,8 +1311,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.blueBg('Hello World!'); // 'Hello World!' with a __dark__ blue background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly blueBg: ColrFn;
     /**<!-- DOCS: colr.darkBlueBg ##### -->
@@ -1330,8 +1330,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkBlueBg: ColrFn;
     /**<!-- DOCS: colr.lightBlueBg ##### -->
@@ -1348,8 +1348,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightBlueBg: ColrFn;
     /**<!-- DOCS: colr.magentaBg #### -->
@@ -1370,8 +1370,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.magentaBg('Hello World!'); // 'Hello World!' with a __dark__ magenta background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly magentaBg: ColrFn;
     /**<!-- DOCS: colr.darkMagentaBg ##### -->
@@ -1389,8 +1389,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkMagentaBg: ColrFn;
     /**<!-- DOCS: colr.lightMagentaBg ##### -->
@@ -1407,8 +1407,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightMagentaBg: ColrFn;
     /**<!-- DOCS: colr.cyanBg #### -->
@@ -1429,8 +1429,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.cyanBg('Hello World!'); // 'Hello World!' with a __dark__ cyan background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly cyanBg: ColrFn;
     /**<!-- DOCS: colr.darkCyanBg ##### -->
@@ -1448,8 +1448,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkCyanBg: ColrFn;
     /**<!-- DOCS: colr.lightCyanBg ##### -->
@@ -1466,8 +1466,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightCyanBg: ColrFn;
     /**<!-- DOCS: colr.whiteBg #### -->
@@ -1488,8 +1488,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.whiteBg('Hello World!'); // 'Hello World!' with a __dark__ white background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly whiteBg: ColrFn;
     /**<!-- DOCS: colr.darkWhiteBg ##### -->
@@ -1507,8 +1507,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkWhiteBg: ColrFn;
     /**<!-- DOCS: colr.lightWhiteBg ##### -->
@@ -1525,8 +1525,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightWhiteBg: ColrFn;
     /**<!-- DOCS: colr.blacksHeader ### -->
@@ -1552,8 +1552,8 @@ interface ColrFn extends WrapFn {
      * colr.dark.black('Hello World!'); // 'Hello World!' with __dark__ black text
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly black: ColrFn;
     /**<!-- DOCS: colr.darkBlack ##### -->
@@ -1572,8 +1572,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkBlack: ColrFn;
     /**<!-- DOCS: colr.lightBlack ##### -->
@@ -1589,8 +1589,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightBlack: ColrFn;
     /**<!-- DOCS: colr.blackBg #### -->
@@ -1613,8 +1613,8 @@ interface ColrFn extends WrapFn {
      * colr.darkBg.blackBg('Hello World!'); // 'Hello World!' with a __dark__ black background
      * ```
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly blackBg: ColrFn;
     /**<!-- DOCS: colr.darkBlackBg ##### -->
@@ -1633,8 +1633,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly darkBlackBg: ColrFn;
     /**<!-- DOCS: colr.lightBlackBg ##### -->
@@ -1650,8 +1650,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly lightBlackBg: ColrFn;
     /**<!-- DOCS: colr.greysHeader ### -->
@@ -1671,8 +1671,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey -->
@@ -1688,8 +1688,8 @@ interface ColrFn extends WrapFn {
      * Unaffected by `light`/`dark` modifiers
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray: ColrFn;
     /**<!-- DOCS: colr.greyBg #### -->
@@ -1708,8 +1708,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Warning:__ May not be visible in some terminals, depending on the colour settings
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly greyBg: ColrFn;
     /**<!-- DOCS-ALIAS: colr.greyBg -->
@@ -1727,8 +1727,8 @@ interface ColrFn extends WrapFn {
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      * 
      * > __Warning:__ May not be visible in some terminals, depending on the colour settings
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grayBg: ColrFn;
     /**<!-- DOCS: colr.grey0 #### -->
@@ -1747,8 +1747,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey0: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey0 -->
@@ -1766,8 +1766,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey0.inverse` ≈ `colr.blackBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray0: ColrFn;
     /**<!-- DOCS: colr.grey1 #### -->
@@ -1788,8 +1788,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey1: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey1 -->
@@ -1809,8 +1809,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ May not be visible in some terminals, depending on the colour settings
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray1: ColrFn;
     /**<!-- DOCS: colr.grey2 #### -->
@@ -1829,8 +1829,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey2: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey2 -->
@@ -1848,8 +1848,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey2.inverse` ≈ `colr.darkWhiteBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray2: ColrFn;
     /**<!-- DOCS: colr.grey3 #### -->
@@ -1868,8 +1868,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey3: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey3 -->
@@ -1887,8 +1887,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey3.inverse` ≈ `colr.whiteBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray3: ColrFn;
     /**<!-- DOCS: colr.grey4 #### -->
@@ -1907,8 +1907,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey4: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey4 -->
@@ -1926,8 +1926,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey4.inverse` ≈ `colr.darkWhiteBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray4: ColrFn;
     /**<!-- DOCS: colr.grey5 #### -->
@@ -1946,8 +1946,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly grey5: ColrFn;
     /**<!-- DOCS-ALIAS: colr.grey5 -->
@@ -1965,8 +1965,8 @@ interface ColrFn extends WrapFn {
      * > __Warning:__ Numbered greys may not inverse as expected. `colr.grey5.inverse` ≈ `colr.whiteBg`
      * 
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly gray5: ColrFn;
     /**<!-- DOCS: colr.themesHeader ### -->
@@ -1983,8 +1983,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly primary: ColrFn;
     /**<!-- DOCS: colr.secondary #### -->
@@ -1998,8 +1998,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly secondary: ColrFn;
     /**<!-- DOCS: colr.success #### -->
@@ -2013,8 +2013,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly success: ColrFn;
     /**<!-- DOCS: colr.danger #### -->
@@ -2028,8 +2028,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly danger: ColrFn;
     /**<!-- DOCS: colr.warning #### -->
@@ -2043,8 +2043,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly warning: ColrFn;
     /**<!-- DOCS: colr.info #### -->
@@ -2058,8 +2058,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly info: ColrFn;
     /**<!-- DOCS: colr.primaryBg #### -->
@@ -2073,8 +2073,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly primaryBg: ColrFn;
     /**<!-- DOCS: colr.secondaryBg #### -->
@@ -2088,8 +2088,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly secondaryBg: ColrFn;
     /**<!-- DOCS: colr.successBg #### -->
@@ -2103,8 +2103,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly successBg: ColrFn;
     /**<!-- DOCS: colr.dangerBg #### -->
@@ -2118,8 +2118,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly dangerBg: ColrFn;
     /**<!-- DOCS: colr.warningBg #### -->
@@ -2133,8 +2133,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly warningBg: ColrFn;
     /**<!-- DOCS: colr.infoBg #### -->
@@ -2148,8 +2148,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly infoBg: ColrFn;
     /**<!-- DOCS: colr.otherStyleHeader ### -->
@@ -2166,8 +2166,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly reset: ColrFn;
     /**<!-- DOCS: colr.bold #### -->
@@ -2181,8 +2181,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly bold: ColrFn;
     /**<!-- DOCS: colr.dim #### -->
@@ -2198,8 +2198,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly dim: ColrFn;
     /**<!-- DOCS: colr.italic #### -->
@@ -2215,8 +2215,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly italic: ColrFn;
     /**<!-- DOCS: colr.overline #### -->
@@ -2232,8 +2232,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly overline: ColrFn;
     /**<!-- DOCS: colr.underline #### -->
@@ -2249,8 +2249,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly underline: ColrFn;
     /**<!-- DOCS: colr.strikethrough #### -->
@@ -2266,8 +2266,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly strikethrough: ColrFn;
     /**<!-- DOCS: colr.inverse #### -->
@@ -2281,8 +2281,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly inverse: ColrFn;
     /**<!-- DOCS: colr.hidden #### -->
@@ -2296,8 +2296,8 @@ interface ColrFn extends WrapFn {
      *
      * > __Note:__ A `ColrFn` - so can be used as a function, or chained with more colours/styles
      *
-     * @param {...string} text
-     * @returns {string}
+     * @param {...string} text - Text to colour
+     * @returns {string} - Coloured text
      */
     readonly hidden: ColrFn;
     /**<!-- DOCS: colr.helpersHeader ### -->
@@ -2896,10 +2896,10 @@ declare namespace table {
      * // │ Jane │ 26  │
      * // └──────┴─────┘
      * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {number}
+     * @param {any[][]} body - Body of the table
+     * @param {any[][]} [header] - Header of the table
+     * @param {TableOptions} [options={}] - Options for the table
+     * @returns {number} - Number of lines printed
      */
     const print: (body: any[][], header?: any[][], options?: TableOptions) => number;
     /**<!-- DOCS: table.printObjects ### @ -->
@@ -2936,10 +2936,10 @@ declare namespace table {
      * // │ 6     │       │       │
      * // └───────┴───────┴───────┘
      * ```
-     * @param {Object[]} objects
-     * @param {Object} [headers={}]
-     * @param {TableOptions} [options={}]
-     * @returns {number}
+     * @param {Object[]} objects - Objects to print
+     * @param {Object} [headers={}] - Headers for the table
+     * @param {TableOptions} [options={}] - Options for the table
+     * @returns {number} - Number of lines printed
      */
     const printObjects: (objects: Object[], headers?: Object, options?: TableOptions) => number;
     /**<!-- DOCS: table.markdown ### @ -->
@@ -2963,10 +2963,10 @@ declare namespace table {
      * // | Alexander |       25       | Builder           |
      * // |      Jane |       26       | Software Engineer |
      * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {string[]}
+     * @param {any[][]} body - Body of the table
+     * @param {any[][]} [header] - Header of the table
+     * @param {TableOptions} [options={}] - Options for the table
+     * @returns {string[]} - Array of lines
      */
     const markdown: (body: any[][], header?: any[][], options?: TableOptions) => string[];
     /**<!-- DOCS: table.getLines ### @ -->
@@ -2990,10 +2990,10 @@ declare namespace table {
      * //   '└──────┴─────┘'
      * // ]
      * ```
-     * @param {any[][]} body
-     * @param {any[][]} [header]
-     * @param {TableOptions} [options={}]
-     * @returns {string[]}
+     * @param {any[][]} body - Body of the table
+     * @param {any[][]} [header] - Header of the table
+     * @param {TableOptions} [options={}] - Options for the table
+     * @returns {string[]} - Array of lines
      */
     const getLines: (body: any[][], header?: any[][], options?: TableOptions) => string[];
     /**<!-- DOCS: table.FullTableOptions ###! -->
@@ -3282,9 +3282,9 @@ declare namespace table {
          * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
          * // }
          * ```
-         * @param {Object[]} objects
-         * @param {Object} [headers={}]
-         * @returns {{ header: any[][]; body: any[][]; }}
+         * @param {Object[]} objects - Objects to convert to a table
+         * @param {Object} [headers={}] - Headers for the table
+         * @returns {{ header: any[][]; body: any[][]; }} - Table object
          */
         const objectsToTable: (objects: Object[], headers?: Object) => {
             header: any[][];
@@ -3309,8 +3309,8 @@ declare namespace table {
          * //   [ 25, 26, 27 ]
          * // ]
          * ```
-         * @param {any[][]} rows
-         * @returns {any[][]}
+         * @param {any[][]} rows - Rows to transpose
+         * @returns {any[][]} - Transposed rows
          */
         const transpose: (rows: any[][]) => any[][];
         /**<!-- DOCS: table.utils.concatRows #### @ -->
@@ -3335,8 +3335,8 @@ declare namespace table {
          * //   [ 'Derek', 27 ]
          * // ]
          * ```
-         * @param {{ header: any[][]; body: any[][] }} cells
-         * @returns {any[][]}
+         * @param {{ header: any[][]; body: any[][] }} cells - Cells to concatenate
+         * @returns {any[][]} - Concatenated rows
          */
         const concatRows: (cells: {
             header: any[][];
@@ -3376,12 +3376,12 @@ declare namespace table {
          * // │ 6 │ 7 │ 8 │
          * // └───┴───┴───┘
          * ```
-         * @param {WrapFn} format
-         * @param {number} [row]
-         * @param {number} [col]
-         * @param {boolean} [isHeader]
-         * @param {boolean} [isBody]
-         * @returns {TableFormatConfig}
+         * @param {WrapFn} format - Wrap function (e.g. colr.blue)
+         * @param {number} [row] - Row to apply the format to
+         * @param {number} [col] - Column to apply the format to
+         * @param {boolean} [isHeader] - Whether to apply the format to the header
+         * @param {boolean} [isBody] - Whether to apply the format to the body
+         * @returns {TableFormatConfig} - Format configuration object
          */
         const getFormat: (format: WrapFn, row?: number, col?: number, isHeader?: boolean, isBody?: boolean) => TableFormatConfig;
         /**<!-- DOCS: table.utils.getFullOptions #### @ -->
@@ -3397,8 +3397,8 @@ declare namespace table {
          * };
          * table.utils.getFullOptions(someOpts) // { ... } with defaults applied
          * ```
-         * @param {TableOptions} opts
-         * @returns {FullTableOptions}
+         * @param {TableOptions} opts - Partial options for the table
+         * @returns {FullTableOptions} - Full options object
          */
         const getFullOptions: (opts: TableOptions) => FullTableOptions;
     }
@@ -3434,8 +3434,8 @@ interface LineCounter$1 {
      * lc.log('hello'); // 1
      * ```
      *
-     * @param {...any} args The arguments to log
-     * @returns {number} The number of lines added
+     * @param {...any} args - Arguments to log
+     * @returns {number} - Number of lines added
      */
     log(...args: any[]): number;
     /**<!-- DOCS: out.LineCounter.overwrite ##### -->
@@ -3452,8 +3452,8 @@ interface LineCounter$1 {
      * lc.overwrite('hello'); // 1
      * ```
      *
-     * @param {...any} args The arguments to overwrite
-     * @returns {number} The number of lines added
+     * @param {...any} args - Arguments to overwrite
+     * @returns {number} - Number of lines added
      */
     overwrite(...args: any[]): number;
     /**<!-- DOCS: out.LineCounter.wrap ##### -->
@@ -3466,10 +3466,10 @@ interface LineCounter$1 {
      * lc.wrap(1, () => console.log('a single line')); // 1
      * ```
      *
-     * @param {number} newLines The number of lines to add
-     * @param {(...args: A[]) => number | T} func The function to wrap
-     * @param {...A} args The arguments to pass to the function
-     * @returns {T} The result of the function
+     * @param {number} newLines - Number of lines to add
+     * @param {(...args: A[]) => number | T} func - Function to wrap
+     * @param {...A} args - Arguments to pass to the function
+     * @returns {T} - Result of the function
      */
     wrap: <T = any, A = any>(newLines: number, func: (...args: A[]) => number | T, ...args: A[]) => T;
     /**<!-- DOCS: out.LineCounter.add ##### -->
@@ -3482,7 +3482,7 @@ interface LineCounter$1 {
      * lc.add(1);
      * ```
      *
-     * @param {number} newLines The number of lines to add
+     * @param {number} newLines - Number of lines to add
      * @returns {void}
      */
     add(newLines: number): void;
@@ -3499,7 +3499,7 @@ interface LineCounter$1 {
      * lc.get(); // 3
      * ```
      *
-     * @returns {number} The line counter
+     * @returns {number} - Line count
      */
     get(): number;
     /**<!-- DOCS: out.LineCounter.getSince ##### -->
@@ -3518,8 +3518,8 @@ interface LineCounter$1 {
      * lc.getSince('test-b'); // 1
      * ```
      *
-     * @param {string} checkpointID The checkpoint to check
-     * @returns {number} The number of lines since the checkpoint
+     * @param {string} checkpointID - Checkpoint to check
+     * @returns {number} - Number of lines since the checkpoint
      */
     getSince(checkpointID: string): number;
     /**<!-- DOCS: out.LineCounter.moveCursor ##### -->
@@ -3536,7 +3536,7 @@ interface LineCounter$1 {
      * lc.log('world'); // 1
      * ```
      *
-     * @param {number} y How many lines to move the cursor (down if positive, up if negative)
+     * @param {number} y - How many lines to move the cursor (down if positive, up if negative)
      * @returns {void}
      */
     moveCursor(y: number): void;
@@ -3576,7 +3576,7 @@ interface LineCounter$1 {
      * lc.log('world'); // 1
      * ```
      *
-     * @param {string} checkpointID The checkpoint to move to
+     * @param {string} checkpointID - Checkpoint to move to
      * @returns {void}
      */
     moveToCheckpoint(checkpointID: string): void;
@@ -3608,8 +3608,8 @@ interface LineCounter$1 {
      * lc.clearBack(2); // ('line 3' and 'line 4' are cleared)
      * ```
      *
-     * @param {number} linesToMoveBack The number of lines to clear
-     * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
+     * @param {number} linesToMoveBack - Number of lines to clear
+     * @param {boolean} [limitToRecordedLines] - Whether to limit the number of lines to clear to the number of lines recorded
      * @returns {void}
      */
     clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): void;
@@ -3629,7 +3629,7 @@ interface LineCounter$1 {
      * lc.log('world'); // 1
      * ```
      *
-     * @param {number} lines The number of lines to move
+     * @param {number} lines - Number of lines to move
      * @returns {void}
      */
     clearDown(lines: number): void;
@@ -3649,8 +3649,8 @@ interface LineCounter$1 {
      * lc.getSince('test-b'); // 1
      * ```
      *
-     * @param {string} [checkpointID] The checkpoint to record
-     * @returns {string} The checkpointID
+     * @param {string} [checkpointID] - Checkpoint to record
+     * @returns {string} - Checkpoint ID
      */
     checkpoint(checkpointID?: string): string;
     /**<!-- DOCS: out.LineCounter.clearToCheckpoint ##### -->
@@ -3668,7 +3668,7 @@ interface LineCounter$1 {
      * lc.clearToCheckpoint('test'); // ('line 3' and 'line 4' are cleared)
      * ```
      *
-     * @param {string} checkpointID The checkpoint to clear to
+     * @param {string} checkpointID - Checkpoint to clear to
      * @returns {void}
      */
     clearToCheckpoint(checkpointID: string): void;
@@ -3694,8 +3694,8 @@ interface LineCounter$1 {
          * lc.log('world'); // 1
          * ```
          *
-         * @param {number} y How many lines to move the cursor (down if positive, up if negative)
-         * @returns {string}
+         * @param {number} y - How many lines to move the cursor (down if positive, up if negative)
+         * @returns {string} - ANSI escape code
          */
         moveCursor(y: number): string;
         /**<!-- DOCS: out.LineCounter.ansi.moveHome ###### -->
@@ -3716,7 +3716,7 @@ interface LineCounter$1 {
          * lc.log('world'); // 1
          * ```
          *
-         * @returns {string}
+         * @returns {string} - ANSI escape code
          */
         moveHome(): string;
         /**<!-- DOCS: out.LineCounter.ansi.moveToCheckpoint ###### -->
@@ -3738,8 +3738,8 @@ interface LineCounter$1 {
          * lc.log('world'); // 1
          * ```
          *
-         * @param {string} checkpointID The checkpoint to move to
-         * @returns {string}
+         * @param {string} checkpointID - Checkpoint to move to
+         * @returns {string} - ANSI escape code
          */
         moveToCheckpoint(checkpointID: string): string;
         /**<!-- DOCS: out.LineCounter.ansi.clear ###### -->
@@ -3755,7 +3755,7 @@ interface LineCounter$1 {
          * process.stdout.write(lc.ansi.clear());
          * ```
          *
-         * @returns {string}
+         * @returns {string} - ANSI escape code
          */
         clear(): string;
         /**<!-- DOCS: out.LineCounter.ansi.clearBack ###### -->
@@ -3774,9 +3774,9 @@ interface LineCounter$1 {
          * process.stdout.write(lc.ansi.clearBack(2)); // ('line 3' and 'line 4' are cleared)
          * ```
          *
-         * @param {number} linesToMoveBack The number of lines to clear
-         * @param {boolean} [limitToRecordedLines] Whether to limit the number of lines to clear to the number of lines recorded
-         * @returns {string}
+         * @param {number} linesToMoveBack - Number of lines to clear
+         * @param {boolean} [limitToRecordedLines] - Whether to limit the number of lines to clear to the number of lines recorded
+         * @returns {string} - ANSI escape code
          */
         clearBack(linesToMoveBack: number, limitToRecordedLines?: boolean): string;
         /**<!-- DOCS: out.LineCounter.ansi.clearDown ###### -->
@@ -3798,8 +3798,8 @@ interface LineCounter$1 {
          * lc.log('line 4'); // 1
          * process.stdout.write(lc.ansi.clearDown(2)); // ('line 3' and 'line 4' are cleared)
          * ```
-         * @param {number} lines The number of lines to move
-         * @returns {string}
+         * @param {number} lines - Number of lines to move
+         * @returns {string} - ANSI escape code
          */
         clearDown(lines: number): string;
         /**<!-- DOCS: out.LineCounter.ansi.clearToCheckpoint ###### -->
@@ -3819,8 +3819,8 @@ interface LineCounter$1 {
          * process.stdout.write(lc.ansi.clearToCheckpoint('test')); // ('line 3' and 'line 4' are cleared)
          * ```
          *
-         * @param {string} checkpointID The checkpoint to clear to
-         * @returns {string}
+         * @param {string} checkpointID - Checkpoint to clear to
+         * @returns {string} - ANSI escape code
          */
         clearToCheckpoint(checkpointID: string): string;
         /**<!-- DOCS: out.LineCounter.ansi.save ###### -->
@@ -3898,8 +3898,8 @@ declare namespace out {
      * out.getWidth('↓←→↑'); // 4
      * out.getWidth(colr.red('this is red')); // 11
      * ```
-     * @param {string} text
-     * @returns {number}
+     * @param {string} text - Text to get the width of
+     * @returns {number} - Width of the text
      */
     export const getWidth: (text: string) => number;
     /**<!-- DOCS: out.pad ### @ -->
@@ -3913,11 +3913,11 @@ declare namespace out {
      * pad('foo', 3, 1, '-'); // '---foo-'
      * pad('bar', 10, 5, '_'); // '__________bar_____'
      * ```
-     * @param {string} line
-     * @param {number} start
-     * @param {number} end
-     * @param {string} [replaceChar=' ']
-     * @returns {string}
+     * @param {string} line - Text to pad
+     * @param {number} start - Number of characters to pad before the line
+     * @param {number} end - Number of characters to pad after the line
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @returns {string} - Padded text
      */
     export const pad: (line: string, start: number, end: number, replaceChar?: string) => string;
     export type AlignType = 'left' | 'right' | 'center' | 'justify';
@@ -3939,11 +3939,11 @@ declare namespace out {
      * // '  1  ' + '\n' +
      * // '  2  '
      * ```
-     * @param {any} item
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @param {boolean} [forceWidth=true]
-     * @returns {string}
+     * @param {any} item - Item to align
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to align to
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @param {boolean} [forceWidth=true] - Whether to force the width
+     * @returns {string} - Aligned text
      */
     export const center: AlignFunction;
     /**<!-- DOCS: out.left ### @ -->
@@ -3963,11 +3963,11 @@ declare namespace out {
      * // '1    ' + '\n' +
      * // '2    '
      * ```
-     * @param {any} item
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @param {boolean} [forceWidth=true]
-     * @returns {string}
+     * @param {any} item - Item to align
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to align to
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @param {boolean} [forceWidth=true] - Whether to force the width
+     * @returns {string} - Aligned text
      */
     export const left: AlignFunction;
     /**<!-- DOCS: out.right ### @ -->
@@ -3987,11 +3987,11 @@ declare namespace out {
      * // '    1' + '\n' +
      * // '    2'
      * ```
-     * @param {any} item
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @param {boolean} [forceWidth=true]
-     * @returns {string}
+     * @param {any} item - Item to align
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to align to
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @param {boolean} [forceWidth=true] - Whether to force the width
+     * @returns {string} - Aligned text
      */
     export const right: AlignFunction;
     /**<!-- DOCS: out.justify ### @ -->
@@ -4011,11 +4011,11 @@ declare namespace out {
      * // 'consectetur         ' + '\n' +
      * // 'adipiscing      elit'
      * ```
-     * @param {any} item
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @param {boolean} [forceWidth=true]
-     * @returns {string}
+     * @param {any} item - Item to align
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to align to
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @param {boolean} [forceWidth=true] - Whether to force the width
+     * @returns {string} - Aligned text
      */
     export const justify: AlignFunction;
     /**<!-- DOCS: out.leftLines ### @ -->
@@ -4033,9 +4033,9 @@ declare namespace out {
      * //   'Line 3                 '
      * // ]
      * ```
-     * @param {string[]} lines
-     * @param {number} [width=getLongestLen(lines)]
-     * @returns {string[]}
+     * @param {string[]} lines - Lines to align
+     * @param {number} [width=getLongestLen(lines)] - Width to align to
+     * @returns {string[]} - Aligned lines
      */
     export const leftLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.centerLines ### @ -->
@@ -4053,9 +4053,9 @@ declare namespace out {
      * //   '                 Line 3'
      * // ]
      * ```
-     * @param {string[]} lines
-     * @param {number} [width=getLongestLen(lines)]
-     * @returns {string[]}
+     * @param {string[]} lines - Lines to align
+     * @param {number} [width=getLongestLen(lines)] - Width to align to
+     * @returns {string[]} - Aligned lines
      */
     export const centerLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.rightLines ### @ -->
@@ -4073,9 +4073,9 @@ declare namespace out {
      * //   '        Line 3         '
      * // ]
      * ```
-     * @param {string[]} lines
-     * @param {number} [width=getLongestLen(lines)]
-     * @returns {string[]}
+     * @param {string[]} lines - Lines to align
+     * @param {number} [width=getLongestLen(lines)] - Width to align to
+     * @returns {string[]} - Aligned lines
      */
     export const rightLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.justifyLines ### @ -->
@@ -4093,9 +4093,9 @@ declare namespace out {
      * //   'Line                  3'
      * // ]
      * ```
-     * @param {string[]} lines
-     * @param {number} [width=getLongestLen(lines)]
-     * @returns {string[]}
+     * @param {string[]} lines - Lines to align
+     * @param {number} [width=getLongestLen(lines)] - Width to align to
+     * @returns {string[]} - Aligned lines
      */
     export const justifyLines: (lines: string[], width?: number) => string[];
     /**<!-- DOCS: out.align ### @ -->
@@ -4115,12 +4115,12 @@ declare namespace out {
      * // '    1' + '\n' +
      * // '    2'
      * ```
-     * @param {any} item
-     * @param {AlignType} direction
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @param {boolean} [forceWidth=true]
-     * @returns {string}
+     * @param {any} item - Item to align
+     * @param {AlignType} direction - Alignment direction
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to align to
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @param {boolean} [forceWidth=true] - Whether to force the width
+     * @returns {string} - Aligned text
      */
     export const align: (item: any, direction: AlignType, width?: number, replaceChar?: string, forceWidth?: boolean) => string;
     /**<!-- DOCS: out.split ### @ -->
@@ -4133,11 +4133,11 @@ declare namespace out {
      * ```typescript
      * out.split('Left', 'Right', 15); // Left      Right
      * ```
-     * @param {any} leftItem
-     * @param {any} rightItem
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {string} [replaceChar=' ']
-     * @returns {string}
+     * @param {any} leftItem - Left item to split
+     * @param {any} rightItem - Right item to split
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to split at
+     * @param {string} [replaceChar=' '] - Character to use for padding
+     * @returns {string} - Split text
      */
     export const split: (leftItem: any, rightItem: any, width?: number, replaceChar?: string) => string;
     /**<!-- DOCS: out.wrap ### @ -->
@@ -4152,11 +4152,11 @@ declare namespace out {
      * // 'This is' + '\n' +
      * // 'a sentence'
      * ```
-     * @param {any} item
-     * @param {number} [width=out.utils.getTerminalWidth()]
-     * @param {AlignType} [alignment]
-     * @param {boolean} [forceWidth=false]
-     * @returns {string}
+     * @param {any} item - Item to wrap
+     * @param {number} [width=out.utils.getTerminalWidth()] - Width to wrap to
+     * @param {AlignType} [alignment] - Alignment to use
+     * @param {boolean} [forceWidth=false] - Whether to force the width
+     * @returns {string} - Wrapped text
      */
     export const wrap: (item: any, width?: number, alignment?: AlignType, forceWidth?: boolean) => string;
     /**<!-- DOCS: out.moveUp ### @ -->
@@ -4171,7 +4171,7 @@ declare namespace out {
      * ```typescript
      * moveUp(1);
      * ```
-     * @param {number} [lines=1]
+     * @param {number} [lines=1] - Number of lines to move up
      * @returns {void}
      */
     export const moveUp: (lines?: number) => void;
@@ -4182,17 +4182,17 @@ declare namespace out {
      *
      * Display an animated loading indicator
      *
-     * If the given action returns a string, it will be printed. Otherwise, it will assume the action prints to output itself (and clears the number of lines given as the second argument)
+     * If the given action returns a string, it will be printed. Otherwise, it will assume the action prints the output itself (and clears the number of lines given as the second argument)
      *
      * ```typescript
      * const loader = out.loading();
      * // ...
      * loader.stop();
      * ```
-     * @param {(s: string) => string | void} [action=loadingDefault]
-     * @param {number} [lines=1]
-     * @param {string[]} [symbols=loadingChars]
-     * @returns {{ stop: () => void; }}
+     * @param {(s: string) => string | void} [action=loadingDefault] - Custom loading output function
+     * @param {number} [lines=1] - Number of lines to move up
+     * @param {string[]} [symbols=loadingChars] - Symbols to use for the loading indicator
+     * @returns {{ stop: () => void; }} - Loading object with a `stop` method
      */
     export const loading: (action?: (s: string) => string | void, lines?: number, symbols?: string[]) => {
         stop: () => void;
@@ -4207,9 +4207,9 @@ declare namespace out {
      * ```typescript
      * out.limitToLength('This is a very long sentence', 12); // 'This is a ve'
      * ```
-     * @param {string} text
-     * @param {number} maxLength
-     * @returns {string}
+     * @param {string} text - Text to limit
+     * @param {number} maxLength - Maximum length of the text
+     * @returns {string} - Limited text
      */
     export const limitToLength: (text: string, maxLength: number) => string;
     /**<!-- DOCS: out.limitToLengthStart ### @ -->
@@ -4222,9 +4222,9 @@ declare namespace out {
      * ```typescript
      * out.limitToLengthStart('This is a very long sentence', 12); // 'ong sentence'
      * ```
-     * @param {string} text
-     * @param {number} maxLength
-     * @returns {string}
+     * @param {string} text - Text to truncate
+     * @param {number} maxLength - Maximum length of the text
+     * @returns {string} - Truncated text
      */
     export const limitToLengthStart: (text: string, maxLength: number) => string;
     /**<!-- DOCS: out.truncate ### @ -->
@@ -4237,10 +4237,10 @@ declare namespace out {
      * ```typescript
      * out.truncate('This is a very long sentence', 15); // 'This is a ve...'
      * ```
-     * @param {string} text
-     * @param {number} [maxLength=out.utils.getTerminalWidth()]
-     * @param {string} [suffix=colr.dim('…')]
-     * @returns {string}
+     * @param {string} text - Text to truncate
+     * @param {number} [maxLength=out.utils.getTerminalWidth()] - Maximum length of the text
+     * @param {string} [suffix=colr.dim('…')] - Suffix to add if the text is truncated
+     * @returns {string} - Truncated text
      */
     export const truncate: (text: string, maxLength?: number, suffix?: string) => string;
     /**<!-- DOCS: out.truncateStart ### @ -->
@@ -4253,10 +4253,10 @@ declare namespace out {
      * ```typescript
      * out.truncateStart('This is a very long sentence', 15); // '...ong sentence'
      * ```
-     * @param {string} text
-     * @param {number} [maxLength=out.utils.getTerminalWidth()]
-     * @param {string} [suffix=colr.dim('…')]
-     * @returns {string}
+     * @param {string} text - Text to truncate
+     * @param {number} [maxLength=out.utils.getTerminalWidth()] - Maximum length of the text
+     * @param {string} [suffix=colr.dim('…')] - Suffix to add if the text is truncated
+     * @returns {string} - Truncated text
      */
     export const truncateStart: (text: string, maxLength?: number, suffix?: string) => string;
     /**<!-- DOCS: out.concatLineGroups ### @ -->
@@ -4270,8 +4270,8 @@ declare namespace out {
      * out.concatLineGroups(['lorem', 'ipsum'], ['dolor', 'sit', 'amet']);
      * // [ 'loremdolor', 'ipsumsit  ', '     amet ' ]
      * ```
-     * @param {...string[]} [groups]
-     * @returns {any}
+     * @param {...string[]} [groups] - Line groups to concatenate
+     * @returns {any} - Concatenated lines
      */
     export const concatLineGroups: (...groups: string[][]) => string[];
     /**<!-- DOCS: out.getResponsiveValue ###! @ -->
@@ -4289,8 +4289,8 @@ declare namespace out {
      *   {minColumns: 1000, value: 'd'}
      * ]) // c
      * ```
-     * @param {ResponsiveOption<T>[]} options
-     * @returns {T}
+     * @param {ResponsiveOption<T>[]} options - Options to get a value from
+     * @returns {T} - Value
      */
     export const getResponsiveValue: <T extends unknown>(options: ResponsiveOption<T>[]) => T;
     /**<!-- DOCS: out.ResponsiveOption #### -->
@@ -4330,8 +4330,8 @@ declare namespace out {
      * subsub(); // 'a › b › c › d'
      * subsub('e'); // 'a › b › c › d › e'
      * ```
-     * @param {...string} [baseNames]
-     * @returns {Breadcrumb}
+     * @param {...string} [baseNames] - Base names to add to the breadcrumb
+     * @returns {Breadcrumb} - Breadcrumb object
      */
     export const getBreadcrumb: (...baseNames: string[]) => Breadcrumb$1;
     /**<!-- DOCS-ALIAS: out.Breadcrumb -->
@@ -4359,7 +4359,7 @@ declare namespace out {
      * lc.get(); // 3
      * lc.clear();
      * ```
-     * @returns {LineCounter}
+     * @returns {LineCounter} - Line counter object
      */
     export const getLineCounter: () => LineCounter$1;
     /**<!-- DOCS-ALIAS: out.LineCounter -->
@@ -4403,7 +4403,7 @@ declare namespace out {
          * ```typescript
          * out.utils.getTerminalWidth(); // 127
          * ```
-         * @returns {number}
+         * @returns {number} - Maximum terminal width
          */
         const getTerminalWidth: () => number;
         /**<!-- DOCS: out.utils.getLines #### 291 @ -->
@@ -4419,8 +4419,8 @@ declare namespace out {
          * this is line 2
          * `); // [ '', 'this is line 1', 'this is line 2', '' ]
          * ```
-         * @param {Text} text
-         * @returns {string[]}
+         * @param {Text} text - Text to split
+         * @returns {string[]} - Array of lines
          */
         const getLines: (text: Text) => string[];
         /**<!-- DOCS: out.utils.getNumLines #### 291 @ -->
@@ -4436,8 +4436,8 @@ declare namespace out {
          * this is line 2
          * `); // 4
          * ```
-         * @param {Text} text
-         * @returns {number}
+         * @param {Text} text - Text to get the number of lines for
+         * @returns {number} - Number of lines
          */
         const getNumLines: (text: Text) => number;
         /**<!-- DOCS: out.utils.getLinesWidth #### 291 @ -->
@@ -4453,8 +4453,8 @@ declare namespace out {
          * this is line 2
          * `) // 14
          * ```
-         * @param {Text} text
-         * @returns {number}
+         * @param {Text} text - Text to get the width of
+         * @returns {number} - Width of the text
          */
         const getLinesWidth: (text: Text) => number;
         /**<!-- DOCS: out.utils.getLogLines #### 291 @ -->
@@ -4470,8 +4470,8 @@ declare namespace out {
          * this is line 2
          * `); // [ '', 'this is line 1', 'this is line 2', '' ]
          * ```
-         * @param {any} item
-         * @returns {string[]}
+         * @param {any} item - Item to get the log lines for
+         * @returns {string[]} - Array of log lines
          */
         const getLogLines: (item: any) => string[];
         /**<!-- DOCS: out.utils.getNumLogLines #### 291 @ -->
@@ -4487,8 +4487,8 @@ declare namespace out {
          * this is line 2
          * `); // 4
          * ```
-         * @param {Text} item
-         * @returns {number}
+         * @param {Text} item - Item to get the number of log lines for
+         * @returns {number} - Number of log lines
          */
         const getNumLogLines: (item: Text) => number;
         /**<!-- DOCS: out.utils.getLogLinesWidth #### 291 @ -->
@@ -4504,8 +4504,8 @@ declare namespace out {
          * this is line 2
          * `) // 14
          * ```
-         * @param {Text} item
-         * @returns {number}
+         * @param {Text} item - Item to get the width of
+         * @returns {number} - Width of the item
          */
         const getLogLinesWidth: (item: Text) => number;
         /**<!-- DOCS: out.utils.joinLines #### 291 @ -->
@@ -4520,8 +4520,8 @@ declare namespace out {
          * // 'this is line 1' + '\n' +
          * // 'this is line 2'
          * ```
-         * @param {string[]} lines
-         * @returns {string}
+         * @param {string[]} lines - Lines to join
+         * @returns {string} - Joined lines
          */
         const joinLines: (lines: string[]) => string;
         /**<!-- DOCS: out.utils.hasColor #### 291 @ -->
@@ -4535,8 +4535,8 @@ declare namespace out {
          * out.utils.hasColor('this is line 1') // false
          * out.utils.hasColor(colr.red('this is line 1')) // true
          * ```
-         * @param {string} str
-         * @returns {boolean}
+         * @param {string} str - String to check for colours
+         * @returns {boolean} - Whether the string contains any colours
          */
         const hasColor: (str: string) => boolean;
         /**<!-- DOCS: out.utils.stripAnsi #### 291 @ -->
@@ -4549,8 +4549,8 @@ declare namespace out {
          * ```typescript
          * out.utils.stripAnsi(colr.red('this is line 1')) // 'this is line 1'
          * ```
-         * @param {string} text
-         * @returns {string}
+         * @param {string} text - Text to strip ANSI codes from
+         * @returns {string} - Text without ANSI codes
          */
         const stripAnsi: (text: string) => string;
         /**<!-- DOCS: out.utils.getEmojiRegex #### 291 @ -->
@@ -4566,8 +4566,8 @@ declare namespace out {
          * const str = "The 🦊 quickly jumps over the lazy 🐶."
          * str.match(out.utils.getEmojiRegex()); // [ '🦊', '🐶' ]
          * ```
-         * @param {string} [flags='g']
-         * @returns {RegExp}
+         * @param {string} [flags='g'] - Flags to pass to the RegExp
+         * @returns {RegExp} - Emoji regex
          */
         const getEmojiRegex: (flags?: string) => RegExp;
     }
@@ -4597,8 +4597,8 @@ declare namespace out {
  * subsub(); // 'a › b › c › d'
  * subsub('e'); // 'a › b › c › d › e'
  * ```
- * @param {...string} [baseNames]
- * @returns {Breadcrumb}
+ * @param {...string} [baseNames] - Base names to add to the breadcrumb
+ * @returns {Breadcrumb} - Breadcrumb object
  */
 declare const getBreadcrumb: (...baseNames: string[]) => Breadcrumb$1;
 /**<!-- DOCS-ALIAS: out.Breadcrumb -->
@@ -4626,7 +4626,7 @@ declare type Breadcrumb = Breadcrumb$1;
  * lc.get(); // 3
  * lc.clear();
  * ```
- * @returns {LineCounter}
+ * @returns {LineCounter} - Line counter object
  */
 declare const getLineCounter: () => LineCounter$1;
 /**<!-- DOCS-ALIAS: out.LineCounter -->
@@ -5610,11 +5610,11 @@ declare namespace ask {
      * ```typescript
      * const name = await ask.text('What is your name?'); // 'Jack'
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {string} [initial]
-     * @param {(value: string) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<string>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {string} [initial] - Initial value
+     * @param {(value: string) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<string>} - Promise that resolves with the user input string
      */
     const text: (question: string | Breadcrumb$1, initial?: string, validate?: (value: string) => ValidationResponse, lc?: LineCounter$1) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.autotext -->
@@ -5627,12 +5627,12 @@ declare namespace ask {
      * ```typescript
      * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {ask.PromptChoice<T>[]} choices
-     * @param {T | string} [initial]
-     * @param {(item: T, index: number, typedValue: string) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<T>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {ask.PromptChoice<T>[]} choices - Choices to autocomplete from
+     * @param {T | string} [initial] - Initial value
+     * @param {(item: T, index: number, typedValue: string) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<T>} - Promise that resolves with the user input string
      */
     const autotext: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: string | T, validate?: (item: T, index: number, typedValue: string) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
     /**<!-- DOCS-ALIAS: ask.number -->
@@ -5645,11 +5645,11 @@ declare namespace ask {
      * ```typescript
      * const age = await ask.number('How old are you?'); // 30
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {number} [initial]
-     * @param {(value: number) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<number>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {number} [initial] - Initial value
+     * @param {(value: number) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<number>} - Promise that resolves with the user input number
      */
     const number: (question: string | Breadcrumb$1, initial?: number, validate?: (value: number) => ValidationResponse, lc?: LineCounter$1) => Promise<number>;
     /**<!-- DOCS-ALIAS: ask.boolean -->
@@ -5662,11 +5662,11 @@ declare namespace ask {
      * ```typescript
      * const isCool = await ask.boolean('Is this cool?'); // true
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {boolean} [initial=true]
-     * @param {(value: boolean) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<boolean>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {boolean} [initial=true] - Initial value
+     * @param {(value: boolean) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<boolean>} - Promise that resolves with the user input boolean
      */
     const boolean: (question: string | Breadcrumb$1, initial?: boolean, validate?: (value: boolean) => ValidationResponse, lc?: LineCounter$1) => Promise<boolean>;
     /**<!-- DOCS-ALIAS: ask.booleanYN -->
@@ -5681,10 +5681,10 @@ declare namespace ask {
      * ```typescript
      * const isCool = await ask.booleanYN('Is this cool?'); // true
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {(value: boolean) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<boolean>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {(value: boolean) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<boolean>} - Promise that resolves with the user input boolean
      */
     const booleanYN: (question: string | Breadcrumb$1, validate?: (value: boolean) => ValidationResponse, lc?: LineCounter$1) => Promise<boolean>;
     /**<!-- DOCS-ALIAS: ask.select -->
@@ -5697,12 +5697,12 @@ declare namespace ask {
      * ```typescript
      * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {ask.PromptChoice<T>[]} choices
-     * @param {ask.PromptChoice<T> | number} [initial]
-     * @param {(item: T, index: number) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<T>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {ask.PromptChoice<T>[]} choices - Choices to select from
+     * @param {ask.PromptChoice<T> | number} [initial] - Initial value
+     * @param {(item: T, index: number) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<T>} - Promise that resolves with the user input string
      */
     const select: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | PromptChoice<T>, validate?: (item: T, index: number) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
     /**<!-- DOCS-ALIAS: ask.multiselect -->
@@ -5715,12 +5715,12 @@ declare namespace ask {
      * ```typescript
      * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {ask.PromptChoice<T>[]} choices
-     * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial]
-     * @param {(items: T[], indexes: number[]) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<T[]>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {ask.PromptChoice<T>[]} choices - Choices to select from
+     * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial] - Initial value
+     * @param {(items: T[], indexes: number[]) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<T[]>} - Promise that resolves with the user input array
      */
     const multiselect: <T = string>(question: string | Breadcrumb$1, choices: PromptChoice<T>[], initial?: number | number[] | PromptChoice<T> | PromptChoice<T>[], validate?: (items: T[], indexes: number[]) => ValidationResponse, lc?: LineCounter$1) => Promise<T[]>;
     /**<!-- DOCS-ALIAS: ask.date -->
@@ -5734,11 +5734,11 @@ declare namespace ask {
      * const date = await ask.date('Whats the date?');
      * // [Date: 2023-01-01T12:00:00.000Z] (user inputted date, always at 12 midday)
      * ```
-     * @param {string | Breadcrumb} [questionText]
-     * @param {Date} [initial]
-     * @param {(date: Date) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<Date>}
+     * @param {string | Breadcrumb} [questionText] - Question to ask
+     * @param {Date} [initial] - Initial date
+     * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<Date>} - Promise that resolves with the user input date
      */
     const date: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.time -->
@@ -5755,11 +5755,11 @@ declare namespace ask {
      * const time2 = await ask.time('Whats the time?', new Date('1999-12-31'));
      * // [Date: 1999-12-31T12:00:00.000Z] (user inputted time, with same date as initial)
      * ```
-     * @param {string | Breadcrumb} [questionText]
-     * @param {Date} [initial]
-     * @param {(date: Date) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<Date>}
+     * @param {string | Breadcrumb} [questionText] - Question to ask
+     * @param {Date} [initial] - Initial date
+     * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<Date>} - Promise that resolves with the user input date
      */
     const time: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.datetime -->
@@ -5773,11 +5773,11 @@ declare namespace ask {
      * const when = await ask.datetime('Whats the date/time?');
      * // [Date: 2023-03-05T20:30:00.000Z] (user inputted time & date)
      * ```
-     * @param {string | Breadcrumb} [questionText]
-     * @param {Date} [initial]
-     * @param {(date: Date) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<Date>}
+     * @param {string | Breadcrumb} [questionText] - Question to ask
+     * @param {Date} [initial] - Initial date
+     * @param {(date: Date) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<Date>} - Promise that resolves with the user input date
      */
     const datetime: (questionText?: string | Breadcrumb$1, initial?: Date, validate?: (date: Date) => ValidationResponse, lc?: LineCounter$1) => Promise<Date>;
     /**<!-- DOCS-ALIAS: ask.dateRange -->
@@ -5794,12 +5794,12 @@ declare namespace ask {
      * //   [Date: 2023-03-31T12:00:00.000Z]
      * // ]
      * ```
-     * @param {string | Breadcrumb} [questionText]
-     * @param {Date} [initialStart]
-     * @param {Date} [initialEnd]
-     * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<[Date, Date]>}
+     * @param {string | Breadcrumb} [questionText] - Question to ask
+     * @param {Date} [initialStart] - Initial start date
+     * @param {Date} [initialEnd] - Initial end date
+     * @param {(dates: [Date, Date]) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<[Date, Date]>} - Promise that resolves with the user input date range
      */
     const dateRange: (questionText?: string | Breadcrumb$1, initialStart?: Date, initialEnd?: Date, validate?: (dates: [Date, Date]) => ValidationResponse, lc?: LineCounter$1) => Promise<[Date, Date]>;
     /**<!-- DOCS-ALIAS: ask.fileExplorer -->
@@ -5820,12 +5820,12 @@ declare namespace ask {
      * const dir = await ask.fileExplorer('What file?', 'd', '/Users/jackcannon/Documents');
      * // '/Users/jackcannon/Documents/some_folder'
      * ```
-     * @param {string | Breadcrumb} questionText
-     * @param {'d' | 'f'} [selectType='f']
-     * @param {string} [startPath=process.cwd()]
-     * @param {(path: string) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<string>}
+     * @param {string | Breadcrumb} questionText - Question to ask
+     * @param {'d' | 'f'} [selectType='f'] - Type of item to select (directory or file)
+     * @param {string} [startPath=process.cwd()] - Starting path
+     * @param {(path: string) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<string>} - Promise that resolves with the user input path
      */
     const fileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (path: string) => ValidationResponse, lc?: LineCounter$1) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.multiFileExplorer -->
@@ -5847,12 +5847,12 @@ declare namespace ask {
      * //   '/Users/user/Documents/some_file_3.txt'
      * // ]
      * ```
-     * @param {string | Breadcrumb} questionText
-     * @param {'d' | 'f'} [selectType='f']
-     * @param {string} [startPath=process.cwd()]
-     * @param {(paths: string[]) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<string[]>}
+     * @param {string | Breadcrumb} questionText - Question to ask
+     * @param {'d' | 'f'} [selectType='f'] - Type of item to select (directory or file)
+     * @param {string} [startPath=process.cwd()] - Starting path
+     * @param {(paths: string[]) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<string[]>} - Promise that resolves with the user input paths
      */
     const multiFileExplorer: (questionText: string | Breadcrumb$1, selectType?: "d" | "f", startPath?: string, validate?: (paths: string[]) => ValidationResponse, lc?: LineCounter$1) => Promise<string[]>;
     /**<!-- DOCS-ALIAS: ask.saveFileExplorer -->
@@ -5871,11 +5871,11 @@ declare namespace ask {
      * const savePath = await ask.saveFileExplorer('Save file', HOME_DIR, 'data.json');
      * // '/Users/user/Documents/data.json'
      * ```
-     * @param {string | Breadcrumb} questionText
-     * @param {string} [startPath=process.cwd()]
-     * @param {string} [suggestedFileName='']
-     * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate]
-     * @returns {Promise<string>}
+     * @param {string | Breadcrumb} questionText - Question to ask
+     * @param {string} [startPath=process.cwd()] - Starting path
+     * @param {string} [suggestedFileName=''] - Suggested file name
+     * @param {(dir: string, filename?: string) => ask.ValidationResponse} [validate] - Validation function
+     * @returns {Promise<string>} - Promise that resolves with the user input path
      */
     const saveFileExplorer: (questionText: string | Breadcrumb$1, startPath?: string, suggestedFileName?: string, validate?: (dir: string, filename?: string) => ValidationResponse) => Promise<string>;
     /**<!-- DOCS-ALIAS: ask.table -->
@@ -5913,13 +5913,13 @@ declare namespace ask {
          * // └───┴───────┴─────┘
          * // Returns: { name: 'Jane', age: 26 }
          * ```
-         * @param {string | Breadcrumb} question
-         * @param {T[]} items
-         * @param {AskTableDisplaySettings<T>} [settings={}]
-         * @param {T | number} [initial]
-         * @param {(item: T) => ask.ValidationResponse} [validate]
-         * @param {LineCounter} [lc]
-         * @returns {Promise<T>}
+         * @param {string | Breadcrumb} question - Question to ask
+         * @param {T[]} items - Items to select from
+         * @param {AskTableDisplaySettings<T>} [settings={}] - Settings for the table
+         * @param {T | number} [initial] - Initial item
+         * @param {(item: T) => ask.ValidationResponse} [validate] - Validation function
+         * @param {LineCounter} [lc] - Line counter
+         * @returns {Promise<T>} - Promise that resolves with the user selected item
          */
         const select: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number | T, validate?: (item: T) => ValidationResponse, lc?: LineCounter$1) => Promise<T>;
         /**<!-- DOCS-ALIAS: ask.table.multiselect -->
@@ -5954,13 +5954,13 @@ declare namespace ask {
          * //   { name: 'Derek', age: 27 }
          * // ]
          * ```
-         * @param {string | Breadcrumb} question
-         * @param {T[]} items
-         * @param {AskTableDisplaySettings<T>} [settings={}]
-         * @param {T[] | number[]} [initial]
-         * @param {(items: T[]) => ask.ValidationResponse} [validate]
-         * @param {LineCounter} [lc]
-         * @returns {Promise<T[]>}
+         * @param {string | Breadcrumb} question - Question to ask
+         * @param {T[]} items - Items to select from
+         * @param {AskTableDisplaySettings<T>} [settings={}] - Settings for the table
+         * @param {T[] | number[]} [initial] - Initial items
+         * @param {(items: T[]) => ask.ValidationResponse} [validate] - Validation function
+         * @param {LineCounter} [lc] - Line counter
+         * @returns {Promise<T[]>} - Promise that resolves with the user selected items
          */
         const multiselect: <T extends unknown>(question: string | Breadcrumb$1, items: T[], settings?: AskTableDisplaySettings<T>, initial?: number[] | T[], validate?: (items: T[]) => ValidationResponse, lc?: LineCounter$1) => Promise<T[]>;
     }
@@ -5974,13 +5974,13 @@ declare namespace ask {
      * ```typescript
      * const handles = await ask.trim('Select a start and end frame', 100); // { start: 0, end: 100 }
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {number} totalFrames
-     * @param {number} [frameRate=60]
-     * @param {Partial<Handles<number>>} [initial]
-     * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<Handles<number>>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {number} totalFrames - Total number of frames
+     * @param {number} [frameRate=60] - Frame rate
+     * @param {Partial<Handles<number>>} [initial] - Initial handle positions
+     * @param {(handles: Handles<number>) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<Handles<number>>} - Promise that resolves with the user selected handles
      */
     const trim: (question: string | Breadcrumb$1, totalFrames: number, frameRate?: number, initial?: Partial<Handles<number>>, validate?: (handles: Handles<number>) => ValidationResponse, lc?: LineCounter$1) => Promise<Handles<number>>;
     /**<!-- DOCS: ask.ExtraHeader ### @ -->
@@ -6002,7 +6002,7 @@ declare namespace ask {
      * ask.customise({ general: { lc } }); // set a line counter for that all prompts will add to when complete
      * ask.customise({ formatters: { formatPrompt: 'fullBox' } }); // change the format of the prompt
      * ```
-     * @param {Partial<ask.AskOptions>} options
+     * @param {Partial<ask.AskOptions>} options - Options to customise the behaviour/appearance of the `ask` prompts
      * @returns {void}
      */
     const customise: (options: Partial<ask$1.AskOptions>) => void;
@@ -6020,11 +6020,11 @@ declare namespace ask {
      * // ...
      * loader.stop();
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {boolean} [isComplete=false]
-     * @param {boolean} [isError=false]
-     * @param {LineCounter} [lc]
-     * @returns {{ stop: () => void; }}
+     * @param {string | Breadcrumb} question - The question to display
+     * @param {boolean} [isComplete=false] - Whether the loading is complete
+     * @param {boolean} [isError=false] - Whether the loading is in an error state
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {{ stop: () => void; }} - Loader object with a `stop` method
      */
     const loading: (question: string | Breadcrumb$1, isComplete?: boolean, isError?: boolean, lc?: LineCounter) => {
         stop: () => void;
@@ -6039,11 +6039,11 @@ declare namespace ask {
      * ```typescript
      * await ask.countdown(5);
      * ```
-     * @param {number} totalSeconds
-     * @param {(s: second) => string} [template]
-     * @param {boolean} [isComplete]
-     * @param {boolean} [isError]
-     * @returns {Promise<void>}
+     * @param {number} totalSeconds - Total number of seconds to countdown from
+     * @param {(s: second) => string} [template] - Template function to format the countdown text
+     * @param {boolean} [isComplete] - Whether the countdown is complete
+     * @param {boolean} [isError] - Whether the countdown is in an error state
+     * @returns {Promise<void>} - Promise that resolves when the countdown is complete
      */
     const countdown: (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean) => Promise<void>;
     /**<!-- DOCS: ask.pause #### @ -->
@@ -6056,8 +6056,8 @@ declare namespace ask {
      * ```typescript
      * await ask.pause();
      * ```
-     * @param {string | Breadcrumb} [text='Press enter to continue...']
-     * @returns {Promise<void>}
+     * @param {string | Breadcrumb} [text='Press enter to continue...'] - Text to display
+     * @returns {Promise<void>} - Promise that resolves when the user presses enter
      */
     const pause: (text?: string | Breadcrumb$1) => Promise<void>;
     /**<!-- DOCS-ALIAS: ask.imitate -->
@@ -6072,12 +6072,12 @@ declare namespace ask {
      * 
      * ask.imitate('What is your name?', 'Jack', true);
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {any} [result]
-     * @param {boolean} [isComplete=true]
-     * @param {boolean} [isError=false]
-     * @param {string} [errorMessage]
-     * @param {LineCounter} [lc]
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {any} [result] - Result to display
+     * @param {boolean} [isComplete=true] - Whether the result is complete
+     * @param {boolean} [isError=false] - Whether the result is an error
+     * @param {string} [errorMessage] - Error message
+     * @param {LineCounter} [lc] - Line counter
      * @returns {void}
      */
     const imitate: (question: string | Breadcrumb$1, result?: any, isComplete?: boolean, isError?: boolean, errorMessage?: string, lc?: LineCounter$1) => void;
@@ -6099,11 +6099,11 @@ declare namespace ask {
      * data = {name: 'Jack'}
      * const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {T | undefined} value
-     * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn
-     * @param {LineCounter} [lc]
-     * @returns {Promise<T>}
+     * @param {string | Breadcrumb} question - Question to display
+     * @param {T | undefined} value - Value to prefill
+     * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn - Ask function to use if no value
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<T>} - Promise that resolves with the prefilled or asked value
      */
     const prefill: <T extends unknown = string>(question: string | Breadcrumb$1, value: T, askFn: (question: string | Breadcrumb$1, lc: LineCounter) => T | Promise<T>, lc?: LineCounter) => Promise<T>;
     /**<!-- DOCS: ask.wizard #### -->
@@ -6132,8 +6132,8 @@ declare namespace ask {
      *
      * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
      * ```
-     * @param {Partial<T>} [startObj={}]
-     * @returns {ask.Wizard<T>}
+     * @param {Partial<T>} [startObj={}] - Initial object to start with
+     * @returns {ask.Wizard<T>} - Wizard object
      */
     const wizard: <T extends unknown>(startObj?: Partial<T>) => Wizard<T>;
     /**
@@ -6183,12 +6183,12 @@ declare namespace ask {
      * ];
      * const result = await ask.menu('What do you want to work with?', menuItems);
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {MenuItem<T>[]} items
-     * @param {MenuItem<T> | T | number} [initial]
-     * @param {(value: T, index: number) => ask.ValidationResponse} [validate]
-     * @param {LineCounter} [lc]
-     * @returns {Promise<T>}
+     * @param {string | Breadcrumb} question - Question to display
+     * @param {MenuItem<T>[]} items - Menu items
+     * @param {MenuItem<T> | T | number} [initial] - Initial item to select
+     * @param {(value: T, index: number) => ask.ValidationResponse} [validate] - Validation function
+     * @param {LineCounter} [lc] - Line counter
+     * @returns {Promise<T>} - Promise that resolves with the selected item
      */
     const menu: <T extends unknown>(question: string | Breadcrumb$1, items: MenuItem<T>[], initial?: number | T | MenuItem<T>, validate?: (value: T, index: number) => ask.ValidationResponse, lc?: LineCounter) => Promise<T>;
     /**
@@ -6240,10 +6240,10 @@ declare namespace ask {
      * Question 1: answer1
      * Question 2a: [ answer2, answer2b ]
      * ```
-     * @param {string | Breadcrumb} question
-     * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader]
-     * @param {...[...T]} [questionFns]
-     * @returns {Promise<TupleFromQuestionFuncs<T>>}
+     * @param {string | Breadcrumb} question - Question to ask
+     * @param {(lc: LineCounter) => void | Promise<any>} [sectionHeader] - Section header function
+     * @param {...[...T]} [questionFns] - Question functions
+     * @returns {Promise<TupleFromQuestionFuncs<T>>} - Promise that resolves with the user input
      */
     const section: <T extends ((qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<any>)[]>(question: string | Breadcrumb$1, sectionHeader?: (lc: LineCounter$1) => void | Promise<any>, ...questionFns_0: T) => Promise<{ [K in keyof T]: T[K] extends (qst: string | Breadcrumb$1, results: any[], lc: LineCounter$1) => Promise<infer U> ? U : never; }>;
     /**<!-- DOCS-ALIAS: ask.separator -->
@@ -6263,11 +6263,11 @@ declare namespace ask {
      * ask.separator('up', 5, 2);
      * // ┄┄┄┄┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄▵┄┄┄┄┄┄┄┄
      * ```
-     * @param {'down' | 'none' | 'up'} [version='down']
-     * @param {number} [spacing=8]
-     * @param {number} [offset=0]
-     * @param {number} [width=out.utils.getTerminalWidth() - 2]
-     * @param {LineCounter} [lc]
+     * @param {'down' | 'none' | 'up'} [version='down'] - Type of separator
+     * @param {number} [spacing=8] - Spacing between the separator nodes
+     * @param {number} [offset=0] - Offset of the separator nodes
+     * @param {number} [width=out.utils.getTerminalWidth() - 2] - Width of the separator
+     * @param {LineCounter} [lc] - Line counter
      * @returns {void}
      */
     const separator: (version?: "up" | "down" | "none", spacing?: number, offset?: number, width?: number, lc?: LineCounter$1) => void;
@@ -6305,10 +6305,10 @@ declare namespace ask {
          * //   { title: 'DOLOR', value: 'dolor' }
          * // ]
          * ```
-         * @param {T[]} items
-         * @param {string[]} [titles=[]]
-         * @param {TitleFn<T>} [titleFn]
-         * @returns {{ title: string; value: T; }[]}
+         * @param {T[]} items - Items to convert
+         * @param {string[]} [titles=[]] - Titles to use
+         * @param {TitleFn<T>} [titleFn] - Function to generate titles
+         * @returns {{ title: string; value: T; }[]} - Array of prompt objects
          */
         export const itemsToPromptObjects: <T = string>(items: T[], titles?: string[], titleFn?: TitleFn<T>) => {
             title: string;
@@ -6385,9 +6385,9 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  *
  * log.myLog('Hello World'); // [12:00:00.123]  MYLOG  Hello World
  * ```
- * @param {T} [extraConfigs={} as T]
- * @param {LogOptions} [options={}]
- * @returns {Logger<T>}
+ * @param {T} [extraConfigs={} as T] - Configs for extra log functions to add to the logger
+ * @param {LogOptions} [options={}] - Options for the logger
+ * @returns {Logger<T>} - Logger object
  */
 declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
     readonly blank: LogConfig;
@@ -6508,8 +6508,8 @@ declare namespace LogTools {
      * //   [ [ [ 'm', 'n', 'o' ] ] ]
      * // ]
      * ```
-     * @param {any} item
-     * @returns {string}
+     * @param {any} item - Item to get a string for
+     * @returns {string} - String representation of the item
      */
     const getLogStr: (item: any) => string;
     /**<!-- DOCS: LogTools.processLogContents ### @ -->
@@ -6523,10 +6523,10 @@ declare namespace LogTools {
      * ```typescript
      * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
      * ```
-     * @param {string} prefix
-     * @param {Function} [wrapper=fn.noact]
-     * @param {...any} [args]
-     * @returns {string}
+     * @param {string} prefix - Prefix to add to the log
+     * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+     * @param {...any} [args] - Arguments to log
+     * @returns {string} - Processed log string
      */
     const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
     /**<!-- DOCS: LogTools.getLog ### @ -->
@@ -6541,9 +6541,9 @@ declare namespace LogTools {
      * const log = LogTools.getLog('prefix:');
      * log('hello'); // 'prefix: hello'
      * ```
-     * @param {string} prefix
-     * @param {Function} [wrapper=fn.noact]
-     * @returns {(...args: any[]) => void}
+     * @param {string} prefix - Prefix to add to the log
+     * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+     * @returns {(...args: any[]) => void} - Log function
      */
     const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) => void;
 }
@@ -6587,8 +6587,8 @@ declare namespace LogTools {
  * //   [ [ [ 'm', 'n', 'o' ] ] ]
  * // ]
  * ```
- * @param {any} item
- * @returns {string}
+ * @param {any} item - Item to get a string for
+ * @returns {string} - String representation of the item
  */
 declare const getLogStr: (item: any) => string;
 /**<!-- DOCS-ALIAS: LogTools.processLogContents -->
@@ -6602,10 +6602,10 @@ declare const getLogStr: (item: any) => string;
  * ```typescript
  * LogTools.processLogContents('prefix:', colr.bold); // 'prefix: hello'
  * ```
- * @param {string} prefix
- * @param {Function} [wrapper=fn.noact]
- * @param {...any} [args]
- * @returns {string}
+ * @param {string} prefix - Prefix to add to the log
+ * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+ * @param {...any} [args] - Arguments to log
+ * @returns {string} - Processed log string
  */
 declare const processLogContents: (prefix: string, wrapper?: Function, ...args: any[]) => string;
 /**<!-- DOCS-ALIAS: LogTools.getLog -->
@@ -6620,9 +6620,9 @@ declare const processLogContents: (prefix: string, wrapper?: Function, ...args: 
  * const log = LogTools.getLog('prefix:');
  * log('hello'); // 'prefix: hello'
  * ```
- * @param {string} prefix
- * @param {Function} [wrapper=fn.noact]
- * @returns {(...args: any[]) => void}
+ * @param {string} prefix - Prefix to add to the log
+ * @param {Function} [wrapper=fn.noact] - Wrapper function to apply to the log
+ * @returns {(...args: any[]) => void} - Log function
  */
 declare const getLog: (prefix: string, wrapper?: Function) => (...args: any[]) => void;
 
@@ -6657,8 +6657,8 @@ declare namespace PathTools {
      * console.log(filename); // 'file.txt'
      * console.log(folders); // ['path', 'to']
      * ```
-     * @param {string} path
-     * @returns {ExplodedPath}
+     * @param {string} path - Path to explode
+     * @returns {ExplodedPath} - Exploded path object
      */
     const explodePath: (path: string) => ExplodedPath;
     /**<!-- DOCS: PathTools.ExplodedPath ###! -->
@@ -6721,8 +6721,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to/file/' -> '/path/to/file'
      * ```
-     * @param {string} path
-     * @returns {string}
+     * @param {string} path - Path to remove the trailing slash from
+     * @returns {string} - Path without the trailing slash
      */
     const removeTrailSlash: (path: string) => string;
     /**<!-- DOCS: PathTools.trailSlash ### @ -->
@@ -6735,8 +6735,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to/file' -> '/path/to/file/'
      * ```
-     * @param {string} path
-     * @returns {string}
+     * @param {string} path - Path to ensure has a trailing slash
+     * @returns {string} - Path with a trailing slash
      */
     const trailSlash: (path: string) => string;
     /**<!-- DOCS: PathTools.removeDoubleSlashes ### @ -->
@@ -6749,8 +6749,8 @@ declare namespace PathTools {
      * ```typescript
      * '/path/to//file' -> '/path/to/file'
      * ```
-     * @param {string} path
-     * @returns {string}
+     * @param {string} path - Path to remove double slashes from
+     * @returns {string} - Path without double slashes
      */
     const removeDoubleSlashes: (path: string) => string;
 }
@@ -6779,8 +6779,8 @@ declare namespace PathTools {
  * console.log(filename); // 'file.txt'
  * console.log(folders); // ['path', 'to']
  * ```
- * @param {string} path
- * @returns {ExplodedPath}
+ * @param {string} path - Path to explode
+ * @returns {ExplodedPath} - Exploded path object
  */
 declare const explodePath: (path: string) => ExplodedPath;
 /**<!-- DOCS-ALIAS: PathTools.ExplodedPath -->
@@ -6805,7 +6805,7 @@ interface ProgressBar {
      * - `getProgressBar().next`
      * 
      * Set the progress bar to the next value
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     next: () => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.set -->
@@ -6814,8 +6814,8 @@ interface ProgressBar {
      * - `getProgressBar().set`
      * 
      * Set the progress bar to a specific value
-     * @param {number} newCurrent
-     * @returns {string} The output string
+     * @param {number} newCurrent - The new current value
+     * @returns {string} - The output string
      */
     set: (newCurrent: number) => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.reset -->
@@ -6824,7 +6824,7 @@ interface ProgressBar {
      * - `getProgressBar().reset`
      * 
      * Set the progress bar to 0
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     reset: () => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.getBar -->
@@ -6833,8 +6833,8 @@ interface ProgressBar {
      * - `getProgressBar().getBar`
      * 
      * Get the output string of the progress bar
-     * @param {boolean} [applyWrap=false] Whether or not to apply the wrapperFn to the output
-     * @returns {string} The output string
+     * @param {boolean} [applyWrap=false] - Whether or not to apply the wrapperFn to the output
+     * @returns {string} - The output string
      */
     getBar: (applyWrap?: boolean) => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.update -->
@@ -6843,7 +6843,7 @@ interface ProgressBar {
      * - `getProgressBar().update`
      * 
      * Trigger the progress bar to update/rerender
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     update: () => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.start -->
@@ -6852,7 +6852,7 @@ interface ProgressBar {
      * - `getProgressBar().start`
      * 
      * Start displaying the progress bar
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     start: () => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.finish -->
@@ -6861,7 +6861,7 @@ interface ProgressBar {
      * - `getProgressBar().finish`
      * 
      * Stop displaying the progress bar
-     * @returns {string} The output string
+     * @returns {string} - The output string
      */
     finish: () => string;
     /**<!-- DOCS-ALIAS: progressBar.progressBar.max -->
@@ -6902,8 +6902,8 @@ interface MultiBarManager {
      * // Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
-     * @param {ProgressBar} bar
-     * @param {boolean} [removeWhenFinished=opts.removeFinished]
+     * @param {ProgressBar} bar - Progress bar to add
+     * @param {boolean} [removeWhenFinished=opts.removeFinished] - Whether to remove the bar when it finishes
      * @returns {void}
      */
     add: (bar: ProgressBar, removeWhenFinished?: boolean) => void;
@@ -6929,9 +6929,9 @@ interface MultiBarManager {
      * // Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
-     * @param {number} [max]
-     * @param {progressBar.ProgressBarOptions} [options={}]
-     * @returns {ProgressBar}
+     * @param {number} [max] - Maximum value of the progress bar
+     * @param {progressBar.ProgressBarOptions} [options={}] - Options for the progress bar
+     * @returns {ProgressBar} - Progress bar object
      */
     addNew: (max?: number, options?: progressBar.ProgressBarOptions) => ProgressBar;
     /**<!-- DOCS-ALIAS: progressBar.MultiBarManager.remove -->
@@ -6957,7 +6957,7 @@ interface MultiBarManager {
      * // Bar 1▕██████████████                                          ▏ [ 25 / 100]
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
-     * @param {ProgressBar} bar
+     * @param {ProgressBar} bar - Progress bar to remove
      * @returns {void}
      */
     remove: (bar: ProgressBar) => void;
@@ -7009,7 +7009,7 @@ interface MultiBarManager {
      * 
      * console.log(manager.getBars()); // [ bar1, bar3 ]
      * ```
-     * @returns {ProgressBar[]}
+     * @returns {ProgressBar[]} - Array of progress bars
      */
     getBars: () => ProgressBar[];
 }
@@ -7057,9 +7057,9 @@ declare namespace progressBar {
      * ABC ▕█████ ▏ [4 / 5]
      * ABC ▕██████▏ [5 / 5]
      * ```
-     * @param {number} [max]
-     * @param {progressBar.ProgressBarOptions} [options={}]
-     * @returns {ProgressBar}
+     * @param {number} [max] - Maximum value of the progress bar
+     * @param {progressBar.ProgressBarOptions} [options={}] - Options for the progress bar
+     * @returns {ProgressBar} - Progress bar object
      */
     export const getProgressBar: (max?: number, options?: progressBar.ProgressBarOptions) => ProgressBar;
     /**
@@ -7279,8 +7279,8 @@ declare namespace progressBar {
      * //   printFn: [Function],
      * // }
      * ```
-     * @param {ProgressBarOptions} [opts={}]
-     * @returns {ProgressBarOptionsFull}
+     * @param {ProgressBarOptions} [opts={}] - Options for the progress bar
+     * @returns {ProgressBarOptionsFull} - Full options object
      */
     export const getFullOptions: (opts?: ProgressBarOptions) => ProgressBarOptionsFull;
     /**<!-- DOCS: progressBar.multiBarManagerHeading ### -->
@@ -7309,8 +7309,8 @@ declare namespace progressBar {
      * // Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
      * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
      * ```
-     * @param {progressBar.MultiBarManagerOptions} [options={}]
-     * @returns {MultiBarManager}
+     * @param {progressBar.MultiBarManagerOptions} [options={}] - Options for the multi-bar manager
+     * @returns {MultiBarManager} - Multi-bar manager object
      */
     export const getMultiBarManager: (options?: progressBar.MultiBarManagerOptions) => MultiBarManager;
     type MultiBarVariableOptionsConfig<T = progressBar.ProgressBarOptions> = {
@@ -7427,8 +7427,8 @@ declare namespace progressBar {
      * //   printFn: [Function],
      * // }
      * ```
-     * @param {MultiBarManagerOptions} opts
-     * @returns {MultiBarManagerOptionsFull}
+     * @param {MultiBarManagerOptions} opts - Options for the multi-bar manager
+     * @returns {MultiBarManagerOptionsFull} - Full options object
      */
     export const getFullMultiBarManagerOptions: (opts: MultiBarManagerOptions) => MultiBarManagerOptionsFull;
     /**<!-- DOCS: progressBar.utils ### -->
@@ -7464,7 +7464,7 @@ declare namespace progressBar {
          * C
          * D
          * ```
-         * @param {...any} [text]
+         * @param {...any} [text] - Text to print
          * @returns {void}
          */
         const printLn: (...text: any[]) => void;
@@ -7483,8 +7483,8 @@ declare namespace progressBar {
          * const bar1 = manager.addNew(100, { prefix: 'Bar 1' });
          * const bar2 = manager.addNew(100, { prefix: 'Bar 2' });
          * ```
-         * @param {number} previousDrawnLines
-         * @param {string} output
+         * @param {number} previousDrawnLines - Number of lines previously drawn
+         * @param {string} output - Output to print
          * @returns {void}
          */
         const multiPrintFn: (previousDrawnLines: number, output: string) => void;
@@ -7526,9 +7526,9 @@ declare namespace progressBar {
  * ABC ▕█████ ▏ [4 / 5]
  * ABC ▕██████▏ [5 / 5]
  * ```
- * @param {number} [max]
- * @param {progressBar.ProgressBarOptions} [options={}]
- * @returns {ProgressBar}
+ * @param {number} [max] - Maximum value of the progress bar
+ * @param {progressBar.ProgressBarOptions} [options={}] - Options for the progress bar
+ * @returns {ProgressBar} - Progress bar object
  */
 declare const getProgressBar: (max?: number, options?: progressBar.ProgressBarOptions) => ProgressBar;
 /**<!-- DOCS-ALIAS: progressBar.getMultiBarManager -->
@@ -7554,8 +7554,8 @@ declare const getProgressBar: (max?: number, options?: progressBar.ProgressBarOp
  * // Bar 2▕████████████████████████████                            ▏ [ 50 / 100]
  * // Bar 3▕██████████████████████████████████████████              ▏ [ 75 / 100]
  * ```
- * @param {progressBar.MultiBarManagerOptions} [options={}]
- * @returns {MultiBarManager}
+ * @param {progressBar.MultiBarManagerOptions} [options={}] - Options for the multi-bar manager
+ * @returns {MultiBarManager} - Multi-bar manager object
  */
 declare const getMultiBarManager: (options?: progressBar.MultiBarManagerOptions) => MultiBarManager;
 
@@ -7565,7 +7565,7 @@ declare const getMultiBarManager: (options?: progressBar.MultiBarManagerOptions)
  * A collection of tools for working with progress bars (from swiss-ak)
  */
 declare namespace progressBarTools {
-    /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### @ -->
+    /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### -->
      * getColouredProgressBarOpts
      *
      * - `progressBarTools.getColouredProgressBarOpts`
@@ -7581,9 +7581,9 @@ declare namespace progressBarTools {
      * const progressBar = getProgressBar(numThings, progOpts('Things'));
      * progressBar.update();
      * ```
-     * @param {progressBar.ProgressBarOptions} opts
-     * @param {boolean} [randomise=false]
-     * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
+     * @param {progressBar.ProgressBarOptions} opts - Options for the progress bar
+     * @param {boolean} [randomise=false] - Whether to randomise the wrapper functions
+     * @returns {(prefix?: string, override?: any, resetColours?: boolean) => progressBar.ProgressBarOptions} - Function to get the progress bar options
      */
     const getColouredProgressBarOpts: (opts: progressBar.ProgressBarOptions, randomise?: boolean) => (prefix?: string, override?: progressBar.ProgressBarOptions, resetColours?: boolean) => progressBar.ProgressBarOptions;
 }
@@ -7603,7 +7603,7 @@ declare namespace waiters {
      * ```typescript
      * await nextTick();
      * ```
-     * @returns {Promise<unknown>}
+     * @returns {Promise<unknown>} - Promise that resolves when the next tick is reached
      */
     const nextTick: () => Promise<unknown>;
 }
@@ -7618,7 +7618,7 @@ declare namespace waiters {
  * ```typescript
  * await nextTick();
  * ```
- * @returns {Promise<unknown>}
+ * @returns {Promise<unknown>} - Promise that resolves when the next tick is reached
  */
 declare const nextTick: () => Promise<unknown>;
 
@@ -7643,10 +7643,10 @@ declare const nextTick: () => Promise<unknown>;
  *
  * kl.stop();
  * ```
- * @param {(keyName: string, rawValue: string) => void} callback
- * @param {boolean} [isStart=true]
- * @param {boolean} [isDebugLog=false]
- * @returns {KeyListener}
+ * @param {(keyName: string, rawValue: string) => void} callback - Callback function when keys are pressed
+ * @param {boolean} [isStart=true] - Whether to start listening for keys immediately
+ * @param {boolean} [isDebugLog=false] - Whether to log key codes to the console
+ * @returns {KeyListener} - KeyListener object
  */
 declare const getKeyListener: (callback: (keyName: string, rawValue: string) => void, isStart?: boolean, isDebugLog?: boolean) => KeyListener;
 /**<!-- DOCS: keyListener.KeyListener ### -->

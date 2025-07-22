@@ -19,11 +19,11 @@ import { valueDisplays } from './basicInput/valueDisplays';
  * ```typescript
  * const name = await ask.text('What is your name?'); // 'Jack'
  * ```
- * @param {string | Breadcrumb} question
- * @param {string} [initial]
- * @param {(value: string) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<string>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {string} [initial] - Initial value
+ * @param {(value: string) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<string>} - Promise that resolves with the user input string
  */
 export const text = async (
   question: string | Breadcrumb,
@@ -105,12 +105,12 @@ export const text = async (
  * ```typescript
  * const name = await ask.autotext('What is your name?', ['Jack', 'Jane', 'Joe']); // 'Jack'
  * ```
- * @param {string | Breadcrumb} question
- * @param {ask.PromptChoice<T>[]} choices
- * @param {T | string} [initial]
- * @param {(item: T, index: number, typedValue: string) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<T>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {ask.PromptChoice<T>[]} choices - Choices to autocomplete from
+ * @param {T | string} [initial] - Initial value
+ * @param {(item: T, index: number, typedValue: string) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<T>} - Promise that resolves with the user input string
  */
 export const autotext = async <T = string>(
   question: string | Breadcrumb,
@@ -222,11 +222,11 @@ export const autotext = async <T = string>(
  * ```typescript
  * const age = await ask.number('How old are you?'); // 30
  * ```
- * @param {string | Breadcrumb} question
- * @param {number} [initial]
- * @param {(value: number) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<number>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {number} [initial] - Initial value
+ * @param {(value: number) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<number>} - Promise that resolves with the user input number
  */
 export const number = async (
   question: string | Breadcrumb,
@@ -332,11 +332,11 @@ export const number = async (
  * ```typescript
  * const isCool = await ask.boolean('Is this cool?'); // true
  * ```
- * @param {string | Breadcrumb} question
- * @param {boolean} [initial=true]
- * @param {(value: boolean) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<boolean>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {boolean} [initial=true] - Initial value
+ * @param {(value: boolean) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<boolean>} - Promise that resolves with the user input boolean
  */
 export const boolean = async (
   question: string | Breadcrumb,
@@ -408,10 +408,10 @@ export const boolean = async (
  * ```typescript
  * const isCool = await ask.booleanYN('Is this cool?'); // true
  * ```
- * @param {string | Breadcrumb} question
- * @param {(value: boolean) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<boolean>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {(value: boolean) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<boolean>} - Promise that resolves with the user input boolean
  */
 export const booleanYN = async (
   question: string | Breadcrumb,
@@ -467,12 +467,12 @@ export const booleanYN = async (
  * ```typescript
  * const colour = await ask.select('Whats your favourite colour?', ['red', 'green', 'blue']); // 'red'
  * ```
- * @param {string | Breadcrumb} question
- * @param {ask.PromptChoice<T>[]} choices
- * @param {ask.PromptChoice<T> | number} [initial]
- * @param {(item: T, index: number) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<T>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {ask.PromptChoice<T>[]} choices - Choices to select from
+ * @param {ask.PromptChoice<T> | number} [initial] - Initial value
+ * @param {(item: T, index: number) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<T>} - Promise that resolves with the user input string
  */
 export const select = async <T = string>(
   question: string | Breadcrumb,
@@ -543,12 +543,12 @@ export const select = async <T = string>(
  * ```typescript
  * const colours = await ask.multiselect('Whats your favourite colours?', ['red', 'green', 'blue']); // ['red', 'green']
  * ```
- * @param {string | Breadcrumb} question
- * @param {ask.PromptChoice<T>[]} choices
- * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial]
- * @param {(items: T[], indexes: number[]) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<T[]>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {ask.PromptChoice<T>[]} choices - Choices to select from
+ * @param {ask.PromptChoice<T> | ask.PromptChoice<T>[] | number | number[]} [initial] - Initial value
+ * @param {(items: T[], indexes: number[]) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<T[]>} - Promise that resolves with the user input array
  */
 export const multiselect = async <T = string>(
   question: string | Breadcrumb,

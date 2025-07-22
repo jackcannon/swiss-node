@@ -48,12 +48,12 @@ export const untrackedImitate = (
  *
  * ask.imitate('What is your name?', 'Jack', true);
  * ```
- * @param {string | Breadcrumb} question
- * @param {any} [result]
- * @param {boolean} [isComplete=true]
- * @param {boolean} [isError=false]
- * @param {string} [errorMessage]
- * @param {LineCounter} [lc]
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {any} [result] - Result to display
+ * @param {boolean} [isComplete=true] - Whether the result is complete
+ * @param {boolean} [isError=false] - Whether the result is an error
+ * @param {string} [errorMessage] - Error message
+ * @param {LineCounter} [lc] - Line counter
  * @returns {void}
  */
 export const imitate = (

@@ -35,10 +35,10 @@ export namespace table {
    * // │ Jane │ 26  │
    * // └──────┴─────┘
    * ```
-   * @param {any[][]} body
-   * @param {any[][]} [header]
-   * @param {TableOptions} [options={}]
-   * @returns {number}
+   * @param {any[][]} body - Body of the table
+   * @param {any[][]} [header] - Header of the table
+   * @param {TableOptions} [options={}] - Options for the table
+   * @returns {number} - Number of lines printed
    */
   export const print = (body: any[][], header?: any[][], options: TableOptions = {}): number => {
     const lines = getLines(body, header, options);
@@ -92,10 +92,10 @@ export namespace table {
    * // │ 6     │       │       │
    * // └───────┴───────┴───────┘
    * ```
-   * @param {Object[]} objects
-   * @param {Object} [headers={}]
-   * @param {TableOptions} [options={}]
-   * @returns {number}
+   * @param {Object[]} objects - Objects to print
+   * @param {Object} [headers={}] - Headers for the table
+   * @param {TableOptions} [options={}] - Options for the table
+   * @returns {number} - Number of lines printed
    */
   export const printObjects = (objects: Object[], headers: Object = {}, options: TableOptions = {}) => {
     const { body, header } = utils.objectsToTable(objects, headers);
@@ -123,10 +123,10 @@ export namespace table {
    * // | Alexander |       25       | Builder           |
    * // |      Jane |       26       | Software Engineer |
    * ```
-   * @param {any[][]} body
-   * @param {any[][]} [header]
-   * @param {TableOptions} [options={}]
-   * @returns {string[]}
+   * @param {any[][]} body - Body of the table
+   * @param {any[][]} [header] - Header of the table
+   * @param {TableOptions} [options={}] - Options for the table
+   * @returns {string[]} - Array of lines
    */
   export const markdown = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     const defaultMarkdownOptions: TableOptions = {
@@ -198,10 +198,10 @@ export namespace table {
    * //   '└──────┴─────┘'
    * // ]
    * ```
-   * @param {any[][]} body
-   * @param {any[][]} [header]
-   * @param {TableOptions} [options={}]
-   * @returns {string[]}
+   * @param {any[][]} body - Body of the table
+   * @param {any[][]} [header] - Header of the table
+   * @param {TableOptions} [options={}] - Options for the table
+   * @returns {string[]} - Array of lines
    */
   export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     // const lc = getLineCounter();
@@ -596,9 +596,9 @@ export namespace table {
      * //   body: [ [ 'John', 25 ], [ 'Jane', 26 ] ]
      * // }
      * ```
-     * @param {Object[]} objects
-     * @param {Object} [headers={}]
-     * @returns {{ header: any[][]; body: any[][]; }}
+     * @param {Object[]} objects - Objects to convert to a table
+     * @param {Object} [headers={}] - Headers for the table
+     * @returns {{ header: any[][]; body: any[][]; }} - Table object
      */
     export const objectsToTable = (objects: Object[], headers: Object = {}): { header: any[][]; body: any[][] } => {
       const allKeys = getAllKeys(objects);
@@ -631,8 +631,8 @@ export namespace table {
      * //   [ 25, 26, 27 ]
      * // ]
      * ```
-     * @param {any[][]} rows
-     * @returns {any[][]}
+     * @param {any[][]} rows - Rows to transpose
+     * @returns {any[][]} - Transposed rows
      */
     export const transpose = (rows: any[][]): any[][] => {
       return ArrayTools.zip(...rows);
@@ -660,8 +660,8 @@ export namespace table {
      * //   [ 'Derek', 27 ]
      * // ]
      * ```
-     * @param {{ header: any[][]; body: any[][] }} cells
-     * @returns {any[][]}
+     * @param {{ header: any[][]; body: any[][] }} cells - Cells to concatenate
+     * @returns {any[][]} - Concatenated rows
      */
     export const concatRows = (cells: { header: any[][]; body: any[][] }): any[][] => {
       return [...(cells.header || []), ...cells.body] as any[][];
@@ -701,12 +701,12 @@ export namespace table {
      * // │ 6 │ 7 │ 8 │
      * // └───┴───┴───┘
      * ```
-     * @param {WrapFn} format
-     * @param {number} [row]
-     * @param {number} [col]
-     * @param {boolean} [isHeader]
-     * @param {boolean} [isBody]
-     * @returns {TableFormatConfig}
+     * @param {WrapFn} format - Wrap function (e.g. colr.blue)
+     * @param {number} [row] - Row to apply the format to
+     * @param {number} [col] - Column to apply the format to
+     * @param {boolean} [isHeader] - Whether to apply the format to the header
+     * @param {boolean} [isBody] - Whether to apply the format to the body
+     * @returns {TableFormatConfig} - Format configuration object
      */
     export const getFormat = (format: WrapFn, row?: number, col?: number, isHeader?: boolean, isBody?: boolean): TableFormatConfig => {
       const result: TableFormatConfig = {
@@ -732,8 +732,8 @@ export namespace table {
      * };
      * table.utils.getFullOptions(someOpts) // { ... } with defaults applied
      * ```
-     * @param {TableOptions} opts
-     * @returns {FullTableOptions}
+     * @param {TableOptions} opts - Partial options for the table
+     * @returns {FullTableOptions} - Full options object
      */
     export const getFullOptions = (opts: TableOptions): FullTableOptions => ({
       overrideChar: '',

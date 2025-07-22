@@ -234,9 +234,9 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.to(5, 10)); // moves the cursor
      * ```
      *
-     * @param {number} [x=0] The x position to move the cursor to
-     * @param {number} [y=0] The y position to move the cursor to
-     * @returns {string} ANSI escape codes
+     * @param {number} [x=0] - The x position to move the cursor to
+     * @param {number} [y=0] - The y position to move the cursor to
+     * @returns {string} - ANSI escape codes
      */
     to: (x?: number, y?: number) => string;
 
@@ -253,9 +253,9 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.move(-5, -10)); // moves the cursor up 5 lines and left 10 spaces
      * ```
      *
-     * @param {number} [x=0] How many spaces to move the cursor horizontally (negative values move left)
-     * @param {number} [y=0] How many spaces to move the cursor vertically (negative values move up)
-     * @returns {string} ANSI escape codes
+     * @param {number} [x=0] - How many spaces to move the cursor horizontally (negative values move left)
+     * @param {number} [y=0] - How many spaces to move the cursor vertically (negative values move up)
+     * @returns {string} - ANSI escape codes
      */
     move: (x?: number, y?: number) => string;
 
@@ -272,8 +272,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.up(-5)); // moves the cursor down 5 lines
      * ```
      *
-     * @param {number} [count=1] How many spaces to move the cursor up
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many spaces to move the cursor up
+     * @returns {string} - ANSI escape codes
      */
     up: (count?: number) => string;
 
@@ -290,8 +290,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.down(-5)); // moves the cursor up 5 lines
      * ```
      *
-     * @param {number} [count=1] How many spaces to move the cursor down
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many spaces to move the cursor down
+     * @returns {string} - ANSI escape codes
      */
     down: (count?: number) => string;
 
@@ -308,8 +308,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.left(-5)); // moves the cursor right 5 spaces
      * ```
      *
-     * @param {number} [count=1] How many spaces to move the cursor left
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many spaces to move the cursor left
+     * @returns {string} - ANSI escape codes
      */
     left: (count?: number) => string;
 
@@ -326,8 +326,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.right(-5)); // moves the cursor left 5 spaces
      * ```
      *
-     * @param {number} [count=1] How many spaces to move the cursor right
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many spaces to move the cursor right
+     * @returns {string} - ANSI escape codes
      */
     right: (count?: number) => string;
 
@@ -344,8 +344,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.nextLine(5)); // moves the cursor down 5 lines and to the beginning of the next line
      * ```
      *
-     * @param {number} [count=1] How many lines to move the cursor down
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to move the cursor down
+     * @returns {string} - ANSI escape codes
      */
     nextLine: (count?: number) => string;
 
@@ -362,8 +362,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.prevLine(5)); // moves the cursor up 5 lines and to the beginning of the previous line
      * ```
      *
-     * @param {number} [count=1] How many lines to move the cursor up
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to move the cursor up
+     * @returns {string} - ANSI escape codes
      */
     prevLine: (count?: number) => string;
 
@@ -396,8 +396,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.cursor.setShow(false)); // hides the cursor
      * ```
      *
-     * @param {boolean} isShow Whether or not the cursor should be shown
-     * @returns {string} ANSI escape code
+     * @param {boolean} isShow - Whether or not the cursor should be shown
+     * @returns {string} - ANSI escape code
      */
     setShow: (isShow: boolean) => string;
 
@@ -489,8 +489,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.scroll.up(-5)); // scrolls the terminal down 5 lines
      * ```
      *
-     * @param {number} [count=1] How much to scroll the terminal up by
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How much to scroll the terminal up by
+     * @returns {string} - ANSI escape codes
      */
     up: (count?: number) => string;
 
@@ -507,8 +507,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.scroll.down(-5)); // scrolls the terminal up 5 lines
      * ```
      *
-     * @param {number} [count=1] How much to scroll the terminal down by
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How much to scroll the terminal down by
+     * @returns {string} - ANSI escape codes
      */
     down: (count?: number) => string;
   };
@@ -548,8 +548,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.erase.up(-5)); // erases the terminal below the cursor by 5 lines
      * ```
      *
-     * @param {number} [count=1] How many lines to erase
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to erase
+     * @returns {string} - ANSI escape codes
      */
     up: (count?: number) => string;
 
@@ -566,8 +566,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.erase.down(-5)); // erases the terminal above the cursor by 5 lines
      * ```
      *
-     * @param {number} [count=1] How many lines to erase
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to erase
+     * @returns {string} - ANSI escape codes
      */
     down: (count?: number) => string;
 
@@ -631,8 +631,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.erase.lines(5)); // erases 5 lines upwards from the cursor
      * ```
      *
-     * @param {number} [count=1] How many lines to erase
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to erase
+     * @returns {string} - ANSI escape codes
      */
     lines: (count?: number) => string;
 
@@ -650,8 +650,8 @@ export interface AnsiEscapeCodes {
      * process.stdout.write(ansi.erase.reserve(5)); // makes sure the next 5 lines are blank and on the screen
      * ```
      *
-     * @param {number} [count=1] How many lines to reserve
-     * @returns {string} ANSI escape codes
+     * @param {number} [count=1] - How many lines to reserve
+     * @returns {string} - ANSI escape codes
      */
     reserve: (count?: number) => string;
   };

@@ -370,13 +370,13 @@ const getTableSelectActionBar = (multi: boolean, pressed?: string, disabled: str
  * // └───┴───────┴─────┘
  * // Returns: { name: 'Jane', age: 26 }
  * ```
- * @param {string | Breadcrumb} question
- * @param {T[]} items
- * @param {AskTableDisplaySettings<T>} [settings={}]
- * @param {T | number} [initial]
- * @param {(item: T) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<T>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {T[]} items - Items to select from
+ * @param {AskTableDisplaySettings<T>} [settings={}] - Settings for the table
+ * @param {T | number} [initial] - Initial item
+ * @param {(item: T) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<T>} - Promise that resolves with the user selected item
  */
 export const select = async <T extends unknown>(
   question: string | Breadcrumb,
@@ -433,13 +433,13 @@ export const select = async <T extends unknown>(
  * //   { name: 'Derek', age: 27 }
  * // ]
  * ```
- * @param {string | Breadcrumb} question
- * @param {T[]} items
- * @param {AskTableDisplaySettings<T>} [settings={}]
- * @param {T[] | number[]} [initial]
- * @param {(items: T[]) => ask.ValidationResponse} [validate]
- * @param {LineCounter} [lc]
- * @returns {Promise<T[]>}
+ * @param {string | Breadcrumb} question - Question to ask
+ * @param {T[]} items - Items to select from
+ * @param {AskTableDisplaySettings<T>} [settings={}] - Settings for the table
+ * @param {T[] | number[]} [initial] - Initial items
+ * @param {(items: T[]) => ask.ValidationResponse} [validate] - Validation function
+ * @param {LineCounter} [lc] - Line counter
+ * @returns {Promise<T[]>} - Promise that resolves with the user selected items
  */
 export const multiselect = <T extends unknown>(
   question: string | Breadcrumb,

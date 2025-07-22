@@ -119,11 +119,11 @@ export namespace ask {
    * // ...
    * loader.stop();
    * ```
-   * @param {string | Breadcrumb} question
-   * @param {boolean} [isComplete=false]
-   * @param {boolean} [isError=false]
-   * @param {LineCounter} [lc]
-   * @returns {{ stop: () => void; }}
+   * @param {string | Breadcrumb} question - The question to display
+   * @param {boolean} [isComplete=false] - Whether the loading is complete
+   * @param {boolean} [isError=false] - Whether the loading is in an error state
+   * @param {LineCounter} [lc] - Line counter
+   * @returns {{ stop: () => void; }} - Loader object with a `stop` method
    */
   export const loading = (
     question: string | Breadcrumb,
@@ -159,11 +159,11 @@ export namespace ask {
    * ```typescript
    * await ask.countdown(5);
    * ```
-   * @param {number} totalSeconds
-   * @param {(s: second) => string} [template]
-   * @param {boolean} [isComplete]
-   * @param {boolean} [isError]
-   * @returns {Promise<void>}
+   * @param {number} totalSeconds - Total number of seconds to countdown from
+   * @param {(s: second) => string} [template] - Template function to format the countdown text
+   * @param {boolean} [isComplete] - Whether the countdown is complete
+   * @param {boolean} [isError] - Whether the countdown is in an error state
+   * @returns {Promise<void>} - Promise that resolves when the countdown is complete
    */
   export const countdown = (totalSeconds: number, template?: (s: second) => string, isComplete?: boolean, isError?: boolean): Promise<void> => {
     const deferred = getDeferred<void>();
@@ -220,8 +220,8 @@ export namespace ask {
    * ```typescript
    * await ask.pause();
    * ```
-   * @param {string | Breadcrumb} [text='Press enter to continue...']
-   * @returns {Promise<void>}
+   * @param {string | Breadcrumb} [text='Press enter to continue...'] - Text to display
+   * @returns {Promise<void>} - Promise that resolves when the user presses enter
    */
   export const pause = async (text: string | Breadcrumb = 'Press enter to continue...'): Promise<void> => {
     const theme = customiseOptions.getAskOptionsForState(false, false);
@@ -283,11 +283,11 @@ export namespace ask {
    * data = {name: 'Jack'}
    * const name2 = ask.prefill('What is your name?', data.name,  ask.text); // Jack
    * ```
-   * @param {string | Breadcrumb} question
-   * @param {T | undefined} value
-   * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn
-   * @param {LineCounter} [lc]
-   * @returns {Promise<T>}
+   * @param {string | Breadcrumb} question - Question to display
+   * @param {T | undefined} value - Value to prefill
+   * @param {(question: string | Breadcrumb, lc: LineCounter) => Promise<T> | T} askFn - Ask function to use if no value
+   * @param {LineCounter} [lc] - Line counter
+   * @returns {Promise<T>} - Promise that resolves with the prefilled or asked value
    */
   export const prefill = async <T extends unknown = string>(
     question: string | Breadcrumb,
@@ -328,8 +328,8 @@ export namespace ask {
    *
    * const result = wiz.get(); // { baz: 'baz', foo: 'foo', bar: 123 }
    * ```
-   * @param {Partial<T>} [startObj={}]
-   * @returns {ask.Wizard<T>}
+   * @param {Partial<T>} [startObj={}] - Initial object to start with
+   * @returns {ask.Wizard<T>} - Wizard object
    */
   export const wizard = <T extends unknown>(startObj: Partial<T> = {}): ask.Wizard<T> => {
     let obj: Partial<T> = { ...startObj };
@@ -364,6 +364,7 @@ export namespace ask {
    * Returned by `ask.wizard`
    */
   export interface Wizard<T> {
+    // TODO: Add JSDoc for each method
     add<P extends keyof T>(propName: P, value: T[P] | Promise<T[P]>): Promise<T[P]>;
     addPartial(partial: Partial<T>): void;
     getPartial(): Partial<T>;
@@ -406,12 +407,12 @@ export namespace ask {
    * ];
    * const result = await ask.menu('What do you want to work with?', menuItems);
    * ```
-   * @param {string | Breadcrumb} question
-   * @param {MenuItem<T>[]} items
-   * @param {MenuItem<T> | T | number} [initial]
-   * @param {(value: T, index: number) => ask.ValidationResponse} [validate]
-   * @param {LineCounter} [lc]
-   * @returns {Promise<T>}
+   * @param {string | Breadcrumb} question - Question to display
+   * @param {MenuItem<T>[]} items - Menu items
+   * @param {MenuItem<T> | T | number} [initial] - Initial item to select
+   * @param {(value: T, index: number) => ask.ValidationResponse} [validate] - Validation function
+   * @param {LineCounter} [lc] - Line counter
+   * @returns {Promise<T>} - Promise that resolves with the selected item
    */
   export const menu = async <T extends unknown>(
     question: string | Breadcrumb,
@@ -546,10 +547,10 @@ export namespace ask {
      * //   { title: 'DOLOR', value: 'dolor' }
      * // ]
      * ```
-     * @param {T[]} items
-     * @param {string[]} [titles=[]]
-     * @param {TitleFn<T>} [titleFn]
-     * @returns {{ title: string; value: T; }[]}
+     * @param {T[]} items - Items to convert
+     * @param {string[]} [titles=[]] - Titles to use
+     * @param {TitleFn<T>} [titleFn] - Function to generate titles
+     * @returns {{ title: string; value: T; }[]} - Array of prompt objects
      */
     export const itemsToPromptObjects = <T = string>(items: T[], titles: string[] = [], titleFn?: TitleFn<T>): { title: string; value: T }[] => {
       return items.map((item, index, arr) => ({ title: (titleFn && titleFn(item, index, arr)) || titles[index] || item + '', value: item as T }));

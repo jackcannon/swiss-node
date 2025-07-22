@@ -35,8 +35,8 @@ export namespace PathTools {
    * console.log(filename); // 'file.txt'
    * console.log(folders); // ['path', 'to']
    * ```
-   * @param {string} path
-   * @returns {ExplodedPath}
+   * @param {string} path - Path to explode
+   * @returns {ExplodedPath} - Exploded path object
    */
   export const explodePath = (path: string): ExplodedPath => {
     const args = {
@@ -119,8 +119,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to/file/' -> '/path/to/file'
    * ```
-   * @param {string} path
-   * @returns {string}
+   * @param {string} path - Path to remove the trailing slash from
+   * @returns {string} - Path without the trailing slash
    */
   export const removeTrailSlash = (path: string) => path.replace(/\/$/, '');
 
@@ -134,8 +134,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to/file' -> '/path/to/file/'
    * ```
-   * @param {string} path
-   * @returns {string}
+   * @param {string} path - Path to ensure has a trailing slash
+   * @returns {string} - Path with a trailing slash
    */
   export const trailSlash = (path: string) => removeTrailSlash(path) + '/';
 
@@ -149,8 +149,8 @@ export namespace PathTools {
    * ```typescript
    * '/path/to//file' -> '/path/to/file'
    * ```
-   * @param {string} path
-   * @returns {string}
+   * @param {string} path - Path to remove double slashes from
+   * @returns {string} - Path without double slashes
    */
   export const removeDoubleSlashes = (path: string) => path.replace(/\/\//g, '/');
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE

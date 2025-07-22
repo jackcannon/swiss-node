@@ -13,7 +13,7 @@ import { progressBar } from './progressBar';
 export namespace progressBarTools {
   // SWISS-DOCS-JSDOC-REMOVE-PREV-LINE
 
-  /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### @ -->
+  /**<!-- DOCS: progressBarTools.getColouredProgressBarOpts ### -->
    * getColouredProgressBarOpts
    *
    * - `progressBarTools.getColouredProgressBarOpts`
@@ -29,11 +29,14 @@ export namespace progressBarTools {
    * const progressBar = getProgressBar(numThings, progOpts('Things'));
    * progressBar.update();
    * ```
-   * @param {progressBar.ProgressBarOptions} opts
-   * @param {boolean} [randomise=false]
-   * @returns {(prefix?: string, override?: any, resetColours?: boolean) => any}
+   * @param {progressBar.ProgressBarOptions} opts - Options for the progress bar
+   * @param {boolean} [randomise=false] - Whether to randomise the wrapper functions
+   * @returns {(prefix?: string, override?: any, resetColours?: boolean) => progressBar.ProgressBarOptions} - Function to get the progress bar options
    */
-  export const getColouredProgressBarOpts = (opts: progressBar.ProgressBarOptions, randomise: boolean = false) => {
+  export const getColouredProgressBarOpts = (
+    opts: progressBar.ProgressBarOptions,
+    randomise: boolean = false
+  ): ((prefix?: string, override?: progressBar.ProgressBarOptions, resetColours?: boolean) => progressBar.ProgressBarOptions) => {
     // let wrapperFns = [colr.blue, colr.cyan, colr.green, colr.yellow, colr.magenta, colr.red];
     // let wrapperFns = [colr.yellow, colr.dark.magenta];
     let wrapperFns = [colr.yellow, colr.dark.magenta, colr.blue, colr.cyan, colr.green, colr.red];
