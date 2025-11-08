@@ -1140,7 +1140,7 @@ var out;
     utils.getLines(text2).map((line) => {
       let specials = "";
       let result = line;
-      while (out2.getWidth(result) > maxLength) {
+      while (out2.getWidth(result) > Math.max(0, maxLength)) {
         const match = result.match(new RegExp(`(\\u001b[[0-9]+m|.)$`));
         const { 0: removed, index } = match || { 0: result.slice(-1), index: result.length - 1 };
         if (removed.match(new RegExp(`\\u001b[[0-9]+m`))) {
@@ -5667,7 +5667,8 @@ var import_swiss_ak31 = require("swiss-ak");
 var defaultOptions = {
   showDate: false,
   showTime: true,
-  enableColours: true
+  enableColours: true,
+  nameWidth: void 0
 };
 var defaultConfigs = {
   blank: {
@@ -5722,32 +5723,46 @@ var getDatePrefix = (now, addDate, addTime, showDate, showTime) => {
     return "";
   let date2 = addDate ? now.toISOString().substring(0, 10) : "";
   let time2 = addTime ? now.toISOString().substring(11, 23) : "";
-  const dateStr = `[${[showDate ? date2 : " ".repeat(date2.length), showTime ? time2 : " ".repeat(time2.length)].filter((s) => s).join(" ")}] `;
+  const dateStr = `[${[showDate ? date2 : " ".repeat(date2.length), showTime ? time2 : " ".repeat(time2.length)].filter((s) => s).join(" ")}]`;
   if (!showDate && !showTime || !showDate && !addTime || !addDate && !showTime)
     return " ".repeat(dateStr.length);
   return dateStr;
 };
-var formatLog = (args, config, completeOptions, longestName = 1) => {
+var formatLog = (args, config, completeOptions, nameWidth = 1) => {
   const now = new Date();
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
   const { name, nameColour, contentColour, showDate, showTime } = config;
   const dateWrapper = enableColours ? colr.dim : (str) => str;
-  const nameWrapper = !enableColours ? (str) => `|${str}|` : nameColour ? nameColour : (str) => str;
+  const nameWrapper = !enableColours ? (str) => `[${str}]` : nameColour ? nameColour : (str) => str;
   const contentWrapper = enableColours && contentColour ? contentColour : (str) => str;
   const dateStr = getDatePrefix(now, addDate, addTime, showDate !== false, showTime !== false);
-  const nameStr = ` ${out.center(`${name}`, longestName)} `;
-  const prefixRaw = `${dateStr}${nameStr} `;
-  const prefix = `${dateWrapper(dateStr)}${nameWrapper(nameStr)} `;
+  const nameStr = out.limitToLength(` ${out.center(out.limitToLength(`${name}`, nameWidth), nameWidth)} `, nameWidth + 2);
+  let prefixRaw = `${dateStr} ${nameStr} `;
+  let prefix = `${dateWrapper(dateStr)} ${nameWrapper(nameStr)} `;
+  if (nameWidth < 0) {
+    prefixRaw = `${dateStr} `;
+    prefix = `${dateWrapper(dateStr)} `;
+  }
+  if (prefixRaw === " ") {
+    prefixRaw = "";
+    prefix = "";
+  }
   return args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixRaw.length) : prefix) + contentWrapper(line)).join("\n");
 };
 var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
+  const nameWidth = completeOptions.nameWidth ?? longestName;
   return import_swiss_ak31.ObjectTools.mapValues(allConfigs, (key, config) => {
-    const func = (...args) => {
-      const log2 = formatLog(args, config, completeOptions, longestName);
+    const func = (...originalArgs) => {
+      if (config.filter && !config.filter(...originalArgs))
+        return;
+      const args = config.process ? config.process(...originalArgs) : originalArgs;
+      const log2 = formatLog(args, config, completeOptions, nameWidth);
       console.log(log2);
+      if (config.action)
+        config.action(...args);
     };
     return func;
   });

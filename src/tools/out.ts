@@ -582,7 +582,7 @@ export namespace out {
       utils.getLines(text).map((line) => {
         let specials = '';
         let result = line;
-        while (out.getWidth(result) > maxLength) {
+        while (out.getWidth(result) > Math.max(0, maxLength)) {
           const match = result.match(new RegExp(`(\\u001b\[[0-9]+m|.)$`));
           const { 0: removed, index } = match || { 0: result.slice(-1), index: result.length - 1 };
 

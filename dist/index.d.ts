@@ -6375,11 +6375,29 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  * ```typescript
  * const log = createLogger({
  *   myLog: {
+ *     // Display name
  *     name: 'MYLOG',
+ *
+ *     // Wrapper (or colr) function to apply to the display name
  *     nameColour: colr.dark.magenta,
- *     showDate: false,
- *     showTime: true,
+ *
+ *     // Wrapper (or colr) function to apply to the main log content
  *     contentColour: colr.yellow
+ *
+ *     // Whether to show the date (overridden by options.showDate)
+ *     showDate: false,
+ *
+ *     // Whether to show the time (overridden by options.showTime)
+ *     showTime: true,
+ *
+ *     // Only log this message if PRINT_DEBUG_LOGS is true
+ *     filter: (...args: any[]) => PRINT_DEBUG_LOGS === true
+ *
+ *     // Process the arguments before logging
+ *     process: (...args: any[]) => args.map((arg) => arg + '!')
+ *
+ *     // Additional action to perform when logging
+ *     action: (...args: any[]) => addToDebugCount()
  *   }
  * });
  *
@@ -6436,11 +6454,23 @@ declare const log: OfType<{
  * - `LogOptions`
  *
  * Options for the log function
+ *
+ * | Property      | Type       | Required | Default | Description                |
+ * |---------------|------------|----------|---------|----------------------------|
+ * | showDate      | `boolean`  | `false`  | `false` | Whether to show the date   |
+ * | showTime      | `boolean`  | `false`  | `true`  | Whether to show the time   |
+ * | enableColours | `boolean`  | `false`  | `true`  | Whether to enable colours  |
+ * | nameWidth     | `number`   | `false`  | Auto    | Width of the name          |
  */
 interface LogOptions {
+    /** Whether to show the date */
     showDate?: boolean;
+    /** Whether to show the time */
     showTime?: boolean;
+    /** Whether to enable colours */
     enableColours?: boolean;
+    /** Width of the name */
+    nameWidth?: number;
 }
 interface LogConfigs {
     [key: string]: LogConfig;
@@ -6452,14 +6482,53 @@ interface LogConfigs {
  *
  * Configuration for the log function
  *
- * See createLogger
+ * | Property      | Type       | Required | Default | Description                                       |
+ * |---------------|------------|----------|---------|---------------------------------------------------|
+ * | name          | `string`   | `true`   |         | Display name                                      |
+ * | nameColour    | `WrapFn`   | `false`  |         | Wrapper function to apply to the display name     |
+ * | contentColour | `WrapFn`   | `false`  |         | Wrapper function to apply to the main log content |
+ * | showDate      | `boolean`  | `false`  | `false` | Whether to show the date                          |
+ * | showTime      | `boolean`  | `false`  | `true`  | Whether to show the time                          |
+ * | filter        | `Function` | `false`  |         | Condition on whether to log                       |
+ * | process       | `Function` | `false`  |         | Process the log arguments before logging          |
+ * | action        | `Function` | `false`  |         | Additional action to perform when logging         |
  */
 interface LogConfig {
+    /** Display name */
     name: string;
+    /** Wrapper function to apply to the display name */
     nameColour?: Function;
-    showDate?: boolean;
-    showTime?: boolean;
+    /** Wrapper function to apply to the main log content */
     contentColour?: Function;
+    /** Whether to show the date */
+    showDate?: boolean;
+    /** Whether to show the time */
+    showTime?: boolean;
+    /**
+     * Condition on whether to log
+     *
+     * If present, the filter function will be run each time the log function is called
+     * and if it doesn't return `true`, the log will not be performed
+     *
+     * Note: Function receives the original arguments, not the processed arguments
+     */
+    filter?: (...args: any[]) => boolean;
+    /**
+     * Process the log arguments before logging
+     *
+     * If present, the process function will be run each time the log function is called
+     * and the result will be used as the arguments for the log function
+     */
+    process?: (...args: any[]) => any[];
+    /**
+     * Additional action to perform when logging
+     *
+     * If present, the action function will be run each time the log function is called.
+     * It will have no impact on the logging step, but can be used to perform additional actions
+     *
+     * Note: Function receives the original arguments, not the processed arguments
+     */
+    action?: (...args: any[]) => void;
 }
 
 /**<!-- DOCS: LogTools ##! -->

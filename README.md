@@ -6936,11 +6936,29 @@ Create a logger with custom configs
 ```typescript
 const log = createLogger({
   myLog: {
+    // Display name
     name: 'MYLOG',
+
+    // Wrapper (or colr) function to apply to the display name
     nameColour: colr.dark.magenta,
-    showDate: false,
-    showTime: true,
+
+    // Wrapper (or colr) function to apply to the main log content
     contentColour: colr.yellow
+
+    // Whether to show the date (overridden by options.showDate)
+    showDate: false,
+
+    // Whether to show the time (overridden by options.showTime)
+    showTime: true,
+
+    // Only log this message if PRINT_DEBUG_LOGS is true
+    filter: (...args: any[]) => PRINT_DEBUG_LOGS === true
+
+    // Process the arguments before logging
+    process: (...args: any[]) => args.map((arg) => arg + '!')
+
+    // Additional action to perform when logging
+    action: (...args: any[]) => addToDebugCount()
   }
 });
 
@@ -6966,6 +6984,13 @@ LogOptions;
 
 Options for the log function
 
+| Property      | Type       | Required | Default | Description                |
+|---------------|------------|----------|---------|----------------------------|
+| showDate      | `boolean`  | `false`  | `false` | Whether to show the date   |
+| showTime      | `boolean`  | `false`  | `true`  | Whether to show the time   |
+| enableColours | `boolean`  | `false`  | `true`  | Whether to enable colours  |
+| nameWidth     | `number`   | `false`  | Auto    | Width of the name          |
+
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
 ### LogConfig
@@ -6976,7 +7001,16 @@ LogConfig;
 
 Configuration for the log function
 
-See createLogger
+| Property      | Type       | Required | Default | Description                                       |
+|---------------|------------|----------|---------|---------------------------------------------------|
+| name          | `string`   | `true`   |         | Display name                                      |
+| nameColour    | `WrapFn`   | `false`  |         | Wrapper function to apply to the display name     |
+| contentColour | `WrapFn`   | `false`  |         | Wrapper function to apply to the main log content |
+| showDate      | `boolean`  | `false`  | `false` | Whether to show the date                          |
+| showTime      | `boolean`  | `false`  | `true`  | Whether to show the time                          |
+| filter        | `Function` | `false`  |         | Condition on whether to log                       |
+| process       | `Function` | `false`  |         | Process the log arguments before logging          |
+| action        | `Function` | `false`  |         | Additional action to perform when logging         |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
 
