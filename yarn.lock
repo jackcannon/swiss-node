@@ -2560,10 +2560,10 @@ swiss-ak@^3.1.0:
   resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.1.0.tgz#bd2d8a2bd801fd92c700713d130c6ca9d9d1e62f"
   integrity sha512-tswV8aKnKxMTPs5V/zzEaTnVhriMUx96kVWHWvbkf74xtoqne0Nm4iDb/CwLdvwNmuEW324IyBK+SV7PHKuXlA==
 
-swiss-ak@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.3.0.tgz#32cfec2285f693768be2ce58236a62e968b95579"
-  integrity sha512-Ok5+tsrYoc/HctSdRQFu2gE+gtBr390EINDhhb+LI8xvs19TIqSww9MJCS+ANT1fQkJDFwSnctVD6cEIPop3UA==
+swiss-ak@^3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/swiss-ak/-/swiss-ak-3.4.2.tgz#d9c25c8de5eb2f1b9286de75db94ce12554014a2"
+  integrity sha512-7ij9VAk+92ChaZKoN1XyN9DatFasomGfsInxAYM5bD6WLq/SZz2tsSC5sWU13FZUNiSFz+TAV8z2wVC4tsHbQg==
 
 swiss-docs@^0.7.7:
   version "0.7.7"

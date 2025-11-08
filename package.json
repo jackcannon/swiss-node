@@ -42,6 +42,6 @@
     "prepublishOnly": "yarn quickbuild"
   },
   "dependencies": {
-    "swiss-ak": "^3.3.0"
+    "swiss-ak": "^3.4.2"
   }
 }
