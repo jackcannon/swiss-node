@@ -61,6 +61,8 @@ const askTableHandler = <T extends unknown>(
         overrideCornChar: HOR_CHAR,
         overrideVerChar: VER_CHAR,
         drawRowLines: true,
+        drawBodyRowLines: true,
+        drawBottomRowLine: true,
         drawOuter: true,
         align: 'left'
       };
@@ -69,14 +71,15 @@ const askTableHandler = <T extends unknown>(
       const cleanLines = tableLines.map((line) => colr.clear(line));
 
       // calculate row heights
-      const horiLine = fullOptions.drawRowLines === false ? 0 : 1;
+      const bodyHoriLine = fullOptions.drawBodyRowLines === false ? 0 : 1;
+      const headerHoriLine = fullOptions.drawHeaderRowLines === false ? 0 : 1;
       const indexesOfHoriLines = cleanLines
         .map((line, index) => (line.startsWith(HOR_CHAR.repeat(4)) ? index : undefined))
         .filter((i) => i !== undefined);
       const allRowHeights = indexesOfHoriLines.slice(0, -1).map((num, i) => indexesOfHoriLines[i + 1] - num);
       const allHeaderHeights = allRowHeights.slice(0, header.length); // includes hor line (even if not usually drawn)
       const allBodyHeights = allRowHeights.slice(header.length); // includes hor line (even if not usually drawn)
-      bodyRowHeight = Math.max(...allBodyHeights) - horiLine; // doesn't include hor line
+      bodyRowHeight = Math.max(...allBodyHeights) - bodyHoriLine; // doesn't include hor line
 
       // calculate maximum number of rows
       const imitatedQuestion = getImitateOutput(questionText, '', false, false, undefined);
@@ -85,15 +88,15 @@ const askTableHandler = <T extends unknown>(
       const actionBarHeight = out.utils.getNumLines(actionBar);
       const topMargin = fullOptions.margin?.[0] ?? 0;
       const bottomMargin = (fullOptions.margin?.[2] ?? topMargin) + 1; // +1 for cursor line
-      headerHeight = horiLine; // top border line (if no header)
+      headerHeight = headerHoriLine; // top border line (if no header)
       if (header.length) {
         const dividerLine = 1; // always present if both body and height are present
-        headerHeight = MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
+        headerHeight = MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawHeaderRowLines ? 0 : header.length);
         headerHeight += dividerLine;
       }
       const maxHeight = Math.floor((askOptions.general.tableSelectMaxHeightPercentage / 100) * calcedTermSize[1]);
       const availableSpace = maxHeight - questPromptHeight - actionBarHeight - topMargin - bottomMargin;
-      numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
+      numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + bodyHoriLine));
       numRows = MathsTools.clamp(numRows, 1, items.length);
 
       // calculate locked column widths

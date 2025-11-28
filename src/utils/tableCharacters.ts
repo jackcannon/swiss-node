@@ -67,7 +67,7 @@ const applyOverrideVerChar = (mapped: CharLookup<string[]>, opts: table.FullTabl
   return mapped;
 };
 const applyOverrideHorChar = (mapped: CharLookup<string[]>, opts: table.FullTableOptions): CharLookup<string[]> => {
-  if (opts.overrideHorChar || !opts.drawRowLines) {
+  if (opts.overrideHorChar) {
     const ovrd = opts.overrideHorChar;
 
     const copyVertsFrom = ['hNor', 'hNor', 'hNor', 'hNor', 'mSep', 'bNor', 'bNor', 'bNor', 'bNor'];
@@ -153,7 +153,7 @@ export const getTableCharacters = (opts: table.FullTableOptions): CharLookup<str
 
   mapped = applyOverrideChar(mapped, opts);
 
-  mapped = applyOverrideOuterChar(mapped, opts);
+  // mapped = applyOverrideOuterChar(mapped, opts);
 
   if (opts.overridePrioritiseVer) {
     mapped = applyOverrideHorChar(mapped, opts);

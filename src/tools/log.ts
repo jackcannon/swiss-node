@@ -2,7 +2,7 @@ import util from 'util';
 import { ObjectTools, OfType } from 'swiss-ak';
 
 import { out } from './out';
-import { colr } from './colr';
+import { colr, WrapFn } from './colr';
 
 //<!-- DOCS: 600 -->
 /**<!-- DOCS: log ##! -->
@@ -41,25 +41,29 @@ const defaultConfigs = {
   } as LogConfig,
   debug: {
     name: 'DBUG',
-    nameColour: colr.darkBg.magentaBg.white
+    nameColour: colr.darkBg.magentaBg.white,
+    type: 'debug'
   } as LogConfig,
   info: {
     name: 'INFO',
-    nameColour: colr.darkBg.blueBg.white
+    nameColour: colr.darkBg.blueBg.white,
+    type: 'info'
   } as LogConfig,
   warn: {
     name: 'WARN',
-    nameColour: colr.yellowBg.black
+    nameColour: colr.yellowBg.black,
+    type: 'warn'
   } as LogConfig,
   error: {
     name: 'ERRR',
-    nameColour: colr.darkBg.redBg.white
+    nameColour: colr.darkBg.redBg.white,
+    type: 'error'
   } as LogConfig
 } as const;
 
 type LogFunction = (...args: any[]) => void;
-export type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
-export type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
+export type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction> & { getPrefixWidth: () => number };
+export type DefaultLogger = Logger<{}>;
 
 const getStr =
   (enableColours: boolean) =>
@@ -85,7 +89,7 @@ const getDatePrefix = (now: Date, addDate: boolean, addTime: boolean, showDate: 
   return dateStr;
 };
 
-const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, nameWidth: number = 1): string => {
+const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, nameWidth: number = 1): [string, number] => {
   const now = new Date();
 
   const { showDate: addDate, showTime: addTime, enableColours } = completeOptions;
@@ -107,13 +111,16 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
     prefixRaw = '';
     prefix = '';
   }
+  const prefixWidth = out.getWidth(prefixRaw);
 
-  return args
+  const result = args
     .map(getStr(enableColours))
     .join(' ')
     .split('\n')
-    .map((line, index) => (index ? ' '.repeat(prefixRaw.length) : prefix) + contentWrapper(line))
+    .map((line, index) => (index ? ' '.repeat(prefixWidth) : prefix) + contentWrapper(line))
     .join('\n');
+
+  return [result, prefixWidth];
 };
 
 /**<!-- DOCS: log.createLogger ### 601 -->
@@ -141,11 +148,17 @@ const formatLog = (args: any[], config: LogConfig, completeOptions: LogOptions, 
  *     // Whether to show the time (overridden by options.showTime)
  *     showTime: true,
  *
+ *     // Which console method to use
+ *     type: 'debug',
+ *
  *     // Only log this message if PRINT_DEBUG_LOGS is true
  *     filter: (...args: any[]) => PRINT_DEBUG_LOGS === true
  *
  *     // Process the arguments before logging
  *     process: (...args: any[]) => args.map((arg) => arg + '!')
+ *
+ *     // Process the output before logging
+ *     processOutput: (output: string, prefixWidth: number) => output.split('\n').map((line) => `[x] ${line} (${prefixWidth})`).join('\n')
  *
  *     // Additional action to perform when logging
  *     action: (...args: any[]) => addToDebugCount()
@@ -165,18 +178,43 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
   const nameWidth = completeOptions.nameWidth ?? longestName;
 
-  return ObjectTools.mapValues(allConfigs, (key, config: LogConfig) => {
+  const resultLogger = ObjectTools.mapValues(allConfigs, (key, config: LogConfig) => {
     const func: LogFunction = (...originalArgs: any[]) => {
       if (config.filter && !config.filter(...originalArgs)) return;
       const args = config.process ? config.process(...originalArgs) : originalArgs;
 
-      const log = formatLog(args, config, completeOptions, nameWidth);
-      console.log(log);
+      const [originalLog, prefixWidth] = formatLog(args, config, completeOptions, nameWidth);
+      const processedLog = config.processOutput ? config.processOutput(originalLog, prefixWidth) : originalLog;
+
+      switch (config.type) {
+        case 'info':
+          console.info(processedLog);
+          break;
+        case 'warn':
+          console.warn(processedLog);
+          break;
+        case 'error':
+          console.error(processedLog);
+          break;
+        case 'debug':
+          console.debug(processedLog);
+          break;
+        case 'log':
+        default:
+          console.log(processedLog);
+          break;
+      }
 
       if (config.action) config.action(...args);
     };
     return func;
   }) as Logger<T>;
+
+  resultLogger.getPrefixWidth = () => {
+    const [_, prefixWidth] = formatLog([], Object.values(allConfigs)[0] as LogConfig, completeOptions, nameWidth);
+    return prefixWidth;
+  };
+  return resultLogger;
 };
 
 /**<!-- DOCS: log.log ### 600 -->
@@ -196,6 +234,8 @@ export const createLogger = <T extends LogConfigs>(extraConfigs: T = {} as T, op
  * log.info('This is info');       // [12:00:00.123]  INFO  This is info
  * log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
  * log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+ *
+ * log.getPrefixWidth();           // Returns: 7
  * ```
  */
 export const log = createLogger({}) as DefaultLogger;
@@ -243,21 +283,25 @@ interface LogConfigs {
  * | contentColour | `WrapFn`   | `false`  |         | Wrapper function to apply to the main log content |
  * | showDate      | `boolean`  | `false`  | `false` | Whether to show the date                          |
  * | showTime      | `boolean`  | `false`  | `true`  | Whether to show the time                          |
+ * | type          | `string`   | `false`  | `'log'` | Which console method to use                       |
  * | filter        | `Function` | `false`  |         | Condition on whether to log                       |
  * | process       | `Function` | `false`  |         | Process the log arguments before logging          |
+ * | processOutput | `Function` | `false`  |         | Process the log output before logging             |
  * | action        | `Function` | `false`  |         | Additional action to perform when logging         |
  */
 export interface LogConfig {
   /** Display name */
   name: string;
   /** Wrapper function to apply to the display name */
-  nameColour?: Function;
+  nameColour?: WrapFn;
   /** Wrapper function to apply to the main log content */
-  contentColour?: Function;
+  contentColour?: WrapFn;
   /** Whether to show the date */
   showDate?: boolean;
   /** Whether to show the time */
   showTime?: boolean;
+  /** Which console method to use */
+  type?: 'log' | 'info' | 'warn' | 'error' | 'debug';
   /**
    * Condition on whether to log
    *
@@ -274,6 +318,19 @@ export interface LogConfig {
    * and the result will be used as the arguments for the log function
    */
   process?: (...args: any[]) => any[];
+
+  /**
+   * Process the output before logging
+   *
+   * If present, the processOutput function will be run each time the log function is called
+   * and the result will be used as the output for the log function
+   *
+   * The function receives the regular output string and the width of the prefix, and should return the final output string
+   *
+   * > *NOTE:* This is not the same as the `process` function, which processes the arguments before logging. Only use this if you need to process the output after it has been formatted.
+   */
+  processOutput?: (output: string, prefixWidth: number) => string;
+
   /**
    * Additional action to perform when logging
    *

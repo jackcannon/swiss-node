@@ -206,7 +206,18 @@ export namespace table {
   export const getLines = (body: any[][], header?: any[][], options: TableOptions = {}): string[] => {
     // const lc = getLineCounter();
     const opts = utils.getFullOptions(options);
-    const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
+    const {
+      wrapperFn,
+      wrapLinesFn,
+      drawOuter,
+      alignCols,
+      align,
+      drawHeaderRowLines,
+      drawBodyRowLines,
+      drawTopRowLine,
+      drawBottomRowLine,
+      cellPadding
+    } = opts;
 
     const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin as number[];
 
@@ -240,26 +251,26 @@ export namespace table {
     if (marginTop) result.push(StringTools.repeat(marginTop - 1, '\n'));
 
     if (pHeader.length) {
-      if (drawOuter && drawRowLines) printLine(empty(numCols, ''), tableChars.hTop, wrapLinesFn);
+      if (drawOuter && drawTopRowLine) printLine(empty(numCols, ''), tableChars.hTop, wrapLinesFn);
       for (let index in pHeader) {
         const row = pHeader[index];
-        if (Number(index) !== 0 && drawRowLines) printLine(empty(numCols, ''), tableChars.hSep, wrapLinesFn);
+        if (Number(index) !== 0 && drawHeaderRowLines) printLine(empty(numCols, ''), tableChars.hSep, wrapLinesFn);
         for (let line of row) {
           printLine(line as string[], tableChars.hNor, opts.wrapHeaderLinesFn);
         }
       }
       printLine(empty(numCols, ''), tableChars.mSep, wrapLinesFn);
     } else {
-      if (drawOuter) printLine(empty(numCols, ''), tableChars.bTop, wrapLinesFn);
+      if (drawOuter && drawTopRowLine) printLine(empty(numCols, ''), tableChars.bTop, wrapLinesFn);
     }
     for (let index in pBody) {
       const row = pBody[index];
-      if (Number(index) !== 0 && drawRowLines) printLine(empty(numCols, ''), tableChars.bSep, wrapLinesFn);
+      if (Number(index) !== 0 && drawBodyRowLines) printLine(empty(numCols, ''), tableChars.bSep, wrapLinesFn);
       for (let line of row) {
         printLine(line as string[], tableChars.bNor, opts.wrapBodyLinesFn);
       }
     }
-    if (drawOuter && drawRowLines) printLine(empty(numCols, ''), tableChars.bBot, wrapLinesFn);
+    if (drawOuter && drawBottomRowLine) printLine(empty(numCols, ''), tableChars.bBot, wrapLinesFn);
     if (marginBottom) result.push(StringTools.repeat(marginBottom - 1, '\n'));
     return result;
   };
@@ -398,6 +409,34 @@ export namespace table {
      * Whether to draw lines between rows (other than separating header and body)
      */
     drawRowLines: boolean;
+
+    /**<!-- DOCS: table.FullTableOptions.drawHeaderRowLines #### -->
+     * drawHeaderRowLines
+     *
+     * Whether to draw lines between header rows
+     */
+    drawHeaderRowLines: boolean;
+
+    /**<!-- DOCS: table.FullTableOptions.drawBodyRowLines #### -->
+     * drawBodyRowLines
+     *
+     * Whether to draw lines between body rows
+     */
+    drawBodyRowLines: boolean;
+
+    /**<!-- DOCS: table.FullTableOptions.drawTopRowLine #### -->
+     * drawTopRowLine
+     *
+     * Whether to draw a line at the top of the table
+     */
+    drawTopRowLine: boolean;
+
+    /**<!-- DOCS: table.FullTableOptions.drawBottomRowLine #### -->
+     * drawBottomRowLine
+     *
+     * Whether to draw a line at the bottom of the table
+     */
+    drawBottomRowLine: boolean;
 
     /**<!-- DOCS: table.FullTableOptions.drawColLines #### -->
      * drawColLines
@@ -735,41 +774,49 @@ export namespace table {
      * @param {TableOptions} opts - Partial options for the table
      * @returns {FullTableOptions} - Full options object
      */
-    export const getFullOptions = (opts: TableOptions): FullTableOptions => ({
-      overrideChar: '',
-      overrideHorChar: opts.overrideChar || '',
-      overrideVerChar: opts.overrideChar || '',
-      overrideCornChar: opts.overrideChar || '',
-      overrideOuterChar: opts.overrideChar || '',
-      overrideCharSet: undefined,
-      overridePrioritiseVer: false,
-      align: 'left',
-      alignCols: ['left'],
-      colWidths: [],
-      cellPadding: 1,
-      truncate: false,
-      maxWidth: out.utils.getTerminalWidth(),
-      ...opts,
-      wrapperFn: typeof opts.wrapperFn !== 'function' ? fn.noact : opts.wrapperFn,
-      wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
-      wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
-      wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
-      drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
-      drawRowLines: typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines,
-      drawColLines: typeof opts.drawColLines !== 'boolean' ? true : opts.drawColLines,
-      transpose: typeof opts.transpose !== 'boolean' ? false : opts.transpose,
-      transposeBody: typeof opts.transposeBody !== 'boolean' ? false : opts.transposeBody,
-      format: (opts.format || []).map(toFullFormatConfig),
-      margin: ((input: number | number[] = 0) => {
-        const arr = [input].flat();
+    export const getFullOptions = (opts: TableOptions): FullTableOptions => {
+      const drawRowLines = typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines;
 
-        const top = arr[0] ?? 0;
-        const right = arr[1] ?? top;
-        const bottom = arr[2] ?? top;
-        const left = arr[3] ?? right ?? top;
+      return {
+        overrideChar: '',
+        overrideHorChar: opts.overrideChar || '',
+        overrideVerChar: opts.overrideChar || '',
+        overrideCornChar: opts.overrideChar || '',
+        overrideOuterChar: opts.overrideChar || '',
+        overrideCharSet: undefined,
+        overridePrioritiseVer: false,
+        align: 'left',
+        alignCols: ['left'],
+        colWidths: [],
+        cellPadding: 1,
+        truncate: false,
+        maxWidth: out.utils.getTerminalWidth(),
+        ...opts,
+        wrapperFn: typeof opts.wrapperFn !== 'function' ? fn.noact : opts.wrapperFn,
+        wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
+        wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
+        wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
+        drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
+        drawRowLines,
+        drawHeaderRowLines: typeof opts.drawHeaderRowLines !== 'boolean' ? drawRowLines : opts.drawHeaderRowLines,
+        drawBodyRowLines: typeof opts.drawBodyRowLines !== 'boolean' ? drawRowLines : opts.drawBodyRowLines,
+        drawTopRowLine: typeof opts.drawTopRowLine !== 'boolean' ? true : opts.drawTopRowLine,
+        drawBottomRowLine: typeof opts.drawBottomRowLine !== 'boolean' ? true : opts.drawBottomRowLine,
+        drawColLines: typeof opts.drawColLines !== 'boolean' ? true : opts.drawColLines,
+        transpose: typeof opts.transpose !== 'boolean' ? false : opts.transpose,
+        transposeBody: typeof opts.transposeBody !== 'boolean' ? false : opts.transposeBody,
+        format: (opts.format || []).map(toFullFormatConfig),
+        margin: ((input: number | number[] = 0) => {
+          const arr = [input].flat();
 
-        return [top, right, bottom, left];
-      })(opts.margin) as number[]
-    });
+          const top = arr[0] ?? 0;
+          const right = arr[1] ?? top;
+          const bottom = arr[2] ?? top;
+          const left = arr[3] ?? right ?? top;
+
+          return [top, right, bottom, left];
+        })(opts.margin) as number[]
+      };
+    };
   } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
 } // SWISS-DOCS-JSDOC-REMOVE-THIS-LINE
