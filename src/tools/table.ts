@@ -775,6 +775,7 @@ export namespace table {
      * @returns {FullTableOptions} - Full options object
      */
     export const getFullOptions = (opts: TableOptions): FullTableOptions => {
+      const drawOuter = typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter;
       const drawRowLines = typeof opts.drawRowLines !== 'boolean' ? true : opts.drawRowLines;
 
       return {
@@ -796,12 +797,12 @@ export namespace table {
         wrapLinesFn: typeof opts.wrapLinesFn !== 'function' ? fn.noact : opts.wrapLinesFn,
         wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== 'function' ? colr.bold : opts.wrapHeaderLinesFn,
         wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== 'function' ? fn.noact : opts.wrapBodyLinesFn,
-        drawOuter: typeof opts.drawOuter !== 'boolean' ? true : opts.drawOuter,
+        drawOuter,
         drawRowLines,
         drawHeaderRowLines: typeof opts.drawHeaderRowLines !== 'boolean' ? drawRowLines : opts.drawHeaderRowLines,
         drawBodyRowLines: typeof opts.drawBodyRowLines !== 'boolean' ? drawRowLines : opts.drawBodyRowLines,
-        drawTopRowLine: typeof opts.drawTopRowLine !== 'boolean' ? true : opts.drawTopRowLine,
-        drawBottomRowLine: typeof opts.drawBottomRowLine !== 'boolean' ? true : opts.drawBottomRowLine,
+        drawTopRowLine: typeof opts.drawTopRowLine !== 'boolean' ? drawOuter : opts.drawTopRowLine,
+        drawBottomRowLine: typeof opts.drawBottomRowLine !== 'boolean' ? drawOuter : opts.drawBottomRowLine,
         drawColLines: typeof opts.drawColLines !== 'boolean' ? true : opts.drawColLines,
         transpose: typeof opts.transpose !== 'boolean' ? false : opts.transpose,
         transposeBody: typeof opts.transposeBody !== 'boolean' ? false : opts.transposeBody,
