@@ -3117,6 +3117,30 @@ declare namespace table {
          * Whether to draw lines between rows (other than separating header and body)
          */
         drawRowLines: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawHeaderRowLines #### -->
+         * drawHeaderRowLines
+         *
+         * Whether to draw lines between header rows
+         */
+        drawHeaderRowLines: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawBodyRowLines #### -->
+         * drawBodyRowLines
+         *
+         * Whether to draw lines between body rows
+         */
+        drawBodyRowLines: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawTopRowLine #### -->
+         * drawTopRowLine
+         *
+         * Whether to draw a line at the top of the table
+         */
+        drawTopRowLine: boolean;
+        /**<!-- DOCS: table.FullTableOptions.drawBottomRowLine #### -->
+         * drawBottomRowLine
+         *
+         * Whether to draw a line at the bottom of the table
+         */
+        drawBottomRowLine: boolean;
         /**<!-- DOCS: table.FullTableOptions.drawColLines #### -->
          * drawColLines
          *
@@ -6363,8 +6387,10 @@ declare const defaultConfigs: {
     readonly error: LogConfig;
 };
 declare type LogFunction = (...args: any[]) => void;
-declare type DefaultLogger = OfType<typeof defaultConfigs, LogFunction>;
-declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
+declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction> & {
+    getPrefixWidth: () => number;
+};
+declare type DefaultLogger = Logger<{}>;
 /**<!-- DOCS: log.createLogger ### 601 -->
  * createLogger
  *
@@ -6390,11 +6416,17 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  *     // Whether to show the time (overridden by options.showTime)
  *     showTime: true,
  *
+ *     // Which console method to use
+ *     type: 'debug',
+ *
  *     // Only log this message if PRINT_DEBUG_LOGS is true
  *     filter: (...args: any[]) => PRINT_DEBUG_LOGS === true
  *
  *     // Process the arguments before logging
  *     process: (...args: any[]) => args.map((arg) => arg + '!')
+ *
+ *     // Process the output before logging
+ *     processOutput: (output: string, prefixWidth: number) => output.split('\n').map((line) => `[x] ${line} (${prefixWidth})`).join('\n')
  *
  *     // Additional action to perform when logging
  *     action: (...args: any[]) => addToDebugCount()
@@ -6407,17 +6439,7 @@ declare type Logger<T> = OfType<typeof defaultConfigs & T, LogFunction>;
  * @param {LogOptions} [options={}] - Options for the logger
  * @returns {Logger<T>} - Logger object
  */
-declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => OfType<{
-    readonly blank: LogConfig;
-    readonly log: LogConfig;
-    readonly out: LogConfig;
-    readonly normal: LogConfig;
-    readonly verbose: LogConfig;
-    readonly debug: LogConfig;
-    readonly info: LogConfig;
-    readonly warn: LogConfig;
-    readonly error: LogConfig;
-} & T, LogFunction>;
+declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: LogOptions) => Logger<T>;
 /**<!-- DOCS: log.log ### 600 -->
  * log
  *
@@ -6435,19 +6457,11 @@ declare const createLogger: <T extends LogConfigs>(extraConfigs?: T, options?: L
  * log.info('This is info');       // [12:00:00.123]  INFO  This is info
  * log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
  * log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+ *
+ * log.getPrefixWidth();           // Returns: 7
  * ```
  */
-declare const log: OfType<{
-    readonly blank: LogConfig;
-    readonly log: LogConfig;
-    readonly out: LogConfig;
-    readonly normal: LogConfig;
-    readonly verbose: LogConfig;
-    readonly debug: LogConfig;
-    readonly info: LogConfig;
-    readonly warn: LogConfig;
-    readonly error: LogConfig;
-}, LogFunction>;
+declare const log: DefaultLogger;
 /**<!-- DOCS: log.LogOptions ### 650 -->
  * LogOptions
  *
@@ -6489,21 +6503,25 @@ interface LogConfigs {
  * | contentColour | `WrapFn`   | `false`  |         | Wrapper function to apply to the main log content |
  * | showDate      | `boolean`  | `false`  | `false` | Whether to show the date                          |
  * | showTime      | `boolean`  | `false`  | `true`  | Whether to show the time                          |
+ * | type          | `string`   | `false`  | `'log'` | Which console method to use                       |
  * | filter        | `Function` | `false`  |         | Condition on whether to log                       |
  * | process       | `Function` | `false`  |         | Process the log arguments before logging          |
+ * | processOutput | `Function` | `false`  |         | Process the log output before logging             |
  * | action        | `Function` | `false`  |         | Additional action to perform when logging         |
  */
 interface LogConfig {
     /** Display name */
     name: string;
     /** Wrapper function to apply to the display name */
-    nameColour?: Function;
+    nameColour?: WrapFn;
     /** Wrapper function to apply to the main log content */
-    contentColour?: Function;
+    contentColour?: WrapFn;
     /** Whether to show the date */
     showDate?: boolean;
     /** Whether to show the time */
     showTime?: boolean;
+    /** Which console method to use */
+    type?: 'log' | 'info' | 'warn' | 'error' | 'debug';
     /**
      * Condition on whether to log
      *
@@ -6520,6 +6538,17 @@ interface LogConfig {
      * and the result will be used as the arguments for the log function
      */
     process?: (...args: any[]) => any[];
+    /**
+     * Process the output before logging
+     *
+     * If present, the processOutput function will be run each time the log function is called
+     * and the result will be used as the output for the log function
+     *
+     * The function receives the regular output string and the width of the prefix, and should return the final output string
+     *
+     * > *NOTE:* This is not the same as the `process` function, which processes the arguments before logging. Only use this if you need to process the output after it has been formatted.
+     */
+    processOutput?: (output: string, prefixWidth: number) => string;
     /**
      * Additional action to perform when logging
      *

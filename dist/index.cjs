@@ -2896,7 +2896,7 @@ var applyOverrideVerChar = (mapped, opts) => {
   return mapped;
 };
 var applyOverrideHorChar = (mapped, opts) => {
-  if (opts.overrideHorChar || !opts.drawRowLines) {
+  if (opts.overrideHorChar) {
     const ovrd = opts.overrideHorChar;
     const copyVertsFrom = ["hNor", "hNor", "hNor", "hNor", "mSep", "bNor", "bNor", "bNor", "bNor"];
     for (const rowIndex in rowTypes) {
@@ -2919,19 +2919,6 @@ var applyOverrideCornChar = (mapped, opts) => {
     for (const rowType of rowTypes) {
       if (!normalRows.includes(rowType)) {
         mapped[rowType] = ovSeperators(mapped[rowType], ovrd);
-      }
-    }
-  }
-  return mapped;
-};
-var applyOverrideOuterChar = (mapped, opts) => {
-  if (opts.overrideOuterChar) {
-    const ovrd = opts.overrideOuterChar;
-    for (const rowType of rowTypes) {
-      if (outerRows.includes(rowType)) {
-        mapped[rowType] = ovAllCharact(mapped[rowType], ovrd);
-      } else {
-        mapped[rowType] = ovOuterChars(mapped[rowType], ovrd);
       }
     }
   }
@@ -2965,7 +2952,6 @@ var applyOverrideCharSet = (mapped, opts) => {
 var getTableCharacters = (opts) => {
   let mapped = tableCharactersBasic();
   mapped = applyOverrideChar(mapped, opts);
-  mapped = applyOverrideOuterChar(mapped, opts);
   if (opts.overridePrioritiseVer) {
     mapped = applyOverrideHorChar(mapped, opts);
     mapped = applyOverrideVerChar(mapped, opts);
@@ -3049,7 +3035,18 @@ var table;
   };
   table2.getLines = (body, header, options = {}) => {
     const opts = utils.getFullOptions(options);
-    const { wrapperFn, wrapLinesFn, drawOuter, alignCols, align, drawRowLines, cellPadding } = opts;
+    const {
+      wrapperFn,
+      wrapLinesFn,
+      drawOuter,
+      alignCols,
+      align,
+      drawHeaderRowLines,
+      drawBodyRowLines,
+      drawTopRowLine,
+      drawBottomRowLine,
+      cellPadding
+    } = opts;
     const [marginTop, marginRight, marginBottom, marginLeft] = opts.margin;
     const result = [];
     const {
@@ -3072,11 +3069,11 @@ var table;
     if (marginTop)
       result.push(import_swiss_ak15.StringTools.repeat(marginTop - 1, "\n"));
     if (pHeader.length) {
-      if (drawOuter && drawRowLines)
+      if (drawOuter && drawTopRowLine)
         printLine(empty2(numCols, ""), tableChars.hTop, wrapLinesFn);
       for (let index in pHeader) {
         const row = pHeader[index];
-        if (Number(index) !== 0 && drawRowLines)
+        if (Number(index) !== 0 && drawHeaderRowLines)
           printLine(empty2(numCols, ""), tableChars.hSep, wrapLinesFn);
         for (let line of row) {
           printLine(line, tableChars.hNor, opts.wrapHeaderLinesFn);
@@ -3084,18 +3081,18 @@ var table;
       }
       printLine(empty2(numCols, ""), tableChars.mSep, wrapLinesFn);
     } else {
-      if (drawOuter)
+      if (drawOuter && drawTopRowLine)
         printLine(empty2(numCols, ""), tableChars.bTop, wrapLinesFn);
     }
     for (let index in pBody) {
       const row = pBody[index];
-      if (Number(index) !== 0 && drawRowLines)
+      if (Number(index) !== 0 && drawBodyRowLines)
         printLine(empty2(numCols, ""), tableChars.bSep, wrapLinesFn);
       for (let line of row) {
         printLine(line, tableChars.bNor, opts.wrapBodyLinesFn);
       }
     }
-    if (drawOuter && drawRowLines)
+    if (drawOuter && drawBottomRowLine)
       printLine(empty2(numCols, ""), tableChars.bBot, wrapLinesFn);
     if (marginBottom)
       result.push(import_swiss_ak15.StringTools.repeat(marginBottom - 1, "\n"));
@@ -3135,40 +3132,48 @@ var table;
         result.isBody = isBody;
       return result;
     };
-    utils2.getFullOptions = (opts) => ({
-      overrideChar: "",
-      overrideHorChar: opts.overrideChar || "",
-      overrideVerChar: opts.overrideChar || "",
-      overrideCornChar: opts.overrideChar || "",
-      overrideOuterChar: opts.overrideChar || "",
-      overrideCharSet: void 0,
-      overridePrioritiseVer: false,
-      align: "left",
-      alignCols: ["left"],
-      colWidths: [],
-      cellPadding: 1,
-      truncate: false,
-      maxWidth: out.utils.getTerminalWidth(),
-      ...opts,
-      wrapperFn: typeof opts.wrapperFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapperFn,
-      wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapLinesFn,
-      wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? colr.bold : opts.wrapHeaderLinesFn,
-      wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapBodyLinesFn,
-      drawOuter: typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter,
-      drawRowLines: typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines,
-      drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
-      transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
-      transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
-      format: (opts.format || []).map(toFullFormatConfig),
-      margin: ((input = 0) => {
-        const arr = [input].flat();
-        const top = arr[0] ?? 0;
-        const right = arr[1] ?? top;
-        const bottom = arr[2] ?? top;
-        const left = arr[3] ?? right ?? top;
-        return [top, right, bottom, left];
-      })(opts.margin)
-    });
+    utils2.getFullOptions = (opts) => {
+      const drawOuter = typeof opts.drawOuter !== "boolean" ? true : opts.drawOuter;
+      const drawRowLines = typeof opts.drawRowLines !== "boolean" ? true : opts.drawRowLines;
+      return {
+        overrideChar: "",
+        overrideHorChar: opts.overrideChar || "",
+        overrideVerChar: opts.overrideChar || "",
+        overrideCornChar: opts.overrideChar || "",
+        overrideOuterChar: opts.overrideChar || "",
+        overrideCharSet: void 0,
+        overridePrioritiseVer: false,
+        align: "left",
+        alignCols: ["left"],
+        colWidths: [],
+        cellPadding: 1,
+        truncate: false,
+        maxWidth: out.utils.getTerminalWidth(),
+        ...opts,
+        wrapperFn: typeof opts.wrapperFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapperFn,
+        wrapLinesFn: typeof opts.wrapLinesFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapLinesFn,
+        wrapHeaderLinesFn: typeof opts.wrapHeaderLinesFn !== "function" ? colr.bold : opts.wrapHeaderLinesFn,
+        wrapBodyLinesFn: typeof opts.wrapBodyLinesFn !== "function" ? import_swiss_ak15.fn.noact : opts.wrapBodyLinesFn,
+        drawOuter,
+        drawRowLines,
+        drawHeaderRowLines: typeof opts.drawHeaderRowLines !== "boolean" ? drawRowLines : opts.drawHeaderRowLines,
+        drawBodyRowLines: typeof opts.drawBodyRowLines !== "boolean" ? drawRowLines : opts.drawBodyRowLines,
+        drawTopRowLine: typeof opts.drawTopRowLine !== "boolean" ? drawOuter : opts.drawTopRowLine,
+        drawBottomRowLine: typeof opts.drawBottomRowLine !== "boolean" ? drawOuter : opts.drawBottomRowLine,
+        drawColLines: typeof opts.drawColLines !== "boolean" ? true : opts.drawColLines,
+        transpose: typeof opts.transpose !== "boolean" ? false : opts.transpose,
+        transposeBody: typeof opts.transposeBody !== "boolean" ? false : opts.transposeBody,
+        format: (opts.format || []).map(toFullFormatConfig),
+        margin: ((input = 0) => {
+          const arr = [input].flat();
+          const top = arr[0] ?? 0;
+          const right = arr[1] ?? top;
+          const bottom = arr[2] ?? top;
+          const left = arr[3] ?? right ?? top;
+          return [top, right, bottom, left];
+        })(opts.margin)
+      };
+    };
   })(utils = table2.utils || (table2.utils = {}));
 })(table || (table = {}));
 
@@ -4987,32 +4992,35 @@ var askTableHandler = (isMulti, question, items, initial = [], rows, headers = [
         overrideCornChar: HOR_CHAR,
         overrideVerChar: VER_CHAR,
         drawRowLines: true,
+        drawBodyRowLines: true,
+        drawBottomRowLine: true,
         drawOuter: true,
         align: "left"
       };
       const { tableLines, body, header } = operation.getTable(items, activeIndex, 0, {}, overrideOptions);
       const cleanLines = tableLines.map((line) => colr.clear(line));
-      const horiLine = fullOptions.drawRowLines === false ? 0 : 1;
+      const bodyHoriLine = fullOptions.drawBodyRowLines === false ? 0 : 1;
+      const headerHoriLine = fullOptions.drawHeaderRowLines === false ? 0 : 1;
       const indexesOfHoriLines = cleanLines.map((line, index) => line.startsWith(HOR_CHAR.repeat(4)) ? index : void 0).filter((i) => i !== void 0);
       const allRowHeights = indexesOfHoriLines.slice(0, -1).map((num, i) => indexesOfHoriLines[i + 1] - num);
       const allHeaderHeights = allRowHeights.slice(0, header.length);
       const allBodyHeights = allRowHeights.slice(header.length);
-      bodyRowHeight = Math.max(...allBodyHeights) - horiLine;
+      bodyRowHeight = Math.max(...allBodyHeights) - bodyHoriLine;
       const imitatedQuestion = getImitateOutput(questionText, "", false, false, void 0);
       const questPromptHeight = out.utils.getNumLines(imitatedQuestion);
       const actionBar = getTableSelectActionBar(isMulti);
       const actionBarHeight = out.utils.getNumLines(actionBar);
       const topMargin = ((_a = fullOptions.margin) == null ? void 0 : _a[0]) ?? 0;
       const bottomMargin = (((_b = fullOptions.margin) == null ? void 0 : _b[2]) ?? topMargin) + 1;
-      headerHeight = horiLine;
+      headerHeight = headerHoriLine;
       if (header.length) {
         const dividerLine = 1;
-        headerHeight = import_swiss_ak28.MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawRowLines ? 0 : header.length);
+        headerHeight = import_swiss_ak28.MathsTools.addAll(...allHeaderHeights) - (fullOptions.drawHeaderRowLines ? 0 : header.length);
         headerHeight += dividerLine;
       }
       const maxHeight = Math.floor(askOptions3.general.tableSelectMaxHeightPercentage / 100 * calcedTermSize[1]);
       const availableSpace = maxHeight - questPromptHeight - actionBarHeight - topMargin - bottomMargin;
-      numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + horiLine));
+      numRows = Math.floor((availableSpace - headerHeight) / (bodyRowHeight + bodyHoriLine));
       numRows = import_swiss_ak28.MathsTools.clamp(numRows, 1, items.length);
       const mostColumns = Math.max(...body.map((row) => row.length));
       const typicalLine = cleanLines.find((line) => line.split("").filter((c) => c === VER_CHAR).length === mostColumns + 1);
@@ -5695,19 +5703,23 @@ var defaultConfigs = {
   },
   debug: {
     name: "DBUG",
-    nameColour: colr.darkBg.magentaBg.white
+    nameColour: colr.darkBg.magentaBg.white,
+    type: "debug"
   },
   info: {
     name: "INFO",
-    nameColour: colr.darkBg.blueBg.white
+    nameColour: colr.darkBg.blueBg.white,
+    type: "info"
   },
   warn: {
     name: "WARN",
-    nameColour: colr.yellowBg.black
+    nameColour: colr.yellowBg.black,
+    type: "warn"
   },
   error: {
     name: "ERRR",
-    nameColour: colr.darkBg.redBg.white
+    nameColour: colr.darkBg.redBg.white,
+    type: "error"
   }
 };
 var getStr = (enableColours) => (item) => {
@@ -5747,25 +5759,50 @@ var formatLog = (args, config, completeOptions, nameWidth = 1) => {
     prefixRaw = "";
     prefix = "";
   }
-  return args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixRaw.length) : prefix) + contentWrapper(line)).join("\n");
+  const prefixWidth = out.getWidth(prefixRaw);
+  const result = args.map(getStr(enableColours)).join(" ").split("\n").map((line, index) => (index ? " ".repeat(prefixWidth) : prefix) + contentWrapper(line)).join("\n");
+  return [result, prefixWidth];
 };
 var createLogger = (extraConfigs = {}, options = {}) => {
   const completeOptions = { ...defaultOptions, ...options };
   const allConfigs = { ...defaultConfigs, ...extraConfigs };
   const longestName = Math.max(0, ...Object.values(allConfigs).map((p) => p.name.length));
   const nameWidth = completeOptions.nameWidth ?? longestName;
-  return import_swiss_ak31.ObjectTools.mapValues(allConfigs, (key, config) => {
+  const resultLogger = import_swiss_ak31.ObjectTools.mapValues(allConfigs, (key, config) => {
     const func = (...originalArgs) => {
       if (config.filter && !config.filter(...originalArgs))
         return;
       const args = config.process ? config.process(...originalArgs) : originalArgs;
-      const log2 = formatLog(args, config, completeOptions, nameWidth);
-      console.log(log2);
+      const [originalLog, prefixWidth] = formatLog(args, config, completeOptions, nameWidth);
+      const processedLog = config.processOutput ? config.processOutput(originalLog, prefixWidth) : originalLog;
+      switch (config.type) {
+        case "info":
+          console.info(processedLog);
+          break;
+        case "warn":
+          console.warn(processedLog);
+          break;
+        case "error":
+          console.error(processedLog);
+          break;
+        case "debug":
+          console.debug(processedLog);
+          break;
+        case "log":
+        default:
+          console.log(processedLog);
+          break;
+      }
       if (config.action)
         config.action(...args);
     };
     return func;
   });
+  resultLogger.getPrefixWidth = () => {
+    const [_, prefixWidth] = formatLog([], Object.values(allConfigs)[0], completeOptions, nameWidth);
+    return prefixWidth;
+  };
+  return resultLogger;
 };
 var log = createLogger({});
 

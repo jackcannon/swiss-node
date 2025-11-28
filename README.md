@@ -6369,6 +6369,10 @@ The configuration options for the table
     - [overridePrioritiseVer](#overrideprioritisever)
     - [drawOuter](#drawouter)
     - [drawRowLines](#drawrowlines)
+    - [drawHeaderRowLines](#drawheaderrowlines)
+    - [drawBodyRowLines](#drawbodyrowlines)
+    - [drawTopRowLine](#drawtoprowline)
+    - [drawBottomRowLine](#drawbottomrowline)
     - [drawColLines](#drawcollines)
     - [colWidths](#colwidths)
     - [align](#table_fulltableoptions_align)
@@ -6482,6 +6486,26 @@ Whether to draw the outer border of the table
 
 #### drawRowLines
 Whether to draw lines between rows (other than separating header and body)
+
+<p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
+
+#### drawHeaderRowLines
+Whether to draw lines between header rows
+
+<p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
+
+#### drawBodyRowLines
+Whether to draw lines between body rows
+
+<p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
+
+#### drawTopRowLine
+Whether to draw a line at the top of the table
+
+<p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
+
+#### drawBottomRowLine
+Whether to draw a line at the bottom of the table
 
 <p style="text-align: right" align="right"><a href="#tableoptions"> [↑ Back to <b>TableOptions</b> ↑] </a></p>
 
@@ -6806,6 +6830,8 @@ log.debug('This is debug');     // [12:00:00.123]  DBUG  This is debug
 log.info('This is info');       // [12:00:00.123]  INFO  This is info
 log.warn('This is warn');       // [12:00:00.123]  WARN  This is warn
 log.error('This is error');     // [12:00:00.123]  ERRR  This is error
+
+log.getPrefixWidth();           // Returns: 7
 ```
 
 <p style="text-align: right" align="right"><a href="#logger"> [↑ Back to <b>Logger</b> ↑] </a></p>
@@ -6951,11 +6977,17 @@ const log = createLogger({
     // Whether to show the time (overridden by options.showTime)
     showTime: true,
 
+    // Which console method to use
+    type: 'debug',
+
     // Only log this message if PRINT_DEBUG_LOGS is true
     filter: (...args: any[]) => PRINT_DEBUG_LOGS === true
 
     // Process the arguments before logging
     process: (...args: any[]) => args.map((arg) => arg + '!')
+
+    // Process the output before logging
+    processOutput: (output: string, prefixWidth: number) => output.split('\n').map((line) => `[x] ${line} (${prefixWidth})`).join('\n')
 
     // Additional action to perform when logging
     action: (...args: any[]) => addToDebugCount()
@@ -7008,8 +7040,10 @@ Configuration for the log function
 | contentColour | `WrapFn`   | `false`  |         | Wrapper function to apply to the main log content |
 | showDate      | `boolean`  | `false`  | `false` | Whether to show the date                          |
 | showTime      | `boolean`  | `false`  | `true`  | Whether to show the time                          |
+| type          | `string`   | `false`  | `'log'` | Which console method to use                       |
 | filter        | `Function` | `false`  |         | Condition on whether to log                       |
 | process       | `Function` | `false`  |         | Process the log arguments before logging          |
+| processOutput | `Function` | `false`  |         | Process the log output before logging             |
 | action        | `Function` | `false`  |         | Additional action to perform when logging         |
 
 <p style="text-align: right" align="right"><a href="#logtools"> [↑ Back to <b>LogTools</b> ↑] </a></p>
